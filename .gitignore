@@ -1,0 +1,7 @@
+node_modules
+**/tests/report
+**/__tests__/report
+**/*/js/bundle.js
+**/.cache
+**/js
+**/.rpt2_cache

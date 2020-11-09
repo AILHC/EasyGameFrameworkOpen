@@ -1,0 +1,27 @@
+{
+    "files.exclude": {
+        ".git": true,
+        "/node_modules": true,
+        ".github": true
+    },
+    "search.exclude": {
+        ".git": true,
+        "node_modules": true,
+        ".github": true,
+        "bin": true
+    },
+    "eslint.validate": [
+        "javascript",
+        {
+            "language": "typescript",
+            "autoFix": true
+        },
+    ],
+    "eslint.workingDirectories": [
+        "./packages/core"
+    ],
+    "eslint.run": "onSave",
+    "eslint.format.enable": true,
+    "eslint.packageManager": "yarn",
+    "liveServer.settings.port": 5501,
+}

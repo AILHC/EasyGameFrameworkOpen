@@ -1,0 +1,214 @@
+{
+    // 指定解析器
+    "parser": "@typescript-eslint/parser",
+    //使用基础规则
+    "extends": "plugin:@typescript-eslint/recommended",
+    //解析插件
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "root": true,
+    // 指定脚本的运行环境
+    "env": {
+        "browser": true,
+        "node": true,
+        "commonjs": true,
+        "es6": true
+    },
+    // 启用的规则及其各自的错误级别
+    "rules": {
+        "quotes": "off", //["warn", "single"],
+        // 禁止使用 console，提醒开发者，上线时要去掉
+        "no-console": "off",
+        //警告⚠function 的圆括号之前是否使用空格
+        "space-before-function-paren": "off",
+        // 限制单行代码的长度
+        "max-len": [
+            "warn",
+            160
+        ],
+        // 变量名必须使用驼峰式
+        // @off 暂不限制
+        "camelcase": "off",
+        // 缩进使用 tab 还是空格
+        // @off 不关心
+        "indent": "off",
+        // 不 禁止空的 function
+        "no-empty-function": "off",
+        // 不 禁止额外的括号，
+        "no-extra-parens": "off",
+        "semi": "off",
+        // @fixable 必须使用 === 或 !==，禁止使用 == 或 !=，与 null 比较时除外
+        "eqeqeq": [
+            "error",
+            "always",
+            {
+                "null": "ignore"
+            }
+        ],
+        "@typescript-eslint/indent": "off",
+        "@typescript-eslint/adjacent-overload-signatures": "off",
+        "@typescript-eslint/array-type": [
+            "warn"
+        ],
+        "@typescript-eslint/await-thenable": "off",
+        "@typescript-eslint/ban-ts-ignore": "warn",
+        "@typescript-eslint/ban-types": [
+            "warn",
+            {
+                "types": {
+                    "Object": "Use {} instead"
+                }
+            }
+        ],
+        "@typescript-eslint/camelcase": [
+            "error",
+            {
+                "allow": [
+                    "^_[a-z]",
+                    "^[a-zA-Z]"
+                ]
+            }
+        ],
+        "@typescript-eslint/class-name-casing": "warn",
+        "@typescript-eslint/consistent-type-definitions": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-member-accessibility": [
+            "warn",
+            {
+                "accessibility": "explicit",
+                "overrides": {
+                    "constructors": "off",
+                    "accessors": "off"
+                }
+            }
+        ],
+        "@typescript-eslint/func-call-spacing": "warn",
+        "@typescript-eslint/generic-type-naming": "off",
+        "@typescript-eslint/interface-name-prefix": "off", //["warn", "never"],
+        "@typescript-eslint/member-delimiter-style": [
+            "warn",
+            {
+                "multiline": {
+                    "delimiter": "semi",
+                    "requireLast": true
+                },
+                "singleline": {
+                    "delimiter": "semi"
+                }
+            }
+        ],
+        //建议私有变量和函数使用_
+        "@typescript-eslint/member-naming": [
+            "warn",
+            {
+                "private": "^_"
+            }
+        ],
+        /**
+        建议字段、方法和构造函数的一致顺序
+        比如公有方法在最前
+        */
+        "@typescript-eslint/member-ordering": [
+            "warn"
+        ],
+        /**
+        禁止使用数组构造函数来构造数组，比如：Array(0,1,2,3)
+        */
+        "@typescript-eslint/no-array-constructor": [
+            "error"
+        ],
+        /**
+        不禁止
+        空函数会降低可读性，因为读者需要猜测它是否是故意的。因此，为空函数写一个清晰的注释是一个很好的实践。
+        */
+        "@typescript-eslint/no-empty-function": "off",
+        /**
+        不禁止空接口
+        空接口相当于它的超类型。如果接口没有实现超类型，则该接口相当于空对象({})。在这两种情况下都可以省略。
+
+        */
+        "@typescript-eslint/no-empty-interface": "off",
+        /**
+        不禁止使用any
+        */
+        "@typescript-eslint/no-explicit-any": "off",
+        /**
+        不禁止
+        此规则限制仅在必要时使用括号。
+        */
+        "@typescript-eslint/no-extra-parens": "off",
+        "@typescript-eslint/no-extraneous-class": "warn",
+        "@typescript-eslint/no-floating-promises": "off",
+        /**
+        警告声明空类
+        */
+        "@typescript-eslint/no-for-in-array": "warn",
+        "@typescript-eslint/no-inferrable-types": "off",
+        "@typescript-eslint/no-magic-numbers": [
+            "off",
+            {
+                "ignoreNumericLiteralTypes": true,
+                "ignoreEnums": true
+            }
+        ],
+        /**
+        禁止类、接口声明new
+        禁止接口声明constructor
+        */
+        "@typescript-eslint/no-misused-new": "error",
+        /**
+        禁止乱用promise
+        */
+        "@typescript-eslint/no-misused-promises": "error",
+        "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/no-non-null-assertion": "warn",
+        "@typescript-eslint/no-parameter-properties": "off",
+        "@typescript-eslint/no-require-imports": "error",
+        "@typescript-eslint/no-this-alias": "warn",
+        "@typescript-eslint/no-type-alias": "off",
+        "@typescript-eslint/no-unnecessary-qualifier": "off",
+        "@typescript-eslint/no-unnecessary-type-assertion": "warn",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/no-useless-constructor": "off",
+        "@typescript-eslint/no-var-requires": "error",
+        "@typescript-eslint/prefer-for-of": "off",
+        "@typescript-eslint/prefer-function-type": "off",
+        "@typescript-eslint/prefer-includes": "warn",
+        "@typescript-eslint/prefer-namespace-keyword": "off",
+        "@typescript-eslint/prefer-readonly": "off",
+        "@typescript-eslint/prefer-regexp-exec": "warn",
+        "@typescript-eslint/prefer-string-starts-ends-with": "warn",
+        "@typescript-eslint/promise-function-async": "off",
+        "@typescript-eslint/require-array-sort-compare": "error",
+        "@typescript-eslint/require-await": "warn",
+        "@typescript-eslint/restrict-plus-operands": "off",
+        "@typescript-eslint/semi": "error",
+        "@typescript-eslint/strict-boolean-expressions": "off",
+        "@typescript-eslint/triple-slash-reference": "error",
+        "@typescript-eslint/type-annotation-spacing": "warn",
+        "@typescript-eslint/typedef": "off",
+        "@typescript-eslint/unbound-method": "off",
+        /**
+        如果有类似 同一个函数多个重载
+        function f(x: number): void;
+        function f(x: string): void;
+        可以改写为：
+        function f(x: number | string): void;
+        */
+        "@typescript-eslint/unified-signatures": "warn"
+    },
+    // 指定解析器选项
+    "parserOptions": {
+        // 启用ES8语法支持
+        // "ecmaVersion": 6,    
+        // module表示ECMAScript模块
+        // "sourceType": "module",
+        //配置tsconfig的路径
+        "tsconfigRootDir": "./",
+        "project": "tsconfig.json"
+    },
+    // 脚本在执行期间访问的额外的全局变量
+    "globals": {}
+}

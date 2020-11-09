@@ -1,0 +1,45 @@
+{
+  "name": "@ailhc/egf-core",
+  "version": "0.1.2",
+  "description": "This is the core of EasyGameFramework, which provides the ability to register modules, get module instances, and load subroutine scripts",
+  "keywords": [],
+  "author": "AILHC <505126057@qq.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameClientFramework.git"
+  },
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.js",
+  "typings": "dist/cjs/types",
+  "directories": {
+    "dist": "dist"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "watch:cjs": "egf build -w true -f cjs",
+    "build:cjs": "egf build -f cjs",
+    "build:es": "egf build -f es",
+    "build:umd": "egf build -f umd:egf",
+    "build:iife": "egf build -f iife:core",
+    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife",
+    "test": "jest",
+    "testc": "jest --coverage"
+  },
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameClientFramework/issues"
+  },
+  "homepage": "https://github.com/AILHC/EasyGameClientFramework#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@ailhc/egf-cli": "0.0.2",
+    "jest": "^25.3.0",
+    "ts-jest": "^25.3.1"
+  }
+}

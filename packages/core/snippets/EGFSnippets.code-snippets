@@ -1,0 +1,53 @@
+{
+	// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	"Create EF Module": {
+		"scope": "javascript,typescript",
+		"prefix": "efmodule",
+		"body": [
+			"declare global {",
+			"    interface IEgfModuleMap {",
+			"        newmodule?:NewModule",
+			"    }",
+			"}",
+			"export class NewModule { ",
+			"}"
+		],
+		"description": "创建EF模块"
+	},
+	"declare global": {
+		"scope": "javascript,typescript",
+		"prefix": "dg",
+		"body": [
+			"declare global {",
+			"    $0",
+			"}",
+		],
+		"description": "扩展全局定义"
+	},
+	"declare moduleMap": {
+		"scope": "javascript,typescript",
+		"prefix": "dm",
+		"body": [
+			"declare global {",
+			"    interface IModuleMap {",
+			"        $0module?:INewModule",
+			"    }",
+			"}",
+		],
+		"description": "扩展模块字典定义"
+	},
+	"ArrowFunc": {
+		"scope": "javascript,typescript",
+		"prefix": "af",
+		"body": [
+			"()=>{$0}",
+		],
+		"description": "箭头函数"
+	}
+}
