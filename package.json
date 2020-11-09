@@ -1,0 +1,32 @@
+{
+  "name": "easygameclientframework",
+  "version": "0.0.1",
+  "description": "base typescript a EasyGameClientFramework ",
+  "main": "index.js",
+  "repository": "https://github.com/AILHC/EasyGameClientFramework.git",
+  "author": "Tide Li <505126057@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
+    "eslint": "^6.7.2",
+    "follow-redirects": "^1.10.0",
+    "typescript": "^3.7.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/node": "^10.0.0",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.2.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "packages": [
+    "packages/*"
+  ]
+}

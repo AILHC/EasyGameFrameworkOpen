@@ -1,0 +1,44 @@
+{
+  "name": "@ailhc/egf-cli",
+  "version": "0.0.2",
+  "description": "egf frame complier cli",
+  "keywords": [
+    "cli",
+    "egf"
+  ],
+  "author": "AILHC <505126057@qq.com>",
+  "license": "MIT",
+  "main": "./cli.js",
+  "directories": {
+    "test": "__tests__"
+  },
+  "files": [
+    "cli.js",
+    "LICENSE",
+    "rollupdo.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameClientFramework.git"
+  },
+  "dependencies": {
+    "cmdjs": "^0.0.14",
+    "colors": "^1.4.0",
+    "commander": "^4.1.0",
+    "matched": "^5.0.0",
+    "rollup": "^2.26.11",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "~0.21.2",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+  },
+  "bin": {
+    "egf": "./cli.js"
+  },
+  "scripts": {
+    "watch": "egf watch"
+  },
+  "private": true
+}

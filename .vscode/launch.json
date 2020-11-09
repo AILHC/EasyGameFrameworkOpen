@@ -1,0 +1,149 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "测试rollup发布iife",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "build:iife"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "cwd": "${workspaceFolder}/packages/fgui-dpc-impl"
+        },
+        {
+            "name": "测试npmdts",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "npmGenDts"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "cwd": "${workspaceFolder}/packages/package-template"
+        },
+        {
+            "name": "测试tsup",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "tsupDts"
+            ],
+            "runtimeExecutable": "yarn",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "cwd": "${workspaceFolder}/packages/package-template"
+        },
+        {
+            "name": "测试rollupDts",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "build:iife"
+            ],
+            "runtimeExecutable": "yarn",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "cwd": "${workspaceFolder}/packages/egf-dpctrl"
+        },
+        {
+            
+            "type": "node",
+            "request": "launch",
+            "name": "测试生成dts,dtsg",
+            "cwd": "${workspaceFolder}/packages/package-template",
+            "program": "${workspaceFolder}/packages/package-template/genDts.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Generate declaraions",
+            "program": "${workspaceFolder}/tools/generate-declarations/generate-declarations-cli.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "rollupTestGenDts",
+            "program": "${workspaceFolder}/rollupTest/generate-declarations/generate-declarations-cli.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "testPublishExcel",
+            "program": "${workspaceFolder}/packages/cli/excel-tool/testGenClientData.js",
+            "cwd": "${workspaceFolder}/packages/cli/excel-tool",
+        },
+        {
+            "name": "dpctrl Unit Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest.js"
+            },
+            "args": [
+                "--runInBand"
+            ],
+            "cwd": "${workspaceFolder}/packages/egf-dpctrl",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "broadcast Unit Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest.js"
+            },
+            "args": [
+                "--runInBand"
+            ],
+            "cwd": "${workspaceFolder}/packages/broadcast",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "net Unit Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest.js"
+            },
+            "args": [
+                "--runInBand"
+            ],
+            "cwd": "${workspaceFolder}/packages/net",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "name": "Unit Test Current File",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest.js"
+            },
+            "args": [
+                "${fileBasenameNoExtension}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+        }
+    ]
+}
