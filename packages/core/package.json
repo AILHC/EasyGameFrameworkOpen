@@ -26,9 +26,10 @@
     "watch:cjs": "egf build -w true -f cjs",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd:egf",
+    "build:umd": "egf build -f umd:core",
     "build:iife": "egf build -f iife:core",
-    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife",
+    "build:system": "egf build -f system:@ailhc/egf-core",
+    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
     "testc": "jest --coverage"
   },
