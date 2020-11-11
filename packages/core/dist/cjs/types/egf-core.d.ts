@@ -112,7 +112,7 @@ declare module '@ailhc/egf-core/src/interfaces' {
 
 }
 declare module '@ailhc/egf-core' {
-	export * from './egf-app';
-	export * from './interfaces';
+	export * from '@ailhc/egf-core/src/egf-app';
+	export * from '@ailhc/egf-core/src/interfaces';
 
 }
