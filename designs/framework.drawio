@@ -1,0 +1,37 @@
+<mxfile host="65bd71144e" modified="2020-11-11T08:29:33.009Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.50.0 Chrome/83.0.4103.122 Electron/9.2.1 Safari/537.36" etag="k-TUzY4E81E3SYDpZLE1" version="13.6.5">
+    <diagram id="oKLI9GotOiLQ3IlupbdN" name="第 1 页">
+        <mxGraphModel dx="974" dy="385" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="413" pageHeight="291" background="#283618" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="渲染框架&lt;br&gt;支持js&amp;amp;ts的 GameEngine&lt;br&gt;Laya,Cocos,Egret,Unity,PIXI,Phaser,...&lt;br&gt;Web" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="7" y="610" width="621" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="底层平台:&amp;nbsp;小游戏，web，native..." style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="7" y="680" width="621" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="游戏逻辑" style="whiteSpace=wrap;html=1;verticalAlign=top;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="188" y="440" width="440" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="资源" style="whiteSpace=wrap;html=1;labelBorderColor=none;shadow=1;glass=0;fillStyle=auto;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="7" y="440" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;业务逻辑&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;" style="shape=corner;whiteSpace=wrap;html=1;rotation=0;dx=50;dy=50;align=center;verticalAlign=top;horizontal=1;shadow=1;fillStyle=auto;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;direction=south;flipH=1;labelPosition=center;verticalLabelPosition=middle;fontSize=15;textDirection=ltr;flipV=0;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="480" width="405" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="shape=tee;whiteSpace=wrap;html=1;sketch=1;direction=south;dx=36;dy=172;fillStyle=hachure;shadow=0;" vertex="1" parent="1">
+                    <mxGeometry x="270" y="392" width="542" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="框架" style="text;html=1;resizable=0;autosize=1;align=center;verticalAlign=middle;points=[];fillColor=none;strokeColor=none;rounded=0;shadow=0;sketch=1;fontSize=15;" vertex="1" parent="1">
+                    <mxGeometry x="415" y="550" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="渲染框架的扩展&lt;br&gt;底层平台的扩展" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="633" y="440" width="90" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="开发工具&lt;br&gt;配置处理工具&lt;br&gt;协议处理工具&lt;br&gt;自动化部署工具" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="730" y="440" width="90" height="300" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
