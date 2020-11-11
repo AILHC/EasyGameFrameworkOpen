@@ -1,0 +1,51 @@
+{
+  "name": "@ailhc/package-template",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "AILHC <505126057@qq.com>",
+  "homepage": "",
+  "license": "ISC",
+  "directories": {
+    "dist": "dist",
+    "test": "__tests__"
+  },
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.js",
+  "typings": "dist/cjs/types",
+  "files": [
+    "libs",
+    "src",
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npm.taobao.org"
+  },
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameClientFramework/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/AIGAMESTUDIO.AILHC/EasyGameClientFramework.git"
+  },
+  "scripts": {
+    "watch:cjs": "egf build -w true -f cjs",
+    "build:cjs": "egf build -f cjs",
+    "build:es": "egf build -f es",
+    "build:umd": "egf build -f umd:packageTemplate",
+    "build:iife": "egf build -f iife:packageTemplate",
+    "build:system": "egf build -f system:@ailhc/package-template",
+    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife",
+    "test": "jest",
+    "testc": "jest --coverage",
+    "npmGenDts": "npm-dts generate",
+    "genDtsBundle": "dts-bundle --name temp --main ./dist/cjs/types/index.d.ts",
+    "genDts": "dts-generator --name test --project ./ --out test.d.ts",
+    "tsupDts": "tsup src/index.ts  --dts --format iife --global-name mydts"
+  },
+  "devDependencies": {
+    "@ailhc/egf-cli": "0.0.2",
+    "jest": "^25.3.0",
+    "ts-jest": "^25.3.1"
+  },
+  "dependencies": {}
+}
