@@ -5,8 +5,10 @@ const nodeResolve = require("rollup-plugin-node-resolve");
 const path = require("path");
 const matched = require("matched")
 const fs = require("fs");
+const rdts = require("rollup-plugin-dts").default;
 const npmDts = require("npm-dts");
 const dtsGenerator = require('dts-generator');
+
 var curPackFiles = null;  //当前包的所有的文件
 var mentry = 'multientry:entry-point';
 function myMultiInput() {
@@ -188,7 +190,8 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
                 customResolveOptions: {
                     moduleDirectory: "node_modules"
                 }
-            })
+            }),
+            // rdts()
         ]
     }
     /**
@@ -248,23 +251,39 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         //     baseDir: path.resolve(process.cwd()),
         //     exclude: ["__tests__/**/*.ts", "node_modules/**/*.d.ts"],
         //     out: path.resolve(typesDirPath, `${dtsFileName}.d.ts`),
-        //     prefix: moduleName,
-        //     // resolveModuleId: function (params) {
-        //     //     console.log(params.currentModuleId) 
-        //     //     return `${moduleName}/${params.currentModuleId}`
-        //     // }
+        //     // prefix: moduleName,
+        //     resolveModuleId: function (params) {
+        //         console.log(params.currentModuleId)
+        //         if (params.currentModuleId === entry.split(".")[0]) {
+        //             return moduleName;
+        //         }
+        //         return `${moduleName}/${params.currentModuleId}`
+        //     },
+        //     resolveModuleImport: function (params) {
+        //         console.log(params)
+        //         // {
+        //         //     importedModuleId: './interfaces',
+        //         //     currentModuleId: 'src/index',
+        //         //     isDeclaredExternalModule: false
+        //         //   }
+        //         if (params.currentModuleId === entry.split(".")[0]) {
+        //             return moduleName;
+        //         }
+        //         return params.importedModuleId
+        //     }
         // })
+        //npm-dts
         const typesDirPath = path.join(process.cwd(), typesDir);
         const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
         if(!fs.existsSync(typesDirPath)){
             fs.mkdirSync(typesDirPath);
         }
         new npmDts.Generator({
-            entry: entry,
+            entry: path.resolve(process.cwd(),entry),
             root: path.resolve(process.cwd()),
             tmp: path.resolve(process.cwd(), 'cache/tmp'),
             output: path.resolve(typesDirPath, `${dtsFileName}.d.ts`),
-            tsc: '--extendedDiagnostics',
+            tsc: '--project tsconfigDts.json --extendedDiagnostics',
         }).generate()
         // if (customDts) {
         //     const modules = rollupBuild.cache.modules;
