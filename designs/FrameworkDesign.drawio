@@ -1,0 +1,37 @@
+<mxfile host="65bd71144e" modified="2020-11-12T01:30:57.627Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.50.0 Chrome/83.0.4103.122 Electron/9.2.1 Safari/537.36" version="13.6.5" etag="Sudl_ICz4YekoWXvDPEX">
+    <diagram id="LpkSENAFwFBsIaX1rJZD" name="第 1 页">
+        <mxGraphModel dx="1707" dy="958" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="350" pageHeight="200" background="#F1FAEE" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="引擎对接层" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="130" width="650" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="" style="group;sketch=1;fontColor=#1D3557;" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="20" y="10" width="650" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="框架层" style="rounded=1;whiteSpace=wrap;html=1;horizontal=1;verticalAlign=top;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="9">
+                    <mxGeometry width="650" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="UI管理&lt;span style=&quot;color: rgba(0 , 0 , 0 , 0) ; font-family: monospace ; font-size: 0px&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%E5%BC%95%E6%93%8E%E5%AF%B9%E6%8E%A5%E5%B1%82%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22150%22%20y%3D%22630%22%20width%3D%22650%22%20height%3D%2260%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="9">
+                    <mxGeometry x="18" y="40" width="93" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="网络管理&lt;span style=&quot;color: rgba(0 , 0 , 0 , 0) ; font-family: monospace ; font-size: 0px&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22UI%E7%AE%A1%E7%90%86%26lt%3Bspan%20style%3D%26quot%3Bcolor%3A%20rgba(0%20%2C%200%20%2C%200%20%2C%200)%20%3B%20font-family%3A%20monospace%20%3B%20font-size%3A%200px%26quot%3B%26gt%3B%253CmxGraphModel%253E%253Croot%253E%253CmxCell%2520id%253D%25220%2522%252F%253E%253CmxCell%2520id%253D%25221%2522%2520parent%253D%25220%2522%252F%253E%253CmxCell%2520id%253D%25222%2522%2520value%253D%2522%25E5%25BC%2595%25E6%2593%258E%25E5%25AF%25B9%25E6%258E%25A5%25E5%25B1%2582%2522%2520style%253D%2522rounded%253D1%253BwhiteSpace%253Dwrap%253Bhtml%253D1%253B%2522%2520vertex%253D%25221%2522%2520parent%253D%25221%2522%253E%253CmxGeometry%2520x%253D%2522150%2522%2520y%253D%2522630%2522%2520width%253D%2522650%2522%2520height%253D%252260%2522%2520as%253D%2522geometry%2522%252F%253E%253C%252FmxCell%253E%253C%252Froot%253E%253C%252FmxGraphModel%253E%26lt%3B%2Fspan%26gt%3B%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22160%22%20y%3D%22550%22%20width%3D%22120%22%20height%3D%2260%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="9">
+                    <mxGeometry x="123" y="40" width="93" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="事件通信" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="9">
+                    <mxGeometry x="228" y="40" width="93" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="场景管理" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="9">
+                    <mxGeometry x="334" y="40" width="93" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="各种工具和运行时" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="9">
+                    <mxGeometry x="439" y="40" width="93" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="····" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" vertex="1" parent="9">
+                    <mxGeometry x="544" y="40" width="93" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
