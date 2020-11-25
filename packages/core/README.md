@@ -1,6 +1,9 @@
 # `@ailhc/egf-core`
 
-> EasyGameFramework 的核心，用于H5游戏/应用程序的渐进式模块化开发
+
+    EasyGameFramework 的核心模块，用于H5游戏/应用程序的渐进式模块化开发
+
+    EasyGameFramework core module for progressive modular development of H5 games/applications
 
 ## 简介
 
@@ -80,6 +83,8 @@ import { m } from "./ModuleMap";
 m.moduleA.doSometing()
 ```
 ## 更新日志
+### 0.1.3 (2020/11/25)
+重新发布，更新github地址
 ### 0.1.3 (2020/11/25)
 重新发布，更新声明文件
 ### 0.1.2 (2020/10/07)
