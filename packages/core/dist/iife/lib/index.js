@@ -1,4 +1,4 @@
-var core = (function (exports) {
+var egfCore = (function (exports) {
     'use strict';
 
     /*! *****************************************************************************
@@ -227,4 +227,4 @@ var core = (function (exports) {
     return exports;
 
 }({}));
-window.core?Object.assign({},window.core):(window.core = core)
+window.egfCore?Object.assign({},window.egfCore):(window.egfCore = egfCore)

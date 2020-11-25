@@ -20,11 +20,10 @@
     "declaration": true,
     "removeComments": false
   },
-  "include": [
-    "libs",
-    "src"
-  ],
   "exclude": [
     "dist"
+  ],
+  "dtsGenExclude": [
+    "__tests__/**/*"
   ]
 }

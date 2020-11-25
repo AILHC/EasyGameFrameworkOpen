@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-core",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "This is the core of EasyGameFramework, which provides the ability to register modules, get module instances, and load subroutine scripts",
   "keywords": [],
   "author": "AILHC <505126057@qq.com>",
@@ -26,8 +26,8 @@
     "watch:cjs": "egf build -w true -f cjs",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd:core",
-    "build:iife": "egf build -f iife:core",
+    "build:umd": "egf build -f umd:egfCore",
+    "build:iife": "egf build -f iife:egfCore",
     "build:system": "egf build -f system:@ailhc/egf-core",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
