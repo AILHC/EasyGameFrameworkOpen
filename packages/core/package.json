@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-core",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "This is the core of EasyGameFramework, which provides the ability to register modules, get module instances, and load subroutine scripts",
   "keywords": [],
   "author": "AILHC <505126057@qq.com>",
@@ -10,8 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AILHC/EasyGameClientFramework.git"
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
+  },
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen#readme",
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.js",
   "typings": "dist/cjs/types",
@@ -33,10 +37,6 @@
     "test": "jest",
     "testc": "jest --coverage"
   },
-  "bugs": {
-    "url": "https://github.com/AILHC/EasyGameClientFramework/issues"
-  },
-  "homepage": "https://github.com/AILHC/EasyGameClientFramework#readme",
   "dependencies": {},
   "devDependencies": {
     "@ailhc/egf-cli": "0.0.2",
