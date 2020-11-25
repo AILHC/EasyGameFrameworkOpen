@@ -1,11 +1,17 @@
 {
   "name": "@ailhc/egf-cli",
-  "version": "0.0.2",
-  "description": "egf frame complier cli",
+  "version": "0.0.3",
+  "description": "The Extension library build package based on Rollup's EasyGameFramework can also be used to build other libraries",
   "keywords": [
     "cli",
     "egf"
   ],
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameClientFramework/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
   "author": "AILHC <505126057@qq.com>",
   "license": "MIT",
   "main": "./cli.js",
@@ -15,11 +21,13 @@
   "files": [
     "cli.js",
     "LICENSE",
+    "utils.js",
+    "README.md",
     "rollupdo.js"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AILHC/EasyGameClientFramework.git"
+    "url": "git+https://github.com/AILHC/EasyGameClientFrameworkOpen.git"
   },
   "dependencies": {
     "cmdjs": "^0.0.14",
@@ -40,6 +48,5 @@
   },
   "scripts": {
     "watch": "egf watch"
-  },
-  "private": true
+  }
 }
