@@ -116,7 +116,7 @@ const tsconfigOverride = {
  */
 async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, unRemoveComments, target) {
     let moduleName;
-    let customDts;
+    let customDts = false;
     let useFooter;
     if (format.includes("iife") || format.includes("umd")) {
         const strs = format.split(":");
@@ -152,15 +152,11 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
 
     tsconfigOverride.compilerOptions.declarationDir = typesDir;
     tsconfigOverride.compilerOptions.target = target ? target : "es5";
-    tsconfigOverride.compilerOptions.declaration = false;
+    tsconfigOverride.compilerOptions.declaration = customDts;
     const tsconfig = require(path.join(process.cwd(), `tsconfig.json`));
-    let exclude;
-    if (!tsconfig.exclude) {
-        exclude = ["__tests__"];
-    } else if (!tsconfig.exclude.includes("__tests__")) {
-        exclude = tsconfig.exclude;
-        exclude.push("__tests__");
-    }
+    let exclude = tsconfig.exclude ? tsconfig.exclude : [];
+    exclude = exclude.concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+    // console.log(exclude)
     tsconfigOverride.exclude = exclude;
     /**
      * @type {import('rollup').InputOptions}
@@ -239,40 +235,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
         await rollupBuild.write(outputOption);
-        /**
-         * @type {dtsGenerator}
-         */
-        const dtsGen = require("dts-generator").default;
 
-        const typesDirPath = path.join(process.cwd(), typesDir);
-        const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
-        dtsGen({
-            baseDir: path.resolve(process.cwd()),
-            exclude: ["__tests__/**/*.ts", "node_modules/**/*.d.ts"],
-            out: path.resolve(typesDirPath, `${dtsFileName}.d.ts`),
-            // prefix: moduleName,
-            resolveModuleId: function (params) {
-                console.log(params.currentModuleId)
-                if (params.currentModuleId === entry.split(".")[0]) {
-                    return moduleName;
-                }
-                return `${moduleName}/${params.currentModuleId}`
-            },
-            resolveModuleImport: function (params) {
-                console.log(params)
-                // {
-                //     importedModuleId: './interfaces',
-                //     currentModuleId: 'src/index',
-                //     isDeclaredExternalModule: false
-                //   }
-                if (!params.isDeclaredExternalModule) {
-                    return `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
-                }
-                return params.importedModuleId
-            }
-        }).then(() => {
-
-        })
         // //npm-dts
         // const typesDirPath = path.join(process.cwd(), typesDir);
         // const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
@@ -286,60 +249,97 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         //     output: path.resolve(typesDirPath, `${dtsFileName}.d.ts`),
         //     tsc: '--project tsconfigDts.json --extendedDiagnostics',
         // }).generate()
-        // if (customDts) {
-        //     const modules = rollupBuild.cache.modules;
-        //     let fileName;
-        //     let dtsFilePath;
-        //     let dtsStr = "";
-        //     const sigleDtsFilePath = path.join(process.cwd(), `dist/${format}`, `${moduleName}.d.ts`);
-        //     if (fs.existsSync(sigleDtsFilePath)) {
-        //         fs.unlinkSync(sigleDtsFilePath);
-        //     }
+        if (!customDts) {
+            /**
+         * @type {dtsGenerator}
+         */
+            const dtsGen = require("dts-generator").default;
 
-        //     // fs.readdirSync(path.join(process.cwd(), typesDir))
-        //     const typesDirPath = path.join(process.cwd(), typesDir);
-        //     const declareGlobalRegex = /(declare global \{{1})([\s\S]*\}{1})([\s]*\}{1})/g;
-        //     const importRegex = /import\s?{\s?[\w\d]*?\s?}\s?from\s?"[\w\W]*?";?/g
-        //     fs.readdir(typesDirPath, function (err, files) {
-        //         let str;
-        //         let regexMatch;
-        //         for (let i = 0; i < files.length; i++) {
-        //             if (files[i] === "index.d.ts") continue;
-        //             // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
-        //             str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
-        //             regexMatch = importRegex.exec(str);
-        //             if (regexMatch) {
-        //                 regexMatch.forEach(function (match) {
-        //                     str = str.replace(match, "")
-        //                 })
-        //             }
-        //             regexMatch = declareGlobalRegex.exec(str)
-        //             if (regexMatch) {
-        //                 dtsStr += regexMatch[2];
-        //             } else {
-        //                 dtsStr += str;
-        //             }
+            const typesDirPath = path.join(process.cwd(), typesDir);
+            const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
+            const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+            // console.log(dtsGenExclude);
+            dtsGen({
+                baseDir: path.resolve(process.cwd()),
+                exclude: dtsGenExclude,
+                out: path.resolve(typesDirPath, `index.d.ts`),
+                // prefix: moduleName,
+                resolveModuleId: function (params) {
+                    // console.log(params.currentModuleId)
+                    if (params.currentModuleId === entry.split(".")[0]) {
+                        return moduleName;
+                    }
+                    return `${moduleName}/${params.currentModuleId}`
+                },
+                resolveModuleImport: function (params) {
+                    // console.log(params)
+                    // {
+                    //     importedModuleId: './interfaces',
+                    //     currentModuleId: 'src/index',
+                    //     isDeclaredExternalModule: false
+                    //   }
+                    if (!params.isDeclaredExternalModule) {
+                        return `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+                    }
+                    return params.importedModuleId
+                }
+            }).then(() => {
 
-        //         }
-        //         dtsStr = dtsStr.replace(/export {}/g, "");
-        //         dtsStr = dtsStr.replace(/export declare /g, "");
-        //         dtsStr = dtsStr.replace(/export default /g, "");
+            })
 
-        //         dtsStr = `declare namespace ${moduleName} {\n` + dtsStr + "}\n";
+        } else {
+            const modules = rollupBuild.cache.modules;
+            let fileName;
+            let dtsFilePath;
+            let dtsStr = "";
+            const sigleDtsFilePath = path.join(process.cwd(), `dist/${format}`, `${moduleName}.d.ts`);
+            if (fs.existsSync(sigleDtsFilePath)) {
+                fs.unlinkSync(sigleDtsFilePath);
+            }
 
-        //         fs.writeFileSync(sigleDtsFilePath, dtsStr, "utf8");
-        //     })
-        //     // for (let i = 0; i < modules.length; i++) {
-        //     //     fileName = modules[i].id.includes("/") ? modules[i].id.split("/").pop() : modules[i].id.split("\\").pop();
-        //     //     if (fileName === "index.ts") {
-        //     //         continue;
-        //     //     }
-        //     //     dtsFilePath = path.join(process.cwd(), typesDir, fileName.replace(".ts", ".d.ts"));
-        //     //     dtsStr += fs.readFileSync(dtsFilePath, "utf8");
+            // fs.readdirSync(path.join(process.cwd(), typesDir))
+            const typesDirPath = path.join(process.cwd(), typesDir);
+            const declareGlobalRegex = /(declare global \{{1})([\s\S]*\}{1})([\s]*\}{1})/g;
+            const importRegex = /import\s?{\s?[\w\d]*?\s?}\s?from\s?"[\w\W]*?";?/g
+            fs.readdir(typesDirPath, function (err, files) {
+                let str;
+                let regexMatch;
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i] === "index.d.ts") continue;
+                    // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
+                    str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
+                    regexMatch = importRegex.exec(str);
+                    if (regexMatch) {
+                        regexMatch.forEach(function (match) {
+                            str = str.replace(match, "")
+                        })
+                    }
+                    regexMatch = declareGlobalRegex.exec(str)
+                    if (regexMatch) {
+                        dtsStr += regexMatch[2];
+                    } else {
+                        dtsStr += str;
+                    }
 
-        //     // }
+                }
+                dtsStr = dtsStr.replace(/export {}/g, "");
+                dtsStr = dtsStr.replace(/export declare /g, "");
+                dtsStr = dtsStr.replace(/export default /g, "");
 
-        // }
+                dtsStr = `declare namespace ${moduleName} {\n` + dtsStr + "}\n";
+
+                fs.writeFileSync(sigleDtsFilePath, dtsStr, "utf8");
+            })
+            // for (let i = 0; i < modules.length; i++) {
+            //     fileName = modules[i].id.includes("/") ? modules[i].id.split("/").pop() : modules[i].id.split("\\").pop();
+            //     if (fileName === "index.ts") {
+            //         continue;
+            //     }
+            //     dtsFilePath = path.join(process.cwd(), typesDir, fileName.replace(".ts", ".d.ts"));
+            //     dtsStr += fs.readFileSync(dtsFilePath, "utf8");
+
+            // }
+        }
     }
 
 }
