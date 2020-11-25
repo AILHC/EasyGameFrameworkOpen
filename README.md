@@ -1,5 +1,6 @@
 # EasyGameFramework
-基于Typescript的渐进式可扩展的通用游戏前端开发框架
+基于Typescript的渐进式通用游戏前端开发框架
+A progressive universal game front-end development framework based on Typescript
 
 # 开发配置
 1. 需要先安装开发环境
@@ -33,11 +34,20 @@
     lerna create @xxx/xxx
 ### 给包添加依赖
 #### 给指定包添加内部包依赖(需要加上版本号)
-    yarn workspace @egf/event add @egf/obj-pool@0.0.1
-#### 指定包添加外部包依赖
+    yarn workspace @xxx/a add @xxx/b@0.0.1
+
+#### 给指定包添加开发时内部包依赖(需要加上版本号)
+    
+    yarn workspace @xxx/a add -D @xxx/b@0.0.1
+
+#### 给指定包添加外部包依赖
     yarn workspace @xxx/xxx add @xxx/xxxx
-#### 给所有包添加依赖(如果是添加内部包，需要加版本号)
+#### 给指定包添加开发时外部包依赖
+    yarn workspace @xxx/xxx add -D @xxx/xxxx
+
+#### 给所有包添加依赖(如果是添加内部包，需要加版本号@0.0.x)
     yarn workspaces add lodash
+    如果是开发时依赖: 则 add -D
 ### 移除依赖
 #### 移除指定包对某包的依赖
     yarn workspace packageB remove packageA
@@ -65,5 +75,6 @@ yarn install
     ```
 
 
-### 发布
-如果接口文件里引用的全局定义，不在这次编译导出的所有文件里，那这个接口文件的.d.ts就不能导出
+### 构建
+
+
