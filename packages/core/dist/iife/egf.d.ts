@@ -28,11 +28,6 @@ declare namespace egf {
          */
         protected _log(msg: string, level?: number): void;
     }
-
-    type ArgsType<T> = T extends (...args: infer A) => any ? A : never;
-    type FunctionPropertyNames<T> = {
-        [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never;
-    }[keyof T] & string;
     interface IModule {
         /**模块名 */
         key?: string;
