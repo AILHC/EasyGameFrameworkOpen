@@ -1,0 +1,45 @@
+{
+  "name": "@ailhc/layer",
+  "version": "0.0.2",
+  "description": "Common hierarchical management modules",
+  "keywords": [],
+  "author": "AILHC <505126057@qq.com>",
+  "license": "MIT",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npm.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameFramework.git"
+  },
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.js",
+  "typings": "dist/cjs/types",
+  "scripts": {
+    "build:cjs": "egf build -f cjs",
+    "build:es": "egf build -f es",
+    "build:umd": "egf build -f umd:layer",
+    "build:iife": "egf build -f iife:layer",
+    "build:system": "egf build -f system:@ailhc/layer",
+    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&yarn run build:system",
+    "test": "jest",
+    "testc": "jest --coverage"
+  },
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameFramework/issues"
+  },
+  "homepage": "https://github.com/AILHC/EasyGameFramework#readme",
+  "devDependencies": {
+    "@ailhc/egf-cli": "0.0.3",
+    "jest": "^25.3.0",
+    "ts-jest": "^25.3.1"
+  }
+}
