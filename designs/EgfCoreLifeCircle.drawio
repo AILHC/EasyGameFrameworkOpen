@@ -1,0 +1,69 @@
+<mxfile host="65bd71144e" modified="2020-11-29T11:55:39.397Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.51.1 Chrome/83.0.4103.122 Electron/9.3.3 Safari/537.36" etag="0JhFjbvxkJGo0y9slhk0" version="13.6.5">
+    <diagram id="n8IkNKqlRHjCn264BWj0" name="第 1 页">
+        <mxGraphModel dx="1276" dy="615" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#F1FAEE" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-1" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;dashed=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="399" y="439.5" width="147" height="147" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-2" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;sketch=1;strokeColor=#457B9D;fontColor=#1D3557;labelBackgroundColor=#F1FAEE;" parent="1" source="DuhegT2qheu0G-dyjHkH-3" target="DuhegT2qheu0G-dyjHkH-5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-3" value="new App()" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="110" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-4" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sketch=1;strokeColor=#457B9D;fontColor=#1D3557;labelBackgroundColor=#F1FAEE;" parent="1" source="DuhegT2qheu0G-dyjHkH-5" target="DuhegT2qheu0G-dyjHkH-7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-5" value="bootstrap&lt;br&gt;框架启动" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="205" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-6" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;sketch=1;strokeColor=#457B9D;fontColor=#1D3557;labelBackgroundColor=#F1FAEE;" parent="1" source="DuhegT2qheu0G-dyjHkH-7" target="DuhegT2qheu0G-dyjHkH-10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-7" value="initModules&lt;br&gt;初始化模块" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="333" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-8" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sketch=1;strokeColor=#457B9D;fontColor=#1D3557;labelBackgroundColor=#F1FAEE;" parent="1" source="DuhegT2qheu0G-dyjHkH-10" target="DuhegT2qheu0G-dyjHkH-13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-9" value="程序退出" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];sketch=1;fontColor=#1D3557;labelBackgroundColor=#F1FAEE;" parent="DuhegT2qheu0G-dyjHkH-8" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2292" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-10" value="Running&lt;br&gt;程序运行" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="473" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-11" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;sketch=1;strokeColor=#457B9D;fontColor=#1D3557;labelBackgroundColor=#F1FAEE;" parent="1" target="DuhegT2qheu0G-dyjHkH-12" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="370" y="290" as="sourcePoint"/>
+                        <mxPoint x="430" y="290" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-12" value="自定义启动逻辑" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="490" y="275" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-13" value="stopModules&lt;br&gt;释放模块，清理回收" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="680" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-14" value="游戏循环" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;sketch=1;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="442.5" y="444" width="60" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;sketch=1;strokeColor=#457B9D;fontColor=#1D3557;labelBackgroundColor=#F1FAEE;" parent="1" source="DuhegT2qheu0G-dyjHkH-16" target="DuhegT2qheu0G-dyjHkH-17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-16" value="modules&lt;br&gt;模块运行" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="483" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="DuhegT2qheu0G-dyjHkH-17" value="&lt;h1&gt;&lt;font style=&quot;font-size: 20px ; font-weight: normal&quot;&gt;可自定义生命周期&lt;/font&gt;&lt;/h1&gt;&lt;p&gt;比如 onLoginInit onAfterLoginInit&lt;/p&gt;" style="text;html=1;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;strokeColor=#457B9D;sketch=1;fontColor=#1D3557;" parent="1" vertex="1">
+                    <mxGeometry x="670" y="473" width="190" height="77" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="&lt;font style=&quot;font-size: 24px&quot;&gt;&lt;b&gt;生命周期&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontColor=#1D3557;" vertex="1" parent="1">
+                    <mxGeometry x="530" y="30" width="110" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
