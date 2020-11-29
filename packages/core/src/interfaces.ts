@@ -1,8 +1,6 @@
 
 
 declare global {
-    type ArgsType<T> = T extends (...args: infer A) => any ? A : never;
-    type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never }[keyof T] & string;
     namespace egf {
 
         interface IModule {

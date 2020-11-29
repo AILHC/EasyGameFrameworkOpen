@@ -1,32 +1,37 @@
-<mxfile host="65bd71144e" modified="2020-11-16T11:13:11.913Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.50.0 Chrome/83.0.4103.122 Electron/9.2.1 Safari/537.36" etag="eklgMp03QSnFqxPVbx4x" version="13.6.5">
+<mxfile host="65bd71144e" modified="2020-11-28T11:34:35.105Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.51.1 Chrome/83.0.4103.122 Electron/9.3.3 Safari/537.36" etag="vN05854Wk1xWypdvm27u" version="13.6.5">
     <diagram id="oKLI9GotOiLQ3IlupbdN" name="第 1 页">
-        <mxGraphModel dx="1227" dy="713" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="413" pageHeight="291" background="#283618" math="0" shadow="0">
+        <mxGraphModel dx="811" dy="232" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="413" pageHeight="291" background="#F1FAEE" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="渲染框架&lt;br&gt;支持js&amp;amp;ts的 GameEngine&lt;br&gt;Laya,Cocos,Egret,Unity,PIXI,Phaser,...&lt;br&gt;Web" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
-                    <mxGeometry x="7" y="627" width="621" height="60" as="geometry"/>
+                <mxCell id="2" value="渲染框架&lt;br&gt;支持js&amp;amp;ts的 GameEngine&lt;br&gt;Laya,Cocos,Egret,Unity,PIXI,Phaser,...&lt;br&gt;Web" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#457B9D;fontColor=#1D3557;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="640" width="621" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="底层平台:&amp;nbsp;小游戏，web，native..." style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
-                    <mxGeometry x="7" y="700" width="621" height="40" as="geometry"/>
+                <mxCell id="3" value="底层平台:&amp;nbsp;小游戏，web，native..." style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#457B9D;fontColor=#1D3557;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="713" width="621" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="游戏逻辑" style="whiteSpace=wrap;html=1;verticalAlign=top;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
-                    <mxGeometry x="188" y="458" width="440" height="160" as="geometry"/>
+                <mxCell id="4" value="游戏逻辑" style="whiteSpace=wrap;html=1;verticalAlign=top;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#457B9D;fontColor=#1D3557;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="241" y="471" width="440" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="资源" style="whiteSpace=wrap;html=1;labelBorderColor=none;shadow=1;glass=0;fillStyle=auto;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
-                    <mxGeometry x="7" y="457" width="160" height="160" as="geometry"/>
+                <mxCell id="5" value="资源" style="whiteSpace=wrap;html=1;labelBorderColor=none;shadow=1;glass=0;fillStyle=auto;fillColor=none;strokeColor=#457B9D;fontColor=#1D3557;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="470" width="160" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;业务逻辑&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;" style="shape=corner;whiteSpace=wrap;html=1;rotation=0;dx=50;dy=50;align=center;verticalAlign=top;horizontal=1;shadow=1;fillStyle=auto;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;direction=south;flipH=1;labelPosition=center;verticalLabelPosition=middle;fontSize=15;textDirection=ltr;flipV=0;" parent="1" vertex="1">
-                    <mxGeometry x="210" y="485" width="405" height="125" as="geometry"/>
+                <mxCell id="10" value="&lt;div style=&quot;font-size: 15px;&quot;&gt;业务逻辑&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 15px;&quot;&gt;&lt;br style=&quot;font-size: 15px;&quot;&gt;&lt;/div&gt;" style="shape=corner;whiteSpace=wrap;html=1;rotation=0;dx=50;dy=50;align=center;verticalAlign=top;horizontal=1;shadow=1;fillStyle=auto;fillColor=none;strokeColor=#457B9D;fontColor=#1D3557;sketch=1;direction=south;flipH=1;labelPosition=center;verticalLabelPosition=middle;fontSize=15;textDirection=ltr;flipV=0;" parent="1" vertex="1">
+                    <mxGeometry x="263" y="498" width="405" height="125" as="geometry"/>
                 </mxCell>
-                <mxCell id="9" value="渲染框架的扩展&lt;br&gt;底层平台的扩展" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
-                    <mxGeometry x="730" y="462.5" width="68" height="263" as="geometry"/>
+                <mxCell id="8" value="开发工具&lt;br&gt;&lt;br&gt;配置处理工具&lt;br&gt;&lt;br&gt;协议处理工具&lt;br&gt;&lt;br&gt;自动化部署工具" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#457B9D;fontColor=#1D3557;sketch=1;" parent="1" vertex="1">
+                    <mxGeometry x="703" y="476.5" width="70" height="276.5" as="geometry"/>
                 </mxCell>
-                <mxCell id="8" value="开发工具&lt;br&gt;&lt;br&gt;配置处理工具&lt;br&gt;&lt;br&gt;协议处理工具&lt;br&gt;&lt;br&gt;自动化部署工具" style="whiteSpace=wrap;html=1;shadow=1;fillStyle=hachure;fillColor=none;strokeColor=#DDA15E;fontColor=#FEFAE0;sketch=1;" parent="1" vertex="1">
-                    <mxGeometry x="650" y="467" width="70" height="254" as="geometry"/>
+                <UserObject label="框架" link="data:page/id,twjdxmskhJgoA8QQGz4X" id="13">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;sketch=1;fillColor=#A8DADC;strokeColor=#457B9D;fontColor=#1D3557;" parent="1" vertex="1">
+                        <mxGeometry x="323" y="563" width="340" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="0fE1nN9BEejrHdBIueqn-13" value="Text" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="570" width="40" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="框架" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;fillColor=#BC6C25;strokeColor=#DDA15E;fontColor=#FEFAE0;" vertex="1" parent="1">
-                    <mxGeometry x="270" y="550" width="340" height="60" as="geometry"/>
+                <mxCell id="0fE1nN9BEejrHdBIueqn-14" value="&lt;span style=&quot;font-size: 26px&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;游戏程序结构图&lt;/font&gt;&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="380" width="233" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
