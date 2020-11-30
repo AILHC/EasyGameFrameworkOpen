@@ -23,7 +23,8 @@
     "LICENSE",
     "utils.js",
     "README.md",
-    "rollupdo.js"
+    "rollupdo.js",
+    "package-template"
   ],
   "repository": {
     "type": "git",
