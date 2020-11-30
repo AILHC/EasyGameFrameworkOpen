@@ -31,15 +31,15 @@
     "watch:cjs": "egf build -w true -f cjs",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd:dpctrlCCC",
-    "build:iife": "egf build -f iife:dpctrlCCC",
-    "build:system": "egf build -f system:@ailhc/dpctrl-c3d",
+    "build:umd": "egf build -f umd:dpctrlC3d",
+    "build:iife": "egf build -f iife:dpctrlC3d",
+    "build:system": "egf build -f system:@ailhc/dpctrlC3d",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
     "testc": "jest --coverage"
   },
   "devDependencies": {
-    "@ailhc/egf-cli": "0.0.3",
+    "@ailhc/egf-cli": "0.0.4",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1"
   },
