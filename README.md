@@ -1,8 +1,15 @@
 # EasyGameFramework
 基于Typescript的渐进式通用游戏前端开发框架
 A progressive universal game front-end development framework based on Typescript
+## 快速使用
 
-# 开发配置
+### 复制模板项目
+/packages/package-template
+### 初始化模板项目（改文件夹名，项目名）
+安装项目开发所需npm包
+npm i
+
+## 开发环境配置
 1. 需要先安装开发环境
     1. 设置淘宝源
     ```
