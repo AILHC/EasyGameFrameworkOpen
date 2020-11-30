@@ -196,6 +196,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         file: output,
         format: format,
         name: moduleName,
+        sourcemap: tsconfig.compilerOptions.sourceMap,
         // globals: {
         //     fairygui: "fairygui",
         //     Laya: "Laya"
