@@ -280,7 +280,12 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
                     //     isDeclaredExternalModule: false
                     //   }
                     if (!params.isDeclaredExternalModule) {
-                        return `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+                        let importedModuleId = params.importedModuleId;
+                        if(params.importedModuleId.includes(".")){
+                            //包内模块
+                            importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+                        }
+                        return importedModuleId;
                     }
                     return params.importedModuleId
                 }

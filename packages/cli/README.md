@@ -19,6 +19,8 @@ npm install -D @ailhc/egf-cli
 [package-template](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/package-template)
 
 # 更新日志
+### 0.0.5 (2020/11/30)
+更新构建工具，修复引用第三方npm包时声明文件导出出错的问题
 ### 0.0.4 (2020/11/30)
 更新构建工具，支持sourcemap导出(方便调试)
 
