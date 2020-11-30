@@ -1,4 +1,4 @@
-var egfCore = (function (exports) {
+var egf = (function (exports) {
     'use strict';
 
     /*! *****************************************************************************
@@ -227,4 +227,5 @@ var egfCore = (function (exports) {
     return exports;
 
 }({}));
-window.egfCore?Object.assign({},window.egfCore):(window.egfCore = egfCore)
+window.egf?Object.assign({},window.egf):(window.egf = egf)
+//# sourceMappingURL=index.js.map

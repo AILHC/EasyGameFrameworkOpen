@@ -227,3 +227,4 @@ System.register('@ailhc/egf-core', [], function (exports) {
         }
     };
 });
+//# sourceMappingURL=index.js.map
