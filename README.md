@@ -4,8 +4,8 @@ A progressive universal game front-end development framework based on Typescript
 ## 快速使用
 
 ### 复制模板项目
-/packages/package-template
-### 初始化模板项目（改文件夹名，项目名）
+/packages/cli/package-template
+### 手动初始化模板项目（改文件夹名，项目名）
 安装项目开发所需npm包
 npm i
 
@@ -83,5 +83,19 @@ yarn install
 
 
 ### 构建
+1. 安装egf-cli到全局目录
+
+    npm install @ailhc/egf-cli -g
+
+    使用 build命令
+    egf build -f cjs
+2. 在项目package.json的scripts中增加命令
+
+```json
+    "scripts": {
+        "build:cjs": "egf build -f cjs"
+    }
+```
+然后在目录下 npm run build:cjs
 
 
