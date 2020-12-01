@@ -24,6 +24,8 @@
     "dist"
   ],
   "dtsGenExclude": [
-    "__tests__/**/*"
-  ]
+    "__tests__/**/*",
+    "libs/**/*"
+  ],
+  "externalTag":"@ailhc"
 }
