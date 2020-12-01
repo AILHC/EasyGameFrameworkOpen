@@ -156,8 +156,18 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     const tsconfig = require(path.join(process.cwd(), `tsconfig.json`));
     let exclude = tsconfig.exclude ? tsconfig.exclude : [];
     exclude = exclude.concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+    const externalTag = tsconfig.externalTag;
     // console.log(exclude)
     tsconfigOverride.exclude = exclude;
+    /**
+     * @type {import('rollup-plugin-typescript2/dist/ioptions').IOptions}
+     */
+    const tsOptions = {
+        clean: true,
+        abortOnError: false,
+        tsconfigOverride: tsconfigOverride,
+        useTsconfigDeclarationDir: true,
+    }
     /**
      * @type {import('rollup').InputOptions}
      */
@@ -172,14 +182,32 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
                 console.warn(message);
             }
         },
+        external: (source,
+            importer,
+            isResolved) => {
+            if (!externalTag || externalTag === "") return false;
+            let tag = externalTag;
+            let isExternal = false;
+            if (typeof externalTag === "object" && externalTag.length) {
+                for (let i = 0; i < externalTag.length; i++) {
+                    tag = externalTag[i];
+                    isExternal = source.includes(tag);
+                    if (isExternal) break;
+                }
+            } else {
+                isExternal = source.includes(tag);
+            }
+            if (isExternal) {
+                console.log(`'${source}' is imported by ${importer}, is custom external  – treating it as an external dependency`)
+
+            }
+            return isExternal;
+
+        },
         input: entry,
         plugins: [
             // myMultiInput(),
-            typescript({
-                clean: true,
-                tsconfigOverride: tsconfigOverride,
-                useTsconfigDeclarationDir: true,
-            }),
+            typescript(tsOptions),
             rollupCjs(),
             nodeResolve({
                 customResolveOptions: {
@@ -281,7 +309,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
                     //   }
                     if (!params.isDeclaredExternalModule) {
                         let importedModuleId = params.importedModuleId;
-                        if(params.importedModuleId.includes(".")){
+                        if (params.importedModuleId.includes(".")) {
                             //包内模块
                             importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
                         }

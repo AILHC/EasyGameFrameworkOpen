@@ -27,6 +27,14 @@
 ```ts
 
 ```
+
+## 配置
+编译相关的配置都配置在tsconfig中
+
+1. dtsGenExclude 是 声明文件生成忽略
+2. externalTag 是 而外模块判断，可以是 字符串，也可以是字符串数组
+如果 import url includes(externalTag) 就会当这个模块为不处理和编译模块
+比如我不想把@ailhc/display-ctrl 甚至 带@ailhc的url的模块都是而外模块
 ## 发布日志
  
 *********

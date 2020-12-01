@@ -25,5 +25,6 @@
   ],
   "dtsGenExclude": [
     "__tests__/**/*"
-  ]
+  ],
+  "externalTag": []
 }
