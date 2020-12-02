@@ -1,4 +1,4 @@
-export class App<ModuleMap = any> implements egf.IApp {
+export class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
     public static readonly UN_RUN: number = 0;
     public static readonly BOOTING: number = 1;
     public static readonly BOOTEND: number = 2;
@@ -36,7 +36,7 @@ export class App<ModuleMap = any> implements egf.IApp {
             for (let i = 0; i < bootLoaders.length; i++) {
                 const bootLoader: egf.IBootLoader = bootLoaders[i];
                 bootPromises.push(new Promise((res, rej) => {
-                    bootLoader.onBoot(this, (isOk) => {
+                    bootLoader.onBoot(this as any, (isOk) => {
                         if (isOk) {
                             res();
                         } else {
@@ -64,11 +64,11 @@ export class App<ModuleMap = any> implements egf.IApp {
         if (this.state === App.RUNING) return;
         for (const key in moduleMap) {
             moduleIns = moduleMap[key];
-            moduleIns.onInit && moduleIns.onInit(this);
+            moduleIns.onInit && moduleIns.onInit(this as any);
         }
         for (const key in moduleMap) {
             moduleIns = moduleMap[key];
-            moduleIns.onAfterInit && moduleIns.onAfterInit(this);
+            moduleIns.onAfterInit && moduleIns.onAfterInit(this as any);
         }
         this.setState(App.RUNING);
     }
@@ -110,8 +110,8 @@ export class App<ModuleMap = any> implements egf.IApp {
             moduleIns.onStop && moduleIns.onStop();
         }
     }
-    public getModule<T extends egf.IModule>(moduleKey: keyof ModuleMap): T {
-        return this._moduleMap[moduleKey as any] as T;
+    public getModule<K extends keyof ModuleMap>(moduleKey: K): ModuleMap[K] {
+        return this._moduleMap[moduleKey as any] as any;
     }
 
     protected setState(state: number) {

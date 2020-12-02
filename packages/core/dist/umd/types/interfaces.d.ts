@@ -1,11 +1,8 @@
-
-
 declare global {
     namespace egf {
-
         interface IModule {
             /**模块名 */
-            key?: string
+            key?: string;
             /**
              * 当初始化时
              */
@@ -26,7 +23,7 @@ declare global {
         interface IBootLoader {
             /**
              * 引导
-             * @param app 
+             * @param app
              */
             onBoot(app: IApp, bootEnd: BootEndCallback): void;
         }
@@ -45,7 +42,7 @@ declare global {
             moduleMap: ModuleMap;
             /**
              * 引导
-             * @param bootLoaders 
+             * @param bootLoaders
              */
             bootstrap(bootLoaders: egf.IBootLoader[]): Promise<boolean>;
             /**
@@ -54,7 +51,7 @@ declare global {
             init(): void;
             /**
              * 加载模块
-             * @param module 
+             * @param module
              */
             loadModule(module: IModule | any, key?: keyof ModuleMap): void;
             /**
@@ -63,18 +60,15 @@ declare global {
             stop(): void;
             /**
              * 获取模块实例
-             * @param moduleKey 
+             * @param moduleKey
              */
             getModule<K extends keyof ModuleMap>(moduleKey: K): ModuleMap[K];
             /**
              * 判断有没有这个模块
-             * @param moduleKey 
+             * @param moduleKey
              */
             hasModule(moduleKey: keyof ModuleMap): boolean;
-
         }
     }
 }
-
-// eslint-disable-next-line @typescript-eslint/semi
-export { }
+export {};
