@@ -65,7 +65,7 @@ declare global {
              * 获取模块实例
              * @param moduleKey 
              */
-            getModule<T extends IModule = any>(moduleKey: keyof ModuleMap): T;
+            getModule<K extends keyof ModuleMap>(moduleKey: K): ModuleMap[K];
             /**
              * 判断有没有这个模块
              * @param moduleKey 
