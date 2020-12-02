@@ -1,5 +1,5 @@
 declare module '@ailhc/egf-core/src/egf-app' {
-	export class App<ModuleMap = any> implements egf.IApp {
+	export class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
 	    static readonly UN_RUN: number;
 	    static readonly BOOTING: number;
 	    static readonly BOOTEND: number;
@@ -19,7 +19,7 @@ declare module '@ailhc/egf-core/src/egf-app' {
 	    loadModule(moduleIns: any | egf.IModule, key?: keyof ModuleMap): boolean;
 	    hasModule(moduleKey: keyof ModuleMap): boolean;
 	    stop(): void;
-	    getModule<T extends egf.IModule>(moduleKey: keyof ModuleMap): T;
+	    getModule<K extends keyof ModuleMap>(moduleKey: K): ModuleMap[K];
 	    protected setState(state: number): void;
 	    /**
 	     * 输出
@@ -95,7 +95,7 @@ declare module '@ailhc/egf-core/src/interfaces' {
 	             * 获取模块实例
 	             * @param moduleKey
 	             */
-	            getModule<T extends IModule = any>(moduleKey: keyof ModuleMap): T;
+	            getModule<K extends keyof ModuleMap>(moduleKey: K): ModuleMap[K];
 	            /**
 	             * 判断有没有这个模块
 	             * @param moduleKey

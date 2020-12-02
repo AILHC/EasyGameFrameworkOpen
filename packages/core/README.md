@@ -85,6 +85,8 @@ import { m } from "./ModuleMap";
 m.moduleA.doSometing()
 ```
 ## 更新日志
+### 0.1.6 (2020/12/02)
+1. 修改类型声明使getModule也能有更好的类型提示
 ### 0.1.5 (2020/11/25)
 更新iife的声明文件
 删除多余的声明文件
