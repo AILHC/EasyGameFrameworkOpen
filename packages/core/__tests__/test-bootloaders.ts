@@ -33,7 +33,7 @@ export class TestModule implements egf.IModule {
     public initText: string;
     private _test2: TestModule2;
 
-    public onInit(app: egf.IApp): void {
+    public onInit(app: egf.IApp<IModuleMap>): void {
         this._test2 = app.getModule("test2");
         this.initText = "test1init";
     }
