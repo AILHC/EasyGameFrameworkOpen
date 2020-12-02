@@ -1,4 +1,4 @@
-export declare class App<ModuleMap = any> implements egf.IApp {
+export declare class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
     static readonly UN_RUN: number;
     static readonly BOOTING: number;
     static readonly BOOTEND: number;
@@ -18,7 +18,7 @@ export declare class App<ModuleMap = any> implements egf.IApp {
     loadModule(moduleIns: any | egf.IModule, key?: keyof ModuleMap): boolean;
     hasModule(moduleKey: keyof ModuleMap): boolean;
     stop(): void;
-    getModule<T extends egf.IModule>(moduleKey: keyof ModuleMap): T;
+    getModule<K extends keyof ModuleMap>(moduleKey: K): ModuleMap[K];
     protected setState(state: number): void;
     /**
      * 输出
