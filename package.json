@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "base typescript a EasyGameClientFramework ",
   "main": "index.js",
-  "repository": "https://github.com/AILHC/EasyGameClientFramework.git",
+  "repository": "https://github.com/AILHC/EasyGameFrameworkOpen.git",
   "author": "Tide Li <505126057@qq.com>",
   "license": "MIT",
   "dependencies": {
