@@ -103,3 +103,4 @@ var layer = (function (exports) {
 
 }({}));
 window.layer?Object.assign({},window.layer):(window.layer = layer)
+//# sourceMappingURL=index.js.map
