@@ -4,7 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@ailhc/broadcast": "1.0.0",
     "@ailhc/dpctrl-ccc": "0.0.1",
-    "@ailhc/egf-core": "0.1.6"
+    "@ailhc/egf-core": "0.1.6",
+    "@ailhc/layer": "0.0.2",
+    "@ailhc/obj-pool": "0.1.0"
   }
 }
