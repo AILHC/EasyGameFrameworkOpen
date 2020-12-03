@@ -99,3 +99,4 @@ var LayerMgr = /** @class */ (function () {
 }());
 
 exports.LayerMgr = LayerMgr;
+//# sourceMappingURL=index.js.map

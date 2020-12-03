@@ -1,0 +1,46 @@
+{
+  "name": "@ailhc/obj-pool",
+  "version": "0.1.0",
+  "description": "General purpose object pool module, provides a concise and complete interface for managing object pools for object generation and collection, as well as object pool manager.",
+  "keywords": [
+    "object",
+    "pool"
+  ],
+  "author": "AILHC <505126057@qq.com>",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen#readme",
+  "license": "MIT",
+  "directories": {
+    "dist": "dist",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.es.js",
+  "typings": "dist/cjs/types",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
+  },
+  "scripts": {
+    "build:cjs": "egf build -f cjs",
+    "build:es": "egf build -f es",
+    "build:umd": "egf build -f umd:objPool",
+    "build:system": "egf build -f system:@ailhc/obj-pool",
+    "build:iife": "egf build -f iife:objPool",
+    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
+    "dts": "./node_modules/.bin/npm-dts generate"
+  },
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
+  },
+  "devDependencies": {
+    "@ailhc/egf-cli": "1.0.0"
+  },
+  "dependencies": {}
+}

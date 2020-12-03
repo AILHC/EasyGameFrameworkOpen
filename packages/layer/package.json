@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AILHC/EasyGameFramework.git"
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.js",
