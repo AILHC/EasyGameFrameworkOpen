@@ -1,0 +1,8 @@
+{
+  "engine": "cocos2d-html5",
+  "packages": "packages",
+  "version": "2.4.3",
+  "id": "example-cases",
+  "name": "egf-ccc-full",
+  "isNew": false
+}
