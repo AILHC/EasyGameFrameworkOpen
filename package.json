@@ -24,9 +24,11 @@
   },
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "packages": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ]
 }
