@@ -16,7 +16,10 @@
     "subContext": ""
   },
   "encryptJs": true,
-  "excludeScenes": [],
+  "excludeScenes": [
+    "93c692be-ac4c-4e26-8ffc-22113996a39a",
+    "7ba6895e-b755-46a2-9597-d5d86e8682cf"
+  ],
   "fb-instant-games": {
     "hide": false
   },
@@ -36,8 +39,8 @@
   "qqplay": {
     "orientation": "portrait"
   },
-  "startScene": "d13475c7-b37e-45d6-b6c5-25929e8a0925",
-  "title": "examplecases",
+  "startScene": "40606661-f003-40b3-bc3e-098bfad973de",
+  "title": "egf-ccc-full",
   "webOrientation": "landscape",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "http://192.168.199.175:8080",
@@ -49,13 +52,25 @@
   "xxteaKey": "de565b49-7232-43",
   "zipCompressJs": true,
   "android": {
+    "REMOTE_SERVER_ROOT": "",
     "packageName": "org.cocos2d.examplecases"
   },
   "ios": {
+    "REMOTE_SERVER_ROOT": "",
     "packageName": "org.cocos2d.examplecases"
   },
   "mac": {
-    "packageName": "org.cocos2d.examplecases"
+    "REMOTE_SERVER_ROOT": "",
+    "height": 720,
+    "packageName": "org.cocos2d.examplecases",
+    "width": 1280
   },
-  "win32": {}
+  "win32": {
+    "REMOTE_SERVER_ROOT": "",
+    "height": 720,
+    "width": 1280
+  },
+  "mainCompressionType": "default",
+  "mainIsRemote": false,
+  "nativeMd5Cache": true
 }
