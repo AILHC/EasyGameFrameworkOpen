@@ -1,19 +1,32 @@
-declare module '@ailhc/dpctrl-ccc/src/BaseNodeCtrl' {
-	import { BaseDpCtrl } from '@ailhc/display-ctrl';
-	export class BaseNodeCtrl<K extends cc.Node = any> extends BaseDpCtrl {
+declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
+	export class NodeCtrl<NodeType extends cc.Node = any> implements displayCtrl.ICtrl<NodeType> {
+	    key?: string;
+	    isLoading?: boolean;
+	    isLoaded?: boolean;
+	    isInited?: boolean;
+	    isAsyncShow?: boolean;
+	    isShowing?: boolean;
+	    isShowed?: boolean;
+	    needShow?: boolean;
+	    needLoad?: boolean;
 	    visible: boolean;
-	    getNode(): K;
-	    protected node: K;
+	    protected node: NodeType;
+	    protected _mgr: displayCtrl.IMgr;
+	    constructor(dpcMgr?: displayCtrl.IMgr);
+	    getRess?(): string[];
+	    getNode(): NodeType;
+	    onInit(initData?: any): void;
+	    onUpdate(updateData: any): void;
+	    getFace<T = any>(): T;
+	    onDestroy(destroyRes?: boolean): void;
 	    onShow(data?: any, endCb?: VoidFunction): void;
 	    onHide(): void;
 	    forceHide(): void;
-	    onAdd(parent: cc.Node): void;
-	    onRemove(): void;
 	    onResize(): void;
 	}
 
 }
-declare module '@ailhc/dpctrl-ccc/src/Layer' {
+declare module '@ailhc/dpctrl-ccc/src/layer' {
 	export class Layer extends cc.Node implements egf.ILayer {
 	    private _layerType;
 	    private _layerMgr;
@@ -30,7 +43,7 @@ declare module '@ailhc/dpctrl-ccc/src/Layer' {
 
 }
 declare module '@ailhc/dpctrl-ccc' {
-	export * from '@ailhc/dpctrl-ccc/src/BaseNodeCtrl';
-	export * from '@ailhc/dpctrl-ccc/src/Layer';
+	export * from '@ailhc/dpctrl-ccc/src/node-ctrl';
+	export * from '@ailhc/dpctrl-ccc/src/layer';
 
 }

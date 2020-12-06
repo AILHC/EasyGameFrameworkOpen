@@ -1,6 +1,6 @@
 import { } from "@ailhc/layer"
 import { Node, UITransform } from "cc";
-export class UILayer extends Node implements egf.ILayer {
+export class Layer extends Node implements egf.ILayer {
 
 
 

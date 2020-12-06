@@ -1,2 +1,2 @@
-export * from "./BaseNodeCtrl";
-export * from "./Layer";
+export * from "./node-ctrl";
+export * from "./layer";

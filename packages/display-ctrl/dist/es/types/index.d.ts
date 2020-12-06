@@ -44,10 +44,15 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	        };
 	        type CtrlInsCb<T = ICtrl> = (ctrl: T) => void;
 	        interface IResLoadConfig {
+	            /**页面key */
 	            key: string;
+	            /**资源数组 */
 	            ress: string[];
+	            /**完成回调 */
 	            complete: VoidFunction;
+	            /**错误回调 */
 	            error: VoidFunction;
+	            /**加载透传数据 */
 	            onLoadData?: any;
 	        }
 	        /**
@@ -57,28 +62,41 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	         */
 	        type ResLoadHandler = (config: IResLoadConfig) => void;
 	        interface IKeyConfig {
+	            /**页面注册类型key */
 	            typeKey: string;
+	            /**页面实例key */
 	            key?: string;
 	        }
 	        interface ILoadConfig extends IKeyConfig {
 	            /**加载后onLoad参数 */
 	            onLoadData?: any;
-	            /**自定义加载处理 */
-	            loadHandler?: ResLoadHandler;
 	            /**加载完成回调 */
 	            loadCb?: CtrlInsCb;
 	        }
 	        interface IInitConfig extends IKeyConfig {
 	            onInitData?: any;
 	        }
-	        interface ICreateConfig extends ILoadConfig, IKeyConfig {
+	        /**
+	         * 创建配置
+	         */
+	        interface ICreateConfig extends ILoadConfig {
+	            /**是否自动显示 */
 	            isAutoShow?: boolean;
-	            onLoadData?: any;
+	            /**透传初始化数据 */
 	            onInitData?: any;
+	            /**显示透传数据 */
 	            onShowData?: any;
+	            /**创建回调 */
 	            createCb?: CtrlInsCb;
 	        }
-	        interface IShowConfig extends ILoadConfig, IInitConfig {
+	        interface IShowConfig extends ILoadConfig {
+	            /**
+	             * 透传初始化数据
+	             */
+	            onInitData?: any;
+	            /**
+	             * 显示数据
+	             */
 	            onShowData?: any;
 	            /**onShow后调用就执行 */
 	            showedCb?: CtrlInsCb;
@@ -159,7 +177,13 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	             */
 	            onLoad(complete: VoidFunction, error?: VoidFunction): void;
 	        }
-	        interface IMgr {
+	        interface IMgr<CtrlKeyMapType = any> {
+	            /**控制器key字典 */
+	            ctrls: CtrlKeyMapType;
+	            /**
+	             * 初始化
+	             * @param resLoadHandler 资源加载处理
+	             */
 	            init(resLoadHandler?: ResLoadHandler): void;
 	            /**
 	             * 批量注册控制器类
@@ -268,7 +292,8 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	 * DisplayControllerMgr
 	 * 显示控制类管理器基类
 	 */
-	export class DpcMgr implements displayCtrl.IMgr {
+	export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
+	    ctrls: CtrlKeyMap;
 	    /**
 	     * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
 	     */

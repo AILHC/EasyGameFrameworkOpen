@@ -53,6 +53,11 @@ System.register('@ailhc/display-ctrl', [], function (exports) {
              */
             var DpcMgr = exports('DpcMgr', /** @class */ (function () {
                 function DpcMgr() {
+                    this.ctrls = new Proxy({}, {
+                        get: function (target, key) {
+                            return key;
+                        }
+                    });
                     /**
                      * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
                      */
@@ -422,3 +427,4 @@ System.register('@ailhc/display-ctrl', [], function (exports) {
         }
     };
 });
+//# sourceMappingURL=index.js.map

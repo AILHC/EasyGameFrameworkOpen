@@ -2,7 +2,12 @@
  * DisplayControllerMgr
  * 显示控制类管理器基类
  */
-export class DpcMgr implements displayCtrl.IMgr {
+export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
+    ctrls: CtrlKeyMap = new Proxy({}, {
+        get(target, key) {
+            return key;
+        }
+    }) as any;
     /**
      * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
      */
