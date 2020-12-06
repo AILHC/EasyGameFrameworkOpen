@@ -1,4 +1,42 @@
-import { BaseDpCtrl } from '@ailhc/display-ctrl';
+var NodeCtrl = /** @class */ (function () {
+    function NodeCtrl(dpcMgr) {
+        this._mgr = dpcMgr;
+    }
+    NodeCtrl.prototype.getRess = function () {
+        return undefined;
+    };
+    NodeCtrl.prototype.getNode = function () {
+        return this.node;
+    };
+    NodeCtrl.prototype.onInit = function (initData) {
+    };
+    NodeCtrl.prototype.onUpdate = function (updateData) {
+    };
+    NodeCtrl.prototype.getFace = function () {
+        return this;
+    };
+    NodeCtrl.prototype.onDestroy = function (destroyRes) {
+    };
+    NodeCtrl.prototype.onShow = function (data, endCb) {
+        if (this.node) {
+            this.node.active = true;
+        }
+        endCb && endCb();
+    };
+    NodeCtrl.prototype.onHide = function () {
+        if (this.node) {
+            this.node.removeFromParent();
+            this.node.active = false;
+        }
+    };
+    NodeCtrl.prototype.forceHide = function () {
+        this.node && (this.node.active = false);
+        this.isShowed = false;
+    };
+    NodeCtrl.prototype.onResize = function () {
+    };
+    return NodeCtrl;
+}());
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -28,47 +66,6 @@ function __extends(d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
-
-var BaseNodeCtrl = /** @class */ (function (_super) {
-    __extends(BaseNodeCtrl, _super);
-    function BaseNodeCtrl() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    BaseNodeCtrl.prototype.getNode = function () {
-        return this.node;
-    };
-    BaseNodeCtrl.prototype.onShow = function (data, endCb) {
-        if (this.node) {
-            this.node.active = true;
-        }
-        _super.prototype.onShow.call(this);
-    };
-    BaseNodeCtrl.prototype.onHide = function () {
-        if (this.node) {
-            this.node.removeFromParent();
-            this.node.active = false;
-        }
-        _super.prototype.onHide.call(this);
-    };
-    BaseNodeCtrl.prototype.forceHide = function () {
-        this.node && (this.node.active = false);
-        this.isShowed = false;
-    };
-    BaseNodeCtrl.prototype.onAdd = function (parent) {
-        if (!this.node)
-            return;
-        parent.addChild(this.node);
-    };
-    BaseNodeCtrl.prototype.onRemove = function () {
-        if (!this.node)
-            return;
-        this.node.removeFromParent();
-    };
-    BaseNodeCtrl.prototype.onResize = function () {
-        if (this.node) ;
-    };
-    return BaseNodeCtrl;
-}(BaseDpCtrl));
 
 var Layer = /** @class */ (function (_super) {
     __extends(Layer, _super);
@@ -116,5 +113,5 @@ var Layer = /** @class */ (function (_super) {
     return Layer;
 }(cc.Node));
 
-export { BaseNodeCtrl, Layer };
+export { Layer, NodeCtrl };
 //# sourceMappingURL=index.js.map

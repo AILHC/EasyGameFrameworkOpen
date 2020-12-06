@@ -52,6 +52,11 @@ var BaseDpCtrl = /** @class */ (function () {
  */
 var DpcMgr = /** @class */ (function () {
     function DpcMgr() {
+        this.ctrls = new Proxy({}, {
+            get: function (target, key) {
+                return key;
+            }
+        });
         /**
          * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
          */
@@ -420,3 +425,4 @@ var DpcMgr = /** @class */ (function () {
 
 exports.BaseDpCtrl = BaseDpCtrl;
 exports.DpcMgr = DpcMgr;
+//# sourceMappingURL=index.js.map

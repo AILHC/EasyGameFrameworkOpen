@@ -51,6 +51,11 @@ var displayCtrl = (function (exports) {
      */
     var DpcMgr = /** @class */ (function () {
         function DpcMgr() {
+            this.ctrls = new Proxy({}, {
+                get: function (target, key) {
+                    return key;
+                }
+            });
             /**
              * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
              */
@@ -424,3 +429,4 @@ var displayCtrl = (function (exports) {
 
 }({}));
 window.displayCtrl?Object.assign({},window.displayCtrl):(window.displayCtrl = displayCtrl)
+//# sourceMappingURL=index.js.map
