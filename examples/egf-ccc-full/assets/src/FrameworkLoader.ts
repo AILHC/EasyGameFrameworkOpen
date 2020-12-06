@@ -5,34 +5,32 @@ import { LayerType } from "./LayerType";
 import { ObjPoolMgr } from "@ailhc/obj-pool"
 declare global {
     interface IModuleMap {
-        uiMgr: displayCtrl.IMgr;
-        layerMgr: egf.ILayerMgr;
-        poolMgr: objPool.IPoolMgr;
+        // uiMgr: displayCtrl.IMgr;
+        // layerMgr: egf.ILayerMgr;
+        // poolMgr: objPool.IPoolMgr;
     }
 }
 export class FrameworkLoader implements egf.IBootLoader {
     onBoot(app: egf.IApp<IModuleMap>, bootEnd: egf.BootEndCallback): void {
-        const dpcMgr = new DpcMgr();
-        dpcMgr.init((config) => {
-            cc.resources.load(config.ress, null, (err, items) => {
-                if (err) {
-                    config.error && config.error();
-                } else {
-                    config.complete && config.complete();
-                }
-            })
-        })
-        const layerMgr = new LayerMgr<cc.Node>();
-        const canvas = cc.director.getScene().getChildByName("Canvas");
-        cc.game.addPersistRootNode(canvas);
-        layerMgr.init(canvas, LayerType, Layer);
+        // const dpcMgr = new DpcMgr();
+        // dpcMgr.init((config) => {
+        //     cc.resources.load(config.ress, null, (err, items) => {
+        //         if (err) {
+        //             config.error && config.error();
+        //         } else {
+        //             config.complete && config.complete();
+        //         }
+        //     })
+        // })
+        // const layerMgr = new LayerMgr<cc.Node>();
+        // const canvas = cc.director.getScene().getChildByName("Canvas");
+        // cc.game.addPersistRootNode(canvas);
+        // layerMgr.init(canvas, LayerType, Layer);
+        // app.loadModule(layerMgr, "layerMgr");
 
-        const objPoolMgr = new ObjPoolMgr();
-
-        app.loadModule(layerMgr, "layerMgr");
-
-        app.loadModule(dpcMgr, "uiMgr");
-        app.loadModule(objPoolMgr, "poolMgr");
+        // app.loadModule(dpcMgr, "uiMgr");
+        // const objPoolMgr = new ObjPoolMgr();
+        // app.loadModule(objPoolMgr, "poolMgr");
         bootEnd(true);
     }
 
