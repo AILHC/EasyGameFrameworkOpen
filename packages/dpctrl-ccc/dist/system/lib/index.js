@@ -30,7 +30,6 @@ System.register('@ailhc/dpctrl-ccc', [], function (exports) {
                 };
                 NodeCtrl.prototype.onHide = function () {
                     if (this.node) {
-                        this.node.removeFromParent();
                         this.node.active = false;
                     }
                 };
@@ -113,6 +112,8 @@ System.register('@ailhc/dpctrl-ccc', [], function (exports) {
                     this.addChild(sp);
                 };
                 Layer.prototype.onNodeAdd = function (node) {
+                    if (node.parent && node.parent === this)
+                        return;
                     this.addChild(node);
                 };
                 return Layer;

@@ -37,6 +37,7 @@ export class Layer extends Node implements egf.ILayer {
         this.addChild(sp);
     }
     onNodeAdd(node: Node): void {
+        if (node.parent && node.parent === this) return;
         this.addChild(node);
     }
 

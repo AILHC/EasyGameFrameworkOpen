@@ -1,4 +1,4 @@
-import {} from "@ailhc/layer"
+import { } from "@ailhc/layer"
 export class Layer extends cc.Node implements egf.ILayer {
     private _layerType: number;
     private _layerMgr: egf.ILayerMgr<cc.Node>;
@@ -32,6 +32,7 @@ export class Layer extends cc.Node implements egf.ILayer {
         this.addChild(sp);
     }
     onNodeAdd(node: cc.Node): void {
+        if (node.parent && node.parent === this) return;
         this.addChild(node);
     }
 

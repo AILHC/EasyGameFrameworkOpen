@@ -25,7 +25,6 @@ var NodeCtrl = /** @class */ (function () {
     };
     NodeCtrl.prototype.onHide = function () {
         if (this.node) {
-            this.node.removeFromParent();
             this.node.active = false;
         }
     };
@@ -108,6 +107,8 @@ var Layer = /** @class */ (function (_super) {
         this.addChild(sp);
     };
     Layer.prototype.onNodeAdd = function (node) {
+        if (node.parent && node.parent === this)
+            return;
         this.addChild(node);
     };
     return Layer;
