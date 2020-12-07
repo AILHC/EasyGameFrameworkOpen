@@ -1,4 +1,4 @@
-export let dpcTestM: IDpcTestModuleMap;
+export let dtM: IDpcTestModuleMap;
 export function setDpcTestModuleMap(moduleMap: IDpcTestModuleMap) {
-    dpcTestM = moduleMap;
+    dtM = moduleMap;
 }

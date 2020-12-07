@@ -1,7 +1,7 @@
 import { NodeCtrl } from "@ailhc/dpctrl-ccc";
 import { getPrefabNodeByPath } from "../../../src/Utils";
 import { DpcTestLayerType } from "../DpcTestLayerType";
-import { dpcTestM } from "../setDpcTestModuleMap";
+import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
         AsyncShowView: string
@@ -32,7 +32,7 @@ export class AsyncShowView extends NodeCtrl {
     }
     onShow(data?: any, endCb?: VoidFunction) {
 
-        dpcTestM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
+        dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
         this._animComp.play("show");
         this._animComp.once(cc.Animation.EventType.FINISHED, () => {
             super.onShow(null, endCb);
