@@ -1,7 +1,7 @@
 import { NodeCtrl } from "@ailhc/dpctrl-ccc";
 import { getPrefabNodeByPath } from "../../../src/Utils";
 import { DpcTestLayerType } from "../DpcTestLayerType";
-import { dpcTestM } from "../setDpcTestModuleMap";
+import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
         LoadingView: string
@@ -30,7 +30,7 @@ export class LoadingView extends NodeCtrl {
     }
     onShow(data?: any) {
         super.onShow();
-        dpcTestM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
+        dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
     }
     onUpdate(data: { finished: number, total: number }) {
         this._tipsLabel.string = `加载中${data.finished}/${data.total}...`;

@@ -1,14 +1,14 @@
 import { NodeCtrl } from "@ailhc/dpctrl-ccc";
 import { getPrefabNodeByPath } from "../../../src/Utils";
 import { DpcTestLayerType } from "../DpcTestLayerType";
-import { dpcTestM } from "../setDpcTestModuleMap";
+import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
         DepResView: string
     }
 }
 export class DepResView extends NodeCtrl {
-    static typeKey =  "DepResView";
+    static typeKey = "DepResView";
     private static _ress: string[];
     public static prefabUrl = "display-ctrl-test-views/DepResView";
     getRess() {
@@ -24,12 +24,14 @@ export class DepResView extends NodeCtrl {
     onInit() {
         super.onInit()
         this.node = getPrefabNodeByPath(DepResView.prefabUrl);
-       
+        this.node.getChildByName("close-icon").on(cc.Node.EventType.MOUSE_DOWN, () => {
+            dtM.uiMgr.hideDpc(this.key);
+        })
 
     }
     onShow(data?: any) {
         super.onShow();
-        dpcTestM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
+        dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
     }
     onHide() {
         super.onHide();

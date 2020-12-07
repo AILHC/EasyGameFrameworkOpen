@@ -11,7 +11,7 @@ import { App } from "@ailhc/egf-core";
 import { LayerMgr } from "@ailhc/layer";
 import { ObjPoolMgr } from "@ailhc/obj-pool";
 import { DpcTestLayerType } from "./DpcTestLayerType";
-import { dpcTestM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
+import { dtM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
 import { AsyncShowView } from "./view-ctrls/AsyncShowView";
 import { CustomLoadView } from "./view-ctrls/CustomLoadView";
 import { DepResView } from "./view-ctrls/DepResView";
@@ -59,6 +59,7 @@ export default class DpcTestMainComp extends cc.Component {
         app.bootstrap();
         app.init();
         setDpcTestModuleMap(app.moduleMap);
+        window["dtM"] = dtM;
         // TestView
         // dpcMgr.regist(LoadingView);
         dpcMgr.registTypes([LoadingView, AsyncShowView, CustomLoadView, DepResView, UnDepResView]);
@@ -67,7 +68,7 @@ export default class DpcTestMainComp extends cc.Component {
 
     }
     showDepResView() {
-        dpcTestM.uiMgr.showDpc(dpcTestM.uiMgr.ctrls.DepResView);
+        dtM.uiMgr.showDpc(dtM.uiMgr.ctrls.DepResView);
     }
     // update (dt) {}
 }

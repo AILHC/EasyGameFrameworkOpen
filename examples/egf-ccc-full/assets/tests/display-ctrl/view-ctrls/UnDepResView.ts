@@ -1,6 +1,6 @@
 import { NodeCtrl } from "@ailhc/dpctrl-ccc";
 import { DpcTestLayerType } from "../DpcTestLayerType";
-import { dpcTestM } from "../setDpcTestModuleMap";
+import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
         UnDepResView: string
@@ -20,7 +20,7 @@ export class UnDepResView extends NodeCtrl {
     }
     onShow(data?: any) {
         super.onShow();
-        dpcTestM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
+        dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
 
     }
     onHide() {
