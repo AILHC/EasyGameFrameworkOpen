@@ -1,5 +1,5 @@
 declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
-	export class NodeCtrl<NodeType extends cc.Node = any> implements displayCtrl.ICtrl<NodeType> {
+	export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
 	    key?: string;
 	    isLoading?: boolean;
 	    isLoaded?: boolean;
@@ -10,11 +10,11 @@ declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
 	    needShow?: boolean;
 	    needLoad?: boolean;
 	    visible: boolean;
-	    protected node: NodeType;
+	    protected node: cc.Node;
 	    protected _mgr: displayCtrl.IMgr;
 	    constructor(dpcMgr?: displayCtrl.IMgr);
 	    getRess?(): string[];
-	    getNode(): NodeType;
+	    getNode(): cc.Node;
 	    onInit(initData?: any): void;
 	    onUpdate(updateData: any): void;
 	    getFace<T = any>(): T;

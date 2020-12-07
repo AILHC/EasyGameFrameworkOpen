@@ -1,14 +1,51 @@
-System.register('@ailhc/dpctrl-c3d', ['@ailhc/display-ctrl', 'cc'], function (exports) {
+System.register('@ailhc/dpctrl-c3d', ['cc'], function (exports) {
     'use strict';
-    var BaseDpCtrl, UITransform, Node;
+    var UITransform, Node;
     return {
         setters: [function (module) {
-            BaseDpCtrl = module.BaseDpCtrl;
-        }, function (module) {
             UITransform = module.UITransform;
             Node = module.Node;
         }],
         execute: function () {
+
+            var NodeCtrl = exports('NodeCtrl', /** @class */ (function () {
+                function NodeCtrl(dpcMgr) {
+                    this._mgr = dpcMgr;
+                }
+                NodeCtrl.prototype.getRess = function () {
+                    return undefined;
+                };
+                NodeCtrl.prototype.getNode = function () {
+                    return this.node;
+                };
+                NodeCtrl.prototype.onInit = function (initData) {
+                };
+                NodeCtrl.prototype.onUpdate = function (updateData) {
+                };
+                NodeCtrl.prototype.getFace = function () {
+                    return this;
+                };
+                NodeCtrl.prototype.onDestroy = function (destroyRes) {
+                };
+                NodeCtrl.prototype.onShow = function (data, endCb) {
+                    if (this.node) {
+                        this.node.active = true;
+                    }
+                    endCb && endCb();
+                };
+                NodeCtrl.prototype.onHide = function () {
+                    if (this.node) {
+                        this.node.active = false;
+                    }
+                };
+                NodeCtrl.prototype.forceHide = function () {
+                    this.node && (this.node.active = false);
+                    this.isShowed = false;
+                };
+                NodeCtrl.prototype.onResize = function () {
+                };
+                return NodeCtrl;
+            }()));
 
             /*! *****************************************************************************
             Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,92 +76,53 @@ System.register('@ailhc/dpctrl-c3d', ['@ailhc/display-ctrl', 'cc'], function (ex
                 d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
             }
 
-            var BaseNodeCtrl = exports('BaseNodeCtrl', /** @class */ (function (_super) {
-                __extends(BaseNodeCtrl, _super);
-                function BaseNodeCtrl() {
+            var Layer = exports('Layer', /** @class */ (function (_super) {
+                __extends(Layer, _super);
+                function Layer() {
                     return _super !== null && _super.apply(this, arguments) || this;
                 }
-                BaseNodeCtrl.prototype.getNode = function () {
-                    return this.node;
-                };
-                BaseNodeCtrl.prototype.onShow = function (data, endCb) {
-                    if (this.node) {
-                        this.node.active = true;
-                    }
-                    _super.prototype.onShow.call(this);
-                };
-                BaseNodeCtrl.prototype.onHide = function () {
-                    if (this.node) {
-                        this.node.removeFromParent();
-                        this.node.active = false;
-                    }
-                    _super.prototype.onHide.call(this);
-                };
-                BaseNodeCtrl.prototype.forceHide = function () {
-                    this.node && (this.node.active = false);
-                    this.isShowed = false;
-                };
-                BaseNodeCtrl.prototype.onAdd = function (parent) {
-                    if (!this.node)
-                        return;
-                    parent.addChild(this.node);
-                };
-                BaseNodeCtrl.prototype.onRemove = function () {
-                    if (!this.node)
-                        return;
-                    this.node.removeFromParent();
-                };
-                BaseNodeCtrl.prototype.onResize = function () {
-                    if (this.node) ;
-                };
-                return BaseNodeCtrl;
-            }(BaseDpCtrl)));
-
-            var UILayer = exports('UILayer', /** @class */ (function (_super) {
-                __extends(UILayer, _super);
-                function UILayer() {
-                    return _super !== null && _super.apply(this, arguments) || this;
-                }
-                UILayer.prototype.onInit = function (layerName, layerType, layerMgr) {
+                Layer.prototype.onInit = function (layerName, layerType, layerMgr) {
                     this._layerType = layerType;
                     this.name = layerName;
                     this._layerMgr = layerMgr;
                 };
-                UILayer.prototype.onDestroy = function () {
+                Layer.prototype.onDestroy = function () {
                 };
-                Object.defineProperty(UILayer.prototype, "layerType", {
+                Object.defineProperty(Layer.prototype, "layerType", {
                     get: function () {
                         return this._layerType;
                     },
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(UILayer.prototype, "layerName", {
+                Object.defineProperty(Layer.prototype, "layerName", {
                     get: function () {
                         return this.name;
                     },
                     enumerable: true,
                     configurable: true
                 });
-                UILayer.prototype.onAdd = function (root) {
+                Layer.prototype.onAdd = function (root) {
                     root.addChild(this);
                     var uiTransform = this.addComponent(UITransform);
                     var rootUITransform = root.getComponent(UITransform);
                     uiTransform.contentSize.set(rootUITransform.contentSize.width, rootUITransform.contentSize.height);
                 };
-                UILayer.prototype.onHide = function () {
+                Layer.prototype.onHide = function () {
                     this.active = false;
                 };
-                UILayer.prototype.onShow = function () {
+                Layer.prototype.onShow = function () {
                     this.active = true;
                 };
-                UILayer.prototype.onSpAdd = function (sp) {
+                Layer.prototype.onSpAdd = function (sp) {
                     this.addChild(sp);
                 };
-                UILayer.prototype.onNodeAdd = function (node) {
+                Layer.prototype.onNodeAdd = function (node) {
+                    if (node.parent && node.parent === this)
+                        return;
                     this.addChild(node);
                 };
-                return UILayer;
+                return Layer;
             }(Node)));
 
         }

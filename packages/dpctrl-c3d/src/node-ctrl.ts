@@ -1,6 +1,6 @@
 import { } from "@ailhc/display-ctrl";
 import { Node } from "cc";
-export class NodeCtrl<NodeType extends Node = any> implements displayCtrl.ICtrl<NodeType> {
+export class NodeCtrl implements displayCtrl.ICtrl<Node> {
     key?: string;
     isLoading?: boolean;
     isLoaded?: boolean;
@@ -14,7 +14,7 @@ export class NodeCtrl<NodeType extends Node = any> implements displayCtrl.ICtrl<
 
     visible: boolean;
 
-    protected node: NodeType;
+    protected node: Node;
     protected _mgr: displayCtrl.IMgr;
     constructor(dpcMgr?: displayCtrl.IMgr) {
         this._mgr = dpcMgr;
@@ -22,7 +22,7 @@ export class NodeCtrl<NodeType extends Node = any> implements displayCtrl.ICtrl<
     getRess?(): string[] {
         return undefined;
     }
-    getNode(): NodeType {
+    getNode(): Node {
         return this.node;
     }
     onInit(initData?: any): void {
@@ -45,8 +45,7 @@ export class NodeCtrl<NodeType extends Node = any> implements displayCtrl.ICtrl<
 
     onHide() {
         if (this.node) {
-            this.node.removeFromParent();
-            this.node.active = false
+            this.node.active = false;
         }
     }
     forceHide() {
