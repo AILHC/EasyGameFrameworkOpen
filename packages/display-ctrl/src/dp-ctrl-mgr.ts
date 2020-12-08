@@ -131,7 +131,9 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
         //需要加载
         if (ins.needLoad) {
             const preloadCfg = showCfg as displayCtrl.ILoadConfig;
+            const loadCb = preloadCfg.loadCb;
             preloadCfg.loadCb = (loadedIns) => {
+                loadCb && loadCb(loadedIns);
                 const loadedShowCfg = sigCtrlShowCfgMap[showTypeKey];
                 if (loadedIns.needShow) {
                     this.initDpcByIns(loadedIns, loadedShowCfg.onInitData);

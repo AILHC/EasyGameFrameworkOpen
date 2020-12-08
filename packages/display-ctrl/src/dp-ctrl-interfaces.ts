@@ -169,7 +169,11 @@ declare global {
              * @param typeKey 
              */
             isRegisted(typeKey: string): boolean;
-
+            /**
+             * 获取单例UI的资源数组
+             * @param typeKey 
+             */
+            getSigDpcRess(typeKey: string): string[];
             /**
              * 获取/生成单例显示控制器示例
              * @param cfg 注册时的typeKey或者 IDpcKeyConfig
