@@ -4,7 +4,6 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-
 import { DpcMgr } from "@ailhc/display-ctrl";
 import { Layer } from "@ailhc/dpctrl-ccc";
 import { App } from "@ailhc/egf-core";
@@ -42,13 +41,17 @@ export default class DpcTestMainComp extends cc.Component {
 
         const dpcMgr = new DpcMgr();
         dpcMgr.init((config) => {
-            cc.resources.load(config.ress, null, (err, items) => {
-                if (err) {
-                    config.error && config.error();
-                } else {
-                    config.complete && config.complete();
-                }
-            })
+            cc.resources.load(config.ress,
+                (finish, total) => {
+                    console.log(`${config.key}加载中:${finish}/${total}`);
+                },
+                (err, items) => {
+                    if (err) {
+                        config.error && config.error();
+                    } else {
+                        config.complete && config.complete();
+                    }
+                })
         })
         const layerMgr = new LayerMgr<cc.Node>();
         const canvas = cc.director.getScene().getChildByName("Canvas");
@@ -83,7 +86,7 @@ export default class DpcTestMainComp extends cc.Component {
         dtM.uiMgr.hideDpc(dtM.uiMgr.ctrls.DepResView);
     }
     destroyDepResView() {
-        dtM.uiMgr.destroyDpc(dtM.uiMgr.ctrls.DepResView);
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.ctrls.DepResView, true);
     }
     getDepResViewRess() {
         const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.ctrls.DepResView)?.getRess();

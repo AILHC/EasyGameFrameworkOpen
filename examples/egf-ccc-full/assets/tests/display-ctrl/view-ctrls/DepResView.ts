@@ -38,7 +38,8 @@ export class DepResView extends NodeCtrl {
     }
     onDestroy(destroyRes?: boolean) {
         if (destroyRes) {
-            cc.assetManager.releaseAsset(cc.resources.get<cc.Prefab>(DepResView.prefabUrl, cc.Prefab));
+            const prefab = cc.resources.get<cc.Prefab>(DepResView.prefabUrl, cc.Prefab)
+            cc.assetManager.releaseAsset(prefab);
         }
     }
 }
