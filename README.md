@@ -11,6 +11,9 @@ npm i
 
 
 ## 开发环境配置
+0. git环境
+   1. 对于二进制文件版本管理，我使用git 的大文件管理插件的lfs ，安装: git lfs install 
+   2. 大小写敏感设置 git config core.ignorecase false
 1. 需要先安装开发环境
     1. 设置淘宝源
     ```
