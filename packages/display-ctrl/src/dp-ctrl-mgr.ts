@@ -177,13 +177,14 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
         this.hideDpcByIns(dpcIns)
     }
 
-    public destroyDpc(key: string, destroyRes?: boolean) {
+    public destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean) {
         if (!key || key === "") {
             console.warn("!!!key is null");
             return;
         }
         const ins = this._sigCtrlCache[key];
         this.destroyDpcByIns(ins, destroyRes);
+        destroyIns && (delete this._sigCtrlCache[key])
     }
     public isShowing(key: string) {
         if (!key) {
@@ -290,6 +291,9 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
             dpcIns.isLoaded = false;
             dpcIns.isInited = false;
             dpcIns.needShow = false;
+        }
+        if (dpcIns.isShowed) {
+            this.hideDpcByIns(dpcIns);
         }
         dpcIns.onDestroy(destroyRes);
     }
