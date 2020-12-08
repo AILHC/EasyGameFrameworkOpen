@@ -236,8 +236,10 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	            /**
 	             * 销毁单例控制器
 	             * @param key
+	             * @param destroyRes 销毁资源
+	             * @param destroyIns 销毁实例
 	             */
-	            destroyDpc(key: string, destroyRes?: boolean): void;
+	            destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean): void;
 	            /**
 	             * 实例化显示控制器
 	             * @param keyCfg
@@ -321,7 +323,7 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	    showDpc<T extends displayCtrl.ICtrl = any>(showCfg: string | displayCtrl.IShowConfig): T;
 	    updateDpc<K>(key: string, updateData?: K): void;
 	    hideDpc(key: string): void;
-	    destroyDpc(key: string, destroyRes?: boolean): void;
+	    destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean): void;
 	    isShowing(key: string): boolean;
 	    isShowed(key: string): boolean;
 	    isLoaded(key: string): boolean;

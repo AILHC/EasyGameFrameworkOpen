@@ -31,7 +31,7 @@ export declare class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKe
     showDpc<T extends displayCtrl.ICtrl = any>(showCfg: string | displayCtrl.IShowConfig): T;
     updateDpc<K>(key: string, updateData?: K): void;
     hideDpc(key: string): void;
-    destroyDpc(key: string, destroyRes?: boolean): void;
+    destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean): void;
     isShowing(key: string): boolean;
     isShowed(key: string): boolean;
     isLoaded(key: string): boolean;

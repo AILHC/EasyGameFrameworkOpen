@@ -208,8 +208,10 @@ declare global {
             /**
              * 销毁单例控制器
              * @param key
+             * @param destroyRes 销毁资源
+             * @param destroyIns 销毁实例
              */
-            destroyDpc(key: string, destroyRes?: boolean): void;
+            destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean): void;
             /**
              * 实例化显示控制器
              * @param keyCfg

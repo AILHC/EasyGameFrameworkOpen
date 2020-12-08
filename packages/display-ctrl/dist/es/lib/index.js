@@ -229,13 +229,14 @@ var DpcMgr = /** @class */ (function () {
         }
         this.hideDpcByIns(dpcIns);
     };
-    DpcMgr.prototype.destroyDpc = function (key, destroyRes) {
+    DpcMgr.prototype.destroyDpc = function (key, destroyRes, destroyIns) {
         if (!key || key === "") {
             console.warn("!!!key is null");
             return;
         }
         var ins = this._sigCtrlCache[key];
         this.destroyDpcByIns(ins, destroyRes);
+        destroyIns && (delete this._sigCtrlCache[key]);
     };
     DpcMgr.prototype.isShowing = function (key) {
         if (!key) {
@@ -347,6 +348,9 @@ var DpcMgr = /** @class */ (function () {
             dpcIns.isLoaded = false;
             dpcIns.isInited = false;
             dpcIns.needShow = false;
+        }
+        if (dpcIns.isShowed) {
+            this.hideDpcByIns(dpcIns);
         }
         dpcIns.onDestroy(destroyRes);
     };
