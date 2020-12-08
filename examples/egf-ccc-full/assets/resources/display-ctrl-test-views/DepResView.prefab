@@ -45,8 +45,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
+      "width": 500,
+      "height": 300
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -58,7 +58,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        0,
+        147.84,
         0,
         0,
         0,
@@ -109,8 +109,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
+      "width": 500,
+      "height": 300
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -192,7 +192,7 @@
   {
     "__type__": "cc.Node",
     "_name": "noBtn",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 1
     },
@@ -233,7 +233,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -254.874,
+        -120.322,
         0,
         0,
         0,
@@ -632,15 +632,15 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        406.843,
-        247.52,
+        222.113,
+        115.392,
         0,
         0,
         0,
         0,
         1,
-        1.17,
-        1.17,
+        0.5,
+        0.5,
         1.17
       ]
     },
@@ -746,8 +746,8 @@
         0,
         0,
         1,
-        0.5,
-        0.5,
+        0.2,
+        0.2,
         1
       ]
     },
@@ -779,7 +779,7 @@
     ],
     "paused": false,
     "defaultSkin": "default",
-    "defaultAnimation": "",
+    "defaultAnimation": "idle",
     "_preCacheMode": 0,
     "_cacheMode": 0,
     "loop": true,
@@ -790,7 +790,7 @@
     "_frameCache": null,
     "_curFrame": null,
     "_skeletonCache": null,
-    "_animationName": "",
+    "_animationName": "idle",
     "_animationQueue": [],
     "_headAniInfo": null,
     "_playTimes": 0,

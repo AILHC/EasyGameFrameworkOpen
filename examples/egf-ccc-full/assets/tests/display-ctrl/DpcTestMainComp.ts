@@ -9,7 +9,7 @@ import { DpcMgr } from "@ailhc/display-ctrl";
 import { Layer } from "@ailhc/dpctrl-ccc";
 import { App } from "@ailhc/egf-core";
 import { LayerMgr } from "@ailhc/layer";
-import { ObjPoolMgr } from "@ailhc/obj-pool";
+import { getChild, getComp } from "../../src/Utils";
 import { DpcTestLayerType } from "./DpcTestLayerType";
 import { dtM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
 import { AsyncShowView } from "./view-ctrls/AsyncShowView";
@@ -17,6 +17,7 @@ import { CustomLoadView } from "./view-ctrls/CustomLoadView";
 import { DepResView } from "./view-ctrls/DepResView";
 import { LoadingView } from "./view-ctrls/LoadingView";
 import { UnDepResView } from "./view-ctrls/UnDepResView";
+import { ObjPoolMgr } from "@ailhc/obj-pool";
 
 const { ccclass, property } = cc._decorator;
 
@@ -32,7 +33,10 @@ declare global {
 }
 @ccclass
 export default class DpcTestMainComp extends cc.Component {
+    @property(cc.Node)
+    depResViewBtnsNode: cc.Node;
 
+    private _depResViewTipsLabel: cc.Label;
     onLoad() {
         const app = new App<IDpcTestModuleMap>();
 
@@ -63,12 +67,32 @@ export default class DpcTestMainComp extends cc.Component {
         // TestView
         // dpcMgr.regist(LoadingView);
         dpcMgr.registTypes([LoadingView, AsyncShowView, CustomLoadView, DepResView, UnDepResView]);
+        const tipsNode = getChild(this.depResViewBtnsNode, "depResStateTips");
+        this._depResViewTipsLabel = getComp(tipsNode, cc.Label);
+        this.depResViewBtnsNode.zIndex = 100;
+        this.depResViewBtnsNode.sortAllChildren();
     }
     start() {
 
     }
+    //····················测试接口······························
     showDepResView() {
         dtM.uiMgr.showDpc(dtM.uiMgr.ctrls.DepResView);
+    }
+    hideDepResView() {
+        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrls.DepResView);
+    }
+    destroyDepResView() {
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.ctrls.DepResView);
+    }
+    getDepResViewRess() {
+        const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.ctrls.DepResView)?.getRess();
+        if (ress) {
+            this._depResViewTipsLabel.string = ress.toString();
+        }
+    }
+    preloadDepResViewRess() {
+        dtM.uiMgr.loadSigDpc(dtM.uiMgr.ctrls.DepResView);
     }
     // update (dt) {}
 }
