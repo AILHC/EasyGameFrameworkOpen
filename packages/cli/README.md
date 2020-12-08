@@ -40,6 +40,8 @@ npm install -D @ailhc/egf-cli
 
 
 # 更新日志
+### 1.0.1 (2020/12/8)
+1. 解决发布后的库，sourcemap加载不到的问题，使用inlinesourcemap的方式
 ### 1.0.0 (2020/12/2)
 1. 修复引用外部声明文件时，把声明也合进来了，没必要
 2. 增加一个tsconfig字段externalTag配置控制是否编译引用模块（避免编译进来又不能用的问题）
