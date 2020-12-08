@@ -38,6 +38,8 @@ npm i
 1. [lerna+yarn workspace+monorepo项目的最佳实践](https://blog.csdn.net/i10630226/article/details/99702447)
 2. [基于lerna和yarn workspace的monorepo工作流](https://zhuanlan.zhihu.com/p/71385053)
 3. [Monorepo 项目管理Lerna](https://www.cnblogs.com/sanbao/p/11834137.html)
+4. [Lerna 中文教程详解](https://segmentfault.com/a/1190000019350611?utm_source=tag-newest)
+5. [lerna管理前端模块最佳实践](https://juejin.cn/post/6844903568751722509)
 ### 创建包
 #### 快速模式
     lerna create @xxx/xxx -y
