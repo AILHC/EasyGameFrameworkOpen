@@ -3,13 +3,16 @@ import { NoResDpCtrl } from "./no-res-dpctrl";
 import { NoTypeKeyDpCtrl } from "./no-typekey-dpctrl";
 import { WithResDpCtrl } from "./with-res-dpctrl";
 import { AsyncShowDpCtrl } from "./async-dpctrls";
+
 describe(
     `管理器属性测试 DpcMgr property test`, function () {
         test(`管理器的属性 单例控制器缓存字典是等于空字典 {}
     dpc-mgr property sigCtrlCache is toEqual {}`, function () {
             const dpcMgr = new DpcMgr();
-            dpcMgr.init((config) => {
-                config.complete();
+            dpcMgr.init({
+                loadRes: (config) => {
+                    config.complete();
+                }
             });
             expect(dpcMgr.sigCtrlCache).toEqual({})
 
@@ -17,8 +20,10 @@ describe(
         test(`管理器的属性 单例控制器类字典是等于空字典 {}
     dpc-mgr property ctrlClassMap is toEqual {}`, function () {
             const dpcMgr = new DpcMgr();
-            dpcMgr.init((config) => {
-                config.complete();
+            dpcMgr.init({
+                loadRes: (config) => {
+                    config.complete();
+                }
             });
             expect(dpcMgr["_ctrlClassMap"]).toEqual({})
 
@@ -29,8 +34,10 @@ describe(`注册类测试, DpcMgr regist and registTypes test`, function () {
     test(`注册有typeKey的类，会在管理器的控制器类字典里
     regist The NoResDpCtrl(has typeKey) will be in the ctrlClassMap`, function () {
         const dpcMgr = new DpcMgr();
-        dpcMgr.init((config) => {
-            config.complete();
+        dpcMgr.init({
+            loadRes: (config) => {
+                config.complete();
+            }
         });
         dpcMgr.regist(NoResDpCtrl);
         expect(dpcMgr.getCtrlClass(NoResDpCtrl.typeKey)).toEqual(NoResDpCtrl);
@@ -38,8 +45,10 @@ describe(`注册类测试, DpcMgr regist and registTypes test`, function () {
     test(`注册没有typeKey的类，会在管理器的控制器类字典里
     regist The NoTypeKeyDpCtrl(no TypeKey) will be in the dpcMgr ctrlClassMap`, function () {
         const dpcMgr = new DpcMgr();
-        dpcMgr.init((config) => {
-            config.complete();
+        dpcMgr.init({
+            loadRes: (config) => {
+                config.complete();
+            }
         });
         dpcMgr.regist(NoTypeKeyDpCtrl, "NoTypeKeyDpCtrl");
         expect(dpcMgr.getCtrlClass("NoTypeKeyDpCtrl")).toEqual(NoTypeKeyDpCtrl);
@@ -65,10 +74,12 @@ test(`可以预加载已经注册的控制器资源,
     1. unload : isLoaded=false,isInited=false,isShowed=false
     2. loaded : isLoaded=true,isInited=false,isShowed=false`, function (done) {
     const dpcMgr = new DpcMgr();
-    dpcMgr.init((config) => {
-        setTimeout(() => {
-            config.complete();
-        }, 1000);
+    dpcMgr.init({
+        loadRes: (config) => {
+            setTimeout(() => {
+                config.complete();
+            }, 1000);
+        }
     });
     dpcMgr.regist(WithResDpCtrl);
 
@@ -86,10 +97,12 @@ test(`可以预加载已经注册的控制器资源,
 })
 test(`通过dpcMgr.showDpc显示WithResDpCtrl,控制器的isLoaded,isInited,isShowed为true`, function (done) {
     const dpcMgr = new DpcMgr();
-    dpcMgr.init((config) => {
-        setTimeout(() => {
-            config.complete();
-        }, 1000);
+    dpcMgr.init({
+        loadRes: (config) => {
+            setTimeout(() => {
+                config.complete();
+            }, 1000);
+        }
     });
     dpcMgr.regist(WithResDpCtrl);
     const ctrlIns: displayCtrl.ICtrl = dpcMgr.showDpc({
@@ -104,18 +117,20 @@ test(`通过dpcMgr.showDpc显示WithResDpCtrl,控制器的isLoaded,isInited,isSh
 });
 test(`通过dpcMgr.showDpc多次显示AsyncShowDpCtrl`, function (done) {
     const dpcMgr = new DpcMgr();
-    dpcMgr.init((config) => {
-        config.complete();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
     });
     dpcMgr.regist(AsyncShowDpCtrl);
     const firstShowCfg: displayCtrl.IShowConfig = {
         typeKey: AsyncShowDpCtrl.typeKey,
-        
+
     };
     const ctrlIns: displayCtrl.ICtrl = dpcMgr.showDpc(firstShowCfg);
-    
+
     expect(ctrlIns.isShowing).toBeTruthy();
-    const secondCfg:displayCtrl.IShowConfig = {
+    const secondCfg: displayCtrl.IShowConfig = {
         typeKey: AsyncShowDpCtrl.typeKey,
         showedCb: (ctrlIns2) => {
             expect(ctrlIns2.isShowing).toBeTruthy();

@@ -32,47 +32,35 @@
 
 1. 基础使用
 ```ts
-//初始化管理器,实现加载接口
+//初始化管理器,实现资源接口
 const dpcMgr = new DpcMgr();
-dpcMgr.init((config) => {
-    cc.resources.load(config.ress, null, (err, items) => {
-        if (err) {
-            config.error && config.error();
-        } else {
-            config.complete && config.complete();
-        }
-    })
+dpcMgr.init({
+    loadRes:(config) => {
+        cc.resources.load(config.ress, null, (err, items) => {
+            if (err) {
+                config.error && config.error();
+            } else {
+                config.complete && config.complete();
+            }
+        })
+    },
+    releaseRes:(ctrlIns)=>{
+        // TODO:
+        // cc.assetManager.releaseAsset
+    }   
 })
-//继承BaseDpCtrl
-import { BaseNodeCtrl } from "../framework-impl/display/BaseNodeCtrl";
-import { m } from "../ModuleMap";
-import { LayerType } from "../LayerType";
-import { getPrefabNodeByPath } from "../framework-impl/engine-ext/Utils";
+//BaseDpCtrl被移除，它没什么作用，自己根据引擎实现displayCtrl.ICtrl接口即可
 
-export class LoginView extends BaseNodeCtrl {
-    getRess() {
-        return [
-            "login/LoginView"
-        ]
-    }
-    onInit() {
-        this.node = getPrefabNodeByPath("login/LoginView");
-    }
-    onShow() {
-        //添加显示节点到舞台中的某个层级
-        m.gLayerMgr.addNodeToLayer(this.node, LayerType.UI);
-        super.onShow();
-    }
-}
+
 //注册显示控制器,会骚操作的你们，肯定会通过装饰器自动注册啦😉
 m.uiMgr.regist(LoginView, "LoginView");
 //显示界面
 m.uiMgr.showDpc("LoginView");
 ```
 ## 发布日志
- 
-*********
-    0.1.0 (2020-10-11)
-    1. 第一次发布
+-----
+### 0.1.0 (2020-10-11)
+1. 第一次发布
+
 
 
