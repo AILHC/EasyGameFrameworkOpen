@@ -2,8 +2,8 @@
  * DisplayControllerMgr
  * 显示控制类管理器基类
  */
-export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
-    ctrls: CtrlKeyMap = new Proxy({}, {
+export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
+    ctrls: CtrlKeyMapType = new Proxy({}, {
         get(target, key) {
             return key;
         }
@@ -13,7 +13,7 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
      */
     protected _sigCtrlCache: displayCtrl.CtrlInsMap = {};
     protected _sigCtrlShowCfgMap: { [key: string]: displayCtrl.IShowConfig } = {};
-    protected _resLoadHandler: displayCtrl.ResLoadHandler;
+    protected _resHandler: displayCtrl.IResHandler;
     /**
      * 控制器类字典
      */
@@ -25,9 +25,9 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
         const clas = this._ctrlClassMap[typeKey];
         return clas;
     }
-    public init(resLoadHandler?: displayCtrl.ResLoadHandler): void {
-        if (!this._resLoadHandler) {
-            this._resLoadHandler = resLoadHandler;
+    public init(resHandler?: displayCtrl.IResHandler): void {
+        if (!this._resHandler) {
+            this._resHandler = resHandler;
         }
     }
     public registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]) {
@@ -38,14 +38,14 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
                 }
             } else {
                 for (const typeKey in classes) {
-                    this.regist(classes[typeKey], typeKey)
+                    this.regist(classes[typeKey], typeKey as any)
                 }
             }
 
         }
 
     }
-    public regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: string) {
+    public regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyof CtrlKeyMapType): void {
         const classMap = this._ctrlClassMap;
         if (!ctrlClass.typeKey) {
             if (!typeKey) {
@@ -312,13 +312,14 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
     protected _loadRess(ctrlIns: displayCtrl.ICtrl, loadCfg: displayCtrl.ILoadConfig) {
         if (ctrlIns) {
             if (!ctrlIns.isLoaded) {
-                if (isNaN(loadCfg["loadCount"])) {
-                    loadCfg["loadCount"] = 0;
+                const loadHandler: displayCtrl.ILoadHandler = loadCfg as any;
+                if (isNaN(loadHandler.loadCount)) {
+                    loadHandler.loadCount = 0;
                 }
-                loadCfg["loadCount"]++;
+                loadHandler.loadCount++;
                 const onComplete = () => {
-                    loadCfg["loadCount"]--;
-                    if (loadCfg["loadCount"] === 0) {
+                    loadHandler.loadCount--;
+                    if (loadHandler.loadCount === 0) {
                         ctrlIns.isLoaded = true;
                         ctrlIns.isLoading = false;
                         loadCfg.loadCb(ctrlIns)
@@ -326,26 +327,26 @@ export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
 
                 }
                 const onError = () => {
-                    loadCfg["loadCount"]--;
-                    if (loadCfg["loadCount"] === 0) {
+                    loadHandler.loadCount--;
+                    if (loadHandler.loadCount === 0) {
                         ctrlIns.isLoaded = false;
                         ctrlIns.isLoading = false;
                         loadCfg.loadCb(null);
                     }
                 }
 
-                const customLoadViewIns: displayCtrl.ICustomLoad = ctrlIns as any;
+                const customLoadViewIns: displayCtrl.ICustomResHandler = ctrlIns as any;
                 ctrlIns.isLoading = true;
                 ctrlIns.isLoaded = false;
-                if (customLoadViewIns.onLoad) {
-                    customLoadViewIns.onLoad(onComplete, onError);
-                } else if (this._resLoadHandler) {
+                if (customLoadViewIns.loadRes) {
+                    customLoadViewIns.loadRes(onComplete, onError);
+                } else if (this._resHandler) {
                     const ress = ctrlIns.getRess ? ctrlIns.getRess() : null;
                     if (!ress || !ress.length) {
                         onComplete();
                         return;
                     }
-                    this._resLoadHandler({
+                    this._resHandler.loadRes({
                         key: ctrlIns.key,
                         ress: ress,
                         complete: onComplete,

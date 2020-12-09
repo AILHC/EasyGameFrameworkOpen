@@ -1,4 +1,4 @@
-import { BaseDpCtrl } from "../src";
+import { BaseDpCtrl } from "./base-dp-ctrl";
 
 export class AsyncShowDpCtrl extends BaseDpCtrl {
     public static readonly typeKey: string = "AsyncShowDpCtrl"

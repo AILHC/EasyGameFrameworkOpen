@@ -20,10 +20,10 @@
         "declaration": true,
         "removeComments": false
     },
-    "include": [
-        "src"
-    ],
     "exclude": [
         "dist"
+    ],
+    "dtsGenExclude": [
+        "__tests__/**/*"
     ]
 }
