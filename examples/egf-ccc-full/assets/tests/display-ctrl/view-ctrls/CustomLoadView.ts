@@ -7,11 +7,8 @@ declare global {
         CustomLoadView: string
     }
 }
-export class CustomLoadView extends NodeCtrl implements displayCtrl.ICustomLoad {
-    static typeKey =  "CustomLoadView";
-    private static _ress: string[];
-    public static prefabUrl = "display-ctrl-test-views/CustomLoadView";
-    onLoad(complete: VoidFunction, error?: VoidFunction): void {
+export class CustomLoadView extends NodeCtrl implements displayCtrl.ICustomResHandler {
+    loadRes(onComplete: VoidFunction, onError: VoidFunction): void {
         dtM.uiMgr.showDpc({
             typeKey: dtM.uiMgr.ctrls.LoadingView,
             showedCb: () => {
@@ -21,9 +18,25 @@ export class CustomLoadView extends NodeCtrl implements displayCtrl.ICustomLoad 
                             {
                                 finished: finished, total: total
                             })
-                    }, complete)
+                    }, (err, data) => {
+                        if (err) {
+                            onError();
+                        } else {
+                            onComplete()
+                        }
+                    })
             }
         })
+    }
+    releaseRes(): void {
+        cc.assetManager.releaseAsset(cc.resources.get(CustomLoadView.prefabUrl));
+    }
+    static typeKey = "CustomLoadView";
+    private static _ress: string[];
+    private static _randomRess = [""]
+    public static prefabUrl = "display-ctrl-test-views/CustomLoadView";
+    onLoad(complete: VoidFunction, error?: VoidFunction): void {
+
 
     }
     onInit() {
@@ -40,6 +53,7 @@ export class CustomLoadView extends NodeCtrl implements displayCtrl.ICustomLoad 
         super.onHide();
     }
     onDestroy(destroyRes?: boolean) {
+        super.onDestroy();
         if (destroyRes) {
             cc.assetManager.releaseAsset(cc.resources.get<cc.Prefab>(CustomLoadView.prefabUrl, cc.Prefab));
         }

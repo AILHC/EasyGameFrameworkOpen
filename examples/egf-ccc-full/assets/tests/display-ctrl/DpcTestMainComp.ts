@@ -33,26 +33,45 @@ declare global {
 @ccclass
 export default class DpcTestMainComp extends cc.Component {
     @property(cc.Node)
-    depResViewBtnsNode: cc.Node;
+    depResViewBtnsNode: cc.Node = undefined;
 
     private _depResViewTipsLabel: cc.Label;
     onLoad() {
         const app = new App<IDpcTestModuleMap>();
 
         const dpcMgr = new DpcMgr();
-        dpcMgr.init((config) => {
-            cc.resources.load(config.ress,
-                (finish, total) => {
-                    console.log(`${config.key}加载中:${finish}/${total}`);
+        dpcMgr.init(
+            {
+                loadRes: (config) => {
+                    cc.resources.load(config.ress,
+                        (finish, total) => {
+                            console.log(`${config.key}加载中:${finish}/${total}`);
+                        },
+                        (err, items) => {
+                            if (err) {
+                                config.error && config.error();
+                            } else {
+                                config.complete && config.complete();
+                            }
+                        })
                 },
-                (err, items) => {
-                    if (err) {
-                        config.error && config.error();
-                    } else {
-                        config.complete && config.complete();
+                releaseRes: (ctrlIns) => {
+                    const ress = ctrlIns.getRess();
+                    if (ress && ress.length) {
+                        const assets = [];
+                        let asset: cc.Asset;
+                        ress.forEach((res) => {
+                            asset = cc.resources.get(res);
+                            if (asset) {
+                                cc.assetManager.releaseAsset(asset);
+                            }
+                        });
+
                     }
-                })
-        })
+                }
+
+            }
+        )
         const layerMgr = new LayerMgr<cc.Node>();
         const canvas = cc.director.getScene().getChildByName("Canvas");
         cc.game.addPersistRootNode(canvas);
