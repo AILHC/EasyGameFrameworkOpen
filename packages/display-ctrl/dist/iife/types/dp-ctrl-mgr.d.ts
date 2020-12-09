@@ -2,8 +2,8 @@
  * DisplayControllerMgr
  * 显示控制类管理器基类
  */
-export declare class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
-    ctrls: CtrlKeyMap;
+export declare class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
+    ctrls: CtrlKeyMapType;
     /**
      * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
      */
@@ -11,7 +11,7 @@ export declare class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKe
     protected _sigCtrlShowCfgMap: {
         [key: string]: displayCtrl.IShowConfig;
     };
-    protected _resLoadHandler: displayCtrl.ResLoadHandler;
+    protected _resHandler: displayCtrl.IResHandler;
     /**
      * 控制器类字典
      */
@@ -20,9 +20,9 @@ export declare class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKe
     };
     get sigCtrlCache(): displayCtrl.CtrlInsMap;
     getCtrlClass(typeKey: string): displayCtrl.CtrlClassType<displayCtrl.ICtrl>;
-    init(resLoadHandler?: displayCtrl.ResLoadHandler): void;
+    init(resHandler?: displayCtrl.IResHandler): void;
     registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void;
-    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: string): void;
+    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyof CtrlKeyMapType): void;
     isRegisted(typeKey: string): boolean;
     getSigDpcRess(typeKey: string): string[];
     loadSigDpc<T extends displayCtrl.ICtrl = any>(loadCfg: string | displayCtrl.ILoadConfig): T;

@@ -33,7 +33,9 @@ export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
         return this as any;
     }
     onDestroy(destroyRes?: boolean): void {
-
+        if(this.node){
+            this.node.destroy();
+        }
     }
     onShow(data?: any, endCb?: VoidFunction) {
         if (this.node) {

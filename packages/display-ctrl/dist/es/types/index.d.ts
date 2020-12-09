@@ -1,30 +1,3 @@
-declare module '@ailhc/display-ctrl/src/base-dp-ctrl' {
-	export class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
-	    protected _dpcMgr: displayCtrl.IMgr;
-	    key: string;
-	    protected _node: NodeType;
-	    constructor(dpcMgr?: displayCtrl.IMgr);
-	    needLoad: boolean;
-	    isLoaded: boolean;
-	    isLoading: boolean;
-	    protected _isAsyncShow: boolean;
-	    isInited: boolean;
-	    isShowing: boolean;
-	    isShowed: boolean;
-	    needShow: boolean;
-	    get isAsyncShow(): boolean;
-	    onInit(initData?: any): void;
-	    onShow(showData?: any, endCb?: VoidFunction): void;
-	    onUpdate(updateData?: any): void;
-	    getFace<T>(): T;
-	    onHide(): void;
-	    forceHide(): void;
-	    getNode(): NodeType;
-	    onDestroy(destroyRes?: boolean): void;
-	    getRess(): string[];
-	}
-
-}
 declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	 global {
 	    namespace displayCtrl {
@@ -56,11 +29,33 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	            onLoadData?: any;
 	        }
 	        /**
-	         * ress 需要加载的资源
-	         * complete 加载完成回调
-	         * error 加载失败回调
+	         * 资源处理器
 	         */
-	        type ResLoadHandler = (config: IResLoadConfig) => void;
+	        interface IResHandler {
+	            /**
+	             * 加载资源
+	             * @param config
+	             */
+	            loadRes?(config: IResLoadConfig): void;
+	            /**
+	             * 释放资源
+	             * @param ctrlIns
+	             */
+	            releaseRes?(ctrlIns: ICtrl): void;
+	        }
+	        /**
+	         * 控制器自定义资源处理
+	         */
+	        interface ICustomResHandler {
+	            /**
+	             * 加载资源
+	             */
+	            loadRes(onComplete: VoidFunction, onError: VoidFunction): void;
+	            /**
+	             * 释放资源
+	             */
+	            releaseRes(): void;
+	        }
 	        interface IKeyConfig {
 	            /**页面注册类型key */
 	            typeKey: string;
@@ -72,6 +67,9 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	            onLoadData?: any;
 	            /**加载完成回调 */
 	            loadCb?: CtrlInsCb;
+	        }
+	        interface ILoadHandler extends ILoadConfig {
+	            loadCount: number;
 	        }
 	        interface IInitConfig extends IKeyConfig {
 	            onInitData?: any;
@@ -166,25 +164,14 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	             */
 	            getNode(): NodeType;
 	        }
-	        /**
-	         * 自定义加载接口
-	         */
-	        interface ICustomLoad {
-	            /**
-	             * 当加载时
-	             * @param complete 加载完成
-	             * @param error 加载失败
-	             */
-	            onLoad(complete: VoidFunction, error?: VoidFunction): void;
-	        }
 	        interface IMgr<CtrlKeyMapType = any> {
 	            /**控制器key字典 */
 	            ctrls: CtrlKeyMapType;
 	            /**
 	             * 初始化
-	             * @param resLoadHandler 资源加载处理
+	             * @param resHandler 资源处理
 	             */
-	            init(resLoadHandler?: ResLoadHandler): void;
+	            init(resHandler?: IResHandler): void;
 	            /**
 	             * 批量注册控制器类
 	             * @param classMap
@@ -193,8 +180,9 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	            /**
 	             * 注册控制器类
 	             * @param ctrlClass
+	             * @param typeKey 如果ctrlClass这个类里没有静态属性typeKey则取传入的typeKey
 	             */
-	            regist(ctrlClass: CtrlClassType, typeKey?: string): void;
+	            regist(ctrlClass: CtrlClassType, typeKey?: keyof CtrlKeyMapType): void;
 	            /**
 	             * 是否注册了
 	             * @param typeKey
@@ -299,8 +287,8 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	 * DisplayControllerMgr
 	 * 显示控制类管理器基类
 	 */
-	export class DpcMgr<CtrlKeyMap = any> implements displayCtrl.IMgr<CtrlKeyMap> {
-	    ctrls: CtrlKeyMap;
+	export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
+	    ctrls: CtrlKeyMapType;
 	    /**
 	     * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
 	     */
@@ -308,7 +296,7 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	    protected _sigCtrlShowCfgMap: {
 	        [key: string]: displayCtrl.IShowConfig;
 	    };
-	    protected _resLoadHandler: displayCtrl.ResLoadHandler;
+	    protected _resHandler: displayCtrl.IResHandler;
 	    /**
 	     * 控制器类字典
 	     */
@@ -317,9 +305,9 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	    };
 	    get sigCtrlCache(): displayCtrl.CtrlInsMap;
 	    getCtrlClass(typeKey: string): displayCtrl.CtrlClassType<displayCtrl.ICtrl>;
-	    init(resLoadHandler?: displayCtrl.ResLoadHandler): void;
+	    init(resHandler?: displayCtrl.IResHandler): void;
 	    registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void;
-	    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: string): void;
+	    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyof CtrlKeyMapType): void;
 	    isRegisted(typeKey: string): boolean;
 	    getSigDpcRess(typeKey: string): string[];
 	    loadSigDpc<T extends displayCtrl.ICtrl = any>(loadCfg: string | displayCtrl.ILoadConfig): T;
@@ -344,7 +332,6 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 
 }
 declare module '@ailhc/display-ctrl' {
-	export * from '@ailhc/display-ctrl/src/base-dp-ctrl';
 	export * from '@ailhc/display-ctrl/src/dp-ctrl-interfaces';
 	export * from '@ailhc/display-ctrl/src/dp-ctrl-mgr';
 

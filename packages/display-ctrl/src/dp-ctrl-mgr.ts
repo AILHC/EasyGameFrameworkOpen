@@ -298,6 +298,14 @@ export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMap
             this.hideDpcByIns(dpcIns);
         }
         dpcIns.onDestroy(destroyRes);
+        if (destroyRes) {
+            const customResHandler = dpcIns as unknown as displayCtrl.ICustomResHandler;
+            if (customResHandler.releaseRes) {
+                customResHandler.releaseRes();
+            } else if (this._resHandler && this._resHandler.releaseRes) {
+                this._resHandler.releaseRes(dpcIns);
+            }
+        }
     }
     protected _getCfg<T = {}>(cfg: string | T): T {
         if (typeof cfg === "string") {
