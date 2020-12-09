@@ -42,9 +42,7 @@ export class AsyncShowView extends NodeCtrl {
     onHide() {
         super.onHide();
     }
-    onDestroy(destroyRes?: boolean) {
-        if (destroyRes) {
-            cc.assetManager.releaseAsset(cc.resources.get<cc.Prefab>(AsyncShowView.prefabUrl, cc.Prefab));
-        }
+    onDestroy(){
+        super.onDestroy();
     }
 }
