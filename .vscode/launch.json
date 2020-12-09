@@ -95,7 +95,7 @@
             "args": [
                 "--runInBand"
             ],
-            "cwd": "${workspaceFolder}/packages/egf-dpctrl",
+            "cwd": "${workspaceFolder}/packages/display-ctrl",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
