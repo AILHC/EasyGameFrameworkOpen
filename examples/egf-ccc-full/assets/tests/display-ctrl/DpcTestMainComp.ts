@@ -12,7 +12,7 @@ import { getChild, getComp } from "../../src/Utils";
 import { DpcTestLayerType } from "./DpcTestLayerType";
 import { dtM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
 import { AsyncShowView } from "./view-ctrls/AsyncShowView";
-import { CustomLoadView } from "./view-ctrls/CustomLoadView";
+import { CustomResHandleView } from "./view-ctrls/CustomLoadView";
 import { DepResView } from "./view-ctrls/DepResView";
 import { LoadingView } from "./view-ctrls/LoadingView";
 import { UnDepResView } from "./view-ctrls/UnDepResView";
@@ -88,7 +88,7 @@ export default class DpcTestMainComp extends cc.Component {
         window["dtM"] = dtM;
         // TestView
         // dpcMgr.regist(LoadingView);
-        dpcMgr.registTypes([LoadingView, AsyncShowView, CustomLoadView, DepResView, UnDepResView]);
+        dpcMgr.registTypes([LoadingView, AsyncShowView, CustomResHandleView, DepResView, UnDepResView]);
         const tipsNode = getChild(this.depResViewBtnsNode, "depResStateTips");
         this._depResViewTipsLabel = getComp(tipsNode, cc.Label);
         this.depResViewBtnsNode.zIndex = 100;
@@ -116,5 +116,16 @@ export default class DpcTestMainComp extends cc.Component {
     preloadDepResViewRess() {
         dtM.uiMgr.loadSigDpc(dtM.uiMgr.ctrls.DepResView);
     }
-    // update (dt) {}
+
+    showAsyncShowView() {
+        dtM.uiMgr.showDpc({
+            typeKey: dtM.uiMgr.ctrls.AsyncShowView,
+            showedCb: () => {
+                console.log(`${dtM.uiMgr.ctrls.AsyncShowView}:显示完成`);
+            }
+        });
+    }
+    hideAsyncShowView() {
+        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrls.AsyncShowView);
+    }
 }
