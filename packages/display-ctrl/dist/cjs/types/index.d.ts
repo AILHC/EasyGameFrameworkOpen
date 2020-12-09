@@ -50,11 +50,11 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	            /**
 	             * 加载资源
 	             */
-	            loadRes(onComplete: VoidFunction, onError: VoidFunction): void;
+	            loadRes?(onComplete: VoidFunction, onError: VoidFunction): void;
 	            /**
 	             * 释放资源
 	             */
-	            releaseRes(): void;
+	            releaseRes?(): void;
 	        }
 	        interface IKeyConfig {
 	            /**页面注册类型key */
@@ -96,10 +96,8 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	             * 显示数据
 	             */
 	            onShowData?: any;
-	            /**onShow后调用就执行 */
+	            /**调用就执行 */
 	            showedCb?: CtrlInsCb;
-	            /**onShow内调用异步显示完成回调，比如动画之类的 */
-	            asyncShowedCb?: CtrlInsCb;
 	            /**显示被取消了 */
 	            onCancel?: VoidFunction;
 	        }
@@ -197,24 +195,24 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	             * 获取/生成单例显示控制器示例
 	             * @param cfg 注册时的typeKey或者 IDpcKeyConfig
 	             */
-	            getSigDpcIns<T extends ICtrl = any>(cfg: string | IKeyConfig): T;
+	            getSigDpcIns<T extends ICtrl>(cfg: string | IKeyConfig): T;
 	            /**
 	             * 加载Dpc
 	             * @param loadCfg 注册时的typeKey或者 IDpCtrlLoadConfig
 	             */
-	            loadSigDpc<T extends ICtrl = any>(loadCfg: string | ILoadConfig): T;
+	            loadSigDpc<T extends ICtrl>(loadCfg: string | ILoadConfig): T;
 	            /**
 	             * 初始化显示控制器
 	             * @param initCfg 注册类时的 typeKey或者 IDpCtrlInitConfig
 	             */
-	            initSigDpc<T extends ICtrl = any>(initCfg: string | IInitConfig): T;
+	            initSigDpc<T extends ICtrl>(initCfg: string | IInitConfig): T;
 	            /**
 	             * 显示单例显示控制器
 	             * @param typeKey
 	             * @param key
 	             * @param lifeCircleData
 	             */
-	            showDpc<T extends ICtrl = any>(showCfg: string | IShowConfig): T;
+	            showDpc<T extends ICtrl>(showCfg: string | IShowConfig): T;
 	            /**
 	             * 更新控制器
 	             * @param key
@@ -237,7 +235,7 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	             * 实例化显示控制器
 	             * @param keyCfg
 	             */
-	            insDpc<T extends ICtrl = any>(keyCfg: string | IKeyConfig): T;
+	            insDpc<T extends ICtrl>(keyCfg: string | IKeyConfig): T;
 	            /**
 	             * 加载显示控制器
 	             * @param ins
@@ -310,17 +308,17 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyof CtrlKeyMapType): void;
 	    isRegisted(typeKey: string): boolean;
 	    getSigDpcRess(typeKey: string): string[];
-	    loadSigDpc<T extends displayCtrl.ICtrl = any>(loadCfg: string | displayCtrl.ILoadConfig): T;
-	    getSigDpcIns<T extends displayCtrl.ICtrl = any>(cfg: string | displayCtrl.IKeyConfig): T;
-	    initSigDpc<T extends displayCtrl.ICtrl = any>(cfg: string | displayCtrl.IInitConfig): T;
-	    showDpc<T extends displayCtrl.ICtrl = any>(showCfg: string | displayCtrl.IShowConfig): T;
+	    loadSigDpc<T extends displayCtrl.ICtrl>(loadCfg: string | displayCtrl.ILoadConfig): T;
+	    getSigDpcIns<T extends displayCtrl.ICtrl>(cfg: string | displayCtrl.IKeyConfig): T;
+	    initSigDpc<T extends displayCtrl.ICtrl>(key: string, onInitData?: any): T;
+	    showDpc<T extends displayCtrl.ICtrl>(showCfg: string | displayCtrl.IShowConfig): T;
 	    updateDpc<K>(key: string, updateData?: K): void;
 	    hideDpc(key: string): void;
-	    destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean): void;
+	    destroyDpc(key: string, destroyRes?: boolean): void;
 	    isShowing(key: string): boolean;
 	    isShowed(key: string): boolean;
 	    isLoaded(key: string): boolean;
-	    insDpc<T extends displayCtrl.ICtrl = any>(keyCfg: string | displayCtrl.IKeyConfig): T;
+	    insDpc<T extends displayCtrl.ICtrl>(keyCfg: string | displayCtrl.IKeyConfig): T;
 	    loadDpcByIns(dpcIns: displayCtrl.ICtrl, loadCfg: displayCtrl.ILoadConfig): void;
 	    initDpcByIns<T = any>(dpcIns: displayCtrl.ICtrl, initData?: T): void;
 	    showDpcByIns(dpcIns: displayCtrl.ICtrl, showCfg: displayCtrl.IShowConfig): void;

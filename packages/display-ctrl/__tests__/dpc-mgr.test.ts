@@ -3,6 +3,8 @@ import { NoResDpCtrl } from "./no-res-dpctrl";
 import { NoTypeKeyDpCtrl } from "./no-typekey-dpctrl";
 import { WithResDpCtrl } from "./with-res-dpctrl";
 import { AsyncShowDpCtrl } from "./async-dpctrls";
+import { OnInitDpc, OnShowDpc, OnUpdateDpc } from "./transfer-param-dpcs";
+import { CustomResHandlerDpc } from "./custom-res-handler-dpc";
 
 describe(
     `管理器属性测试 DpcMgr property test`, function () {
@@ -133,12 +135,9 @@ test(`通过dpcMgr.showDpc多次显示AsyncShowDpCtrl`, function (done) {
     const secondCfg: displayCtrl.IShowConfig = {
         typeKey: AsyncShowDpCtrl.typeKey,
         showedCb: (ctrlIns2) => {
-            expect(ctrlIns2.isShowing).toBeTruthy();
             expect(ctrlOnShowSpy).toBeCalledTimes(1);
-            done()
-        },
-        asyncShowedCb: () => {
             expect(ctrlIns.isShowed).toBeTruthy();
+            done()
         }
     };
     const ctrlInsTime2 = dpcMgr.getSigDpcIns(secondCfg);
@@ -146,7 +145,231 @@ test(`通过dpcMgr.showDpc多次显示AsyncShowDpCtrl`, function (done) {
     dpcMgr.showDpc(secondCfg);
     expect(ctrlInsTime2.isShowing).toBeTruthy();
 });
-// test(``)
-// test("preload with res dpc", function () {
 
-// })
+test("测试获取控制器资源数组：get dpc ress ", function () {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(WithResDpCtrl);
+    const dpcRess = dpcMgr.getSigDpcRess(WithResDpCtrl.typeKey);
+    expect(dpcRess.length).toBe(2);
+    expect(dpcRess[1]).toBe("res2");
+});
+
+test("测试预加载显示控制器 test preload display ctrl", function (done) {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(WithResDpCtrl);
+    dpcMgr.loadSigDpc({
+        typeKey: WithResDpCtrl.typeKey,
+        loadCb: (ctrlIns) => {
+            expect(ctrlIns.isLoaded).toBeTruthy();
+            done();
+        }
+    });
+})
+test("测试隐藏显示控制器 test hide display ctrl", function (done) {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(WithResDpCtrl);
+    const ctrlIns = dpcMgr.getSigDpcIns(WithResDpCtrl.typeKey);
+    const ctrlOnHideSpy = jest.spyOn(ctrlIns, "onHide");
+    dpcMgr.showDpc({
+        typeKey: WithResDpCtrl.typeKey,
+        showedCb: (ctrlIns) => {
+            dpcMgr.hideDpc(WithResDpCtrl.typeKey);
+            expect(ctrlIns.isShowed).toBeFalsy();
+            expect(ctrlOnHideSpy).toBeCalledTimes(1);
+            done();
+        }
+    });
+})
+test("测试传参更新显示控制器 test transfer param update display ctrl", function (done) {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(OnUpdateDpc);
+    const ctrlIns = dpcMgr.getSigDpcIns(OnUpdateDpc.typeKey);
+    const ctrlOnUpdateSpy = jest.spyOn(ctrlIns, "onUpdate");
+    dpcMgr.showDpc({
+        typeKey: OnUpdateDpc.typeKey,
+        showedCb: (ctrlIns: OnUpdateDpc) => {
+            dpcMgr.updateDpc(OnUpdateDpc.typeKey, 2);
+            expect(ctrlIns.updateData).toBe(2);
+            expect(ctrlOnUpdateSpy).toBeCalledTimes(1);
+            done();
+        }
+    });
+});
+test("测试传参初始化显示控制器 test transfer param init display ctrl", function () {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(OnInitDpc);
+    const ctrlIns: OnInitDpc = dpcMgr.getSigDpcIns(OnInitDpc.typeKey);
+    const ctrlOnInitSpy = jest.spyOn(ctrlIns, "onInit");
+    dpcMgr.initSigDpc(OnInitDpc.typeKey, 2);
+    expect(ctrlOnInitSpy).toBeCalledTimes(1);
+    expect(ctrlIns.initData).toBe(2);
+});
+test("测试传参显示 显示控制器 test transfer param show display ctrl", function (done) {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(OnShowDpc);
+    const ctrlIns: OnShowDpc = dpcMgr.getSigDpcIns(OnShowDpc.typeKey);
+    const ctrlOnShowSpy = jest.spyOn(ctrlIns, "onShow");
+    dpcMgr.showDpc({
+        typeKey: OnShowDpc.typeKey,
+        showedCb: (ctrlIns: OnShowDpc) => {
+            console.log("hahhaha")
+            expect(ctrlIns.showData).toBe(2);
+            expect(ctrlOnShowSpy).toBeCalledTimes(1);
+            done();
+        },
+        onShowData: 2
+    });
+});
+
+test("测试销毁显示控制器资源和实例 test destroy display ctrl", function (done) {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        },
+        releaseRes: () => {
+
+        }
+    });
+    dpcMgr.regist(WithResDpCtrl);
+
+
+
+    dpcMgr.showDpc({
+        typeKey: WithResDpCtrl.typeKey,
+        showedCb: (ctrlIns: WithResDpCtrl) => {
+            const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
+            const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDestroy");
+
+            dpcMgr.destroyDpc(WithResDpCtrl.typeKey, true);
+            expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(1);
+            expect(ctrlOnDestroySpy).toBeCalledTimes(1);
+            expect(dpcMgr.sigCtrlCache[WithResDpCtrl.typeKey]).toBeUndefined();
+
+            expect(ctrlIns.isLoaded).toBeFalsy();
+            expect(ctrlIns.isInited).toBeFalsy();
+            expect(ctrlIns.isShowed).toBeFalsy();
+            done();
+        }
+    });
+
+});
+test("测试加载和销毁实现了自定义资源处理接口的dpc", function (done) {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        },
+        releaseRes: () => {
+
+        }
+    });
+    dpcMgr.regist(CustomResHandlerDpc);
+
+    const ctrlIns: displayCtrl.ICustomResHandler = dpcMgr.getSigDpcIns(CustomResHandlerDpc.typeKey) as any;
+    const ctrlCustomLoadResSpy = jest.spyOn(ctrlIns, "loadRes");
+    const ctrlCustomReleaseResSpy = jest.spyOn(ctrlIns, "releaseRes");
+
+    const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
+    const dpcMgrResHandlerloadResSpy = jest.spyOn(dpcMgr["_resHandler"], "loadRes");
+    dpcMgr.showDpc({
+        typeKey: CustomResHandlerDpc.typeKey,
+        showedCb: (ctrlIns: CustomResHandlerDpc) => {
+
+            const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDestroy");
+            expect(dpcMgrResHandlerloadResSpy).toBeCalledTimes(0);
+            expect(ctrlCustomLoadResSpy).toBeCalledTimes(1)
+            dpcMgr.destroyDpc(CustomResHandlerDpc.typeKey, true);
+            expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(0);
+            expect(ctrlCustomReleaseResSpy).toBeCalledTimes(1);
+            expect(ctrlOnDestroySpy).toBeCalledTimes(1);
+            expect(dpcMgr.sigCtrlCache[CustomResHandlerDpc.typeKey]).toBeUndefined();
+
+            expect(ctrlIns.isLoaded).toBeFalsy();
+            expect(ctrlIns.isInited).toBeFalsy();
+            expect(ctrlIns.isShowed).toBeFalsy();
+            done();
+        }
+    });
+});
+test("测试显示控制器 isShowing接口 test display-ctrl isShowing func", function () {
+
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(AsyncShowDpCtrl);
+    const firstShowCfg: displayCtrl.IShowConfig = {
+        typeKey: AsyncShowDpCtrl.typeKey,
+
+    };
+    const ctrlIns: displayCtrl.ICtrl = dpcMgr.showDpc(firstShowCfg);
+
+    expect(ctrlIns.isShowing).toBeTruthy();
+    expect(dpcMgr.isShowing(ctrlIns.key)).toBeTruthy();
+})
+
+test("测试显示控制器 isShowed 接口 test display-ctrl isShowed func", function (done) {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(AsyncShowDpCtrl);
+    const firstShowCfg: displayCtrl.IShowConfig = {
+        typeKey: AsyncShowDpCtrl.typeKey,
+        showedCb: (ctrlIns) => {
+            expect(dpcMgr.isShowed(ctrlIns.key)).toBeTruthy();
+            done();
+        }
+    };
+    const ctrlIns: displayCtrl.ICtrl = dpcMgr.showDpc(firstShowCfg);
+
+    expect(ctrlIns.isShowed).toBeFalsy();
+    expect(dpcMgr.isShowed(ctrlIns.key)).toBeFalsy();
+});
+test("测试显示控制器 isRegisted 接口 test display-ctrl isRegisted func", function () {
+    const dpcMgr = new DpcMgr();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(AsyncShowDpCtrl);
+
+    expect(dpcMgr.isRegisted(AsyncShowDpCtrl.typeKey)).toBeTruthy();
+});
+
