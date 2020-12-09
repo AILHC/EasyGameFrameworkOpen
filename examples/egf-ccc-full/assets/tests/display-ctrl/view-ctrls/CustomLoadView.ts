@@ -7,12 +7,18 @@ declare global {
         CustomLoadView: string
     }
 }
-export class CustomLoadView extends NodeCtrl implements displayCtrl.ICustomResHandler {
+export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustomResHandler {
+
+    
+    static typeKey = "CustomLoadView";
+    private static _ress: string[];
+    private static _randomRess = [""]
+    public static prefabUrl = "display-ctrl-test-views/CustomLoadView";
     loadRes(onComplete: VoidFunction, onError: VoidFunction): void {
         dtM.uiMgr.showDpc({
             typeKey: dtM.uiMgr.ctrls.LoadingView,
             showedCb: () => {
-                cc.assetManager.loadAny(CustomLoadView.prefabUrl,
+                cc.assetManager.loadAny(CustomResHandleView.prefabUrl,
                     (finished: number, total: number, item) => {
                         dtM.uiMgr.updateDpc(dtM.uiMgr.ctrls.LoadingView,
                             {
@@ -29,19 +35,11 @@ export class CustomLoadView extends NodeCtrl implements displayCtrl.ICustomResHa
         })
     }
     releaseRes(): void {
-        cc.assetManager.releaseAsset(cc.resources.get(CustomLoadView.prefabUrl));
-    }
-    static typeKey = "CustomLoadView";
-    private static _ress: string[];
-    private static _randomRess = [""]
-    public static prefabUrl = "display-ctrl-test-views/CustomLoadView";
-    onLoad(complete: VoidFunction, error?: VoidFunction): void {
-
-
+        cc.assetManager.releaseAsset(cc.resources.get(CustomResHandleView.prefabUrl));
     }
     onInit() {
         super.onInit()
-        this.node = getPrefabNodeByPath(CustomLoadView.prefabUrl);
+        this.node = getPrefabNodeByPath(CustomResHandleView.prefabUrl);
 
 
     }
@@ -55,7 +53,8 @@ export class CustomLoadView extends NodeCtrl implements displayCtrl.ICustomResHa
     onDestroy(destroyRes?: boolean) {
         super.onDestroy();
         if (destroyRes) {
-            cc.assetManager.releaseAsset(cc.resources.get<cc.Prefab>(CustomLoadView.prefabUrl, cc.Prefab));
+            cc.assetManager.releaseAsset(cc.resources.get<cc.Prefab>(CustomResHandleView.prefabUrl, cc.Prefab));
         }
     }
+    
 }

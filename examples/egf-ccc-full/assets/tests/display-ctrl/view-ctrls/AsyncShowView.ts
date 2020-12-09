@@ -8,7 +8,7 @@ declare global {
     }
 }
 export class AsyncShowView extends NodeCtrl {
-    static typeKey =  "AsyncShowView";
+    static typeKey = "AsyncShowView";
     private static _ress: string[];
     public static prefabUrl = "display-ctrl-test-views/AsyncShowView";
     getRess() {
@@ -31,18 +31,22 @@ export class AsyncShowView extends NodeCtrl {
 
     }
     onShow(data?: any, endCb?: VoidFunction) {
-
+        this.node.active = true;
         dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
-        this._animComp.play("show");
+        this._animComp.play("asyncViewShowAnimClip", 0);
+        
         this._animComp.once(cc.Animation.EventType.FINISHED, () => {
-            super.onShow(null, endCb);
+            endCb();
         });
 
     }
     onHide() {
+        if (this._animComp) {
+            this._animComp.stop();
+        }
         super.onHide();
     }
-    onDestroy(){
+    onDestroy() {
         super.onDestroy();
     }
 }
