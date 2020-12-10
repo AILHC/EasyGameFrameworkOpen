@@ -4,13 +4,9 @@ export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
     isLoading?: boolean;
     isLoaded?: boolean;
     isInited?: boolean;
-    isAsyncShow?: boolean;
-    isShowing?: boolean;
     isShowed?: boolean;
     needShow?: boolean;
     needLoad?: boolean;
-
-
     visible: boolean;
 
     protected node: cc.Node;
@@ -37,11 +33,10 @@ export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
             this.node.destroy();
         }
     }
-    onShow(data?: any, endCb?: VoidFunction) {
+    onShow(data?: any) {
         if (this.node) {
             this.node.active = true;
         }
-        endCb && endCb();
     }
 
     onHide() {
