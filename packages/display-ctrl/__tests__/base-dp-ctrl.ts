@@ -9,15 +9,11 @@ export class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
     public needLoad: boolean = true;
     public isLoaded: boolean = false;
     public isLoading: boolean = false;
-    protected _isAsyncShow: boolean = false;
 
     public isInited: boolean = false;
-    public isShowing: boolean = false;
     public isShowed: boolean = false;
     public needShow: boolean = false;
-    public get isAsyncShow() {
-        return this._isAsyncShow;
-    }
+    
     public onInit(initData?: any): void {
     }
     public onShow(showData?: any, endCb?: VoidFunction): void {

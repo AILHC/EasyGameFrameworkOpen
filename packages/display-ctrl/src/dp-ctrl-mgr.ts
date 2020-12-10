@@ -3,7 +3,8 @@
  * 显示控制类管理器基类
  */
 export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
-    ctrls: CtrlKeyMapType = new Proxy({}, {
+
+    ctrlKeys: CtrlKeyMapType = new Proxy({}, {
         get(target, key) {
             return key;
         }
@@ -144,6 +145,7 @@ export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMap
             if (!ins.isInited) {
                 this.initDpcByIns(ins, showCfg.onInitData);
             }
+
             if (ins.isInited) {
                 this.showDpcByIns(ins, showCfg);
             }
@@ -184,29 +186,13 @@ export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMap
         this.destroyDpcByIns(ins, destroyRes);
         delete this._sigCtrlCache[key];
     }
-    public isShowing(key: string) {
+    public isLoading(key: string): boolean {
         if (!key) {
             console.warn("!!!key is null");
             return;
         }
         const ins = this._sigCtrlCache[key];
-        if (ins) {
-            return ins.isShowing;
-        } else {
-            return false;
-        }
-    }
-    public isShowed(key: string): boolean {
-        if (!key) {
-            console.warn("!!!key is null");
-            return;
-        }
-        const ins = this._sigCtrlCache[key];
-        if (ins) {
-            return ins.isShowed;
-        } else {
-            return false;
-        }
+        return ins ? ins.isLoading : false;
     }
     public isLoaded(key: string): boolean {
         if (!key) {
@@ -214,12 +200,25 @@ export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMap
             return;
         }
         const ins = this._sigCtrlCache[key];
-        if (ins) {
-            return ins.isLoaded;
-        } else {
+        return ins ? ins.isLoaded : false;
+    }
+    public isInited(key: string): boolean {
+        if (!key) {
+            console.warn("!!!key is null");
+            return;
+        }
+        const ins = this._sigCtrlCache[key];
+        return ins ? ins.isInited : false;
+    }
+    public isShowed(key: string): boolean {
+        if (!key) {
+            console.warn("!!!key is null");
             return false;
         }
+        const ins = this._sigCtrlCache[key];
+        return ins ? ins.isShowed : false;
     }
+
     //基础操作函数
 
     public insDpc<T extends displayCtrl.ICtrl>(keyCfg: string | displayCtrl.IKeyConfig): T {
@@ -257,23 +256,9 @@ export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMap
     }
     public showDpcByIns(dpcIns: displayCtrl.ICtrl, showCfg: displayCtrl.IShowConfig) {
         if (dpcIns.needShow) {
-            if (dpcIns.isAsyncShow) {
-                if (dpcIns.isShowing) {
-                    dpcIns.forceHide();
-                    dpcIns.isShowing = false;
-                }
-                dpcIns.isShowing = true;
-                dpcIns.onShow(showCfg.onShowData, function () {
-                    dpcIns.isShowed = true;
-                    dpcIns.isShowing = false;
-                    showCfg.showedCb && showCfg.showedCb(dpcIns);
-                });
-            } else {
-                dpcIns.onShow(showCfg.onShowData);
-                dpcIns.isShowed = true;
-                showCfg.showedCb && showCfg.showedCb(dpcIns);
-
-            }
+            dpcIns.onShow(showCfg.onShowData);
+            dpcIns.isShowed = true;
+            showCfg.showedCb && showCfg.showedCb(dpcIns);
         }
         dpcIns.needShow = false;
     }
@@ -281,7 +266,6 @@ export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMap
         if (!dpcIns) return;
         dpcIns.needShow = false;
         dpcIns.onHide();
-        dpcIns.isShowing = false;
         dpcIns.isShowed = false;
     }
     public destroyDpcByIns(dpcIns: displayCtrl.ICtrl, destroyRes?: boolean) {
