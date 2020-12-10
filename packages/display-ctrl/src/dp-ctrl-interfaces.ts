@@ -104,11 +104,6 @@ declare global {
             isLoaded?: boolean;
             /**已经初始化 */
             isInited?: boolean;
-
-            /**是否异步显示 */
-            isAsyncShow?: boolean
-            /**正在显示 */
-            isShowing?: boolean;
             /**已经显示 */
             isShowed?: boolean;
             /**需要显示 */
@@ -125,9 +120,8 @@ declare global {
             /**
              * 当显示时
              * @param showData 显示数据
-             * @param endCb 显示结束
              */
-            onShow(showData?: any, endCb?: VoidFunction): void;
+            onShow(showData?: any): void;
             /**
              * 当更新时
              * @param updateData 更新数据
@@ -140,7 +134,6 @@ declare global {
             getFace<T = any>(): T;
             /**
              * 当隐藏时
-             * @param endCb 结束回调
              */
             onHide(): void;
             /**
@@ -150,7 +143,6 @@ declare global {
             /**
              * 当销毁时
              * @param destroyRes 
-             * @param endCb 结束回调
              */
             onDestroy(destroyRes?: boolean): void;
             /**
@@ -161,7 +153,11 @@ declare global {
 
         interface IMgr<CtrlKeyMapType = any> {
             /**控制器key字典 */
-            ctrls: CtrlKeyMapType;
+            ctrlKeys: CtrlKeyMapType;
+            /**
+             * 控制器单例字典
+             */
+            sigCtrlCache: CtrlInsMap;
             /**
              * 初始化
              * @param resHandler 资源处理
@@ -177,7 +173,7 @@ declare global {
              * @param ctrlClass 
              * @param typeKey 如果ctrlClass这个类里没有静态属性typeKey则取传入的typeKey
              */
-            regist(ctrlClass: CtrlClassType, typeKey?:  keyof CtrlKeyMapType): void;
+            regist(ctrlClass: CtrlClassType, typeKey?: keyof CtrlKeyMapType): void;
             /**
              * 是否注册了
              * @param typeKey 
@@ -192,24 +188,24 @@ declare global {
              * 获取/生成单例显示控制器示例
              * @param cfg 注册时的typeKey或者 IDpcKeyConfig
              */
-            getSigDpcIns<T extends ICtrl >(cfg: string | IKeyConfig): T
+            getSigDpcIns<T extends ICtrl>(cfg: string | IKeyConfig): T
             /**
              * 加载Dpc
              * @param loadCfg 注册时的typeKey或者 IDpCtrlLoadConfig
              */
-            loadSigDpc<T extends ICtrl >(loadCfg: string | ILoadConfig): T;
+            loadSigDpc<T extends ICtrl>(loadCfg: string | ILoadConfig): T;
             /**
              * 初始化显示控制器
              * @param initCfg 注册类时的 typeKey或者 IDpCtrlInitConfig
              */
-            initSigDpc<T extends ICtrl >(initCfg: string | IInitConfig): T;
+            initSigDpc<T extends ICtrl>(initCfg: string | IInitConfig): T;
             /**
              * 显示单例显示控制器
              * @param typeKey 
              * @param key 
              * @param lifeCircleData 
              */
-            showDpc<T extends ICtrl >(showCfg: string | IShowConfig): T;
+            showDpc<T extends ICtrl>(showCfg: string | IShowConfig): T;
             /**
              * 更新控制器
              * @param key 
@@ -233,7 +229,7 @@ declare global {
              * 实例化显示控制器
              * @param keyCfg 
              */
-            insDpc<T extends ICtrl >(keyCfg: string | IKeyConfig): T;
+            insDpc<T extends ICtrl>(keyCfg: string | IKeyConfig): T;
             /**
              * 加载显示控制器
              * @param ins 
@@ -259,6 +255,22 @@ declare global {
              * @param destroyRes 是否销毁资源
              */
             destroyDpcByIns<T extends ICtrl>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void;
+            
+            /**
+             * 获取单例控制器是否正在
+             * @param key 
+             */
+            isLoading(key: string): boolean
+            /**
+             * 获取单例控制器是否加载了
+             * @param key 
+             */
+            isLoaded(key: string): boolean;
+            /**
+             * 获取单例控制器是否初始化了
+             * @param key 
+             */
+            isInited(key: string): boolean;
             /**
              * 获取单例控制器是否显示
              * @param key 
@@ -269,10 +281,7 @@ declare global {
              * @param typeKey 
              */
             getCtrlClass(typeKey: string): CtrlClassType<ICtrl>;
-            /**
-             * 控制器单例字典
-             */
-            sigCtrlCache: CtrlInsMap;
+            
 
         }
     }
