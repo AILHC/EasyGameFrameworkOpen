@@ -64,7 +64,7 @@ declare global {
         interface ILoadConfig extends IKeyConfig {
             /**加载后onLoad参数 */
             onLoadData?: any;
-            /**加载完成回调 */
+            /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
             loadCb?: CtrlInsCb;
         }
         interface ILoadHandler extends ILoadConfig {
@@ -108,10 +108,6 @@ declare global {
             isLoaded?: boolean;
             /**已经初始化 */
             isInited?: boolean;
-            /**是否异步显示 */
-            isAsyncShow?: boolean;
-            /**正在显示 */
-            isShowing?: boolean;
             /**已经显示 */
             isShowed?: boolean;
             /**需要显示 */
@@ -128,9 +124,8 @@ declare global {
             /**
              * 当显示时
              * @param showData 显示数据
-             * @param endCb 显示结束
              */
-            onShow(showData?: any, endCb?: VoidFunction): void;
+            onShow(showData?: any): void;
             /**
              * 当更新时
              * @param updateData 更新数据
@@ -143,7 +138,6 @@ declare global {
             getFace<T = any>(): T;
             /**
              * 当隐藏时
-             * @param endCb 结束回调
              */
             onHide(): void;
             /**
@@ -153,7 +147,6 @@ declare global {
             /**
              * 当销毁时
              * @param destroyRes
-             * @param endCb 结束回调
              */
             onDestroy(destroyRes?: boolean): void;
             /**
@@ -163,7 +156,11 @@ declare global {
         }
         interface IMgr<CtrlKeyMapType = any> {
             /**控制器key字典 */
-            ctrls: CtrlKeyMapType;
+            ctrlKeys: CtrlKeyMapType;
+            /**
+             * 控制器单例字典
+             */
+            sigCtrlCache: CtrlInsMap;
             /**
              * 初始化
              * @param resHandler 资源处理
@@ -260,6 +257,21 @@ declare global {
              */
             destroyDpcByIns<T extends ICtrl>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void;
             /**
+             * 获取单例控制器是否正在
+             * @param key
+             */
+            isLoading(key: string): boolean;
+            /**
+             * 获取单例控制器是否加载了
+             * @param key
+             */
+            isLoaded(key: string): boolean;
+            /**
+             * 获取单例控制器是否初始化了
+             * @param key
+             */
+            isInited(key: string): boolean;
+            /**
              * 获取单例控制器是否显示
              * @param key
              */
@@ -269,10 +281,6 @@ declare global {
              * @param typeKey
              */
             getCtrlClass(typeKey: string): CtrlClassType<ICtrl>;
-            /**
-             * 控制器单例字典
-             */
-            sigCtrlCache: CtrlInsMap;
         }
     }
 }
