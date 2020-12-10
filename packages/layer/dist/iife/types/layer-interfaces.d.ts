@@ -1,10 +1,10 @@
 declare global {
-    namespace egf {
+    namespace layer {
         type LayerClassType = new () => ILayer;
         interface ILayer {
             layerType: number;
             layerName: string;
-            onInit(layerName: string, layerType: number, layerMgr: ILayerMgr): void;
+            onInit(layerName: string, layerType: number, layerMgr: IMgr): void;
             /**
              * 当被添加到根节点时
              * @param root
@@ -28,28 +28,33 @@ declare global {
              */
             onNodeAdd(node: any): void;
         }
-        interface ILayerMgr<T = any> {
+        interface IMgr<T = any> {
             /**
              * 层级字典
              */
-            layerMap: Map<number, egf.ILayer>;
+            layerMap: Map<number, layer.ILayer>;
             /**
              * 层级管理根节点
              */
             root: T;
             /**
-             * 初始化层级
-             * @param root 层级根节点
+             * 初始化层级管理器
              * @param layerEnum 层级枚举
              * @param defaultType 默认层级处理类
              * @param typeMap 自定义层级处理类字典
+             * @param root 层级根节点
              */
-            init(root: T, layerEnum: any, defaultType: LayerClassType, typeMap?: Map<string, LayerClassType>): void;
+            init(layerEnum: any, defaultType: LayerClassType, typeMap?: Map<string, LayerClassType>, root?: T): void;
+            /**
+             * 设置层级根节点
+             * @param root
+             */
+            setLayerRoot(root: T): void;
             /**
              * 添加层级
              * @param layer 层级对象
              */
-            addLayer(layer: egf.ILayer): boolean;
+            addLayer(layer: layer.ILayer): boolean;
             /**
              * 移除层级
              * @param layerType 层级类型
@@ -75,9 +80,8 @@ declare global {
              * 获取层级
              * @param layerType
              */
-            getLayerByType<K extends egf.ILayer>(layerType: number): K;
+            getLayerByType<K extends layer.ILayer>(layerType: number): K;
         }
     }
 }
-export interface LayerInterfaces {
-}
+export {};
