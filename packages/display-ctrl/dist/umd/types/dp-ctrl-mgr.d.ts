@@ -3,7 +3,7 @@
  * 显示控制类管理器基类
  */
 export declare class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
-    ctrls: CtrlKeyMapType;
+    ctrlKeys: CtrlKeyMapType;
     /**
      * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
      */
@@ -32,9 +32,10 @@ export declare class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<Ct
     updateDpc<K>(key: string, updateData?: K): void;
     hideDpc(key: string): void;
     destroyDpc(key: string, destroyRes?: boolean): void;
-    isShowing(key: string): boolean;
-    isShowed(key: string): boolean;
+    isLoading(key: string): boolean;
     isLoaded(key: string): boolean;
+    isInited(key: string): boolean;
+    isShowed(key: string): boolean;
     insDpc<T extends displayCtrl.ICtrl>(keyCfg: string | displayCtrl.IKeyConfig): T;
     loadDpcByIns(dpcIns: displayCtrl.ICtrl, loadCfg: displayCtrl.ILoadConfig): void;
     initDpcByIns<T = any>(dpcIns: displayCtrl.ICtrl, initData?: T): void;

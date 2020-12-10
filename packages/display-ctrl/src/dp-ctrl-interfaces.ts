@@ -59,7 +59,7 @@ declare global {
         interface ILoadConfig extends IKeyConfig {
             /**加载后onLoad参数 */
             onLoadData?: any,
-            /**加载完成回调 */
+            /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
             loadCb?: CtrlInsCb
         }
         interface ILoadHandler extends ILoadConfig {
@@ -87,6 +87,10 @@ declare global {
              * 透传初始化数据
              */
             onInitData?: any
+            /**
+             * 强制重新加载
+             */
+            forceLoad?: boolean
             /**
              * 显示数据
              */
@@ -255,7 +259,7 @@ declare global {
              * @param destroyRes 是否销毁资源
              */
             destroyDpcByIns<T extends ICtrl>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void;
-            
+
             /**
              * 获取单例控制器是否正在
              * @param key 
@@ -281,7 +285,7 @@ declare global {
              * @param typeKey 
              */
             getCtrlClass(typeKey: string): CtrlClassType<ICtrl>;
-            
+
 
         }
     }

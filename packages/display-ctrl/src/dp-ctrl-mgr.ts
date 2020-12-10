@@ -130,17 +130,18 @@ export class DpcMgr<CtrlKeyMapType = any> implements displayCtrl.IMgr<CtrlKeyMap
             const preloadCfg = showCfg as displayCtrl.ILoadConfig;
             const loadCb = preloadCfg.loadCb;
             preloadCfg.loadCb = (loadedIns) => {
-                loadCb && loadCb(loadedIns);
-                const loadedShowCfg = sigCtrlShowCfgMap[showTypeKey];
-                if (loadedIns.needShow) {
-                    this.initDpcByIns(loadedIns, loadedShowCfg.onInitData);
-                    this.showDpcByIns(loadedIns, loadedShowCfg);
+                loadCb && loadCb(null);
+                if (loadedIns) {
+                    const loadedShowCfg = sigCtrlShowCfgMap[showTypeKey];
+                    if (loadedIns.needShow) {
+                        this.initDpcByIns(loadedIns, loadedShowCfg.onInitData);
+                        this.showDpcByIns(loadedIns, loadedShowCfg);
+                    }
                 }
                 delete sigCtrlShowCfgMap[showTypeKey];
             }
             ins.needLoad = false;
             this._loadRess(ins, preloadCfg);
-
         } else {
             if (!ins.isInited) {
                 this.initDpcByIns(ins, showCfg.onInitData);
