@@ -11,12 +11,12 @@ import { LayerMgr } from "@ailhc/layer";
 import { getChild, getComp } from "../../src/Utils";
 import { DpcTestLayerType } from "./DpcTestLayerType";
 import { dtM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
-import { AsyncShowView } from "./view-ctrls/AsyncShowView";
-import { CustomResHandleView } from "./view-ctrls/CustomLoadView";
+import { CustomResHandleView } from "./view-ctrls/CustomResHandleView";
 import { DepResView } from "./view-ctrls/DepResView";
 import { LoadingView } from "./view-ctrls/LoadingView";
-import { UnDepResView } from "./view-ctrls/UnDepResView";
 import { ObjPoolMgr } from "@ailhc/obj-pool";
+import { AnimView } from "./view-ctrls/AnimView";
+import { error } from "console";
 
 const { ccclass, property } = cc._decorator;
 
@@ -26,7 +26,7 @@ declare global {
     }
     interface IDpcTestModuleMap {
         uiMgr: displayCtrl.IMgr<IDpcTestViewKeyMap>;
-        layerMgr: egf.ILayerMgr<cc.Node>;
+        layerMgr: layer.IMgr<cc.Node>;
         poolMgr: objPool.IPoolMgr;
     }
 }
@@ -49,6 +49,7 @@ export default class DpcTestMainComp extends cc.Component {
                         },
                         (err, items) => {
                             if (err) {
+                                console.error(`加载失败`, err);
                                 config.error && config.error();
                             } else {
                                 config.complete && config.complete();
@@ -58,7 +59,6 @@ export default class DpcTestMainComp extends cc.Component {
                 releaseRes: (ctrlIns) => {
                     const ress = ctrlIns.getRess();
                     if (ress && ress.length) {
-                        const assets = [];
                         let asset: cc.Asset;
                         ress.forEach((res) => {
                             asset = cc.resources.get(res);
@@ -76,7 +76,7 @@ export default class DpcTestMainComp extends cc.Component {
         const canvas = cc.director.getScene().getChildByName("Canvas");
         cc.game.addPersistRootNode(canvas);
 
-        layerMgr.init(canvas, DpcTestLayerType, Layer);
+        layerMgr.init(DpcTestLayerType, Layer, null, canvas);
         app.loadModule(layerMgr, "layerMgr");
         app.loadModule(dpcMgr, "uiMgr");
         const objPoolMgr = new ObjPoolMgr();
@@ -88,7 +88,7 @@ export default class DpcTestMainComp extends cc.Component {
         window["dtM"] = dtM;
         // TestView
         // dpcMgr.regist(LoadingView);
-        dpcMgr.registTypes([LoadingView, AsyncShowView, CustomResHandleView, DepResView, UnDepResView]);
+        dpcMgr.registTypes([LoadingView, AnimView, CustomResHandleView, DepResView]);
         const tipsNode = getChild(this.depResViewBtnsNode, "depResStateTips");
         this._depResViewTipsLabel = getComp(tipsNode, cc.Label);
         this.depResViewBtnsNode.zIndex = 100;
@@ -99,33 +99,39 @@ export default class DpcTestMainComp extends cc.Component {
     }
     //····················测试接口······························
     showDepResView() {
-        dtM.uiMgr.showDpc(dtM.uiMgr.ctrls.DepResView);
+        dtM.uiMgr.showDpc(dtM.uiMgr.ctrlKeys.DepResView);
     }
     hideDepResView() {
-        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrls.DepResView);
+        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrlKeys.DepResView);
     }
     destroyDepResView() {
-        dtM.uiMgr.destroyDpc(dtM.uiMgr.ctrls.DepResView, true);
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.ctrlKeys.DepResView, true);
     }
     getDepResViewRess() {
-        const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.ctrls.DepResView)?.getRess();
+        const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.ctrlKeys.DepResView)?.getRess();
         if (ress) {
             this._depResViewTipsLabel.string = ress.toString();
         }
     }
     preloadDepResViewRess() {
-        dtM.uiMgr.loadSigDpc(dtM.uiMgr.ctrls.DepResView);
+        dtM.uiMgr.loadSigDpc(dtM.uiMgr.ctrlKeys.DepResView);
     }
 
-    showAsyncShowView() {
+    showAnimView() {
         dtM.uiMgr.showDpc({
-            typeKey: dtM.uiMgr.ctrls.AsyncShowView,
+            typeKey: dtM.uiMgr.ctrlKeys.AnimView,
             showedCb: () => {
-                console.log(`${dtM.uiMgr.ctrls.AsyncShowView}:显示完成`);
+                console.log(`${dtM.uiMgr.ctrlKeys.AnimView}:显示完成`);
             }
         });
     }
-    hideAsyncShowView() {
-        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrls.AsyncShowView);
+    hideAnimView() {
+        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrlKeys.AnimView);
+    }
+    showCustomResHandlerView(){
+        dtM.uiMgr.showDpc(dtM.uiMgr.ctrlKeys.CustomResHandleView);
+    }
+    hideCustomResHandlerView(){
+        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrlKeys.CustomResHandleView);
     }
 }
