@@ -4,8 +4,6 @@ declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
 	    isLoading?: boolean;
 	    isLoaded?: boolean;
 	    isInited?: boolean;
-	    isAsyncShow?: boolean;
-	    isShowing?: boolean;
 	    isShowed?: boolean;
 	    needShow?: boolean;
 	    needLoad?: boolean;
@@ -19,7 +17,7 @@ declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
 	    onUpdate(updateData: any): void;
 	    getFace<T = any>(): T;
 	    onDestroy(destroyRes?: boolean): void;
-	    onShow(data?: any, endCb?: VoidFunction): void;
+	    onShow(data?: any): void;
 	    onHide(): void;
 	    forceHide(): void;
 	    onResize(): void;
@@ -27,10 +25,10 @@ declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
 
 }
 declare module '@ailhc/dpctrl-ccc/src/layer' {
-	export class Layer extends cc.Node implements egf.ILayer {
-	    private _layerType;
-	    private _layerMgr;
-	    onInit(layerName: string, layerType: number, layerMgr: egf.ILayerMgr<cc.Node>): void;
+	export class Layer extends cc.Node implements layer.ILayer {
+	    protected _layerType: number;
+	    protected _layerMgr: layer.IMgr<cc.Node>;
+	    onInit(layerName: string, layerType: number, layerMgr: layer.IMgr<cc.Node>): void;
 	    onDestroy(): void;
 	    get layerType(): number;
 	    get layerName(): string;

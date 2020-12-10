@@ -1,14 +1,14 @@
 import { } from "@ailhc/layer"
 import { Node, UITransform } from "cc";
-export class Layer extends Node implements egf.ILayer {
+export class Layer extends Node implements layer.ILayer {
 
 
 
-    private _layerType: number;
-    private _layerMgr: egf.ILayerMgr<Node>;
+    protected _layerType: number;
+    protected _layerMgr: layer.IMgr<Node>;
 
     onInit(layerName: string, layerType: number
-        , layerMgr: egf.ILayerMgr<Node>): void {
+        , layerMgr: layer.IMgr<Node>): void {
         this._layerType = layerType;
         this.name = layerName;
         this._layerMgr = layerMgr;

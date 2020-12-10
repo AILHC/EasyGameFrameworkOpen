@@ -1,10 +1,10 @@
 import { } from "@ailhc/layer"
-export class Layer extends cc.Node implements egf.ILayer {
-    private _layerType: number;
-    private _layerMgr: egf.ILayerMgr<cc.Node>;
+export class Layer extends cc.Node implements layer.ILayer {
+    protected _layerType: number;
+    protected _layerMgr: layer.IMgr<cc.Node>;
 
     onInit(layerName: string, layerType: number
-        , layerMgr: egf.ILayerMgr<cc.Node>): void {
+        , layerMgr: layer.IMgr<cc.Node>): void {
         this._layerType = layerType;
         this.name = layerName;
         this._layerMgr = layerMgr;
