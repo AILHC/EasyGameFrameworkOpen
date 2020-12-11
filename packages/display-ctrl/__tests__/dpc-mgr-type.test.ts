@@ -91,3 +91,6 @@ mgr.showDpc({
     onInitData: { a: 1, b: 1 },
     onShowData: { a: 1, b: 1 }
 })
+const myMgr:displayCtrl.IMgr<CtrlKeyTypeMapType, InitDataTypeMapType, ShowDataTypeMapType> = {} as any;
+
+myMgr.showDpc("typeTest2")
