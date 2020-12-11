@@ -1,9 +1,9 @@
-type IListenerHandler<T> = broadcast.IListenerHandler<T>;
-export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
-    public keyMap: { [key in keyof KeyType]: any };
-    private _valueMap: { [key in keyof KeyType]: any };
-    private _handlerMap: { [key in keyof KeyType]: IListenerHandler<KeyType> | IListenerHandler<KeyType>[] };
-    private _stickBroadcasterMap: { [key in keyof KeyType]: broadcast.IBroadcaster<KeyType>[] };
+
+export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
+    public keyMap: { [key in keyof MsgKeyType]: MsgKeyType[key] };
+    private _valueMap: { [key in keyof MsgKeyType]: any };
+    private _handlerMap: { [key in keyof MsgKeyType]: broadcast.IListenerHandler | broadcast.IListenerHandler[] };
+    private _stickBroadcasterMap: { [key in keyof MsgKeyType]: broadcast.IBroadcaster[] };
     constructor() {
         this.keyMap = new Proxy({} as any, {
             get: (target, p) => {
@@ -11,28 +11,32 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
             }
         })
         this._valueMap = {} as any;
-
+        
     }
     //注册
     /**
-     * 注册事件
+     * 注册事件，可以注册多个
      * @param key 事件名
      * @param listener 监听回调
      * @param context 上下文
      * @param args 透传参数
-     * @param more 注册多个
+     * @param once 是否监听一次
+     * 
      */
-    public on(handler?: IListenerHandler<KeyType>[] | IListenerHandler<KeyType>) {
+    public on<keyType extends keyof MsgKeyType = any>(
+        handler?: broadcast.IListenerHandler<keyType, ValueType> |
+            broadcast.IListenerHandler<keyType, ValueType>[]
+    ) {
         if (this._isArr(handler)) {
-            const handlers = (handler as IListenerHandler<KeyType>[]);
+            const handlers: broadcast.IListenerHandler[] = handler as any;
             for (let i = 0; i < handlers.length; i++) {
                 this._addHandler(handlers[i]);
             }
         } else {
-            this._addHandler(handler as IListenerHandler<KeyType>);
+            this._addHandler(handler as any);
         }
     }
-    public has(key: keyof KeyType) {
+    public has(key: keyof MsgKeyType) {
         return this._handlerMap && !!this._handlerMap[key]
     }
 
@@ -51,7 +55,7 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
      * 注销
      * @param key 
      */
-    public offAll(key?: keyof KeyType) {
+    public offAll(key?: keyof MsgKeyType) {
         if (this._isStringNull(key)) {
             this._handlerMap = undefined;
             this._stickBroadcasterMap = undefined;
@@ -66,13 +70,13 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
         if (valueMap) valueMap[key] = undefined;
 
     }
-    public off(key: keyof KeyType, listener: broadcast.Listener, context?: any, onceOnly?: boolean) {
+    public off(key: keyof MsgKeyType, listener: broadcast.Listener, context?: any, onceOnly?: boolean) {
         if (this._isStringNull(key)) return;
         const handlerMap = this._handlerMap;
         if (!handlerMap || !handlerMap[key]) return this;
-        let handler = handlerMap[key] as IListenerHandler<KeyType>;
+        let handler: broadcast.IListenerHandler = handlerMap[key] as any;
         if (handler !== undefined && handler !== null) {
-            let handlers: IListenerHandler<KeyType>[];
+            let handlers: broadcast.IListenerHandler[];
             if (!this._isArr(handler)) {
                 if ((!context || handler.context === context)
                     && (listener == null || handler.listener === listener)
@@ -138,7 +142,7 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
      * @param callback 回调
      * @param persistence 是否持久化数据
      */
-    public broadcast<T = any>(key: keyof KeyType, value?: T, callback?: broadcast.ResultCallBack, persistence?: boolean) {
+    public broadcast<T = any>(key: keyof MsgKeyType, value?: T, callback?: broadcast.ResultCallBack, persistence?: boolean) {
         const handlerMap = this._handlerMap;
         if (!handlerMap) return;
         const handlers = handlerMap[key];
@@ -152,14 +156,14 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
         }
         if (!handlers) return;
         if (!this._isArr(handlers)) {
-            const handler = handlers as IListenerHandler<KeyType>;
+            const handler = handlers as broadcast.IListenerHandler;
             value ? Broadcast._runHandlerWithData(handler, value, callback) : Broadcast._runHandler(handler, callback);
             if (handler.once) {
                 this._handlerMap[key] = undefined;
             }
         } else {
-            const handlerArr = handlers as IListenerHandler<KeyType>[];
-            let handler: IListenerHandler<KeyType>;
+            const handlerArr = handlers as broadcast.IListenerHandler[];
+            let handler: broadcast.IListenerHandler;
             let endIndex = handlerArr.length - 1;
             for (let i = endIndex; i >= 0; i--) {
                 handler = handlerArr[i];
@@ -187,7 +191,12 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
      * @param callback 能够收到接收器返回的消息
      * @param persistence 是否持久化消息类型。持久化的消息可以在任意时刻通过 broadcast.value(key) 获取当前消息的数据包。默认情况下，未持久化的消息类型在没有接收者的时候会被移除，而持久化的消息类型则不会。开发者可以通过 [clear] 函数来移除持久化的消息类型。
      */
-    public stickyBroadcast(key: keyof KeyType, value?: T, callback?: broadcast.ResultCallBack, persistence?: boolean) {
+    public stickyBroadcast<keyType extends keyof MsgKeyType = any>(
+        key: keyType,
+        value?: ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>],
+        callback?: broadcast.ResultCallBack,
+        persistence?: boolean
+    ) {
         if (this._isStringNull(key)) return;
         const handlerMap = this._handlerMap;
         if (handlerMap && handlerMap[key]) {
@@ -199,8 +208,8 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
                 this._stickBroadcasterMap = stickyMap;
             }
             const broadcasters = stickyMap[key];
-            const broadcaster: broadcast.IBroadcaster<KeyType> = {
-                key: key,
+            const broadcaster: broadcast.IBroadcaster = {
+                key: key as any,
                 value: value,
                 callback: callback,
                 persistence: persistence
@@ -231,7 +240,7 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
      * @param handler 广播监听器
      * @param data 广播的消息数据
      */
-    protected static _runHandlerWithData(handler: IListenerHandler<any>, data: any, callback: broadcast.Listener) {
+    protected static _runHandlerWithData(handler: broadcast.IListenerHandler, data: any, callback: broadcast.Listener) {
         if (handler.listener == null) return null;
         let result: any;
         if (data == null) {
@@ -247,7 +256,7 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
      * 执行广播监听者的逻辑
      * @param handler 
      */
-    protected static _runHandler(handler: IListenerHandler<any>, callback: broadcast.Listener) {
+    protected static _runHandler(handler: broadcast.IListenerHandler, callback: broadcast.Listener) {
         if (handler.listener == null) return null;
         const args = handler.args ? handler.args.unshift(callback) : [callback];
         const result: any = handler.listener.apply(handler.context, args);
@@ -259,7 +268,7 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
      * 会判断是否有粘性广播，如果有就会触发广播
      * @param handler 
      */
-    protected _addHandler(handler: IListenerHandler<KeyType>) {
+    protected _addHandler(handler: broadcast.IListenerHandler) {
         let handlerMap = this._handlerMap;
         if (handler.once) {
             this.off(handler.key, handler.listener, handler.context, handler.once);
@@ -271,7 +280,7 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
         const events = handlerMap[handler.key];
         if (events) {
             if (this._isArr(events)) {
-                (events as IListenerHandler<KeyType>[]).push(handler);
+                (events as broadcast.IListenerHandler[]).push(handler);
             } else {
                 handlerMap[handler.key] = [events as any, handler];
             }
@@ -282,10 +291,10 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
         if (stickyMap) {
             const stickyBroadcasters = stickyMap[handler.key];
             if (stickyBroadcasters) {
-                let broadcaster: broadcast.IBroadcaster<KeyType>;
+                let broadcaster: broadcast.IBroadcaster;
                 for (let i = 0; i < stickyBroadcasters.length; i++) {
                     broadcaster = stickyBroadcasters[i];
-                    this.broadcast(broadcaster.key, broadcaster.value, broadcaster.callback, broadcaster.persistence);
+                    this.broadcast(broadcaster.key as any, broadcaster.value, broadcaster.callback, broadcaster.persistence);
                 }
                 stickyMap[handler.key] = undefined;
             }
@@ -299,7 +308,7 @@ export class Broadcast<KeyType extends broadcast.IMsgKey, T = any> {
      * 取值
      * @param key 
      */
-    public value(key: keyof KeyType): T[keyof T] {
+    public value<keyType extends keyof MsgKeyType = any>(key: keyType): ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>] {
         return this._valueMap && this._valueMap[key];
     }
     /**

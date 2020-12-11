@@ -52,7 +52,7 @@ declare global {
         }
         interface ILoadConfig {
             /**页面类型key */
-            typeKey: string,
+            typeKey?: string,
             /**加载后onLoad参数 */
             onLoadData?: any,
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */

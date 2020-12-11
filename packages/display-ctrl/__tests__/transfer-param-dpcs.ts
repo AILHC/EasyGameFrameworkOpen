@@ -1,5 +1,11 @@
 import { BaseDpCtrl } from "./base-dp-ctrl";
-
+declare global {
+    interface ITestCtrlKeyType {
+        OnUpdateDpc: "OnUpdateDpc",
+        OnShowDpc: "OnShowDpc",
+        OnInitDpc: "OnInitDpc"
+    }
+}
 export class OnUpdateDpc extends BaseDpCtrl {
     public static readonly typeKey: string = "OnUpdateDpc";
     public updateData: number;
@@ -19,7 +25,7 @@ export class OnShowDpc extends BaseDpCtrl {
     constructor() {
         super();
     }
-    onShow(showData:number){
+    onShow(showData: number) {
         this.showData = showData;
         super.onShow()
     }

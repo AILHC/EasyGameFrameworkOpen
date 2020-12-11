@@ -1,5 +1,9 @@
 import { BaseDpCtrl } from "./base-dp-ctrl";
-
+declare global {
+    interface ITestCtrlKeyType {
+        WithResDpCtrl: "WithResDpCtrl"
+    }
+}
 export class WithResDpCtrl extends BaseDpCtrl {
     public static readonly typeKey: string = "WithResDpCtrl";
     public getRess(){
