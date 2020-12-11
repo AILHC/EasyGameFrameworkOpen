@@ -1,26 +1,28 @@
 declare global {
     namespace broadcast {
         interface IMsgKey {
-            onListenerOn?: any | string,
+            onListenerOn?: "onListenerOn",
         }
-        /**
-         * 事件监听触发的广播派发数据
-         */
-        type IListenerOnData = string;
+        interface IMsgValueType {
+            onListenerOn?: string
+        }
 
         type ResultCallBack = (data?: any, callBack?: any) => void
-        type Listener = (value: any, callBack?: ResultCallBack, ...args) => void
-        type BroadcastKey = (keyof IMsgKey);
-        interface IListenerHandler<T> {
-            key: keyof T
-            listener: Listener,
+        type Listener<T = any> = (value: T, callBack?: ResultCallBack, ...args) => void
+        /**
+         * 将索引类型转换为任意类型的索引类型
+         */
+        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
+        interface IListenerHandler<keyType extends keyof any = any, ListenerValueTypeMapType = any> {
+            key: keyType
+            listener: Listener<ListenerValueTypeMapType[ToAnyIndexKey<keyType, ListenerValueTypeMapType>]>,
             context?: any,
             args?: any[],
             once?: boolean
         }
-        interface IBroadcaster<T extends IMsgKey> {
-            key: keyof T,
-            handlers?: IListenerHandler<T>[]
+        interface IBroadcaster {
+            key: string,
+            handlers?: IListenerHandler[]
             value?: any,
             callback?: ResultCallBack,
             persistence?: boolean

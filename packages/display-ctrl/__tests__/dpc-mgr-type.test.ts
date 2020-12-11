@@ -21,6 +21,11 @@ interface ShowDataTypeMapType {
         fjfj: string
     }
 }
+type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never }[keyof T] &
+        string;
+        // let params:
+        type MethodParameters<T extends Partial<any>,M extends FunctionPropertyNames<T>> = Parameters<T[M]>;
+        
 interface IShowConfig2<
     InitDataTypeMapType = any,
     ShowDataTypeMapType = any,

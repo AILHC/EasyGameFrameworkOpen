@@ -1,17 +1,24 @@
 import { Broadcast } from "../src"
 
 interface ITestKey extends broadcast.IMsgKey {
-    testKey1: string,
-    testKey2: string,
-    testKey3: string,
-    testKey4: string,
-    testKey5: string,
-    testKey6: string,
+    testKey1: "testKey1",
+    testKey2: "testKey2",
+    testKey3: "testKey3",
+    testKey4: "testKey4",
+    testKey5: "testKey5",
+    testKey6: "testKey6",
 }
-
+interface ITestValueType extends broadcast.IMsgValueType {
+    testKey1: number,
+    testKey2: { a: string },
+    testKey3: Array<string>,
+    testKey4: Map<string, number>,
+    testKey5: undefined,
+    testKey6: Set<number>,
+}
 //监听测试
 test("on Listener", function (done) {
-    const broadcast = new Broadcast<ITestKey>();
+    const broadcast = new Broadcast<ITestKey, ITestValueType>();
     //事件类型，事件回调
     broadcast.on({ key: broadcast.keyMap.onListenerOn, listener: function () { } });
     expect(broadcast.has(broadcast.keyMap.onListenerOn)).toBe(true);
@@ -63,8 +70,10 @@ test("on Listener", function (done) {
         }
     ])
     expect(broadcast.has(broadcast.keyMap.testKey5) && broadcast.has(broadcast.keyMap.testKey6)).toBe(true);
-    expect(broadcast["_handlerMap"][broadcast.keyMap.testKey5].length).toBe(3);
-    expect(broadcast["_handlerMap"][broadcast.keyMap.testKey6].length).toBe(2);
+    const testKey5Handlers = (broadcast["_handlerMap"][broadcast.keyMap.testKey5] as Array<any>);
+    const testKey6Handlers = broadcast["_handlerMap"][broadcast.keyMap.testKey6] as [];
+    expect(testKey5Handlers.length).toBe(3);
+    expect(testKey6Handlers.length).toBe(2);
 
     done();
 })
@@ -106,7 +115,8 @@ test("off Listener", function (done) {
 
     broadcast.off(broadcast.keyMap.testKey1, listenerOn1);
     expect(broadcast.has("testKey1")).toBe(true);
-    expect(broadcast["_handlerMap"][broadcast.keyMap.testKey1].length).toBe(1);
+    const testKey1Handlers: broadcast.IListenerHandler[] = broadcast["_handlerMap"][broadcast.keyMap.testKey1] as any;
+    expect(testKey1Handlers.length).toBe(1);
 
     broadcast.offAll(broadcast.keyMap.testKey2);
     expect(broadcast.has("testKey2")).toBe(false);
@@ -123,15 +133,16 @@ test("off Listener", function (done) {
     broadcast.off("" as any, nullKeyListener);
     expect(broadcast.has(broadcast.keyMap.testKey5)).toBe(true);
     done()
+    
 })
 //广播普通消息
 test("broadcast normal msg", function (done) {
-    const broadcast = new Broadcast<ITestKey>();
+    const broadcast = new Broadcast<ITestKey, ITestValueType>();
     broadcast.broadcast('onListenerOn');
     //事件类型，事件回调
     broadcast.on({
         key: broadcast.keyMap.onListenerOn,
-        listener: function (data: broadcast.IListenerOnData) {
+        listener: function (data) {
             expect(data === broadcast.keyMap.testKey1).toBe(true);
         },
         once: true
