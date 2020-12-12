@@ -4,7 +4,7 @@ import { DpcTestLayerType } from "../DpcTestLayerType";
 import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
-        AnimView: string
+        AnimView: "AnimView"
     }
 }
 export class AnimView extends NodeCtrl {

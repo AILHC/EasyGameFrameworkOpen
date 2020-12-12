@@ -4,7 +4,7 @@ import { DpcTestLayerType } from "../DpcTestLayerType";
 import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
-        LoadingView: string
+        LoadingView: "LoadingView"
     }
 }
 export class LoadingView extends NodeCtrl {

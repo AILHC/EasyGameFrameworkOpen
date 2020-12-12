@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "LoadView",
+    "_name": "LoadingView",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -262,6 +262,7 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
+    "_useOriginalSize": true,
     "_string": "加载中0/10",
     "_N$string": "加载中0/10",
     "_fontSize": 40,
