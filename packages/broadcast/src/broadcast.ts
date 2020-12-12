@@ -2,13 +2,13 @@
 /**
  * @author AILHC 505126057@qq.com
  */
-export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
-    implements broadcast.IBroadcast<MsgKeyType, ValueType>{
+export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, ResultType = any>
+    implements broadcast.IBroadcast<MsgKeyType, ValueType, ResultType>{
 
     public keys: { [key in keyof MsgKeyType]: MsgKeyType[key] };
     private _valueMap: { [key in keyof MsgKeyType]: any };
     private _handlerMap: { [key in keyof MsgKeyType]: broadcast.IListenerHandler | broadcast.IListenerHandler[] };
-    private _stickBroadcasterMap: { [key in keyof MsgKeyType]: broadcast.IBroadcaster[] };
+    private _stickHandlersMap: { [key in keyof MsgKeyType]: broadcast.IStickyHandler[] };
     protected _unuseHandlers: any[]
     constructor() {
         this.keys = new Proxy({} as any, {
@@ -30,8 +30,8 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
      * 
      */
     public on<keyType extends keyof MsgKeyType = any>(
-        handler: keyType | broadcast.IListenerHandler<keyType, ValueType> | broadcast.IListenerHandler<keyType, ValueType>[],
-        listener?: broadcast.Listener<ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>]>,
+        handler: keyType | broadcast.IListenerHandler<keyType, ValueType, ResultType> | broadcast.IListenerHandler<keyType, ValueType, ResultType>[],
+        listener?: broadcast.Listener<ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>], ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
         context?: any,
         once?: boolean,
         args?: any[]
@@ -75,7 +75,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
             return;
         }
         const handlerMap = this._handlerMap;
-        const stickyMap = this._stickBroadcasterMap;
+        const stickyMap = this._stickHandlersMap;
         const valueMap = this._valueMap;
         if (stickyMap) stickyMap[key] = undefined;
         if (handlerMap) {
@@ -165,7 +165,10 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
      * @param callback 回调
      * @param persistence 是否持久化数据
      */
-    public broadcast<T = any>(key: keyof MsgKeyType, value?: T, callback?: broadcast.ResultCallBack, persistence?: boolean) {
+    public broadcast<keyType extends keyof MsgKeyType = any>(
+        key: keyType, value?: ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>],
+        callback?: broadcast.ResultCallBack<ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
+        persistence?: boolean) {
         const handlerMap = this._handlerMap;
         if (!handlerMap) return;
         const handlers = handlerMap[key];
@@ -218,7 +221,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
     public stickyBroadcast<keyType extends keyof MsgKeyType = any>(
         key: keyType,
         value?: ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>],
-        callback?: broadcast.ResultCallBack,
+        callback?: broadcast.ResultCallBack<ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
         persistence?: boolean
     ) {
         if (this._isStringNull(key)) return;
@@ -226,22 +229,22 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
         if (handlerMap && handlerMap[key]) {
             this.broadcast(key, value, callback, persistence);
         } else {
-            let stickyMap = this._stickBroadcasterMap;
+            let stickyMap = this._stickHandlersMap;
             if (!stickyMap) {
                 stickyMap = {} as any;
-                this._stickBroadcasterMap = stickyMap;
+                this._stickHandlersMap = stickyMap;
             }
-            const broadcasters = stickyMap[key];
-            const broadcaster: broadcast.IBroadcaster = {
+            const stickyHandlers = stickyMap[key];
+            const handler: broadcast.IStickyHandler = {
                 key: key as any,
                 value: value,
                 callback: callback,
                 persistence: persistence
             };
-            if (!broadcasters) {
-                stickyMap[key] = [broadcaster]
+            if (!stickyHandlers) {
+                stickyMap[key] = [handler]
             } else {
-                broadcasters.push(broadcaster)
+                stickyHandlers.push(handler)
             }
         }
     }
@@ -345,14 +348,14 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
         } else {
             handlerMap[handler.key] = handler;
         }
-        const stickyMap = this._stickBroadcasterMap;
+        const stickyMap = this._stickHandlersMap;
         if (stickyMap) {
-            const stickyBroadcasters = stickyMap[handler.key];
-            if (stickyBroadcasters) {
-                let broadcaster: broadcast.IBroadcaster;
-                for (let i = 0; i < stickyBroadcasters.length; i++) {
-                    broadcaster = stickyBroadcasters[i];
-                    this.broadcast(broadcaster.key as any, broadcaster.value, broadcaster.callback, broadcaster.persistence);
+            const stickyHandlers = stickyMap[handler.key];
+            if (stickyHandlers) {
+                let handler: broadcast.IStickyHandler;
+                for (let i = 0; i < stickyHandlers.length; i++) {
+                    handler = stickyHandlers[i];
+                    this.broadcast(handler.key as any, handler.value, handler.callback, handler.persistence);
                 }
                 stickyMap[handler.key] = undefined;
             }
@@ -374,7 +377,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
      */
     public dispose() {
         this._handlerMap = undefined;
-        this._stickBroadcasterMap = undefined;
+        this._stickHandlersMap = undefined;
         this._valueMap = undefined;
     }
 
