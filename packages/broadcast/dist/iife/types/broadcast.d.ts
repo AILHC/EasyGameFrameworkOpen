@@ -1,5 +1,8 @@
-export declare class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
-    keyMap: {
+/**
+ * @author AILHC 505126057@qq.com
+ */
+export declare class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> implements broadcast.IBroadcast<MsgKeyType, ValueType> {
+    keys: {
         [key in keyof MsgKeyType]: MsgKeyType[key];
     };
     private _valueMap;

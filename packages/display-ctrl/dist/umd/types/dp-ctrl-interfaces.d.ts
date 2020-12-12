@@ -165,7 +165,7 @@ declare global {
         }
         interface IMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> {
             /**控制器key字典 */
-            ctrlKeys: CtrlKeyMapType;
+            keys: CtrlKeyMapType;
             /**
              * 控制器单例字典
              */
