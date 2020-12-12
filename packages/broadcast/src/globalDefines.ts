@@ -28,9 +28,10 @@ declare global {
             persistence?: boolean
         }
         interface IBroadcast<MsgKeyType = any, ValueType = any> {
-            keyMap: {
-                [key in keyof MsgKeyType]: MsgKeyType[key];
-            };
+            /**
+             * 消息key
+             */
+            keys: MsgKeyType;
             /**
              * 注册事件，可以注册多个
              * @param key 事件名

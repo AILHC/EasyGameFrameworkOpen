@@ -20,58 +20,58 @@ interface ITestValueType extends broadcast.IMsgValueType {
 test("on Listener", function (done) {
     const broadcast = new Broadcast<ITestKey, ITestValueType>();
     //事件类型，事件回调
-    broadcast.on({ key: broadcast.keyMap.onListenerOn, listener: function () { } });
-    expect(broadcast.has(broadcast.keyMap.onListenerOn)).toBe(true);
+    broadcast.on({ key: broadcast.keys.onListenerOn, listener: function () { } });
+    expect(broadcast.has(broadcast.keys.onListenerOn)).toBe(true);
     //注册事件类型，事件回调，透传参数
-    broadcast.on(broadcast.keyMap.testKey1, function () { }, null, false, ["abc"]);
-    expect(broadcast.has(broadcast.keyMap.testKey1)).toBe(true);
+    broadcast.on(broadcast.keys.testKey1, function () { }, null, false, ["abc"]);
+    expect(broadcast.has(broadcast.keys.testKey1)).toBe(true);
     //注册事件类型，事件回调，上下文
     const context = { a: 1 };
-    broadcast.on({ key: broadcast.keyMap.testKey2, listener: function () { }, context: context });
-    expect(broadcast.has(broadcast.keyMap.testKey2)).toBe(true);
+    broadcast.on({ key: broadcast.keys.testKey2, listener: function () { }, context: context });
+    expect(broadcast.has(broadcast.keys.testKey2)).toBe(true);
     //注册事件类型，事件回调，一次性
-    broadcast.on({ key: broadcast.keyMap.testKey3, listener: function () { }, context: context, once: true });
-    expect(broadcast.has(broadcast.keyMap.testKey3)).toBe(true);
+    broadcast.on({ key: broadcast.keys.testKey3, listener: function () { }, context: context, once: true });
+    expect(broadcast.has(broadcast.keys.testKey3)).toBe(true);
     //全部
     broadcast.on({
-        key: broadcast.keyMap.testKey4,
+        key: broadcast.keys.testKey4,
         listener: function () { },
         context: context,
         once: true
     });
-    expect(broadcast.has(broadcast.keyMap.testKey4)).toBe(true);
+    expect(broadcast.has(broadcast.keys.testKey4)).toBe(true);
     //一次注册多个
     broadcast.on([
         {
-            key: broadcast.keyMap.testKey5,
+            key: broadcast.keys.testKey5,
             listener: function () { },
             context: context,
             once: true
         },
         {
-            key: broadcast.keyMap.testKey5,
+            key: broadcast.keys.testKey5,
             listener: function () { },
             context: context
         },
         {
-            key: broadcast.keyMap.testKey5,
+            key: broadcast.keys.testKey5,
             listener: function () { },
             context: context,
             args: [1, 2, 3, 4]
         },
         {
-            key: broadcast.keyMap.testKey6,
+            key: broadcast.keys.testKey6,
             listener: function () { }
         },
         {
-            key: broadcast.keyMap.testKey6,
+            key: broadcast.keys.testKey6,
             listener: function () { },
             once: true
         }
     ])
-    expect(broadcast.has(broadcast.keyMap.testKey5) && broadcast.has(broadcast.keyMap.testKey6)).toBe(true);
-    const testKey5Handlers = (broadcast["_handlerMap"][broadcast.keyMap.testKey5] as Array<any>);
-    const testKey6Handlers = broadcast["_handlerMap"][broadcast.keyMap.testKey6] as [];
+    expect(broadcast.has(broadcast.keys.testKey5) && broadcast.has(broadcast.keys.testKey6)).toBe(true);
+    const testKey5Handlers = (broadcast["_handlerMap"][broadcast.keys.testKey5] as Array<any>);
+    const testKey6Handlers = broadcast["_handlerMap"][broadcast.keys.testKey6] as [];
     expect(testKey5Handlers.length).toBe(3);
     expect(testKey6Handlers.length).toBe(2);
 
@@ -83,42 +83,42 @@ test("off Listener", function (done) {
     const broadcast = new Broadcast<ITestKey>();
     //事件类型，事件回调
     const listenerOn0 = function () { };
-    broadcast.on({ key: broadcast.keyMap.onListenerOn, listener: listenerOn0 });
+    broadcast.on({ key: broadcast.keys.onListenerOn, listener: listenerOn0 });
     //注册事件类型，事件回调，透传参数
     const listenerOn1 = function () { };
-    broadcast.on({ key: broadcast.keyMap.testKey1, listener: listenerOn1, args: ["abc"] });
+    broadcast.on({ key: broadcast.keys.testKey1, listener: listenerOn1, args: ["abc"] });
     const listenerOn1V2 = function () { };
-    broadcast.on({ key: broadcast.keyMap.testKey1, listener: listenerOn1V2, args: ["abc"] });
+    broadcast.on({ key: broadcast.keys.testKey1, listener: listenerOn1V2, args: ["abc"] });
     //注册事件类型，事件回调，上下文
     const context = { a: 1 };
     const listenerOn2 = function () { };
-    broadcast.on({ key: broadcast.keyMap.testKey2, listener: listenerOn2, context: context });
+    broadcast.on({ key: broadcast.keys.testKey2, listener: listenerOn2, context: context });
     //注册事件类型，事件回调，一次性
     const listenerOn2V2 = function () { };
-    broadcast.on({ key: broadcast.keyMap.testKey2, listener: listenerOn2V2, context: context, once: true });
+    broadcast.on({ key: broadcast.keys.testKey2, listener: listenerOn2V2, context: context, once: true });
     //带上下文注册
     const context2 = { a: 1 };
     const listenerOn3 = function () { };
-    broadcast.on({ key: broadcast.keyMap.testKey3, listener: listenerOn3, context: context2 });
+    broadcast.on({ key: broadcast.keys.testKey3, listener: listenerOn3, context: context2 });
     const listenerOn3V2 = function () { };
-    broadcast.on({ key: broadcast.keyMap.testKey3, listener: listenerOn3V2, context: context2 });
+    broadcast.on({ key: broadcast.keys.testKey3, listener: listenerOn3V2, context: context2 });
     //全部
     const listenerOn4 = function () { };
     broadcast.on({
-        key: broadcast.keyMap.testKey4,
+        key: broadcast.keys.testKey4,
         listener: listenerOn4,
         context: context,
         once: true
     });
-    broadcast.off(broadcast.keyMap.onListenerOn, listenerOn0);
+    broadcast.off(broadcast.keys.onListenerOn, listenerOn0);
     expect(broadcast.has("onListenerOn")).toBe(false);
 
-    broadcast.off(broadcast.keyMap.testKey1, listenerOn1);
+    broadcast.off(broadcast.keys.testKey1, listenerOn1);
     expect(broadcast.has("testKey1")).toBe(true);
-    const testKey1Handlers: broadcast.IListenerHandler[] = broadcast["_handlerMap"][broadcast.keyMap.testKey1] as any;
+    const testKey1Handlers: broadcast.IListenerHandler[] = broadcast["_handlerMap"][broadcast.keys.testKey1] as any;
     expect(testKey1Handlers.length).toBe(1);
 
-    broadcast.offAll(broadcast.keyMap.testKey2);
+    broadcast.offAll(broadcast.keys.testKey2);
     expect(broadcast.has("testKey2")).toBe(false);
 
     broadcast.offAllByContext(context2);
@@ -127,11 +127,11 @@ test("off Listener", function (done) {
     //off null key
     const nullKeyListener = function () { };
     broadcast.on({
-        key: broadcast.keyMap.testKey5,
+        key: broadcast.keys.testKey5,
         listener: nullKeyListener
     })
     broadcast.off("" as any, nullKeyListener);
-    expect(broadcast.has(broadcast.keyMap.testKey5)).toBe(true);
+    expect(broadcast.has(broadcast.keys.testKey5)).toBe(true);
     done()
 
 })
@@ -141,9 +141,9 @@ test("broadcast normal msg", function (done) {
     broadcast.broadcast('onListenerOn');
     //事件类型，事件回调
     broadcast.on({
-        key: broadcast.keyMap.onListenerOn,
+        key: broadcast.keys.onListenerOn,
         listener: function (data) {
-            expect(data === broadcast.keyMap.testKey1).toBe(true);
+            expect(data === broadcast.keys.testKey1).toBe(true);
         },
         once: true
     });
@@ -156,10 +156,10 @@ test("broadcast normal msg", function (done) {
         expect(num4).toBe(4)
         callBack && callBack(value)
     }
-    broadcast.on({ key: broadcast.keyMap.testKey1, listener: listener, args: [1, 2, 3, 4] });
+    broadcast.on({ key: broadcast.keys.testKey1, listener: listener, args: [1, 2, 3, 4] });
 
-    broadcast.broadcast(broadcast.keyMap.testKey1, broadcast.keyMap.testKey1, function (value) {
-        expect(value === broadcast.keyMap.testKey1).toBe(true);
+    broadcast.broadcast(broadcast.keys.testKey1, broadcast.keys.testKey1, function (value) {
+        expect(value === broadcast.keys.testKey1).toBe(true);
         done();
     })
 
@@ -169,22 +169,22 @@ test("broadcast persistence msg", function (done) {
     const broadcast = new Broadcast<ITestKey>();
 
     broadcast.on({
-        key: broadcast.keyMap.testKey1,
+        key: broadcast.keys.testKey1,
         listener: function (value: any) {
-            expect(value === broadcast.value(broadcast.keyMap.testKey1)).toBe(true);
+            expect(value === broadcast.value(broadcast.keys.testKey1)).toBe(true);
             done();
         }
     });
-    expect(broadcast.value(broadcast.keyMap.testKey1)).toBe(undefined);
-    broadcast.broadcast(broadcast.keyMap.testKey1, 1, null, true);
+    expect(broadcast.value(broadcast.keys.testKey1)).toBe(undefined);
+    broadcast.broadcast(broadcast.keys.testKey1, 1, null, true);
 
 })
 //粘性广播
 test("sticky broadcast", function (done) {
     const broadcast = new Broadcast<ITestKey>();
-    broadcast.stickyBroadcast(broadcast.keyMap.testKey1, "sticky");
+    broadcast.stickyBroadcast(broadcast.keys.testKey1, "sticky");
     broadcast.on({
-        key: broadcast.keyMap.testKey1,
+        key: broadcast.keys.testKey1,
         listener: function (value) {
             expect(value === "sticky").toBe(true);
             done();

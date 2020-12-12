@@ -13,7 +13,7 @@ export class DpcMgr<
     ShowDataTypeMapType,
     UpdateDataTypeMapType> {
 
-    ctrlKeys: CtrlKeyMapType = new Proxy({}, {
+    keys: CtrlKeyMapType = new Proxy({}, {
         get(target, key) {
             return key;
         }

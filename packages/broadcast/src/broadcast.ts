@@ -5,13 +5,13 @@
 export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
     implements broadcast.IBroadcast<MsgKeyType, ValueType>{
 
-    public keyMap: { [key in keyof MsgKeyType]: MsgKeyType[key] };
+    public keys: { [key in keyof MsgKeyType]: MsgKeyType[key] };
     private _valueMap: { [key in keyof MsgKeyType]: any };
     private _handlerMap: { [key in keyof MsgKeyType]: broadcast.IListenerHandler | broadcast.IListenerHandler[] };
     private _stickBroadcasterMap: { [key in keyof MsgKeyType]: broadcast.IBroadcaster[] };
     protected _unuseHandlers: any[]
     constructor() {
-        this.keyMap = new Proxy({} as any, {
+        this.keys = new Proxy({} as any, {
             get: (target, p) => {
                 return p;
             }
@@ -357,8 +357,8 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
                 stickyMap[handler.key] = undefined;
             }
         }
-        if (handler.key !== this.keyMap.onListenerOn) {
-            this.broadcast(this.keyMap.onListenerOn, handler.key);
+        if (handler.key !== this.keys.onListenerOn) {
+            this.broadcast(this.keys.onListenerOn, handler.key);
         }
 
     }
