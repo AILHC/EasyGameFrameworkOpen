@@ -52,7 +52,7 @@ declare global {
         }
         interface ILoadConfig {
             /**页面类型key */
-            typeKey?: string,
+            typeKey?: string | any,
             /**加载后onLoad参数 */
             onLoadData?: any,
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
@@ -78,24 +78,6 @@ declare global {
             /**创建回调 */
             createCb?: CtrlInsCb
         }
-        interface IShowConfig extends ILoadConfig {
-            /**
-             * 透传初始化数据
-             */
-            onInitData?: any
-            /**
-             * 强制重新加载
-             */
-            forceLoad?: boolean
-            /**
-             * 显示数据
-             */
-            onShowData?: any,
-            /**调用就执行 */
-            showedCb?: CtrlInsCb,
-            /**显示被取消了 */
-            onCancel?: VoidFunction
-        }
         /**
         * 将索引类型转换为任意类型的索引类型
         */
@@ -103,11 +85,12 @@ declare global {
         /**
          * 显示配置
          */
-        interface IShowConfig2<
+        interface IShowConfig<
+            TypeKey extends keyof any = any,
             InitDataTypeMapType = any,
             ShowDataTypeMapType = any,
-            TypeKey extends keyof any = any
-            > extends ILoadConfig {
+            > {
+            typeKey?: TypeKey,
             /**
              * 透传初始化数据
              */
@@ -123,7 +106,11 @@ declare global {
             /**在调用控制器实例onShow后执行 */
             showedCb?: CtrlInsCb,
             /**显示被取消了 */
-            onCancel?: VoidFunction
+            onCancel?: VoidFunction,
+            /**加载后onLoad参数 */
+            onLoadData?: any,
+            /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
+            loadCb?: CtrlInsCb
         }
         interface ICtrl<NodeType = any> {
             key?: string;
@@ -238,12 +225,22 @@ declare global {
             ): T;
             /**
              * 显示单例显示控制器
-             * @param typeKey 
-             * @param showCfg
+             * @param typeKey 类key或者显示配置
+             * @param onShowData 显示透传数据
+             * @param showedCb 显示完成回调(onShow调用之后)
+             * @param onInitData 初始化透传数据
+             * @param forceLoad 是否强制重新加载
+             * @param onCancel 当取消显示时
              */
             showDpc<T extends ICtrl, keyType extends keyof CtrlKeyMapType>(
-                typeKey: keyType,
-                showCfg?: IShowConfig2<InitDataTypeMapType, ShowDataTypeMapType, keyType>
+                typeKey: keyType | IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
+                onShowData?: ShowDataTypeMapType[ToAnyIndexKey<keyType, ShowDataTypeMapType>],
+                showedCb?: CtrlInsCb,
+                onInitData?: InitDataTypeMapType[ToAnyIndexKey<keyType, InitDataTypeMapType>],
+                forceLoad?: boolean,
+                onLoadData?: any,
+                loadCb?: displayCtrl.CtrlInsCb,
+                onCancel?: VoidFunction
             ): T;
             /**
              * 更新控制器
@@ -288,7 +285,8 @@ declare global {
              */
             showDpcByIns<keyType extends keyof CtrlKeyMapType>(
                 ins: ICtrl,
-                showCfg?: IShowConfig2<InitDataTypeMapType, ShowDataTypeMapType, keyType>
+                onShowData?: ShowDataTypeMapType[ToAnyIndexKey<keyType, ShowDataTypeMapType>],
+                showedCb?: CtrlInsCb
             ): void;
 
             /**

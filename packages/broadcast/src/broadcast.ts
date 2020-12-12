@@ -1,9 +1,15 @@
 
-export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
+/**
+ * @author AILHC 505126057@qq.com
+ */
+export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any>
+    implements broadcast.IBroadcast<MsgKeyType, ValueType>{
+
     public keyMap: { [key in keyof MsgKeyType]: MsgKeyType[key] };
     private _valueMap: { [key in keyof MsgKeyType]: any };
     private _handlerMap: { [key in keyof MsgKeyType]: broadcast.IListenerHandler | broadcast.IListenerHandler[] };
     private _stickBroadcasterMap: { [key in keyof MsgKeyType]: broadcast.IBroadcaster[] };
+    protected _unuseHandlers: any[]
     constructor() {
         this.keyMap = new Proxy({} as any, {
             get: (target, p) => {
@@ -11,7 +17,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
             }
         })
         this._valueMap = {} as any;
-        
+        this._unuseHandlers = [];
     }
     //注册
     /**
@@ -24,17 +30,26 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
      * 
      */
     public on<keyType extends keyof MsgKeyType = any>(
-        handler?: broadcast.IListenerHandler<keyType, ValueType> |
-            broadcast.IListenerHandler<keyType, ValueType>[]
+        handler: keyType | broadcast.IListenerHandler<keyType, ValueType> | broadcast.IListenerHandler<keyType, ValueType>[],
+        listener?: broadcast.Listener<ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>]>,
+        context?: any,
+        once?: boolean,
+        args?: any[]
     ) {
-        if (this._isArr(handler)) {
-            const handlers: broadcast.IListenerHandler[] = handler as any;
-            for (let i = 0; i < handlers.length; i++) {
-                this._addHandler(handlers[i]);
-            }
+        if (typeof handler === "string") {
+            if (!listener) return;
+            this._addHandler(this._getHandler(handler, listener, context, once, args));
         } else {
-            this._addHandler(handler as any);
+            if (this._isArr(handler)) {
+                const handlers: broadcast.IListenerHandler[] = handler as any;
+                for (let i = 0; i < handlers.length; i++) {
+                    this._addHandler(handlers[i]);
+                }
+            } else {
+                this._addHandler(handler as any);
+            }
         }
+
     }
     public has(key: keyof MsgKeyType) {
         return this._handlerMap && !!this._handlerMap[key]
@@ -52,21 +67,28 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
         }
     }
     /**
-     * 注销
+     * 注销指定事件的所有监听
      * @param key 
      */
     public offAll(key?: keyof MsgKeyType) {
         if (this._isStringNull(key)) {
-            this._handlerMap = undefined;
-            this._stickBroadcasterMap = undefined;
-            this._valueMap = undefined;
             return;
         }
         const handlerMap = this._handlerMap;
         const stickyMap = this._stickBroadcasterMap;
         const valueMap = this._valueMap;
         if (stickyMap) stickyMap[key] = undefined;
-        if (handlerMap) handlerMap[key] = undefined;
+        if (handlerMap) {
+            const handlers: broadcast.IListenerHandler[] = handlerMap[key] as any;
+            if (this._isArr(handlers)) {
+                for (let i = 0; i < handlers.length; i++) {
+                    this._recoverHandler(handlers[i]);
+                }
+            } else {
+                this._recoverHandler(handlers as any);
+            }
+            handlerMap[key] = undefined
+        }
         if (valueMap) valueMap[key] = undefined;
 
     }
@@ -81,6 +103,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
                 if ((!context || handler.context === context)
                     && (listener == null || handler.listener === listener)
                     && (!onceOnly || handler.once)) {
+                    this._recoverHandler(handler);
                     handlerMap[key] = undefined;
                 }
             } else {
@@ -98,7 +121,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
                             handlers[endIndex] = handlers[i];
                             handlers[i] = handler;
                         }
-                        handlers.pop();
+                        this._recoverHandler(handlers.pop());
 
                     }
                 }
@@ -159,6 +182,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
             const handler = handlers as broadcast.IListenerHandler;
             value ? Broadcast._runHandlerWithData(handler, value, callback) : Broadcast._runHandler(handler, callback);
             if (handler.once) {
+                this._recoverHandler(handler);
                 this._handlerMap[key] = undefined;
             }
         } else {
@@ -173,7 +197,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
                     handler = handlerArr[endIndex];
                     handlerArr[endIndex] = handlerArr[i];
                     handlerArr[i] = handler;
-                    handlerArr.pop();
+                    this._recoverHandler(handlerArr.pop());
                 }
             }
             if (!handlerArr.length) {
@@ -261,6 +285,40 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any> {
         const args = handler.args ? handler.args.unshift(callback) : [callback];
         const result: any = handler.listener.apply(handler.context, args);
         return result;
+    }
+    /**
+     * 回收handler
+     * @param handler 
+     */
+    protected _recoverHandler(handler: broadcast.IListenerHandler) {
+        handler.args = undefined;
+        handler.context = undefined;
+        handler.listener = undefined;
+        handler.key = undefined;
+        this._unuseHandlers.push(handler);
+    }
+    /**
+     * 获取handler
+     * @param key 
+     * @param listener 
+     * @param context 
+     * @param once 
+     * @param args 
+     */
+    protected _getHandler(key: string, listener: any, context: any, once: boolean, args: any[]) {
+        const unuseHandlers = this._unuseHandlers;
+        let handler: broadcast.IListenerHandler;
+        if (unuseHandlers.length) {
+            handler = unuseHandlers.pop();
+        } else {
+            handler = {} as any;
+        }
+        handler.key = key;
+        handler.listener = listener;
+        handler.context = context;
+        handler.once = once;
+        handler.args = args;
+        return handler;
     }
     /**
      * 添加广播监听
