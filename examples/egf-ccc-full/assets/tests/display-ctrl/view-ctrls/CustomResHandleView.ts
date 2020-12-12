@@ -4,7 +4,7 @@ import { DpcTestLayerType } from "../DpcTestLayerType";
 import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
-        CustomResHandleView: string
+        CustomResHandleView: "CustomResHandleView"
     }
 }
 export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustomResHandler {
@@ -18,7 +18,7 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
     private _monsterIconRess: string[];
     loadRes(onComplete: VoidFunction, onError: VoidFunction): void {
         dtM.uiMgr.showDpc({
-            typeKey: dtM.uiMgr.ctrlKeys.LoadingView,
+            typeKey: dtM.uiMgr.keys.LoadingView,
             showedCb: () => {
                 const randomMonsterNameIndexs = getSomeRandomInt(0, CustomResHandleView._monsterNames.length, 2);
                 const ress = [];
@@ -27,9 +27,9 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
                     ress.push(CustomResHandleView._monsterIconDir + "/" + CustomResHandleView._monsterNames[element]);
                 });
                 ress.push(CustomResHandleView.prefabUrl);
-                cc.assetManager.loadAny(ress,
+                cc.resources.load(ress,
                     (finished: number, total: number, item) => {
-                        dtM.uiMgr.updateDpc(dtM.uiMgr.ctrlKeys.LoadingView,
+                        dtM.uiMgr.updateDpc(dtM.uiMgr.keys.LoadingView,
                             {
                                 finished: finished, total: total
                             })

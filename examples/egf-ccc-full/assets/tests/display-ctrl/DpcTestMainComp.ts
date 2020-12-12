@@ -99,39 +99,42 @@ export default class DpcTestMainComp extends cc.Component {
     }
     //····················测试接口······························
     showDepResView() {
-        dtM.uiMgr.showDpc(dtM.uiMgr.ctrlKeys.DepResView);
+        dtM.uiMgr.showDpc(dtM.uiMgr.keys.DepResView);
     }
     hideDepResView() {
-        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrlKeys.DepResView);
+        dtM.uiMgr.hideDpc(dtM.uiMgr.keys.DepResView);
     }
     destroyDepResView() {
-        dtM.uiMgr.destroyDpc(dtM.uiMgr.ctrlKeys.DepResView, true);
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.DepResView, true);
     }
     getDepResViewRess() {
-        const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.ctrlKeys.DepResView)?.getRess();
+        const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.keys.DepResView)?.getRess();
         if (ress) {
             this._depResViewTipsLabel.string = ress.toString();
         }
     }
     preloadDepResViewRess() {
-        dtM.uiMgr.loadSigDpc(dtM.uiMgr.ctrlKeys.DepResView);
+        dtM.uiMgr.loadSigDpc(dtM.uiMgr.keys.DepResView);
     }
 
     showAnimView() {
         dtM.uiMgr.showDpc({
-            typeKey: dtM.uiMgr.ctrlKeys.AnimView,
+            typeKey: dtM.uiMgr.keys.AnimView,
             showedCb: () => {
-                console.log(`${dtM.uiMgr.ctrlKeys.AnimView}:显示完成`);
+                console.log(`${dtM.uiMgr.keys.AnimView}:显示完成`);
             }
         });
     }
     hideAnimView() {
-        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrlKeys.AnimView);
+        dtM.uiMgr.hideDpc(dtM.uiMgr.keys.AnimView);
     }
-    showCustomResHandlerView(){
-        dtM.uiMgr.showDpc(dtM.uiMgr.ctrlKeys.CustomResHandleView);
+    showCustomResHandlerView() {
+        dtM.uiMgr.showDpc(dtM.uiMgr.keys.CustomResHandleView);
     }
-    hideCustomResHandlerView(){
-        dtM.uiMgr.hideDpc(dtM.uiMgr.ctrlKeys.CustomResHandleView);
+    hideCustomResHandlerView() {
+        dtM.uiMgr.hideDpc(dtM.uiMgr.keys.CustomResHandleView);
+    }
+    destroyCustomResHandlerView() {
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.CustomResHandleView, true, true)
     }
 }

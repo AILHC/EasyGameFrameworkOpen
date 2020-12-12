@@ -4,7 +4,7 @@ import { DpcTestLayerType } from "../DpcTestLayerType";
 import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
-        DepResView: string
+        DepResView: "DepResView"
     }
 }
 export class DepResView extends NodeCtrl {

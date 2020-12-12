@@ -9,10 +9,19 @@ import { Broadcast } from "@ailhc/broadcast"
 const { ccclass, property } = cc._decorator;
 declare global {
     interface ITestKey extends broadcast.IMsgKey {
-        testA: any,
-        testB: any,
-        testC: any,
-        testD: any
+        testA: "testA",
+        testB: "testB",
+        testC: "testC",
+        testD: "testD"
+    }
+    interface ITestValueType extends broadcast.IMsgValueType {
+        testA: string,
+        testB: string,
+        testC: string,
+        testD: string
+    }
+    interface ITestResultType extends broadcast.IResultType {
+        testC: string,
     }
 }
 @ccclass
@@ -63,10 +72,10 @@ export default class TestBroadcast extends cc.Component {
     clickGetDValueShowLabel: cc.Label = null;
 
     start() {
-        this._broadcast = new Broadcast();
+        this._broadcast = new Broadcast<ITestKey, ITestValueType, ITestResultType>();
         this._broadcast.on({
             key: "testA",
-            listener: (msg: string) => {
+            listener: (msg) => {
                 this.reciveALabel.string = msg;
             }
         });
