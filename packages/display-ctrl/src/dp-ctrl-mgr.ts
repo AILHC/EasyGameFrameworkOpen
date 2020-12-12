@@ -304,7 +304,7 @@ export class DpcMgr<
         if (dpcIns.needShow) {
             dpcIns.onShow(showCfg && showCfg.onShowData);
             dpcIns.isShowed = true;
-            showCfg && showCfg?.showedCb(dpcIns);
+            showCfg?.showedCb && showCfg?.showedCb(dpcIns);
         }
         dpcIns.needShow = false;
     }

@@ -16,6 +16,14 @@ interface ITestValueType extends broadcast.IMsgValueType {
     testKey5: undefined,
     testKey6: Set<number>,
 }
+interface ITestResultType extends broadcast.IMsgValueType {
+    testKey1: string,
+    testKey2: { a: number },
+    testKey3: Array<number>,
+    testKey4: Map<number, string>,
+    testKey5: {},
+    testKey6: Set<string>,
+}
 //监听测试
 test("on Listener", function (done) {
     const broadcast = new Broadcast<ITestKey, ITestValueType>();
@@ -137,7 +145,7 @@ test("off Listener", function (done) {
 })
 //广播普通消息
 test("broadcast normal msg", function (done) {
-    const broadcast = new Broadcast<ITestKey, ITestValueType>();
+    const broadcast = new Broadcast<ITestKey, ITestValueType, ITestResultType>();
     broadcast.broadcast('onListenerOn');
     //事件类型，事件回调
     broadcast.on({
@@ -150,18 +158,16 @@ test("broadcast normal msg", function (done) {
 
     //注册事件类型，事件回调，透传参数
     const listener: broadcast.Listener = function (value, callBack, num1: number, num2: number, num3: number, num4: number) {
-        expect(num1).toBe(1)
-        expect(num2).toBe(2)
-        expect(num3).toBe(3)
-        expect(num4).toBe(4)
-        callBack && callBack(value)
+        expect(num1).toBe(1);
+        expect(num2).toBe(2);
+        expect(num3).toBe(3);
+        expect(num4).toBe(4);
+        expect(value).toBe(1);
+        done();
     }
     broadcast.on({ key: broadcast.keys.testKey1, listener: listener, args: [1, 2, 3, 4] });
 
-    broadcast.broadcast(broadcast.keys.testKey1, broadcast.keys.testKey1, function (value) {
-        expect(value === broadcast.keys.testKey1).toBe(true);
-        done();
-    })
+    broadcast.broadcast(broadcast.keys.testKey1, 1)
 
 })
 //数据持久化
@@ -190,4 +196,16 @@ test("sticky broadcast", function (done) {
             done();
         }
     })
+})
+//双向通信测试
+test("double call test", function () {
+    const broadcast = new Broadcast<ITestKey, ITestValueType, ITestResultType>();
+    broadcast.on("testKey1", (value, callback) => {
+        expect(value).toBe(1);
+        callback("result");
+    })
+    broadcast.broadcast("testKey1", 1, (value) => {
+        expect(value).toBe("result");
+    })
+
 })
