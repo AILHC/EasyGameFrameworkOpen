@@ -6,7 +6,12 @@ export class DpcMgr<
     CtrlKeyMapType = any,
     InitDataTypeMapType = any,
     ShowDataTypeMapType = any,
-    UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
+    UpdateDataTypeMapType = any>
+    implements displayCtrl.IMgr<
+    CtrlKeyMapType,
+    InitDataTypeMapType,
+    ShowDataTypeMapType,
+    UpdateDataTypeMapType> {
 
     ctrlKeys: CtrlKeyMapType = new Proxy({}, {
         get(target, key) {
@@ -106,12 +111,43 @@ export class DpcMgr<
         return ctrlIns as any;
     }
     public showDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(
-        typeKey: keyType,
-        showCfg?: displayCtrl.IShowConfig2<InitDataTypeMapType, ShowDataTypeMapType, keyType>
+        typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
+        onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>],
+        showedCb?: displayCtrl.CtrlInsCb,
+        onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>],
+        forceLoad?: boolean,
+        onLoadData?: any,
+        loadCb?: displayCtrl.CtrlInsCb,
+        onCancel?: VoidFunction
     ): T {
-        const ins = this.getSigDpcIns(typeKey);
+        let showCfg: displayCtrl.IShowConfig<keyType>;
+        if (typeof typeKey == "string") {
+            showCfg = {
+                typeKey: typeKey,
+                onShowData: onShowData,
+                showedCb: showedCb,
+                onInitData: onInitData,
+                forceLoad: forceLoad,
+                onLoadData: onLoadData,
+                loadCb: loadCb,
+                onCancel: onCancel
+            }
+        } else if (typeof typeKey === "object") {
+            showCfg = typeKey;
+            onShowData !== undefined && (showCfg.onShowData = onShowData);
+            showedCb !== undefined && (showCfg.showedCb = showedCb);
+            onInitData !== undefined && (showCfg.onInitData = onInitData);
+            forceLoad !== undefined && (showCfg.forceLoad = forceLoad);
+            onLoadData !== undefined && (showCfg.onLoadData = onLoadData);
+            loadCb !== undefined && (showCfg.loadCb = loadCb);
+            onCancel !== undefined && (showCfg.onCancel = onCancel);
+        } else {
+            console.warn(`unknown showDpc`, typeKey);
+            return;
+        }
+        const ins = this.getSigDpcIns(showCfg.typeKey as any);
         if (!ins) {
-            console.error(`没有注册:typeKey:${typeKey}`);
+            console.error(`没有注册:typeKey:${showCfg.typeKey}`);
             return null;
         };
         if (ins.isShowed) {
@@ -119,15 +155,16 @@ export class DpcMgr<
         }
         ins.needShow = true;
         const sigCtrlShowCfgMap = this._sigCtrlShowCfgMap;
-        const oldShowCfg = sigCtrlShowCfgMap[typeKey];
+        const oldShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
         if (oldShowCfg && showCfg) {
             oldShowCfg.onCancel && oldShowCfg.onCancel();
             Object.assign(oldShowCfg, showCfg);
         } else {
-            sigCtrlShowCfgMap[typeKey] = showCfg;
+            sigCtrlShowCfgMap[showCfg.typeKey] = showCfg;
         }
-        if (ins.needLoad) {
+        if (ins.needLoad || showCfg.forceLoad) {
             ins.isLoaded = false;
+            ins.needLoad = true;
         } else if (!ins.isLoaded && !ins.isLoading) {
             ins.needLoad = true;
         }
@@ -136,21 +173,21 @@ export class DpcMgr<
             const preloadCfg = showCfg as displayCtrl.ILoadConfig;
             const loadCb = preloadCfg.loadCb;
             preloadCfg.loadCb = (loadedIns) => {
-                loadCb && loadCb(null);
+                loadCb && loadCb(loadedIns);
                 if (loadedIns) {
-                    const loadedShowCfg = sigCtrlShowCfgMap[typeKey];
+                    const loadedShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
                     if (loadedIns.needShow) {
-                        this.initDpcByIns(loadedIns, loadedShowCfg && loadedShowCfg.onInitData);
+                        this.initDpcByIns(loadedIns, loadedShowCfg.onInitData);
                         this.showDpcByIns(loadedIns, loadedShowCfg);
                     }
                 }
-                delete sigCtrlShowCfgMap[typeKey];
+                delete sigCtrlShowCfgMap[showCfg.typeKey];
             }
             ins.needLoad = false;
             this._loadRess(ins, preloadCfg);
         } else {
             if (!ins.isInited) {
-                this.initDpcByIns(ins, showCfg && showCfg.onInitData);
+                this.initDpcByIns(ins, showCfg.onInitData);
             }
 
             if (ins.isInited) {

@@ -23,7 +23,7 @@ test("on Listener", function (done) {
     broadcast.on({ key: broadcast.keyMap.onListenerOn, listener: function () { } });
     expect(broadcast.has(broadcast.keyMap.onListenerOn)).toBe(true);
     //注册事件类型，事件回调，透传参数
-    broadcast.on({ key: broadcast.keyMap.testKey1, listener: function () { }, args: ["abc"] });
+    broadcast.on(broadcast.keyMap.testKey1, function () { }, null, false, ["abc"]);
     expect(broadcast.has(broadcast.keyMap.testKey1)).toBe(true);
     //注册事件类型，事件回调，上下文
     const context = { a: 1 };
@@ -133,7 +133,7 @@ test("off Listener", function (done) {
     broadcast.off("" as any, nullKeyListener);
     expect(broadcast.has(broadcast.keyMap.testKey5)).toBe(true);
     done()
-    
+
 })
 //广播普通消息
 test("broadcast normal msg", function (done) {
