@@ -166,7 +166,7 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	        }
 	        interface IMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> {
 	            /**控制器key字典 */
-	            ctrlKeys: CtrlKeyMapType;
+	            keys: CtrlKeyMapType;
 	            /**
 	             * 控制器单例字典
 	             */
@@ -306,8 +306,8 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	 * DisplayControllerMgr
 	 * 显示控制类管理器基类
 	 */
-	export class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
-	    ctrlKeys: CtrlKeyMapType;
+	export class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType, InitDataTypeMapType, ShowDataTypeMapType, UpdateDataTypeMapType> {
+	    keys: CtrlKeyMapType;
 	    /**
 	     * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
 	     */

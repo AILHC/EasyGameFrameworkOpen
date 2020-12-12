@@ -190,7 +190,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
         }
         interface IMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> {
             /**控制器key字典 */
-            ctrlKeys: CtrlKeyMapType;
+            keys: CtrlKeyMapType;
             /**
              * 控制器单例字典
              */
@@ -324,8 +324,8 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
  * DisplayControllerMgr
  * 显示控制类管理器基类
  */
-class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
-    ctrlKeys: CtrlKeyMapType;
+class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType, InitDataTypeMapType, ShowDataTypeMapType, UpdateDataTypeMapType> {
+    keys: CtrlKeyMapType;
     /**
      * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
      */

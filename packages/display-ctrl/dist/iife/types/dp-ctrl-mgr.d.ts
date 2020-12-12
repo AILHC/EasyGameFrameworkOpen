@@ -2,8 +2,8 @@
  * DisplayControllerMgr
  * 显示控制类管理器基类
  */
-export declare class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType> {
-    ctrlKeys: CtrlKeyMapType;
+export declare class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType, InitDataTypeMapType, ShowDataTypeMapType, UpdateDataTypeMapType> {
+    keys: CtrlKeyMapType;
     /**
      * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
      */
