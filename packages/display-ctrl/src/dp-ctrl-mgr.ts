@@ -178,7 +178,9 @@ export class DpcMgr<
                     const loadedShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
                     if (loadedIns.needShow) {
                         this.initDpcByIns(loadedIns, loadedShowCfg.onInitData);
-                        this.showDpcByIns(loadedIns, loadedShowCfg);
+                        this.showDpcByIns(loadedIns, loadedShowCfg.onShowData);
+                        loadedIns.needShow = false;
+                        loadedShowCfg.showedCb && loadedShowCfg.showedCb(loadedIns);
                     }
                 }
                 delete sigCtrlShowCfgMap[showCfg.typeKey];
@@ -191,7 +193,10 @@ export class DpcMgr<
             }
 
             if (ins.isInited) {
-                this.showDpcByIns(ins, showCfg);
+                this.showDpcByIns(ins, showCfg.onShowData);
+                showCfg.showedCb && showCfg.showedCb(ins);
+                ins.needShow = false;
+
             }
         }
         return ins as T;
@@ -300,13 +305,10 @@ export class DpcMgr<
             }
         }
     }
-    public showDpcByIns(dpcIns: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig) {
-        if (dpcIns.needShow) {
-            dpcIns.onShow(showCfg && showCfg.onShowData);
-            dpcIns.isShowed = true;
-            showCfg?.showedCb && showCfg?.showedCb(dpcIns);
-        }
-        dpcIns.needShow = false;
+    public showDpcByIns<T = any>(ins: displayCtrl.ICtrl, onShowData?: T): void {
+
+        ins.onShow(onShowData);
+        ins.isShowed = true;
     }
     public hideDpcByIns(dpcIns: displayCtrl.ICtrl) {
         if (!dpcIns) return;
