@@ -39,7 +39,7 @@ export declare class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, Sho
     insDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T;
     loadDpcByIns(dpcIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
     initDpcByIns<T = any>(dpcIns: displayCtrl.ICtrl, initData?: T): void;
-    showDpcByIns(dpcIns: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig): void;
+    showDpcByIns<T = any>(ins: displayCtrl.ICtrl, onShowData?: T): void;
     hideDpcByIns(dpcIns: displayCtrl.ICtrl): void;
     destroyDpcByIns(dpcIns: displayCtrl.ICtrl, destroyRes?: boolean): void;
     protected _loadRess(ctrlIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
