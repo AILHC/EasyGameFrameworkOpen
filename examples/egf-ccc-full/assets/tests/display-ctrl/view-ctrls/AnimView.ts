@@ -30,13 +30,13 @@ export class AnimView extends NodeCtrl {
         this._animComp = this.node.getComponent(cc.Animation);
 
     }
-    onShow(data?: any, endCb?: VoidFunction) {
+    onShow() {
         this.node.active = true;
         dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
         this._animComp.play("asyncViewShowAnimClip", 0);
         
         this._animComp.once(cc.Animation.EventType.FINISHED, () => {
-            endCb();
+            console.log(`播放完成`);
         });
 
     }
