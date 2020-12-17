@@ -8,7 +8,7 @@ import { DpcMgr } from "@ailhc/display-ctrl";
 import { Layer } from "@ailhc/dpctrl-ccc";
 import { App } from "@ailhc/egf-core";
 import { LayerMgr } from "@ailhc/layer";
-import { getChild, getComp } from "../../src/Utils";
+import { getChild, getComp, getSomeRandomInt } from "../../src/Utils";
 import { DpcTestLayerType } from "./DpcTestLayerType";
 import { dtM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
 import { CustomResHandleView } from "./view-ctrls/CustomResHandleView";
@@ -17,6 +17,7 @@ import { LoadingView } from "./view-ctrls/LoadingView";
 import { ObjPoolMgr } from "@ailhc/obj-pool";
 import { AnimView } from "./view-ctrls/AnimView";
 import { error } from "console";
+import { MutiInsView } from "./view-ctrls/MutiInsView";
 
 const { ccclass, property } = cc._decorator;
 
@@ -39,7 +40,7 @@ export default class DpcTestMainComp extends cc.Component {
     onLoad() {
         const app = new App<IDpcTestModuleMap>();
 
-        const dpcMgr = new DpcMgr();
+        const dpcMgr = new DpcMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap>();
         dpcMgr.init(
             {
                 loadRes: (config) => {
@@ -88,7 +89,7 @@ export default class DpcTestMainComp extends cc.Component {
         window["dtM"] = dtM;
         // TestView
         // dpcMgr.regist(LoadingView);
-        dpcMgr.registTypes([LoadingView, AnimView, CustomResHandleView, DepResView]);
+        dpcMgr.registTypes([LoadingView, AnimView, CustomResHandleView, DepResView, MutiInsView]);
         const tipsNode = getChild(this.depResViewBtnsNode, "depResStateTips");
         this._depResViewTipsLabel = getComp(tipsNode, cc.Label);
         this.depResViewBtnsNode.zIndex = 100;
@@ -98,6 +99,7 @@ export default class DpcTestMainComp extends cc.Component {
 
     }
     //····················测试接口······························
+    //DepResView 依赖资源界面接口调用
     showDepResView() {
         dtM.uiMgr.showDpc(dtM.uiMgr.keys.DepResView);
     }
@@ -117,6 +119,7 @@ export default class DpcTestMainComp extends cc.Component {
         dtM.uiMgr.loadSigDpc(dtM.uiMgr.keys.DepResView);
     }
 
+    //AnimView 带动画界面
     showAnimView() {
         dtM.uiMgr.showDpc({
             typeKey: dtM.uiMgr.keys.AnimView,
@@ -128,6 +131,8 @@ export default class DpcTestMainComp extends cc.Component {
     hideAnimView() {
         dtM.uiMgr.hideDpc(dtM.uiMgr.keys.AnimView);
     }
+
+    //CustomResHandlerView 自定义资源处理界面
     showCustomResHandlerView() {
         dtM.uiMgr.showDpc(dtM.uiMgr.keys.CustomResHandleView);
     }
@@ -136,5 +141,35 @@ export default class DpcTestMainComp extends cc.Component {
     }
     destroyCustomResHandlerView() {
         dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.CustomResHandleView, true, true)
+    }
+
+    //MutiInsView 多实例界面
+    private _mutiInss: displayCtrl.ICtrl[] = [];
+    createMutiInsView() {
+        if (!dtM.uiMgr.isLoaded(dtM.uiMgr.keys.MutiInsView)) {
+            dtM.uiMgr.loadSigDpc(dtM.uiMgr.keys.MutiInsView, {
+                loadCb: (ctrlIns) => {
+                    this._createMutiInsView(ctrlIns);
+                }
+            })
+        } else {
+            this._createMutiInsView();
+        }
+
+    }
+    private _createMutiInsView(ctrlIns?: displayCtrl.ICtrl) {
+        if (!ctrlIns) {
+            ctrlIns = dtM.uiMgr.insDpc(dtM.uiMgr.keys.MutiInsView);
+        }
+        dtM.uiMgr.initDpcByIns(ctrlIns);
+        dtM.uiMgr.showDpcByIns<IDpcTestViewShowDataMap["MutiInsView"]>(ctrlIns, { preStr: "egf", clickCount: getSomeRandomInt(0, 100, 1)[0] });
+        this._mutiInss.push(ctrlIns);
+    }
+    destroyAllMutiInsView() {
+        for (let i = 0; i < this._mutiInss.length; i++) {
+            dtM.uiMgr.destroyDpcByIns(this._mutiInss[i], true);
+        }
+        this._mutiInss.length = 0;
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.MutiInsView, true, true);
     }
 }

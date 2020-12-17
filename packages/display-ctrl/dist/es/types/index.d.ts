@@ -261,9 +261,14 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	            /**
 	             * 显示 显示控制器
 	             * @param ins
-	             * @param showCfg
+	             * @param onShowData
 	             */
-	            showDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: ICtrl, onShowData?: ShowDataTypeMapType[ToAnyIndexKey<keyType, ShowDataTypeMapType>], showedCb?: CtrlInsCb): void;
+	            showDpcByIns<T = any>(ins: displayCtrl.ICtrl, onShowData?: T): void;
+	            /**
+	             * 隐藏显示控制器
+	             * @param dpcIns
+	             */
+	            hideDpcByIns(dpcIns: displayCtrl.ICtrl): void;
 	            /**
 	             * 通过实例销毁
 	             * @param ins
@@ -343,7 +348,7 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 	    insDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T;
 	    loadDpcByIns(dpcIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
 	    initDpcByIns<T = any>(dpcIns: displayCtrl.ICtrl, initData?: T): void;
-	    showDpcByIns(dpcIns: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig): void;
+	    showDpcByIns<T = any>(ins: displayCtrl.ICtrl, onShowData?: T): void;
 	    hideDpcByIns(dpcIns: displayCtrl.ICtrl): void;
 	    destroyDpcByIns(dpcIns: displayCtrl.ICtrl, destroyRes?: boolean): void;
 	    protected _loadRess(ctrlIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;

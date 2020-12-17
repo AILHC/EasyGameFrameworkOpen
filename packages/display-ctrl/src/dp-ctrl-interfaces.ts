@@ -294,7 +294,7 @@ declare global {
             /**
              * 显示 显示控制器
              * @param ins 
-             * @param showCfg 
+             * @param showCfg
              */
             showDpcByIns<keyType extends keyof CtrlKeyMapType>(
                 ins: displayCtrl.ICtrl,

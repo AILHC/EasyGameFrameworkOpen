@@ -101,7 +101,7 @@ export class DpcMgr<
         }
         return ctrlIns as any;
     }
-    public initSigDpc<T extends displayCtrl.ICtrl = any,keyType extends keyof CtrlKeyMapType = any>(
+    public initSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(
         typeKey: keyType,
         initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
     ): T {
@@ -172,13 +172,14 @@ export class DpcMgr<
         if (ins.needLoad) {
             const preloadCfg = showCfg as displayCtrl.ILoadConfig;
             const loadCb = preloadCfg.loadCb;
-            preloadCfg.loadCb = (loadedIns) => {
+            preloadCfg.loadCb = (loadedIns: displayCtrl.ICtrl) => {
                 loadCb && loadCb(loadedIns);
                 if (loadedIns) {
                     const loadedShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
                     if (loadedIns.needShow) {
                         this.initDpcByIns(loadedIns, loadedShowCfg);
                         this.showDpcByIns(loadedIns, loadedShowCfg);
+                        loadedIns.needShow = false;
                     }
                 }
                 delete sigCtrlShowCfgMap[showCfg.typeKey];
@@ -192,6 +193,8 @@ export class DpcMgr<
 
             if (ins.isInited) {
                 this.showDpcByIns(ins, showCfg);
+                ins.needShow = false;
+
             }
         }
         return ins as T;
@@ -306,11 +309,8 @@ export class DpcMgr<
         ins: displayCtrl.ICtrl,
         showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
     ): void {
-        if (ins.needShow) {
-            ins.isShowing = true;
-            ins.onShow(showCfg);
-        }
-        ins.needShow = false;
+        ins.isShowing = true;
+        ins.onShow(showCfg);
     }
     public hideDpcByIns(dpcIns: displayCtrl.ICtrl) {
         if (!dpcIns) return;
