@@ -84,14 +84,14 @@ export class DpcMgr<
         }
         return null;
     }
-    public loadSigDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): T {
+    public loadSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): T {
         const ctrlIns = this.getSigDpcIns(typeKey);
         if (ctrlIns) {
             this.loadDpcByIns(ctrlIns, loadCfg);
         }
         return ctrlIns as any;
     }
-    public getSigDpcIns<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T {
+    public getSigDpcIns<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): T {
         const sigCtrlCache = this._sigCtrlCache;
         if (!typeKey) return null;
         let ctrlIns = sigCtrlCache[typeKey];
@@ -101,19 +101,19 @@ export class DpcMgr<
         }
         return ctrlIns as any;
     }
-    public initSigDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(
+    public initSigDpc<T extends displayCtrl.ICtrl = any,keyType extends keyof CtrlKeyMapType = any>(
         typeKey: keyType,
-        onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>]
+        initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
     ): T {
         let ctrlIns: displayCtrl.ICtrl;
         ctrlIns = this.getSigDpcIns(typeKey);
-        this.initDpcByIns(ctrlIns, onInitData);
+        this.initDpcByIns(ctrlIns, initCfg);
         return ctrlIns as any;
     }
-    public showDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(
+    public showDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(
         typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
         onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>],
-        showedCb?: displayCtrl.CtrlInsCb,
+        showedCb?: displayCtrl.CtrlInsCb<T>,
         onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>],
         forceLoad?: boolean,
         onLoadData?: any,
@@ -177,7 +177,7 @@ export class DpcMgr<
                 if (loadedIns) {
                     const loadedShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
                     if (loadedIns.needShow) {
-                        this.initDpcByIns(loadedIns, loadedShowCfg.onInitData);
+                        this.initDpcByIns(loadedIns, loadedShowCfg);
                         this.showDpcByIns(loadedIns, loadedShowCfg);
                     }
                 }
@@ -279,34 +279,38 @@ export class DpcMgr<
         return ins as any;
     }
 
-    public loadDpcByIns(dpcIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void {
-        if (dpcIns) {
-            if (dpcIns.needLoad) {
-                dpcIns.isLoaded = false;
-            } else if (!dpcIns.isLoaded && !dpcIns.isLoading) {
-                dpcIns.needLoad = true;
+    public loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void {
+        if (ins) {
+            if (ins.needLoad) {
+                ins.isLoaded = false;
+            } else if (!ins.isLoaded && !ins.isLoading) {
+                ins.needLoad = true;
             }
-            if (dpcIns.needLoad) {
-                dpcIns.needLoad = false;
-                this._loadRess(dpcIns, loadCfg);
-            }
-        }
-    }
-    public initDpcByIns<T = any>(dpcIns: displayCtrl.ICtrl, initData?: T): void {
-        if (dpcIns) {
-            if (!dpcIns.isInited) {
-                dpcIns.isInited = true;
-                dpcIns.onInit && dpcIns.onInit(initData);
+            if (ins.needLoad) {
+                ins.needLoad = false;
+                this._loadRess(ins, loadCfg);
             }
         }
     }
-    public showDpcByIns(dpcIns: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig) {
-        if (dpcIns.needShow) {
-            dpcIns.onShow(showCfg && showCfg.onShowData);
-            dpcIns.isShowed = true;
-            showCfg?.showedCb && showCfg?.showedCb(dpcIns);
+    public initDpcByIns<keyType extends keyof CtrlKeyMapType>(
+        ins: displayCtrl.ICtrl,
+        initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): void {
+        if (ins) {
+            if (!ins.isInited) {
+                ins.isInited = true;
+                ins.onInit && ins.onInit(initCfg);
+            }
         }
-        dpcIns.needShow = false;
+    }
+    public showDpcByIns<keyType extends keyof CtrlKeyMapType>(
+        ins: displayCtrl.ICtrl,
+        showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
+    ): void {
+        if (ins.needShow) {
+            ins.isShowing = true;
+            ins.onShow(showCfg);
+        }
+        ins.needShow = false;
     }
     public hideDpcByIns(dpcIns: displayCtrl.ICtrl) {
         if (!dpcIns) return;
@@ -365,7 +369,12 @@ export class DpcMgr<
                 ctrlIns.isLoading = true;
                 ctrlIns.isLoaded = false;
                 if (customLoadViewIns.loadRes) {
-                    customLoadViewIns.loadRes(onComplete, onError);
+                    customLoadViewIns.loadRes({
+                        key: ctrlIns.key,
+                        complete: onComplete,
+                        error: onError,
+                        onLoadData: loadCfg && loadCfg?.onLoadData
+                    });
                 } else if (this._resHandler) {
                     const ress = ctrlIns.getRess ? ctrlIns.getRess() : null;
                     if (!ress || !ress.length) {

@@ -5,9 +5,18 @@ declare global {
         OnShowDpc: "OnShowDpc",
         OnInitDpc: "OnInitDpc"
     }
+    interface ITestCtrlShowDataMap {
+        OnShowDpc: number
+    }
+    interface ITestCtrlInitDataMap {
+        OnInitDpc: number
+    }
+    interface ITestCtrlUpdateDataMap {
+        OnUpdateDpc: number
+    }
 }
 export class OnUpdateDpc extends BaseDpCtrl {
-    public static readonly typeKey: string = "OnUpdateDpc";
+    public static readonly typeKey: "OnUpdateDpc" = "OnUpdateDpc";
     public updateData: number;
 
     constructor() {
@@ -25,21 +34,21 @@ export class OnShowDpc extends BaseDpCtrl {
     constructor() {
         super();
     }
-    onShow(showData: number) {
-        this.showData = showData;
-        super.onShow()
+    onShow(config: displayCtrl.IShowConfig<"OnShowDpc", ITestCtrlShowDataMap>) {
+        this.showData = config.onShowData;
+        super.onShow(config)
     }
 
 }
 export class OnInitDpc extends BaseDpCtrl {
-    public static readonly typeKey: string = "OnInitDpc";
+    public static readonly typeKey: "OnInitDpc" = "OnInitDpc";
     public initData: number;
 
     constructor() {
         super();
     }
-    onInit(initData) {
-        this.initData = initData;
+    onInit(config: displayCtrl.IInitConfig<"OnInitDpc", ITestCtrlInitDataMap>) {
+        this.initData = config.onInitData;
     }
 
 }

@@ -9,12 +9,12 @@ declare global {
         type CtrlInsMap<keyType extends keyof any = any> = { [P in keyType]: ICtrl };
         type CtrlShowCfgs = { [key: string]: IShowConfig[] };
         type CtrlClassMap = { [key: string]: CtrlClassType<ICtrl> };
-        type CtrlInsCb<T = ICtrl> = (ctrl: T) => void;
+        type CtrlInsCb<T extends ICtrl = any> = (ctrl: T) => void;
         interface IResLoadConfig {
             /**页面key */
             key: string,
             /**资源数组 */
-            ress: string[],
+            ress?: string[],
             /**完成回调 */
             complete: VoidFunction,
             /**错误回调 */
@@ -44,7 +44,7 @@ declare global {
             /**
              * 加载资源
              */
-            loadRes?(onComplete: VoidFunction, onError: VoidFunction): void;
+            loadRes?(cfg: displayCtrl.IResLoadConfig): void;
             /**
              * 释放资源
              */
@@ -82,6 +82,14 @@ declare global {
         * 将索引类型转换为任意类型的索引类型
         */
         type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
+        interface IInitConfig<
+            TypeKey extends keyof any = any,
+            InitDataTypeMapType = any
+            > {
+            typeKey?: TypeKey,
+            onInitData?: InitDataTypeMapType[ToAnyIndexKey<TypeKey, InitDataTypeMapType>]
+
+        }
         /**
          * 显示配置
          */
@@ -126,18 +134,20 @@ declare global {
             needShow?: boolean
             /**需要加载 */
             needLoad?: boolean
+            /**正在显示 */
+            isShowing?: boolean
             /**获取资源 */
             getRess?(): string[];
             /**
              * 初始化
              * @param initData 初始化数据
              */
-            onInit(initData?: any): void;
+            onInit(config?: displayCtrl.IInitConfig): void;
             /**
              * 当显示时
              * @param showData 显示数据
              */
-            onShow(showData?: any): void;
+            onShow(config?: displayCtrl.IShowConfig): void;
             /**
              * 当更新时
              * @param updateData 更新数据
@@ -208,35 +218,36 @@ declare global {
              * 获取/生成单例显示控制器示例
              * @param typeKey 类型key
              */
-            getSigDpcIns<T extends ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T
+            getSigDpcIns<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): T
             /**
              * 加载Dpc
              * @param typeKey 注册时的typeKey
              * @param loadCfg 透传数据和回调
              */
-            loadSigDpc<T extends ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType, loadCfg?: ILoadConfig): T;
+            loadSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: ILoadConfig): T;
             /**
              * 初始化显示控制器
-             * @param initCfg 注册类时的 typeKey或者 IDpCtrlInitConfig
+             * @param typeKey 注册类时的 typeKey
+             * @param initCfg displayCtrl.IInitConfig
              */
-            initSigDpc<T extends ICtrl, keyType extends keyof CtrlKeyMapType>(
+            initSigDpc<T extends displayCtrl.ICtrl = any,keyType extends keyof CtrlKeyMapType = any>(
                 typeKey: keyType,
-                onInitData?: InitDataTypeMapType[ToAnyIndexKey<keyType, InitDataTypeMapType>]
+                initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
             ): T;
             /**
              * 显示单例显示控制器
-             * @param typeKey 类key或者显示配置
+             * @param typeKey 类key或者显示配置IShowConfig
              * @param onShowData 显示透传数据
              * @param showedCb 显示完成回调(onShow调用之后)
              * @param onInitData 初始化透传数据
              * @param forceLoad 是否强制重新加载
              * @param onCancel 当取消显示时
              */
-            showDpc<T extends ICtrl, keyType extends keyof CtrlKeyMapType>(
-                typeKey: keyType | IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
-                onShowData?: ShowDataTypeMapType[ToAnyIndexKey<keyType, ShowDataTypeMapType>],
-                showedCb?: CtrlInsCb,
-                onInitData?: InitDataTypeMapType[ToAnyIndexKey<keyType, InitDataTypeMapType>],
+            showDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(
+                typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
+                onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>],
+                showedCb?: displayCtrl.CtrlInsCb<T>,
+                onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>],
                 forceLoad?: boolean,
                 onLoadData?: any,
                 loadCb?: displayCtrl.CtrlInsCb,
@@ -244,8 +255,8 @@ declare global {
             ): T;
             /**
              * 更新控制器
-             * @param key 
-             * @param updateData 
+             * @param key UIkey
+             * @param updateData 更新数据
              */
             updateDpc<keyType extends keyof CtrlKeyMapType>(key: keyType, updateData?: UpdateDataTypeMapType[ToAnyIndexKey<keyType, UpdateDataTypeMapType>]): void;
             /**
@@ -277,16 +288,17 @@ declare global {
              * @param ins 
              * @param initData 
              */
-            initDpcByIns<T = any>(ins: ICtrl, initData?: T): void
+            initDpcByIns<keyType extends keyof CtrlKeyMapType>(
+                ins: displayCtrl.ICtrl,
+                initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): void
             /**
              * 显示 显示控制器
              * @param ins 
              * @param showCfg 
              */
             showDpcByIns<keyType extends keyof CtrlKeyMapType>(
-                ins: ICtrl,
-                onShowData?: ShowDataTypeMapType[ToAnyIndexKey<keyType, ShowDataTypeMapType>],
-                showedCb?: CtrlInsCb
+                ins: displayCtrl.ICtrl,
+                showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
             ): void;
 
             /**

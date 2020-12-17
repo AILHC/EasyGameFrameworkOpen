@@ -4,6 +4,7 @@ import { NoTypeKeyDpCtrl } from "./no-typekey-dpctrl";
 import { WithResDpCtrl } from "./with-res-dpctrl";
 import { OnInitDpc, OnShowDpc, OnUpdateDpc } from "./transfer-param-dpcs";
 import { CustomResHandlerDpc } from "./custom-res-handler-dpc";
+import { AsyncShowDpCtrl } from "./async-show-dpctrl";
 
 describe(
     `管理器属性测试 DpcMgr property test`, function () {
@@ -161,7 +162,7 @@ test("测试隐藏显示控制器 test hide display ctrl", function (done) {
     });
 })
 test("测试传参更新显示控制器 test transfer param update display ctrl", function (done) {
-    const dpcMgr = new DpcMgr();
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType, any, any, ITestCtrlUpdateDataMap>();
     dpcMgr.init({
         loadRes: (config) => {
             config.complete();
@@ -178,7 +179,7 @@ test("测试传参更新显示控制器 test transfer param update display ctrl"
     });
 });
 test("测试传参初始化显示控制器 test transfer param init display ctrl", function () {
-    const dpcMgr = new DpcMgr();
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType, ITestCtrlInitDataMap>();
     dpcMgr.init({
         loadRes: (config) => {
             config.complete();
@@ -187,12 +188,12 @@ test("测试传参初始化显示控制器 test transfer param init display ctrl
     dpcMgr.regist(OnInitDpc);
     const ctrlIns: OnInitDpc = dpcMgr.getSigDpcIns(OnInitDpc.typeKey);
     const ctrlOnInitSpy = jest.spyOn(ctrlIns, "onInit");
-    dpcMgr.initSigDpc(OnInitDpc.typeKey, 2);
+    dpcMgr.initSigDpc(OnInitDpc.typeKey, { onInitData: 2 });
     expect(ctrlOnInitSpy).toBeCalledTimes(1);
     expect(ctrlIns.initData).toBe(2);
 });
 test("测试传参显示 显示控制器 test transfer param show display ctrl", function (done) {
-    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType, any, ITestCtrlShowDataMap>();
     dpcMgr.init({
         loadRes: (config) => {
             config.complete();
@@ -315,3 +316,19 @@ test("测试显示控制器 isRegisted 接口 test display-ctrl isRegisted func"
     expect(dpcMgr.isRegisted(WithResDpCtrl.typeKey)).toBeTruthy();
 });
 
+test("测试异步显示完成回调  ", function (done) {
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(AsyncShowDpCtrl, "AsyncShowDpCtrl");
+    dpcMgr.showDpc<AsyncShowDpCtrl>("AsyncShowDpCtrl", undefined, (ctrl) => {
+        expect(ctrl.isShowed).toBeTruthy();
+        done();
+    });
+    const ctrl: displayCtrl.ICtrl = dpcMgr.getSigDpcIns<AsyncShowDpCtrl>("AsyncShowDpCtrl");
+    expect(ctrl.isShowing).toBeTruthy();
+    dpcMgr.getSigDpcRess("AsyncShowDpCtrl")
+}, 5000)
