@@ -311,6 +311,7 @@ export class DpcMgr<
     ): void {
         ins.isShowing = true;
         ins.onShow(showCfg);
+        
     }
     public hideDpcByIns(dpcIns: displayCtrl.ICtrl) {
         if (!dpcIns) return;
