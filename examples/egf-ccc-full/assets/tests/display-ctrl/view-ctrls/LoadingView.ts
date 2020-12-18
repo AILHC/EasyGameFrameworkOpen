@@ -6,9 +6,12 @@ declare global {
     interface IDpcTestViewKeyMap {
         LoadingView: "LoadingView"
     }
+    interface IDpcTestUpdateDataMap {
+        LoadingView: { finished: number, total: number }
+    }
 }
 export class LoadingView extends NodeCtrl {
-    static typeKey = "LoadingView";
+    static typeKey:string = "LoadingView";
     private static _ress: string[];
     public static prefabUrl = "display-ctrl-test-views/LoadingView";
     getRess() {
@@ -28,11 +31,12 @@ export class LoadingView extends NodeCtrl {
         this._tipsLabel = this.node.getChildByName("loadingTips").getComponent(cc.Label);
 
     }
-    onShow(data?: any) {
-        super.onShow();
+    onShow(config: displayCtrl.IShowConfig) {
+        super.onShow(config);
         dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
+        this._tipsLabel.string = "加载中...";
     }
-    onUpdate(data: { finished: number, total: number }) {
+    onUpdate(data: IDpcTestUpdateDataMap["LoadingView"]) {
         this._tipsLabel.string = `加载中${data.finished}/${data.total}...`;
     }
     onHide() {

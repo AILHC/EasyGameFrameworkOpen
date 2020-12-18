@@ -26,9 +26,12 @@ declare global {
 
     }
     interface IDpcTestModuleMap {
-        uiMgr: displayCtrl.IMgr<IDpcTestViewKeyMap>;
+        uiMgr: displayCtrl.IMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap, IDpcTestUpdateDataMap>;
         layerMgr: layer.IMgr<cc.Node>;
         poolMgr: objPool.IPoolMgr;
+    }
+    interface IDpcTestOnLoadData {
+        showLoading: boolean
     }
 }
 @ccclass
@@ -36,17 +39,25 @@ export default class DpcTestMainComp extends cc.Component {
     @property(cc.Node)
     depResViewBtnsNode: cc.Node = undefined;
 
+    @property(cc.Node)
+    ctrlBtns: cc.Node = undefined;
+
+
     private _depResViewTipsLabel: cc.Label;
     onLoad() {
         const app = new App<IDpcTestModuleMap>();
 
         const dpcMgr = new DpcMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap>();
+
         dpcMgr.init(
             {
                 loadRes: (config) => {
+                    const onLoadData: IDpcTestOnLoadData = config.onLoadData;
+                    onLoadData?.showLoading && dtM.uiMgr.showDpc("LoadingView");
                     cc.resources.load(config.ress,
                         (finish, total) => {
                             console.log(`${config.key}加载中:${finish}/${total}`);
+                            onLoadData?.showLoading && dtM.uiMgr.updateDpc("LoadingView", { finished: finish, total: total })
                         },
                         (err, items) => {
                             if (err) {
@@ -55,6 +66,7 @@ export default class DpcTestMainComp extends cc.Component {
                             } else {
                                 config.complete && config.complete();
                             }
+                            onLoadData?.showLoading && dtM.uiMgr.hideDpc("LoadingView");
                         })
                 },
                 releaseRes: (ctrlIns) => {
@@ -86,14 +98,20 @@ export default class DpcTestMainComp extends cc.Component {
         app.bootstrap();
         app.init();
         setDpcTestModuleMap(app.moduleMap);
-        window["dtM"] = dtM;
+        window["dtM"] = dtM;//控制台调试用
         // TestView
         // dpcMgr.regist(LoadingView);
         dpcMgr.registTypes([LoadingView, AnimView, CustomResHandleView, DepResView, MutiInsView]);
         const tipsNode = getChild(this.depResViewBtnsNode, "depResStateTips");
         this._depResViewTipsLabel = getComp(tipsNode, cc.Label);
-        this.depResViewBtnsNode.zIndex = 100;
-        this.depResViewBtnsNode.sortAllChildren();
+        this.ctrlBtns.zIndex = 100;
+        this.ctrlBtns.sortAllChildren();
+        dtM.uiMgr.loadSigDpc("LoadingView", {
+            loadCb: () => {
+                dtM.uiMgr.initSigDpc("LoadingView");
+            }
+        });
+
     }
     start() {
 
@@ -125,6 +143,9 @@ export default class DpcTestMainComp extends cc.Component {
             typeKey: dtM.uiMgr.keys.AnimView,
             showedCb: () => {
                 console.log(`${dtM.uiMgr.keys.AnimView}:显示完成`);
+            },
+            showEndCb: () => {
+                console.log(`${dtM.uiMgr.keys.AnimView}:显示结束`);
             }
         });
     }
@@ -140,7 +161,7 @@ export default class DpcTestMainComp extends cc.Component {
         dtM.uiMgr.hideDpc(dtM.uiMgr.keys.CustomResHandleView);
     }
     destroyCustomResHandlerView() {
-        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.CustomResHandleView, true, true)
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.CustomResHandleView, true)
     }
 
     //MutiInsView 多实例界面
@@ -162,7 +183,7 @@ export default class DpcTestMainComp extends cc.Component {
             ctrlIns = dtM.uiMgr.insDpc(dtM.uiMgr.keys.MutiInsView);
         }
         dtM.uiMgr.initDpcByIns(ctrlIns);
-        dtM.uiMgr.showDpcByIns<IDpcTestViewShowDataMap["MutiInsView"]>(ctrlIns, { preStr: "egf", clickCount: getSomeRandomInt(0, 100, 1)[0] });
+        dtM.uiMgr.showDpcByIns<"MutiInsView">(ctrlIns, { onShowData: { preStr: "egf", clickCount: getSomeRandomInt(0, 100, 1)[0] } });
         this._mutiInss.push(ctrlIns);
     }
     destroyAllMutiInsView() {
@@ -170,6 +191,6 @@ export default class DpcTestMainComp extends cc.Component {
             dtM.uiMgr.destroyDpcByIns(this._mutiInss[i], true);
         }
         this._mutiInss.length = 0;
-        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.MutiInsView, true, true);
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.MutiInsView, true);
     }
 }

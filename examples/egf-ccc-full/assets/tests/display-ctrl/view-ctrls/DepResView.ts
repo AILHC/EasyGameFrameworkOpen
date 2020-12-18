@@ -11,10 +11,12 @@ export class DepResView extends NodeCtrl {
     static typeKey = "DepResView";
     private static _ress: string[];
     public static prefabUrl = "display-ctrl-test-views/DepResView";
+    onLoadData: IDpcTestOnLoadData = { showLoading: true };
     getRess() {
         if (!DepResView._ress) {
             DepResView._ress = [
-                DepResView.prefabUrl
+                DepResView.prefabUrl,
+                "test-txts/txt1"
             ]
         }
         return DepResView._ress;
@@ -29,8 +31,8 @@ export class DepResView extends NodeCtrl {
         })
 
     }
-    onShow(data?: any) {
-        super.onShow();
+    onShow(config: displayCtrl.IShowConfig) {
+        super.onShow(config);
         dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
     }
     onHide() {
