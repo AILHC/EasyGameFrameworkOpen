@@ -28,7 +28,6 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
                 });
                 ress.push({ path: CustomResHandleView.prefabUrl, type: cc.Prefab });
                 ress.push({ path: "test-txts/txt1", type: cc.TextAsset });
-                cc.assetManager.presets
                 cc.assetManager.loadAny(ress, { bundle: "resources" }, (finished: number, total: number, item) => {
                     dtM.uiMgr.updateDpc(dtM.uiMgr.keys.LoadingView,
                         {
