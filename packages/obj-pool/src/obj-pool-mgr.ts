@@ -7,6 +7,7 @@ const logType = {
 export class ObjPoolMgr<SignType = any> implements objPool.IPoolMgr<SignType> {
 
 
+
     private _poolDic: { [key in keyof SignType]: BaseObjPool<any> } = {} as any;
     private _cid: number = 1;
     public destroyPool(sign: keyof SignType): void {
@@ -78,6 +79,10 @@ export class ObjPoolMgr<SignType = any> implements objPool.IPoolMgr<SignType> {
         const pool = this._poolDic[sign];
         return pool ? pool.get(...onGetArgs) : undefined;
     }
+    public getMore<T>(sign: keyof SignType, onGetArgs: any[], num?: number): T extends objPool.IObj ? T[] : objPool.IObj[] {
+        const pool = this._poolDic[sign];
+        return pool ? pool.getMore(onGetArgs, num) as any : undefined;
+    }
     public getPoolObjsBySign<T>(sign: keyof SignType): T extends objPool.IObj ? T : objPool.IObj[] {
         const pool = this._poolDic[sign];
 
@@ -86,8 +91,8 @@ export class ObjPoolMgr<SignType = any> implements objPool.IPoolMgr<SignType> {
     public hasPool(sign: keyof SignType): boolean {
         return !!this._poolDic[sign];
     }
-    public getPool<T>(sign: keyof SignType): objPool.IPool<T> {
-        return this._poolDic[sign];
+    public getPool<T = any>(sign: keyof SignType): objPool.IPool<T> {
+        return this._poolDic[sign] as any;
     }
     private _log(msg: string, level: number = 1) {
         const tagStr = "[对象池管理器]";

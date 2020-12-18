@@ -359,9 +359,11 @@ test("loadDpcByIns test", function (done) {
     });
     dpcMgr.regist(WithResDpCtrl, "WithResDpCtrl");
     const ins = dpcMgr.getSigDpcIns("WithResDpCtrl");
+    
     const handlerLoadResSpy = jest.spyOn(dpcMgr["_resHandler"], "loadRes");
     dpcMgr.loadDpcByIns(ins, {
-        loadCb: (ctrlIns: displayCtrl.ICtrl) => {
+        loadCb: (ctrlIns) => {
+            
             expect(ctrlIns.isLoaded).toBe(true);
             done()
         }
@@ -394,7 +396,7 @@ test("showDpcByIns test", function (done) {
     const ins = dpcMgr.getSigDpcIns("RessInClassDpc");
     const ctrlOnShowSpy = jest.spyOn(ins, "onShow");
     dpcMgr.showDpcByIns(ins, {
-        showedCb: (ctrlIns: displayCtrl.ICtrl) => {
+        showedCb: (ctrlIns) => {
             expect(ctrlIns).toBe(ins);
             expect(ctrlIns.isInited).toBeFalsy();
             expect(ctrlIns.isShowed).toBeTruthy();

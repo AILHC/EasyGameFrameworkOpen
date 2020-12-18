@@ -98,6 +98,12 @@ declare global {
              */
             get(...args): T;
             /**
+             * 批量获取对象
+             * @param args 
+             * @param num 默认1
+             */
+            getMore(args: any[], num?: number): T[];
+            /**
              * 预创建
              * @param num 数量
              */
@@ -149,6 +155,13 @@ declare global {
              * @param onGetArgs 当对象出池子时的参数，默认没有
              */
             get<T>(sign: keyof SignType, ...onGetArgs): T extends IObj ? T : IObj;
+            /**
+             * 批量获取指定对象池对象
+             * @param sign 对象池标志（对象类型）
+             * @param onGetArgs onGet参数
+             * @param num 数量，默认1
+             */
+            getMore<T>(sign: keyof SignType, onGetArgs: any[], num?: number): T extends IObj ? T[] : IObj[];
             /**
             * 根据对象类型标识字符，获取对象池。
             * @param sign 对象类型标识字符。
