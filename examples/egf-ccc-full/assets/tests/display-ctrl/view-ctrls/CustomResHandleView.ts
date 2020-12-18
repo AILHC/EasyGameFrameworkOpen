@@ -15,7 +15,7 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
     private static _monsterNames = ["BuleMonster", "GreenMonster", "PurpleMonster", "RedMonster", "YellowMonster"];
     private static _monsterIconDir = "monster_icon";
     private static prefabUrl: string = "display-ctrl-test-views/CustomResHandleView";
-    private _monsterIconRess: string[];
+    private _monsterIconRess: { path: string, type: any }[];
     loadRes(config: displayCtrl.IResLoadConfig): void {
         dtM.uiMgr.showDpc({
             typeKey: dtM.uiMgr.keys.LoadingView,
@@ -24,24 +24,24 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
                 const ress = [];
                 this._monsterIconRess = ress;
                 randomMonsterNameIndexs.forEach(element => {
-                    ress.push(CustomResHandleView._monsterIconDir + "/" + CustomResHandleView._monsterNames[element]);
+                    ress.push({ path: CustomResHandleView._monsterIconDir + "/" + CustomResHandleView._monsterNames[element], type: cc.SpriteFrame });
                 });
-                ress.push(CustomResHandleView.prefabUrl);
-                ress.push("test-txts/txt1");
-                cc.resources.load(ress,
-                    (finished: number, total: number, item) => {
-                        dtM.uiMgr.updateDpc(dtM.uiMgr.keys.LoadingView,
-                            {
-                                finished: finished, total: total
-                            })
-                    }, (err, data) => {
-                        if (err) {
-                            config.error();
-                        } else {
-                            config.complete();
-                        }
-                        dtM.uiMgr.hideDpc("LoadingView");
-                    })
+                ress.push({ path: CustomResHandleView.prefabUrl, type: cc.Prefab });
+                ress.push({ path: "test-txts/txt1", type: cc.TextAsset });
+                cc.assetManager.presets
+                cc.assetManager.loadAny(ress, { bundle: "resources" }, (finished: number, total: number, item) => {
+                    dtM.uiMgr.updateDpc(dtM.uiMgr.keys.LoadingView,
+                        {
+                            finished: finished, total: total
+                        })
+                }, (err, data) => {
+                    if (err) {
+                        config.error();
+                    } else {
+                        config.complete();
+                    }
+                    dtM.uiMgr.hideDpc("LoadingView");
+                });
             }
         })
     }
@@ -60,9 +60,9 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
         const monsterNodeB = getChild(this.node, "monsterB");
         const monsterSpCompA = getComp(monsterNodeA, cc.Sprite);
         // monsterSpCompA.spriteFrame.setTexture(cc.resources.get(this._monsterIconRess[0], cc.SpriteFrame))
-        // monsterSpCompA.spriteFrame = cc.resources.get(this._monsterIconRess[0], cc.SpriteFrame);
+        monsterSpCompA.spriteFrame = cc.resources.get(this._monsterIconRess[0].path, cc.SpriteFrame);
         const monsterSpCompB = getComp(monsterNodeB, cc.Sprite);
-        // monsterSpCompB.spriteFrame = cc.resources.get(this._monsterIconRess[1], cc.SpriteFrame);
+        monsterSpCompB.spriteFrame = cc.resources.get(this._monsterIconRess[1].path, cc.SpriteFrame);
         // monsterSpCompB.spriteFrame.setTexture(cc.resources.get(this._monsterIconRess[1], cc.SpriteFrame));
     }
     onHide() {
