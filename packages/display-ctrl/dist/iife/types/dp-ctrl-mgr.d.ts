@@ -23,7 +23,8 @@ export declare class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, Sho
     init(resHandler?: displayCtrl.IResHandler): void;
     registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void;
     regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyof CtrlKeyMapType): void;
-    isRegisted(typeKey: string): boolean;
+    isRegisted<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): boolean;
+    getDpcRessInClass<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): any[] | string[];
     getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[];
     loadSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): T;
     getSigDpcIns<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): T;
@@ -40,7 +41,7 @@ export declare class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, Sho
     loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
     initDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): void;
     showDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>): void;
-    hideDpcByIns(dpcIns: displayCtrl.ICtrl): void;
+    hideDpcByIns<T extends displayCtrl.ICtrl = any>(dpcIns: T): void;
     destroyDpcByIns(dpcIns: displayCtrl.ICtrl, destroyRes?: boolean): void;
     protected _loadRess(ctrlIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
 }

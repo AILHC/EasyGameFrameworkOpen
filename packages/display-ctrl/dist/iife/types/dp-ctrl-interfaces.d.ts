@@ -2,6 +2,7 @@ declare global {
     namespace displayCtrl {
         type CtrlClassType<T extends ICtrl = any> = {
             readonly typeKey?: string;
+            readonly ress?: string[] | any[];
             new (dpCtrlMgr?: IMgr): T;
         };
         type CtrlLoadedCb = (isOk: boolean) => void;
@@ -19,7 +20,7 @@ declare global {
             /**页面key */
             key: string;
             /**资源数组 */
-            ress?: string[];
+            ress?: string | any[];
             /**完成回调 */
             complete: VoidFunction;
             /**错误回调 */
@@ -141,7 +142,7 @@ declare global {
              * */
             onLoadData?: any;
             /**获取资源 */
-            getRess?(): string[];
+            getRess?(): string[] | any[];
             /**
              * 初始化
              * @param initData 初始化数据
@@ -207,12 +208,18 @@ declare global {
              * 是否注册了
              * @param typeKey
              */
-            isRegisted(typeKey: string): boolean;
+            isRegisted<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): boolean;
+            /**
+             * 获取注册类的资源信息
+             * 读取类的静态变量 ress
+             * @param typeKey
+             */
+            getDpcRessInClass<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[] | any[];
             /**
              * 获取单例UI的资源数组
              * @param typeKey
              */
-            getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[];
+            getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[] | any[];
             /**
              * 获取/生成单例显示控制器示例
              * @param typeKey 类型key
@@ -280,6 +287,11 @@ declare global {
              * @param showCfg
              */
             showDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>): void;
+            /**
+             * 通过实例隐藏
+             * @param ins
+             */
+            hideDpcByIns<T extends displayCtrl.ICtrl>(ins: T): void;
             /**
              * 通过实例销毁
              * @param ins

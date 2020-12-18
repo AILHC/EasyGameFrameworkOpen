@@ -5,6 +5,7 @@ import { WithResDpCtrl } from "./with-res-dpctrl";
 import { OnInitDpc, OnShowDpc, OnUpdateDpc } from "./transfer-param-dpcs";
 import { CustomResHandlerDpc } from "./custom-res-handler-dpc";
 import { AsyncShowDpCtrl } from "./async-show-dpctrl";
+import { RessInClassDpc } from "./ress-in-class-dpc";
 
 describe(
     `管理器属性测试 DpcMgr property test`, function () {
@@ -335,3 +336,100 @@ test("测试异步显示完成回调  ", function (done) {
 
     dpcMgr.getSigDpcRess("AsyncShowDpCtrl")
 }, 5000)
+
+test("getDpcRessInClass test", function () {
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
+    const ress = dpcMgr.getDpcRessInClass("RessInClassDpc");
+    expect(ress[0]).toBe("res1");
+    expect(ress.length).toBe(2);
+})
+
+test("loadDpcByIns test", function (done) {
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(WithResDpCtrl, "WithResDpCtrl");
+    const ins = dpcMgr.getSigDpcIns("WithResDpCtrl");
+    const handlerLoadResSpy = jest.spyOn(dpcMgr["_resHandler"], "loadRes");
+    dpcMgr.loadDpcByIns(ins, {
+        loadCb: (ctrlIns: displayCtrl.ICtrl) => {
+            expect(ctrlIns.isLoaded).toBe(true);
+            done()
+        }
+    })
+    expect(handlerLoadResSpy).toBeCalledTimes(1);
+})
+
+test("initDpcByIns test", function () {
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
+    const ins = dpcMgr.getSigDpcIns("RessInClassDpc");
+    const ctrlOnInitSpy = jest.spyOn(ins, "onInit");
+    dpcMgr.initDpcByIns(ins);
+    expect(ctrlOnInitSpy).toBeCalledTimes(1);
+
+})
+test("showDpcByIns test", function (done) {
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
+    const ins = dpcMgr.getSigDpcIns("RessInClassDpc");
+    const ctrlOnShowSpy = jest.spyOn(ins, "onShow");
+    dpcMgr.showDpcByIns(ins, {
+        showedCb: (ctrlIns: displayCtrl.ICtrl) => {
+            expect(ctrlIns).toBe(ins);
+            expect(ctrlIns.isInited).toBeFalsy();
+            expect(ctrlIns.isShowed).toBeTruthy();
+            done()
+        }
+    })
+    expect(ctrlOnShowSpy).toBeCalledTimes(1);
+
+    
+})
+test("hideDpcByIns test", function () {
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
+    const ins:RessInClassDpc = dpcMgr.getSigDpcIns("RessInClassDpc");
+    const ctrlOnHideSpy = jest.spyOn(ins, "onHide");
+    dpcMgr.hideDpcByIns(ins);
+    expect(ctrlOnHideSpy).toBeCalledTimes(1);
+
+})
+test("destroyDpcByIns test", function () {
+    const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
+    dpcMgr.init({
+        loadRes: (config) => {
+            config.complete();
+        }
+    });
+    dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
+    const ins = dpcMgr.getSigDpcIns("RessInClassDpc");
+    const ctrlOnDestroySpy = jest.spyOn(ins, "onDestroy");
+    dpcMgr.destroyDpcByIns(ins);
+    expect(ctrlOnDestroySpy).toBeCalledTimes(1);
+
+})
