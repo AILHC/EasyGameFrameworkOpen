@@ -1,23 +1,25 @@
 declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
 	export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
-	    key?: string;
+	    key?: string | any;
 	    isLoading?: boolean;
 	    isLoaded?: boolean;
 	    isInited?: boolean;
 	    isShowed?: boolean;
 	    needShow?: boolean;
 	    needLoad?: boolean;
+	    isShowing?: boolean;
 	    visible: boolean;
+	    onLoadData: any;
 	    protected node: cc.Node;
 	    protected _mgr: displayCtrl.IMgr;
 	    constructor(dpcMgr?: displayCtrl.IMgr);
+	    onInit(config?: displayCtrl.IInitConfig<any, any>): void;
+	    onShow(config?: displayCtrl.IShowConfig<any, any, any>): void;
 	    getRess?(): string[];
 	    getNode(): cc.Node;
-	    onInit(initData?: any): void;
 	    onUpdate(updateData: any): void;
 	    getFace<T = any>(): T;
 	    onDestroy(destroyRes?: boolean): void;
-	    onShow(data?: any): void;
 	    onHide(): void;
 	    forceHide(): void;
 	    onResize(): void;

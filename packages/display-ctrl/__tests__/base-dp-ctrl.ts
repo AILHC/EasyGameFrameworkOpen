@@ -17,8 +17,7 @@ export class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
     public onInit(config?: displayCtrl.IInitConfig): void {
     }
     public onShow(config?: displayCtrl.IShowConfig): void {
-        this.isShowed = true;
-        config.showedCb && config.showedCb(this);
+        
     }
     public onUpdate(updateData?: any): void {
     }
