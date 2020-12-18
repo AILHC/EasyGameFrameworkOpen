@@ -93,14 +93,14 @@ export class DpcMgr<
         }
         return null;
     }
-    public loadSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): T {
+    public loadSigDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T> {
         const ctrlIns = this.getSigDpcIns(typeKey);
         if (ctrlIns) {
             this.loadDpcByIns(ctrlIns, loadCfg);
         }
         return ctrlIns as any;
     }
-    public getSigDpcIns<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): T {
+    public getSigDpcIns<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T> {
         const sigCtrlCache = this._sigCtrlCache;
         if (!typeKey) return null;
         let ctrlIns = sigCtrlCache[typeKey];
@@ -110,16 +110,16 @@ export class DpcMgr<
         }
         return ctrlIns as any;
     }
-    public initSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(
+    public initSigDpc<T = any, keyType extends keyof CtrlKeyMapType = any>(
         typeKey: keyType,
         initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
-    ): T {
+    ): displayCtrl.ReturnCtrlType<T> {
         let ctrlIns: displayCtrl.ICtrl;
         ctrlIns = this.getSigDpcIns(typeKey);
         this.initDpcByIns(ctrlIns, initCfg);
         return ctrlIns as any;
     }
-    public showDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(
+    public showDpc<T, keyType extends keyof CtrlKeyMapType = any>(
         typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
         onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>],
         showedCb?: displayCtrl.CtrlInsCb<T>,
@@ -129,7 +129,7 @@ export class DpcMgr<
         loadCb?: displayCtrl.CtrlInsCb,
         showEndCb?: VoidFunction,
         onCancel?: VoidFunction
-    ): T {
+    ): displayCtrl.ReturnCtrlType<T> {
         let showCfg: displayCtrl.IShowConfig<keyType>;
         if (typeof typeKey == "string") {
             showCfg = {
@@ -206,7 +206,7 @@ export class DpcMgr<
 
             }
         }
-        return ins as T;
+        return ins as any;
     }
     public updateDpc<keyType extends keyof CtrlKeyMapType>(
         key: keyType,
@@ -280,7 +280,7 @@ export class DpcMgr<
 
     //基础操作函数
 
-    public insDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T {
+    public insDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T> {
         const ctrlClass = this._ctrlClassMap[typeKey];
         if (!ctrlClass) {
             console.error(`Not instantiate:${typeKey}`);
@@ -319,14 +319,14 @@ export class DpcMgr<
         ins: displayCtrl.ICtrl,
         showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
     ): void {
-        ins.onShow(showCfg);
+        ins.onShow && ins.onShow(showCfg);
         ins.isShowed = true;
         showCfg.showedCb && showCfg.showedCb(ins);
     }
     public hideDpcByIns<T extends displayCtrl.ICtrl = any>(dpcIns: T) {
         if (!dpcIns) return;
         dpcIns.needShow = false;
-        dpcIns.onHide();
+        dpcIns.onHide && dpcIns.onHide();
         dpcIns.isShowed = false;
     }
     public destroyDpcByIns(dpcIns: displayCtrl.ICtrl, destroyRes?: boolean) {
@@ -339,7 +339,7 @@ export class DpcMgr<
         if (dpcIns.isShowed) {
             this.hideDpcByIns(dpcIns);
         }
-        dpcIns.onDestroy(destroyRes);
+        dpcIns.onDestroy && dpcIns.onDestroy(destroyRes);
         if (destroyRes) {
             const customResHandler = dpcIns as unknown as displayCtrl.ICustomResHandler;
             if (customResHandler.releaseRes) {

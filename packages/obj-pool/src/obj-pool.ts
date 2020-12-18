@@ -115,10 +115,23 @@ export class BaseObjPool<T> implements objPool.IPool<T> {
         }
         this._usedPoolMap.set(obj, obj);
         obj.isInPool = false;
-        obj.onGet && obj.onGet(...args);
-        this._objHandler && this._objHandler.onGet(obj, ...args);
-
+        if (obj.onGet) {
+            obj.onGet(...args);
+        } else {
+            this._objHandler && this._objHandler.onGet(obj, ...args);
+        }
         return obj as T;
+    }
+    public getMore(args: any[], num: number = 1): T[] {
+        const objs = [];
+        if (!isNaN(num) && num > 1) {
+            for (let i = 0; i < num; i++) {
+                objs.push(this.get(args));
+            }
+        } else {
+            objs.push(this.get(args));
+        }
+        return objs as any;
     }
     private _loghasInit() {
         console.warn(`对象池${this._sign}已经初始化`);
