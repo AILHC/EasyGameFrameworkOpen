@@ -13,6 +13,7 @@ export class DpcMgr<
     ShowDataTypeMapType,
     UpdateDataTypeMapType> {
 
+
     keys: CtrlKeyMapType = new Proxy({}, {
         get(target, key) {
             return key;
@@ -71,10 +72,18 @@ export class DpcMgr<
             classMap[ctrlClass.typeKey] = ctrlClass;
         }
     }
-    public isRegisted(typeKey: string) {
+    public isRegisted<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): boolean {
         return !!this._ctrlClassMap[typeKey];
     }
-
+    public getDpcRessInClass<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): any[] | string[] {
+        const clas = this._ctrlClassMap[typeKey];
+        if (clas) {
+            return clas.ress;
+        } else {
+            console.error(`This class :${typeKey} is not registered `);
+            return undefined;
+        }
+    }
     //单例操作
 
     public getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType,): string[] {
@@ -150,7 +159,7 @@ export class DpcMgr<
         }
         const ins = this.getSigDpcIns(showCfg.typeKey as any);
         if (!ins) {
-            console.error(`没有注册:typeKey:${showCfg.typeKey}`);
+            console.error(`There is no registration :typeKey:${showCfg.typeKey}`);
             return null;
         };
         ins.needShow = true;
@@ -211,7 +220,7 @@ export class DpcMgr<
         if (ctrlIns && ctrlIns.isInited) {
             ctrlIns.onUpdate(updateData);
         } else {
-            console.warn(` updateDpc key:${key},该实例没初始化`);;
+            console.warn(` updateDpc key:${key}, The instance is not initialized`);;
         }
     }
     public hideDpc<keyType extends keyof CtrlKeyMapType>(key: keyType): void {
@@ -221,7 +230,7 @@ export class DpcMgr<
         }
         const dpcIns = this._sigCtrlCache[key];
         if (!dpcIns) {
-            console.warn(`${key} 没实例化`);
+            console.warn(`${key} Not instantiate`);
             return;
         }
         this.hideDpcByIns(dpcIns)
@@ -274,7 +283,7 @@ export class DpcMgr<
     public insDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T {
         const ctrlClass = this._ctrlClassMap[typeKey];
         if (!ctrlClass) {
-            console.error(`实例,请先注册类:${typeKey}`);
+            console.error(`Not instantiate:${typeKey}`);
             return null;
         }
         const ins = new ctrlClass();
@@ -314,7 +323,7 @@ export class DpcMgr<
         ins.isShowed = true;
         showCfg.showedCb && showCfg.showedCb(ins);
     }
-    public hideDpcByIns(dpcIns: displayCtrl.ICtrl) {
+    public hideDpcByIns<T extends displayCtrl.ICtrl = any>(dpcIns: T) {
         if (!dpcIns) return;
         dpcIns.needShow = false;
         dpcIns.onHide();
@@ -399,7 +408,7 @@ export class DpcMgr<
                     ctrlIns.isLoaded = false;
                     ctrlIns.isLoading = false;
                     onError();
-                    console.error(`无法处理加载:${ctrlIns.key}`);
+                    console.error(`load fail:${ctrlIns.key}`);
                 }
             } else {
                 ctrlIns.isLoaded = true;

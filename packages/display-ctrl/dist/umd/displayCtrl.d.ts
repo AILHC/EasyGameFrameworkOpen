@@ -27,6 +27,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
     namespace displayCtrl {
         type CtrlClassType<T extends ICtrl = any> = {
             readonly typeKey?: string;
+            readonly ress?: string[] | any[];
             new (dpCtrlMgr?: IMgr): T;
         };
         type CtrlLoadedCb = (isOk: boolean) => void;
@@ -44,7 +45,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
             /**页面key */
             key: string;
             /**资源数组 */
-            ress?: string[];
+            ress?: string | any[];
             /**完成回调 */
             complete: VoidFunction;
             /**错误回调 */
@@ -166,7 +167,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              * */
             onLoadData?: any;
             /**获取资源 */
-            getRess?(): string[];
+            getRess?(): string[] | any[];
             /**
              * 初始化
              * @param initData 初始化数据
@@ -232,12 +233,18 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              * 是否注册了
              * @param typeKey
              */
-            isRegisted(typeKey: string): boolean;
+            isRegisted<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): boolean;
+            /**
+             * 获取注册类的资源信息
+             * 读取类的静态变量 ress
+             * @param typeKey
+             */
+            getDpcRessInClass<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[] | any[];
             /**
              * 获取单例UI的资源数组
              * @param typeKey
              */
-            getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[];
+            getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[] | any[];
             /**
              * 获取/生成单例显示控制器示例
              * @param typeKey 类型key
@@ -306,6 +313,11 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              */
             showDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>): void;
             /**
+             * 通过实例隐藏
+             * @param ins
+             */
+            hideDpcByIns<T extends displayCtrl.ICtrl>(ins: T): void;
+            /**
              * 通过实例销毁
              * @param ins
              * @param destroyRes 是否销毁资源
@@ -362,7 +374,8 @@ class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapTyp
     init(resHandler?: displayCtrl.IResHandler): void;
     registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void;
     regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyof CtrlKeyMapType): void;
-    isRegisted(typeKey: string): boolean;
+    isRegisted<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): boolean;
+    getDpcRessInClass<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): any[] | string[];
     getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[];
     loadSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): T;
     getSigDpcIns<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): T;
@@ -379,7 +392,7 @@ class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapTyp
     loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
     initDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): void;
     showDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>): void;
-    hideDpcByIns(dpcIns: displayCtrl.ICtrl): void;
+    hideDpcByIns<T extends displayCtrl.ICtrl = any>(dpcIns: T): void;
     destroyDpcByIns(dpcIns: displayCtrl.ICtrl, destroyRes?: boolean): void;
     protected _loadRess(ctrlIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
 }
