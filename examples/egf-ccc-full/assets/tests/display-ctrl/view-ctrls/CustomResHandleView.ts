@@ -16,17 +16,18 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
     private static _monsterIconDir = "monster_icon";
     private static prefabUrl: string = "display-ctrl-test-views/CustomResHandleView";
     private _monsterIconRess: string[];
-    loadRes(onComplete: VoidFunction, onError: VoidFunction): void {
+    loadRes(config: displayCtrl.IResLoadConfig): void {
         dtM.uiMgr.showDpc({
             typeKey: dtM.uiMgr.keys.LoadingView,
             showedCb: () => {
-                const randomMonsterNameIndexs = getSomeRandomInt(0, CustomResHandleView._monsterNames.length, 2);
+                const randomMonsterNameIndexs = getSomeRandomInt(0, CustomResHandleView._monsterNames.length - 1, 2);
                 const ress = [];
                 this._monsterIconRess = ress;
                 randomMonsterNameIndexs.forEach(element => {
                     ress.push(CustomResHandleView._monsterIconDir + "/" + CustomResHandleView._monsterNames[element]);
                 });
                 ress.push(CustomResHandleView.prefabUrl);
+                ress.push("test-txts/txt1");
                 cc.resources.load(ress,
                     (finished: number, total: number, item) => {
                         dtM.uiMgr.updateDpc(dtM.uiMgr.keys.LoadingView,
@@ -35,10 +36,11 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
                             })
                     }, (err, data) => {
                         if (err) {
-                            onError();
+                            config.error();
                         } else {
-                            onComplete()
+                            config.complete();
                         }
+                        dtM.uiMgr.hideDpc("LoadingView");
                     })
             }
         })
@@ -49,17 +51,19 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustom
     onInit() {
         super.onInit()
         this.node = getPrefabNodeByPath(CustomResHandleView.prefabUrl);
-        
+
     }
-    onShow(data?: any) {
-        super.onShow();
+    onShow(config: displayCtrl.IShowConfig) {
+        super.onShow(config);
         dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.POP_UP_UI);
         const monsterNodeA = getChild(this.node, "monsterA");
         const monsterNodeB = getChild(this.node, "monsterB");
         const monsterSpCompA = getComp(monsterNodeA, cc.Sprite);
-        monsterSpCompA.spriteFrame = cc.resources.get(this._monsterIconRess[0], cc.SpriteFrame);
+        // monsterSpCompA.spriteFrame.setTexture(cc.resources.get(this._monsterIconRess[0], cc.SpriteFrame))
+        // monsterSpCompA.spriteFrame = cc.resources.get(this._monsterIconRess[0], cc.SpriteFrame);
         const monsterSpCompB = getComp(monsterNodeB, cc.Sprite);
-        monsterSpCompB.spriteFrame = cc.resources.get(this._monsterIconRess[1], cc.SpriteFrame);
+        // monsterSpCompB.spriteFrame = cc.resources.get(this._monsterIconRess[1], cc.SpriteFrame);
+        // monsterSpCompB.spriteFrame.setTexture(cc.resources.get(this._monsterIconRess[1], cc.SpriteFrame));
     }
     onHide() {
         super.onHide();

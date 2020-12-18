@@ -34,10 +34,10 @@ export class MutiInsView extends NodeCtrl {
         this._animComp = this.node.getComponent(cc.Animation);
 
     }
-    onShow(onShowData: IDpcTestViewShowDataMap["MutiInsView"]) {
-        super.onShow();
+    onShow(config: displayCtrl.IShowConfig<"MutiInsView", any, IDpcTestViewShowDataMap>) {
+        super.onShow(config);
         const tipsStr = getRandomArrayElements(this._tips, 1);
-        this._tipsLabel.string = `${onShowData.preStr}_${tipsStr}_x${onShowData.clickCount}`;
+        this._tipsLabel.string = `${config.onShowData.preStr}_${tipsStr}_x${config.onShowData.clickCount}`;
         dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType.EFFECT_UI);
         this._animComp.play();
         this._animComp.once(cc.Animation.EventType.FINISHED, () => {
