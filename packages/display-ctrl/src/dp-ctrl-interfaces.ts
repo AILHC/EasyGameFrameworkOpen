@@ -53,6 +53,8 @@ declare global {
         interface ILoadConfig {
             /**页面类型key */
             typeKey?: string | any,
+            /**强制重新加载 */
+            forceLoad?: boolean
             /**加载后onLoad参数 */
             onLoadData?: any,
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
@@ -111,8 +113,10 @@ declare global {
              * 显示数据
              */
             onShowData?: ShowDataTypeMapType[ToAnyIndexKey<TypeKey, ShowDataTypeMapType>],
-            /**在调用控制器实例onShow后执行 */
-            showedCb?: CtrlInsCb,
+            /**在调用控制器实例onShow后回调 */
+            showedCb?: CtrlInsCb;
+            /**控制器显示完成后回调 */
+            showEndCb?: VoidFunction;
             /**显示被取消了 */
             onCancel?: VoidFunction,
             /**加载后onLoad参数 */
@@ -121,7 +125,7 @@ declare global {
             loadCb?: CtrlInsCb
         }
         interface ICtrl<NodeType = any> {
-            key?: string;
+            key?: string | any;
             /**正在加载 */
             isLoading?: boolean;
             /**已经加载 */
@@ -136,6 +140,14 @@ declare global {
             needLoad?: boolean
             /**正在显示 */
             isShowing?: boolean
+
+            /**
+             * 透传给加载处理的数据,
+             * 会和调用显示接口showDpc中传来的onLoadData合并,
+             * 以接口传入的为主
+             * Object.assign(ins.onLoadData,cfg.onLoadData); 
+             * */
+            onLoadData?: any;
             /**获取资源 */
             getRess?(): string[];
             /**
@@ -230,7 +242,7 @@ declare global {
              * @param typeKey 注册类时的 typeKey
              * @param initCfg displayCtrl.IInitConfig
              */
-            initSigDpc<T extends displayCtrl.ICtrl = any,keyType extends keyof CtrlKeyMapType = any>(
+            initSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(
                 typeKey: keyType,
                 initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
             ): T;
@@ -263,14 +275,13 @@ declare global {
              * 隐藏单例控制器
              * @param key 
              */
-            hideDpc(key: string): void;
+            hideDpc<keyType extends keyof CtrlKeyMapType>(key: keyType): void;
             /**
              * 销毁单例控制器
              * @param key 
              * @param destroyRes 销毁资源
-             * @param destroyIns 销毁实例
              */
-            destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean): void;
+            destroyDpc<keyType extends keyof CtrlKeyMapType>(key: keyType, destroyRes?: boolean): void;
 
             /**
              * 实例化显示控制器

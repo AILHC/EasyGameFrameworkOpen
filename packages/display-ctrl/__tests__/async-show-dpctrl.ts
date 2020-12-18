@@ -7,10 +7,10 @@ declare global {
 }
 export class AsyncShowDpCtrl extends BaseDpCtrl {
     onShow(config: displayCtrl.IShowConfig) {
+        this.isShowing = true;
         setTimeout(() => {
-            // this.isShowed = true;
-            // config&&config.showedCb(this);
-            super.onShow(config);
+            this.isShowing = false;
+            config.showEndCb && config.showEndCb();
         }, 2000);
     }
 }

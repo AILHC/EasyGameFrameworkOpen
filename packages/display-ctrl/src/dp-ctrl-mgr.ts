@@ -118,6 +118,7 @@ export class DpcMgr<
         forceLoad?: boolean,
         onLoadData?: any,
         loadCb?: displayCtrl.CtrlInsCb,
+        showEndCb?: VoidFunction,
         onCancel?: VoidFunction
     ): T {
         let showCfg: displayCtrl.IShowConfig<keyType>;
@@ -129,6 +130,7 @@ export class DpcMgr<
                 onInitData: onInitData,
                 forceLoad: forceLoad,
                 onLoadData: onLoadData,
+                showEndCb: showEndCb,
                 loadCb: loadCb,
                 onCancel: onCancel
             }
@@ -136,6 +138,7 @@ export class DpcMgr<
             showCfg = typeKey;
             onShowData !== undefined && (showCfg.onShowData = onShowData);
             showedCb !== undefined && (showCfg.showedCb = showedCb);
+            showEndCb !== undefined && (showCfg.showEndCb = showEndCb);
             onInitData !== undefined && (showCfg.onInitData = onInitData);
             forceLoad !== undefined && (showCfg.forceLoad = forceLoad);
             onLoadData !== undefined && (showCfg.onLoadData = onLoadData);
@@ -150,9 +153,6 @@ export class DpcMgr<
             console.error(`没有注册:typeKey:${showCfg.typeKey}`);
             return null;
         };
-        if (ins.isShowed) {
-            return;
-        }
         ins.needShow = true;
         const sigCtrlShowCfgMap = this._sigCtrlShowCfgMap;
         const oldShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
@@ -214,7 +214,7 @@ export class DpcMgr<
             console.warn(` updateDpc key:${key},该实例没初始化`);;
         }
     }
-    public hideDpc(key: string) {
+    public hideDpc<keyType extends keyof CtrlKeyMapType>(key: keyType): void {
         if (!key) {
             console.warn("!!!key is null");
             return;
@@ -227,7 +227,7 @@ export class DpcMgr<
         this.hideDpcByIns(dpcIns)
     }
 
-    public destroyDpc(key: string, destroyRes?: boolean) {
+    public destroyDpc<keyType extends keyof CtrlKeyMapType>(key: keyType, destroyRes?: boolean): void {
         if (!key || key === "") {
             console.warn("!!!key is null");
             return;
@@ -284,8 +284,9 @@ export class DpcMgr<
 
     public loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void {
         if (ins) {
-            if (ins.needLoad) {
+            if (ins.needLoad || (loadCfg && loadCfg.forceLoad)) {
                 ins.isLoaded = false;
+                ins.needLoad = true;
             } else if (!ins.isLoaded && !ins.isLoading) {
                 ins.needLoad = true;
             }
@@ -309,9 +310,9 @@ export class DpcMgr<
         ins: displayCtrl.ICtrl,
         showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
     ): void {
-        ins.isShowing = true;
         ins.onShow(showCfg);
-        
+        ins.isShowed = true;
+        showCfg.showedCb && showCfg.showedCb(ins);
     }
     public hideDpcByIns(dpcIns: displayCtrl.ICtrl) {
         if (!dpcIns) return;
@@ -369,12 +370,17 @@ export class DpcMgr<
                 const customLoadViewIns: displayCtrl.ICustomResHandler = ctrlIns as any;
                 ctrlIns.isLoading = true;
                 ctrlIns.isLoaded = false;
+                let onLoadData = loadCfg && loadCfg.onLoadData;
+                onLoadData =
+                    ctrlIns.onLoadData
+                        ? Object.assign(ctrlIns.onLoadData, onLoadData)
+                        : onLoadData;
                 if (customLoadViewIns.loadRes) {
                     customLoadViewIns.loadRes({
                         key: ctrlIns.key,
                         complete: onComplete,
                         error: onError,
-                        onLoadData: loadCfg && loadCfg?.onLoadData
+                        onLoadData: onLoadData
                     });
                 } else if (this._resHandler) {
                     const ress = ctrlIns.getRess ? ctrlIns.getRess() : null;
@@ -387,7 +393,7 @@ export class DpcMgr<
                         ress: ress,
                         complete: onComplete,
                         error: onError,
-                        onLoadData: loadCfg && loadCfg?.onLoadData
+                        onLoadData: onLoadData
                     });
                 } else {
                     ctrlIns.isLoaded = false;

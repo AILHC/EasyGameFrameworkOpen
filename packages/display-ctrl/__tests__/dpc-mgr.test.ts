@@ -326,9 +326,12 @@ test("测试异步显示完成回调  ", function (done) {
     dpcMgr.regist(AsyncShowDpCtrl, "AsyncShowDpCtrl");
     dpcMgr.showDpc<AsyncShowDpCtrl>("AsyncShowDpCtrl", undefined, (ctrl) => {
         expect(ctrl.isShowed).toBeTruthy();
+        expect(ctrl.isShowing).toBeTruthy();
+    }, undefined, undefined, undefined, undefined, () => {
+        expect(ctrl.isShowing).toBeFalsy();
         done();
     });
     const ctrl: displayCtrl.ICtrl = dpcMgr.getSigDpcIns<AsyncShowDpCtrl>("AsyncShowDpCtrl");
-    expect(ctrl.isShowing).toBeTruthy();
+
     dpcMgr.getSigDpcRess("AsyncShowDpCtrl")
 }, 5000)
