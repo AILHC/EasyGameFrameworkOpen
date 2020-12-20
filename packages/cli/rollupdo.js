@@ -229,7 +229,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         //     fairygui: "fairygui",
         //     Laya: "Laya"
         // },
-        footer: moduleName && useFooter ? `window.${moduleName}?Object.assign({},window.${moduleName}):(window.${moduleName} = ${moduleName})` : ''
+        footer: moduleName && useFooter ? `const globalTarget =window?window:global; globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : ''
     }
 
     if (isWatch) {
