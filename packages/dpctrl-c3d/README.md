@@ -1,36 +1,35 @@
-# `@ailhc/xxx`
-> xxxx
+# `@ailhc/dpctrl-c3d`
+
 
 ## 简介
-
-
-
+@ailhc/display-ctrl的CocosCreator3d实现
 
 ## 特性
-****
+
 ## 使用
 
 0. 
     
     通过npm安装 
-    npm install @ailhc/xxx
+    npm install @ailhc/dpctrl-c3d
 
     如果支持使用npm模块，则 通过导入npm模块的方式
-    ```ts
-    import { } from "@ailhc/xxx"
+    
+    由于CocosCreator3d暂时不支持npm，可以复制dist/systemjs目录下的文件到项目中
+    设置index.js为插件就可以使用了
 
-    ```
-    如果不支持，则使用dist下的iife格式
-    或者直接复制src下的源码
 
 1. 基础使用
 ```ts
-
+    import { NodeCtrl } from "@ailhc/dpctrl-c3d"
+    export class AView extends NodeCtrl {
+        
+    }
 ```
 ## 发布日志
  
 *********
-    0.1.0 (2020-10-11)
-    1. 第一次发布
+### 1.0.0 (2020-12-20)
+@ailhc/display-ctrl的CocosCreator3d实现
 
 
