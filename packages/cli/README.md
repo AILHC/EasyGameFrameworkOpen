@@ -40,6 +40,8 @@ npm install -D @ailhc/egf-cli
 
 
 # 更新日志
+### 1.0.2 (2020/12/20)
+1. iife导出兼容nodejs环境的全局变量global
 ### 1.0.1 (2020/12/8)
 1. 解决发布后的库，sourcemap加载不到的问题，使用inlinesourcemap的方式
 ### 1.0.0 (2020/12/2)
