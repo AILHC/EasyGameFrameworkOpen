@@ -22,10 +22,10 @@ interface ShowDataTypeMapType {
     }
 }
 type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never }[keyof T] &
-        string;
-        // let params:
-        type MethodParameters<T extends Partial<any>,M extends FunctionPropertyNames<T>> = Parameters<T[M]>;
-        
+    string;
+// let params:
+type MethodParameters<T extends Partial<any>, M extends FunctionPropertyNames<T>> = Parameters<T[M]>;
+
 interface IShowConfig2<
     InitDataTypeMapType = any,
     ShowDataTypeMapType = any,
@@ -96,6 +96,21 @@ mgr.showDpc({
     onInitData: { a: 1, b: 1 },
     onShowData: { a: 1, b: 1 }
 })
-const myMgr:displayCtrl.IMgr<CtrlKeyTypeMapType, InitDataTypeMapType, ShowDataTypeMapType> = {} as any;
+const myMgr: displayCtrl.IMgr<CtrlKeyTypeMapType, InitDataTypeMapType, ShowDataTypeMapType> = {} as any;
 
 myMgr.showDpc("typeTest2")
+
+type Whitespace = ' ' | '\n' | '\r' | '\t'
+
+type TrimStart<S extends string, P extends string = Whitespace> =
+    S extends `${P}${infer R}` ? TrimStart<R, P> : S
+
+type String1 = '\t  \r  \n   value'
+type Trimmed1 = TrimStart<String1>
+
+type String2 = '---value'
+type Trimmed2 = TrimStart<String2, '-'>
+function a(a:Trimmed1){
+
+}
+a("value")

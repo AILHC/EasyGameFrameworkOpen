@@ -40,7 +40,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
         type CtrlClassMap = {
             [key: string]: CtrlClassType<ICtrl>;
         };
-        type CtrlInsCb<T extends ICtrl = any> = (ctrl: T) => void;
+        type CtrlInsCb<T = unknown> = (ctrl: T extends displayCtrl.ICtrl ? T : displayCtrl.ICtrl) => void;
         interface IResLoadConfig {
             /**页面key */
             key: string;
@@ -61,25 +61,12 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              * 加载资源
              * @param config
              */
-            loadRes?(config: IResLoadConfig): void;
+            loadRes?(config: displayCtrl.IResLoadConfig): void;
             /**
              * 释放资源
              * @param ctrlIns
              */
-            releaseRes?(ctrlIns: ICtrl): void;
-        }
-        /**
-         * 控制器自定义资源处理
-         */
-        interface ICustomResHandler {
-            /**
-             * 加载资源
-             */
-            loadRes?(cfg: displayCtrl.IResLoadConfig): void;
-            /**
-             * 释放资源
-             */
-            releaseRes?(): void;
+            releaseRes?(ctrlIns?: ICtrl): void;
         }
         interface ILoadConfig {
             /**页面类型key */
@@ -143,6 +130,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
             loadCb?: CtrlInsCb;
         }
+        type ReturnCtrlType<T> = T extends displayCtrl.ICtrl ? T : displayCtrl.ICtrl;
         interface ICtrl<NodeType = any> {
             key?: string | any;
             /**正在加载 */
@@ -187,7 +175,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
             /**
              * 获取控制器
              */
-            getFace<T = any>(): T;
+            getFace<T>(): ReturnCtrlType<T>;
             /**
              * 当隐藏时
              */
@@ -249,19 +237,19 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              * 获取/生成单例显示控制器示例
              * @param typeKey 类型key
              */
-            getSigDpcIns<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): T;
+            getSigDpcIns<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T>;
             /**
              * 加载Dpc
              * @param typeKey 注册时的typeKey
              * @param loadCfg 透传数据和回调
              */
-            loadSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: ILoadConfig): T;
+            loadSigDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T>;
             /**
              * 初始化显示控制器
              * @param typeKey 注册类时的 typeKey
              * @param initCfg displayCtrl.IInitConfig
              */
-            initSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): T;
+            initSigDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): displayCtrl.ReturnCtrlType<T>;
             /**
              * 显示单例显示控制器
              * @param typeKey 类key或者显示配置IShowConfig
@@ -271,7 +259,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              * @param forceLoad 是否强制重新加载
              * @param onCancel 当取消显示时
              */
-            showDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>, onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>], showedCb?: displayCtrl.CtrlInsCb<T>, onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>], forceLoad?: boolean, onLoadData?: any, loadCb?: displayCtrl.CtrlInsCb, onCancel?: VoidFunction): T;
+            showDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>, onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>], showedCb?: displayCtrl.CtrlInsCb<T>, onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>], forceLoad?: boolean, onLoadData?: any, loadCb?: displayCtrl.CtrlInsCb, onCancel?: VoidFunction): displayCtrl.ReturnCtrlType<T>;
             /**
              * 更新控制器
              * @param key UIkey
@@ -293,13 +281,13 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              * 实例化显示控制器
              * @param typeKey 类型key
              */
-            insDpc<T extends ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T;
+            insDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): ReturnCtrlType<T>;
             /**
              * 加载显示控制器
              * @param ins
              * @param loadCfg
              */
-            loadDpcByIns(ins: ICtrl, loadCfg?: ILoadConfig): void;
+            loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: ILoadConfig): void;
             /**
              * 初始化显示控制器
              * @param ins
@@ -322,7 +310,7 @@ class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
              * @param ins
              * @param destroyRes 是否销毁资源
              */
-            destroyDpcByIns<T extends ICtrl>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void;
+            destroyDpcByIns<T extends displayCtrl.ICtrl>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void;
             /**
              * 获取单例控制器是否正在
              * @param key
@@ -377,10 +365,10 @@ class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapTyp
     isRegisted<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): boolean;
     getDpcRessInClass<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): any[] | string[];
     getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[];
-    loadSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): T;
-    getSigDpcIns<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): T;
-    initSigDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): T;
-    showDpc<T extends displayCtrl.ICtrl = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>, onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>], showedCb?: displayCtrl.CtrlInsCb<T>, onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>], forceLoad?: boolean, onLoadData?: any, loadCb?: displayCtrl.CtrlInsCb, showEndCb?: VoidFunction, onCancel?: VoidFunction): T;
+    loadSigDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T>;
+    getSigDpcIns<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T>;
+    initSigDpc<T = any, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): displayCtrl.ReturnCtrlType<T>;
+    showDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>, onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>], showedCb?: displayCtrl.CtrlInsCb<T>, onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>], forceLoad?: boolean, onLoadData?: any, loadCb?: displayCtrl.CtrlInsCb, showEndCb?: VoidFunction, onCancel?: VoidFunction): displayCtrl.ReturnCtrlType<T>;
     updateDpc<keyType extends keyof CtrlKeyMapType>(key: keyType, updateData?: UpdateDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, UpdateDataTypeMapType>]): void;
     hideDpc<keyType extends keyof CtrlKeyMapType>(key: keyType): void;
     destroyDpc<keyType extends keyof CtrlKeyMapType>(key: keyType, destroyRes?: boolean): void;
@@ -388,7 +376,7 @@ class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapTyp
     isLoaded<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
     isInited<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
     isShowed<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
-    insDpc<T extends displayCtrl.ICtrl, keyType extends keyof CtrlKeyMapType>(typeKey: keyType): T;
+    insDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T>;
     loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
     initDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): void;
     showDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>): void;

@@ -31,25 +31,12 @@ declare global {
              * 加载资源
              * @param config 
              */
-            loadRes?(config: IResLoadConfig): void;
+            loadRes?(config: displayCtrl.IResLoadConfig): void;
             /**
              * 释放资源
              * @param ctrlIns 
              */
-            releaseRes?(ctrlIns: ICtrl): void;
-        }
-        /**
-         * 控制器自定义资源处理
-         */
-        interface ICustomResHandler {
-            /**
-             * 加载资源
-             */
-            loadRes?(cfg: displayCtrl.IResLoadConfig): void;
-            /**
-             * 释放资源
-             */
-            releaseRes?(): void;
+            releaseRes?(ctrlIns?: ICtrl): void;
         }
         interface ILoadConfig {
             /**页面类型key */

@@ -341,9 +341,9 @@ export class DpcMgr<
         }
         dpcIns.onDestroy && dpcIns.onDestroy(destroyRes);
         if (destroyRes) {
-            const customResHandler = dpcIns as unknown as displayCtrl.ICustomResHandler;
+            const customResHandler = dpcIns as unknown as displayCtrl.IResHandler;
             if (customResHandler.releaseRes) {
-                customResHandler.releaseRes();
+                customResHandler.releaseRes(dpcIns);
             } else if (this._resHandler && this._resHandler.releaseRes) {
                 this._resHandler.releaseRes(dpcIns);
             }
@@ -376,7 +376,7 @@ export class DpcMgr<
                     }
                 }
 
-                const customLoadViewIns: displayCtrl.ICustomResHandler = ctrlIns as any;
+                const customLoadViewIns: displayCtrl.IResHandler = ctrlIns as any;
                 ctrlIns.isLoading = true;
                 ctrlIns.isLoaded = false;
                 let onLoadData = loadCfg && loadCfg.onLoadData;
