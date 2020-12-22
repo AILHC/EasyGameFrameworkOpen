@@ -32,7 +32,7 @@
     "build:es": "egf build -f es",
     "build:umd": "egf build -f umd:broadcast",
     "build:iife": "egf build -f iife:broadcast",
-    "build:system":"egf build -f system:@ailhc/broadcast",
+    "build:system": "egf build -f system:@ailhc/broadcast",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
     "testc": "jest --coverage"

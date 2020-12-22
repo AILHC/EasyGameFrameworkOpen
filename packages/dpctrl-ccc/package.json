@@ -44,6 +44,6 @@
   },
   "dependencies": {
     "@ailhc/display-ctrl": "0.1.2",
-    "@ailhc/layer": "0.0.2"
+    "@ailhc/layer": "^0.0.2"
   }
 }
