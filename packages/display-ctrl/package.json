@@ -30,7 +30,7 @@
     "build:es": "egf build -f es",
     "build:umd": "egf build -f umd:displayCtrl",
     "build:iife": "egf build -f iife:displayCtrl",
-    "build:system":"egf build -f system:@ailhc/display-ctrl",
+    "build:system": "egf build -f system:@ailhc/display-ctrl",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest"
   },
@@ -41,6 +41,5 @@
     "@ailhc/egf-cli": "1.0.0",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1"
-  },
-  "dependencies": {}
+  }
 }

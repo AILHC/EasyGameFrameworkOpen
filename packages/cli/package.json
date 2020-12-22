@@ -46,7 +46,6 @@
     "rollup-plugin-typescript2": "~0.21.2",
     "typescript": "^3.8.3"
   },
-  "devDependencies": {},
   "bin": {
     "egf": "./cli.js"
   },

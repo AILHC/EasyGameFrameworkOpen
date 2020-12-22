@@ -41,6 +41,5 @@
   },
   "devDependencies": {
     "@ailhc/egf-cli": "1.0.0"
-  },
-  "dependencies": {}
+  }
 }
