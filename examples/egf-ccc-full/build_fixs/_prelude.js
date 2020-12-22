@@ -23,9 +23,11 @@
             };
             t[o][0].call(f.exports, function (e) {
                 var n = t[o][1][e];
+                //判断是不是npm包，是就传包名
                 return s(n || e, undefined, !e.includes("./") ? e : undefined);
             }, f, f.exports, e, t, n, r);
         }
+        //判断是不是npm包，是就用包名作为key存一下模块引用
         if (npmPkgName && n[o] && !n[npmPkgName]) {
             n[npmPkgName] = n[o];
         }
