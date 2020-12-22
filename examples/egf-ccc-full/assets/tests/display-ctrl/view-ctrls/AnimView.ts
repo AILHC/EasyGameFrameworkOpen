@@ -9,12 +9,12 @@ declare global {
 }
 export class AnimView extends NodeCtrl {
     static typeKey = "AnimView";
-    private static _ress: string[];
+    private static _ress: { path: string, type: any }[];
     public static prefabUrl = "display-ctrl-test-views/AnimView";
     getRess() {
         if (!AnimView._ress) {
             AnimView._ress = [
-                AnimView.prefabUrl
+                { path: AnimView.prefabUrl, type: cc.Prefab }
             ]
         }
         return AnimView._ress;
