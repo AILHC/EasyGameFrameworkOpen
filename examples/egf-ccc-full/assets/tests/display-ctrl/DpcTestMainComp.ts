@@ -5,7 +5,7 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import { DpcMgr } from "@ailhc/display-ctrl";
-import { Layer } from "@ailhc/dpctrl-ccc";
+import { Layer, NodeCtrl } from "@ailhc/dpctrl-ccc";
 import { App } from "@ailhc/egf-core";
 import { LayerMgr } from "@ailhc/layer";
 import { getChild, getComp, getSomeRandomInt } from "../../src/Utils";
@@ -20,7 +20,16 @@ import { error } from "console";
 import { MutiInsView } from "./view-ctrls/MutiInsView";
 
 const { ccclass, property } = cc._decorator;
-
+declare global {
+    interface Window {
+        globalType: IGlobalType
+    }
+    interface IGlobalType {
+        NodeCtrlType?: new () => NodeCtrl
+    }
+}
+window.globalType = {} as any;
+window.globalType.NodeCtrlType = NodeCtrl;
 declare global {
     interface IDpcTestViewKeyMap {
 
@@ -29,6 +38,7 @@ declare global {
         uiMgr: displayCtrl.IMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap, IDpcTestUpdateDataMap>;
         layerMgr: layer.IMgr<cc.Node>;
         poolMgr: objPool.IPoolMgr;
+        abtest: InstanceType<IGlobalType["ABTestModuleType"]>
     }
     interface IDpcTestOnLoadData {
         showLoading: boolean
@@ -36,6 +46,7 @@ declare global {
 }
 @ccclass
 export default class DpcTestMainComp extends cc.Component {
+    private _app: App;
     @property(cc.Node)
     depResViewBtnsNode: cc.Node = undefined;
 
@@ -46,7 +57,7 @@ export default class DpcTestMainComp extends cc.Component {
     private _depResViewTipsLabel: cc.Label;
     onLoad() {
         const app = new App<IDpcTestModuleMap>();
-
+        this._app = app;
         const dpcMgr = new DpcMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap>();
 
         dpcMgr.init(
@@ -54,7 +65,8 @@ export default class DpcTestMainComp extends cc.Component {
                 loadRes: (config) => {
                     const onLoadData: IDpcTestOnLoadData = config.onLoadData;
                     onLoadData?.showLoading && dtM.uiMgr.showDpc("LoadingView");
-                    cc.resources.load(config.ress,
+                    cc.assetManager.loadAny(config.ress,
+                        { bundle: "resources" },
                         (finish, total) => {
                             console.log(`${config.key}加载中:${finish}/${total}`);
                             onLoadData?.showLoading && dtM.uiMgr.updateDpc("LoadingView", { finished: finish, total: total })
@@ -73,8 +85,8 @@ export default class DpcTestMainComp extends cc.Component {
                     const ress = ctrlIns.getRess();
                     if (ress && ress.length) {
                         let asset: cc.Asset;
-                        ress.forEach((res) => {
-                            asset = cc.resources.get(res);
+                        ress.forEach((res: { path: string }) => {
+                            asset = cc.resources.get(res.path);
                             if (asset) {
                                 cc.assetManager.releaseAsset(asset);
                             }
@@ -130,7 +142,9 @@ export default class DpcTestMainComp extends cc.Component {
     getDepResViewRess() {
         const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.keys.DepResView)?.getRess();
         if (ress) {
-            this._depResViewTipsLabel.string = ress.toString();
+            this._depResViewTipsLabel.string = (ress as any[]).map((value) => {
+                return value.path as string;
+            }).toString();
         }
     }
     preloadDepResViewRess() {
@@ -192,5 +206,27 @@ export default class DpcTestMainComp extends cc.Component {
         }
         this._mutiInss.length = 0;
         dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.MutiInsView, true);
+    }
+
+    loadABTest() {
+        dtM.uiMgr.showDpc("LoadingView");
+        dtM.uiMgr.updateDpc("LoadingView", { finished: 0, total: 1 });
+        cc.assetManager.loadBundle("abtest", (onComplete, bundle) => {
+            dtM.uiMgr.updateDpc("LoadingView", { finished: 1, total: 1 });
+
+            this._app.loadModule(new window.globalType.ABTestModuleType(), "abtest");
+            dtM.uiMgr.hideDpc("LoadingView");
+        })
+    }
+    showAbTestView() {
+        if (!dtM.abtest) {
+            console.error(`abtest模块还没加载`);
+        } else {
+            dtM.abtest.showABTestView();
+        }
+
+    }
+    destroyAbTestView() {
+        dtM.uiMgr.destroyDpc("ABTestView", true);
     }
 }

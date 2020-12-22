@@ -7,7 +7,7 @@ declare global {
         CustomResHandleView: "CustomResHandleView"
     }
 }
-export class CustomResHandleView extends NodeCtrl implements displayCtrl.ICustomResHandler {
+export class CustomResHandleView extends NodeCtrl implements displayCtrl.IResHandler {
 
 
     static typeKey = "CustomResHandleView";

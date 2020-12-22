@@ -17,7 +17,7 @@ export class MutiInsView extends NodeCtrl {
     private _tipsLabel: cc.Label;
     private _animComp: cc.Animation;
     getRess() {
-        return [this.prefabUrl];
+        return [{ path: this.prefabUrl, type: cc.Prefab }] as any;
     }
     onInit() {
         this._tips = [

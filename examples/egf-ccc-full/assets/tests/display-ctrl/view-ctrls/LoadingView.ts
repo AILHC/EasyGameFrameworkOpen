@@ -11,13 +11,13 @@ declare global {
     }
 }
 export class LoadingView extends NodeCtrl {
-    static typeKey:string = "LoadingView";
-    private static _ress: string[];
+    static typeKey: string = "LoadingView";
+    private static _ress: { path: string, type: any }[];
     public static prefabUrl = "display-ctrl-test-views/LoadingView";
     getRess() {
         if (!LoadingView._ress) {
             LoadingView._ress = [
-                LoadingView.prefabUrl
+                { path: LoadingView.prefabUrl, type: cc.Prefab }
             ]
         }
         return LoadingView._ress;

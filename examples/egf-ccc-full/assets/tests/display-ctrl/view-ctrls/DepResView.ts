@@ -9,19 +9,17 @@ declare global {
 }
 export class DepResView extends NodeCtrl {
     static typeKey = "DepResView";
-    private static _ress: string[];
+    private static _ress: { path: string, type: any }[];
     public static prefabUrl = "display-ctrl-test-views/DepResView";
     onLoadData: IDpcTestOnLoadData = { showLoading: true };
     getRess() {
         if (!DepResView._ress) {
             DepResView._ress = [
-                DepResView.prefabUrl,
-                "test-txts/txt1"
+                { path: DepResView.prefabUrl, type: cc.Prefab },
+                { path: "test-txts/txt1", type: cc.TextAsset }
             ]
         }
         return DepResView._ress;
-
-
     }
     onInit() {
         super.onInit()
