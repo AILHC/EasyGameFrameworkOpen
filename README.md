@@ -62,19 +62,37 @@ npm i
     yarn workspaces add lodash
     如果是开发时依赖: 则 add -D
 ### 移除依赖
-#### 移除指定包对某包的依赖
-    yarn workspace packageB remove packageA
-#### 移除所有包对指定包的依赖
-    yarn workspaces remove lodash
-#### 移除根目录下对某包的依赖
-    yarn remove -W -D typescript
-#### 
+1. 移除指定包对某包的依赖
+    
+        yarn workspace packageB remove packageA
 
-### 添加所有依赖
-yarn install
+2. 移除所有包对指定包的依赖
+    
+        yarn workspaces remove lodash
 
+3. 移除根目录下对某包的依赖
+    
+        yarn remove -W -D typescript 
 
-### 其他开发项目使用
+4. 添加所有依赖
+    
+        yarn install 或者 lerna bootstrap
+
+5. 清除所有依赖
+
+        lerna clean
+
+### git发布版本
+    lerna version
+    会遍历所有包，检查修改，然后更新包的版本号，以及自动修改引用的包的引用版本号
+    
+    生成一个提交，一个tag，以及推送到远程仓库
+    
+    比如 packageA 修改了，版本号从1.0.0变成了1.0.1
+    
+    然后引用了packageA的packageB、C的版本号也要递增，以及引用的packageA的版本号也要从1.0.0变成1.0.1
+
+## 其他开发项目使用
 1. 使用npm link 将指定包链接到全局
 比如
     ```
