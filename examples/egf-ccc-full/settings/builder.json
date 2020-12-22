@@ -24,7 +24,7 @@
     "hide": false
   },
   "includeSDKBox": false,
-  "inlineSpriteFrames": true,
+  "inlineSpriteFrames": false,
   "inlineSpriteFrames_native": true,
   "md5Cache": false,
   "mergeStartScene": false,
