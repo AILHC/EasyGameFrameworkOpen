@@ -43,7 +43,7 @@
     "ts-jest": "^25.3.1"
   },
   "dependencies": {
-    "@ailhc/display-ctrl": "0.1.2",
+    "@ailhc/display-ctrl": "^1.0.0",
     "@ailhc/layer": "^0.0.2"
   }
 }
