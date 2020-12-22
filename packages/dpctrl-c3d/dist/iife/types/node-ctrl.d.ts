@@ -16,7 +16,7 @@ export declare class NodeCtrl implements displayCtrl.ICtrl<Node> {
     onInit(config?: displayCtrl.IInitConfig<any, any>): void;
     onShow(config?: displayCtrl.IShowConfig<any, any, any>): void;
     onUpdate(updateData: any): void;
-    getRess?(): string[];
+    getRess(): any[] | string[];
     getNode(): Node;
     getFace<T = any>(): T;
     onDestroy(destroyRes?: boolean): void;

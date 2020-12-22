@@ -26,7 +26,7 @@ export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
             this.node.active = true;
         }
     }
-    getRess?(): string[] {
+    getRess(): any[] | string[] {
         return undefined;
     }
     getNode(): cc.Node {
