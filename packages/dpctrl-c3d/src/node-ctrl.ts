@@ -28,7 +28,7 @@ export class NodeCtrl implements displayCtrl.ICtrl<Node> {
 
     onUpdate(updateData: any): void {
     }
-    getRess?(): string[] {
+    getRess(): any[] | string[] {
         return undefined;
     }
     getNode(): Node {

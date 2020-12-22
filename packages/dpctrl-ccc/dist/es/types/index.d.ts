@@ -15,7 +15,7 @@ declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
 	    constructor(dpcMgr?: displayCtrl.IMgr);
 	    onInit(config?: displayCtrl.IInitConfig<any, any>): void;
 	    onShow(config?: displayCtrl.IShowConfig<any, any, any>): void;
-	    getRess?(): string[];
+	    getRess(): any[] | string[];
 	    getNode(): cc.Node;
 	    onUpdate(updateData: any): void;
 	    getFace<T = any>(): T;

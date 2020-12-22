@@ -17,7 +17,7 @@ declare module '@ailhc/dpctrl-c3d/src/node-ctrl' {
 	    onInit(config?: displayCtrl.IInitConfig<any, any>): void;
 	    onShow(config?: displayCtrl.IShowConfig<any, any, any>): void;
 	    onUpdate(updateData: any): void;
-	    getRess?(): string[];
+	    getRess(): any[] | string[];
 	    getNode(): Node;
 	    getFace<T = any>(): T;
 	    onDestroy(destroyRes?: boolean): void;
