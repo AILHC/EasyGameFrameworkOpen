@@ -5,3 +5,5 @@ node_modules
 **/.cache
 **/js
 **/.rpt2_cache
+yarn-error.log
+yarn.lock

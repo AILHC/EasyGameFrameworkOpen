@@ -15,7 +15,7 @@ declare global {
              * 创建时
              * @param pool 
              */
-            onCreate?(pool: IPool<any>, initData?: any): void;
+            onCreate?(pool: IPool<any>): void;
             /**
              * 当被取时
              */
@@ -38,6 +38,7 @@ declare global {
          * 对象池的对象通用处理器
          */
         interface IObjHandler<onGetDataType = any> {
+            onCreate(obj: IObj): void
             /**
              * 当对象获取时
              * @param obj 
@@ -55,7 +56,7 @@ declare global {
              */
             onKill(obj: IObj): void;
         }
-        interface IPool<T = any, initDataType = any, onGetDataType = any> {
+        interface IPool<T = any, onGetDataType = any> {
             /**
              * 对象数组
              */
@@ -78,16 +79,14 @@ declare global {
              * @param createFunc 
              * @param initData 
              */
-            initByFunc(sign: string,
-                createFunc: (initData: initDataType) => T,
-                initData?: initDataType): objPool.IPool<T, initDataType, onGetDataType>;
+            initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType>;
             /**
              * 通过构造函数初始化
              * @param clas 
              * @param sign 对象池标志,如果没有传,则使用clas["__name"] 的值，如果这个值没有，就使用自增id
              * @param initData 
              */
-            initByClass(sign: string, clas: Clas<T>, initData?: initDataType): objPool.IPool<T, initDataType, onGetDataType>;
+            initByClass(sign: string, clas: Clas<T>): objPool.IPool<T, onGetDataType>;
             /**
              * 设置对象池对象处理器，当对象在取、回收、销毁时调用
              * @param objHandler 
@@ -132,32 +131,26 @@ declare global {
 
         }
         type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
-        interface IPoolMgr<SignType = any, InitDataType = any, GetDataType = any> {
+        interface IPoolMgr<SignType = any, GetDataType = any> {
             /**
              * 设置对象池对象处理器，当对象在取、回收、销毁时调用
              * @param objHandler 
              */
-            setObjPoolHandler<keyType extends keyof SignType = any>(sign: keyType, objHandler: objPool.IObjHandler): void;
+            setObjPoolHandler(sign: keyof SignType, objHandler: objPool.IObjHandler): void;
 
             /**
              * 使用类构造函数创建对象池
-             * 
+             * @param sign 对象池标志
              * @param cls 
-             * @param sign 对象池标志,可选,如果不传，则使用cls["__name"],如果这个字段没有值，则使用自增id cls["_$cid"] = cid++;
-             * @param initData onCreate的参数
              */
-            createByClass<keyType extends keyof SignType = any>(
-                cls: any, sign?: keyType,
-                initData?: InitDataType[objPool.ToAnyIndexKey<keyType, InitDataType>]): void;
+            createByClass(sign: keyof SignType, cls: any): void;
             /**
              * 使用创建函数创建对象池
              * @param sign 
              * @param createFunc 
              * @param initData 
              */
-            createByFunc<keyType extends keyof SignType = any>(sign: keyType,
-                createFunc: (initData?: InitDataType[objPool.ToAnyIndexKey<keyType, InitDataType>]) => objPool.IObj,
-                initData?: InitDataType[objPool.ToAnyIndexKey<keyType, InitDataType>]): void;
+            createByFunc(sign: keyof SignType, createFunc: () => objPool.IObj): void;
             /**
              * 获取对象池
              * @param sign 
@@ -167,7 +160,7 @@ declare global {
              * 判断对象池是否存在
              * @param sign 
              */
-            hasPool<keyType extends keyof SignType = any>(sign: keyType): boolean
+            hasPool(sign: keyof SignType): boolean
             /**
              * 销毁指定对象池
              * @param sign 
@@ -193,7 +186,7 @@ declare global {
             get<T, keyType extends keyof SignType = any>(
                 sign: keyType,
                 onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>]
-            ): T extends objPool.IObj ? T : objPool.IObj
+            ): T;
             /**
              * 批量获取指定对象池对象
              * @param sign 对象池标志（对象类型）
@@ -209,7 +202,7 @@ declare global {
             * @param sign 对象类型标识字符。
             * @return 对象池。
             */
-            getPoolObjsBySign<T>(sign: keyof SignType): T extends IObj ? T : IObj[];
+            getPoolObjsBySign<T extends objPool.IObj>(sign: keyof SignType): T extends IObj ? T[] : IObj[];
             /**
             * 回收对象到对象池
             * @param obj 对象
@@ -221,6 +214,12 @@ declare global {
              * @param sign 
              */
             freeAll(sign: keyof SignType): void
+            /**
+            * 销毁对象
+            * @param obj 对象
+            * @returns 返回是否回收成功
+            */
+            kill(obj: IObj): void;
 
         }
     }
