@@ -1,7 +1,6 @@
-declare type Clas<T = {}> = new (...args: any[]) => T;
-export declare class BaseObjPool<T> implements objPool.IPool<T> {
+export declare class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> implements objPool.IPool<T, onGetDataType> {
     private _poolObjs;
-    private _usedPoolMap;
+    private _usedObjMap;
     get poolObjs(): objPool.IObj[];
     private _sign;
     get sign(): string;
@@ -9,16 +8,16 @@ export declare class BaseObjPool<T> implements objPool.IPool<T> {
     protected _objHandler: objPool.IObjHandler;
     get size(): number;
     get usedCount(): number;
-    initByFunc(sign: string, createFunc: (...args: any[]) => T, createArgs?: any[]): objPool.IPool<T>;
-    setObjHandler(objHandler: objPool.IObjHandler): void;
-    initByClass(sign: string, clas: Clas<T>, args?: any[]): objPool.IPool<T>;
+    initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType>;
+    initByClass(sign: string, clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType>;
+    setObjHandler(objHandler: objPool.IObjHandler<onGetDataType>): void;
     preCreate(num: number): void;
     clear(): void;
-    kill(obj: T): void;
+    kill(obj: T extends objPool.IObj ? T : any): void;
     free(obj: T extends objPool.IObj ? T : any): void;
     freeAll(): void;
-    get(...args: any[]): T;
+    get(onGetData?: onGetDataType): T;
+    getMore(onGetData?: onGetDataType, num?: number): T[];
     private _loghasInit;
     private _logNotInit;
 }
-export {};
