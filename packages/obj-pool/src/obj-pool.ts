@@ -1,5 +1,4 @@
-type Clas<T = {}> = new (...args: any[]) => T;
-export class BaseObjPool<T> implements objPool.IPool<T> {
+export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> implements objPool.IPool<T, initDataType, onGetDataType> {
 
     private _poolObjs: objPool.IObj[];
     private _usedPoolMap: Map<objPool.IObj, objPool.IObj>;
@@ -19,34 +18,39 @@ export class BaseObjPool<T> implements objPool.IPool<T> {
     public get usedCount(): number {
         return this._usedPoolMap ? this._usedPoolMap.size : 0;
     }
-    public initByFunc(sign: string, createFunc: (...args: any[]) => T, createArgs?: any[]): objPool.IPool<T> {
+    public initByFunc(sign: string,
+        createFunc: (initData: initDataType) => T,
+        initData?: initDataType): objPool.IPool<T, initDataType, onGetDataType> {
         if (!this._sign) {
             this._sign = sign;
             this._poolObjs = [];
             this._usedPoolMap = new Map();
-            this._createFunc = createFunc.bind(null, createArgs);
+            this._createFunc = createFunc.bind(null, initData);
         } else {
             this._loghasInit();
         }
         return this;
 
     }
-    public setObjHandler(objHandler: objPool.IObjHandler): void {
-        this._objHandler = objHandler;
-    }
-    public initByClass(sign: string, clas: Clas<T>, args?: any[]): objPool.IPool<T> {
+    public initByClass(sign: string,
+        clas: objPool.Clas<T>,
+        initData?: initDataType): objPool.IPool<T, initDataType, onGetDataType> {
         if (!this._sign) {
             this._sign = sign;
             this._poolObjs = [];
             this._usedPoolMap = new Map();
             this._createFunc = function (...args) {
                 return new clas(args);
-            }.bind(null, args);
+            }.bind(null, initData);
         } else {
             this._loghasInit();
         }
         return this;
     }
+    public setObjHandler(objHandler: objPool.IObjHandler<onGetDataType>): void {
+        this._objHandler = objHandler;
+    }
+
     public preCreate(num: number) {
         if (!this._sign) {
             this._logNotInit();
@@ -99,7 +103,7 @@ export class BaseObjPool<T> implements objPool.IPool<T> {
         });
         this._usedPoolMap.clear();
     }
-    public get(...args: any[]): T {
+    public get(onGetData?: onGetDataType): T {
         if (!this._sign) {
             this._logNotInit();
             return;
@@ -116,20 +120,20 @@ export class BaseObjPool<T> implements objPool.IPool<T> {
         this._usedPoolMap.set(obj, obj);
         obj.isInPool = false;
         if (obj.onGet) {
-            obj.onGet(...args);
+            obj.onGet(onGetData);
         } else {
-            this._objHandler && this._objHandler.onGet(obj, ...args);
+            this._objHandler && this._objHandler.onGet(obj, onGetData);
         }
         return obj as T;
     }
-    public getMore(args: any[], num: number = 1): T[] {
+    public getMore(onGetData: onGetDataType, num: number = 1): T[] {
         const objs = [];
         if (!isNaN(num) && num > 1) {
             for (let i = 0; i < num; i++) {
-                objs.push(this.get(args));
+                objs.push(this.get(onGetData));
             }
         } else {
-            objs.push(this.get(args));
+            objs.push(this.get(onGetData));
         }
         return objs as any;
     }
