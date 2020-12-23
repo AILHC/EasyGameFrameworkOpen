@@ -4,12 +4,55 @@ const logType = {
     poolExit: "对象池已存在",
     signIsNull: "sign is null",
 };
-export class ObjPoolMgr<SignType = any> implements objPool.IPoolMgr<SignType> {
-
-
+export class ObjPoolMgr<SignType = any, InitDataType = any, GetDataType = any> implements objPool.IPoolMgr<SignType, InitDataType, GetDataType> {
 
     private _poolDic: { [key in keyof SignType]: BaseObjPool<any> } = {} as any;
     private _cid: number = 1;
+    public setObjPoolHandler<keyType extends keyof SignType = any>(sign: keyType, objHandler: objPool.IObjHandler) {
+        const pool = this._poolDic[sign];
+        if (pool) {
+            pool.setObjHandler(objHandler);
+        }
+    }
+    public createByClass<keyType extends keyof SignType = any>(
+        cls: any, sign?: keyType,
+        initData?: InitDataType[objPool.ToAnyIndexKey<keyType, InitDataType>]): void {
+        if (this.hasPool(sign)) {
+            this._log(`${logType.poolExit}${sign}`);
+            return;
+        }
+        sign = sign ? sign : this._getClassSign(cls) as any;
+        const pool = new BaseObjPool();
+        pool.initByClass(sign as string, cls, initData);
+        this._poolDic[sign] = pool;
+    }
+    public createByFunc<keyType extends keyof SignType = any>(sign: keyType,
+        createFunc: (initData?: InitDataType[objPool.ToAnyIndexKey<keyType, InitDataType>]) => objPool.IObj,
+        initData?: InitDataType[objPool.ToAnyIndexKey<keyType, InitDataType>]): void {
+        if (this.hasPool(sign)) {
+            this._log(`${logType.poolExit}${sign}`);
+            return;
+        }
+        if (!sign || typeof sign === "string" && sign.trim() === "") {
+            const pool = new BaseObjPool();
+            pool.initByFunc(sign as string, createFunc, initData);
+            this._poolDic[sign] = pool;
+        } else {
+            this._log(`${logType.signIsNull}`);
+        }
+    }
+    public hasPool(sign: keyof SignType): boolean {
+        return !!this._poolDic[sign];
+    }
+    public getPool<T = any>(sign: keyof SignType): objPool.IPool<T> {
+        return this._poolDic[sign] as any;
+    }
+    public clearPool(sign: keyof SignType): void {
+        const pool = this._poolDic[sign];
+        if (pool) {
+            pool.clear();
+        }
+    }
     public destroyPool(sign: keyof SignType): void {
         const poolDic = this._poolDic;
         const pool = poolDic[sign];
@@ -20,7 +63,7 @@ export class ObjPoolMgr<SignType = any> implements objPool.IPoolMgr<SignType> {
             this._log(`${logType.poolIsNull}${sign}`);
         }
     }
-    public preCreate<T>(sign: keyof SignType, preCreateCount: number): void {
+    public preCreate(sign: keyof SignType, preCreateCount: number): void {
         const pool = this._poolDic[sign];
         if (pool) {
             pool.preCreate(preCreateCount);
@@ -28,12 +71,26 @@ export class ObjPoolMgr<SignType = any> implements objPool.IPoolMgr<SignType> {
             this._log(`${logType.poolIsNull}${sign}`);
         }
     }
-    public clearPool(sign: keyof SignType): void {
+    public get<T, keyType extends keyof SignType = any>(
+        sign: keyType,
+        onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>]
+    ): T extends objPool.IObj ? T : objPool.IObj {
         const pool = this._poolDic[sign];
-        if (pool) {
-            pool.clear();
-        }
+        return pool ? pool.get(onGetData) : undefined;
     }
+    public getMore<T, keyType extends keyof SignType = any>(
+        sign: keyType,
+        onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>],
+        num?: number): T extends objPool.IObj ? T[] : objPool.IObj[] {
+        const pool = this._poolDic[sign];
+        return pool ? pool.getMore(onGetData, num) as any : undefined;
+    }
+    public getPoolObjsBySign<T>(sign: keyof SignType): T extends objPool.IObj ? T : objPool.IObj[] {
+        const pool = this._poolDic[sign];
+
+        return pool ? pool.poolObjs as any : undefined;
+    }
+
     public free(obj: objPool.IObj): void {
         const pool = this._poolDic[obj.poolSign];
         if (pool) {
@@ -46,54 +103,9 @@ export class ObjPoolMgr<SignType = any> implements objPool.IPoolMgr<SignType> {
             pool.freeAll();
         }
     }
-    public createByClass(cls: any, sign?: keyof SignType, ...initArgs): void {
-        if (this.hasPool(sign)) {
-            this._log(`${logType.poolExit}${sign}`);
-            return;
-        }
-        sign = sign ? sign : this._getClassSign(cls) as any;
-        const pool = new BaseObjPool();
-        pool.initByClass(sign as string, cls, ...initArgs);
-        this._poolDic[sign] = pool;
-    }
-    public createByFunc(sign: keyof SignType, createFunc: (...createArgs) => objPool.IObj, ...createArgs): void {
-        if (this.hasPool(sign)) {
-            this._log(`${logType.poolExit}${sign}`);
-            return;
-        }
-        if (!sign || typeof sign === "string" && sign.trim() === "") {
-            const pool = new BaseObjPool();
-            pool.initByFunc(sign as string, createFunc, ...createArgs);
-            this._poolDic[sign] = pool;
-        } else {
-            this._log(`${logType.signIsNull}`);
-        }
-    }
-    public setObjPoolHandler(sign: keyof SignType, objHandler: objPool.IObjHandler) {
-        const pool = this._poolDic[sign];
-        if (pool) {
-            pool.setObjHandler(objHandler);
-        }
-    }
-    public get<T>(sign: keyof SignType, ...onGetArgs: any[]): T extends objPool.IObj ? T : objPool.IObj {
-        const pool = this._poolDic[sign];
-        return pool ? pool.get(...onGetArgs) : undefined;
-    }
-    public getMore<T>(sign: keyof SignType, onGetArgs: any[], num?: number): T extends objPool.IObj ? T[] : objPool.IObj[] {
-        const pool = this._poolDic[sign];
-        return pool ? pool.getMore(onGetArgs, num) as any : undefined;
-    }
-    public getPoolObjsBySign<T>(sign: keyof SignType): T extends objPool.IObj ? T : objPool.IObj[] {
-        const pool = this._poolDic[sign];
 
-        return pool ? pool.poolObjs as any : undefined;
-    }
-    public hasPool(sign: keyof SignType): boolean {
-        return !!this._poolDic[sign];
-    }
-    public getPool<T = any>(sign: keyof SignType): objPool.IPool<T> {
-        return this._poolDic[sign] as any;
-    }
+
+
     private _log(msg: string, level: number = 1) {
         const tagStr = "[对象池管理器]";
         switch (level) {
