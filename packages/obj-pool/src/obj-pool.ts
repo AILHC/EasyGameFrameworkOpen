@@ -1,7 +1,7 @@
-export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> implements objPool.IPool<T, initDataType, onGetDataType> {
+export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> implements objPool.IPool<T, onGetDataType> {
 
     private _poolObjs: objPool.IObj[];
-    private _usedPoolMap: Map<objPool.IObj, objPool.IObj>;
+    private _usedObjMap: Map<objPool.IObj, objPool.IObj>;
     public get poolObjs(): objPool.IObj[] {
         return this._poolObjs;
     }
@@ -16,16 +16,14 @@ export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> imple
         return poolObjs ? poolObjs.length : 0;
     }
     public get usedCount(): number {
-        return this._usedPoolMap ? this._usedPoolMap.size : 0;
+        return this._usedObjMap ? this._usedObjMap.size : 0;
     }
-    public initByFunc(sign: string,
-        createFunc: (initData: initDataType) => T,
-        initData?: initDataType): objPool.IPool<T, initDataType, onGetDataType> {
+    public initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType> {
         if (!this._sign) {
             this._sign = sign;
             this._poolObjs = [];
-            this._usedPoolMap = new Map();
-            this._createFunc = createFunc.bind(null, initData);
+            this._usedObjMap = new Map();
+            this._createFunc = createFunc;
         } else {
             this._loghasInit();
         }
@@ -33,15 +31,14 @@ export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> imple
 
     }
     public initByClass(sign: string,
-        clas: objPool.Clas<T>,
-        initData?: initDataType): objPool.IPool<T, initDataType, onGetDataType> {
+        clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType> {
         if (!this._sign) {
             this._sign = sign;
             this._poolObjs = [];
-            this._usedPoolMap = new Map();
-            this._createFunc = function (...args) {
-                return new clas(args);
-            }.bind(null, initData);
+            this._usedObjMap = new Map();
+            this._createFunc = function () {
+                return new clas();
+            };
         } else {
             this._loghasInit();
         }
@@ -58,9 +55,14 @@ export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> imple
         }
         const poolObjs = this._poolObjs;
         let obj: objPool.IObj;
+        const handler = this._objHandler;
         for (let i = 0; i < num; i++) {
             obj = this._createFunc();
-            obj.onCreate && obj.onCreate(this);
+            if (obj && obj.onCreate) {
+                obj.onCreate(this);
+            } else if (handler && handler.onCreate) {
+                handler.onCreate(obj);
+            }
             obj.poolSign = this._sign;
             obj.isInPool = true;
             poolObjs.push(obj);
@@ -72,16 +74,29 @@ export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> imple
             let poolObj: objPool.IObj;
             for (let i = 0; i < poolObjs.length; i++) {
                 poolObj = poolObjs[i];
-                poolObj && poolObj.onKill();
-                this._objHandler && this._objHandler.onKill(poolObj);
+                this.kill(poolObj as any);
             }
             poolObjs.length = 0;
         }
 
 
     }
-    public kill(obj: T): void {
-        this._usedPoolMap.delete(obj);
+    public kill(obj: T extends objPool.IObj ? T : any): void {
+        if (this._usedObjMap.has(obj)) {
+            const handler = this._objHandler;
+            if (obj.onFree) {
+                obj.onFree();
+            } else if (handler && handler.onFree) {
+                handler.onFree(obj);
+            }
+            this._usedObjMap.delete(obj);
+        }
+        const handler = this._objHandler;
+        if (obj && obj.onKill) {
+            obj.onKill();
+        } else if (handler && handler.onKill) {
+            handler.onKill(obj);
+        }
     }
     public free(obj: T extends objPool.IObj ? T : any): void {
         if (!this._sign) {
@@ -89,19 +104,24 @@ export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> imple
             return;
         }
         if (!obj.isInPool) {
-            obj.onFree && obj.onFree();
-            this._objHandler && this._objHandler.onFree(obj);
+            const handler = this._objHandler;
+
+            if (obj.onFree) {
+                obj.onFree();
+            } else if (handler && handler.onFree) {
+                handler.onFree(obj);
+            }
             this._poolObjs.push(obj);
-            this._usedPoolMap.delete(obj);
+            this._usedObjMap.delete(obj);
         } else {
             console.warn(`pool :${this._sign} obj is in pool`);
         }
     }
     public freeAll() {
-        this._usedPoolMap.forEach((value) => {
+        this._usedObjMap.forEach((value) => {
             this.free(value as any);
         });
-        this._usedPoolMap.clear();
+        this._usedObjMap.clear();
     }
     public get(onGetData?: onGetDataType): T {
         if (!this._sign) {
@@ -117,16 +137,17 @@ export class BaseObjPool<T = any, initDataType = any, onGetDataType = any> imple
             obj.onCreate && obj.onCreate(this);
             obj.poolSign = this._sign;
         }
-        this._usedPoolMap.set(obj, obj);
+        this._usedObjMap.set(obj, obj);
         obj.isInPool = false;
+        const handler = this._objHandler;
         if (obj.onGet) {
             obj.onGet(onGetData);
-        } else {
-            this._objHandler && this._objHandler.onGet(obj, onGetData);
+        } else if (handler && handler.onGet) {
+            handler.onGet(obj, onGetData);
         }
         return obj as T;
     }
-    public getMore(onGetData: onGetDataType, num: number = 1): T[] {
+    public getMore(onGetData?: onGetDataType, num: number = 1): T[] {
         const objs = [];
         if (!isNaN(num) && num > 1) {
             for (let i = 0; i < num; i++) {
