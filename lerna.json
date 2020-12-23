@@ -2,7 +2,14 @@
   "packages": [
     "packages/*"
   ],
+  "publish": {
+    "allowBranch": "main"
+  },
+  "ignoreChanges": [
+    "**/__tests__/**",
+    "**/*.md"
+  ],
   "version": "independent",
   "npmClient": "yarn",
-  "useWorkspaces": true 
+  "useWorkspaces": true
 }
