@@ -7,6 +7,6 @@
     "@ailhc/broadcast": "^1.0.0",
     "@ailhc/dpctrl-ccc": "^1.0.2",
     "@ailhc/egf-core": "^0.1.6",
-    "@ailhc/obj-pool": "^0.1.0"
+    "@ailhc/obj-pool": "^1.0.0"
   }
 }
