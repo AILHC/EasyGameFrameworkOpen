@@ -33,10 +33,26 @@ declare global {
             freeSelf?(): void;
 
         }
+        /**
+         * 对象池的对象通用处理器
+         */
         interface IObjHandler {
-            onGet?(obj: IObj, ...args): void;
-            onFree?(obj: IObj): void;
-            onKill?(obj: IObj): void;
+            /**
+             * 当对象获取时
+             * @param obj 
+             * @param args 
+             */
+            onGet(obj: IObj, ...args): void;
+            /**
+             * 当对象释放时
+             * @param obj 
+             */
+            onFree(obj: IObj): void;
+            /**
+             * 当对象被kill掉时
+             * @param obj 
+             */
+            onKill(obj: IObj): void;
         }
         interface IPool<T extends IObj> {
             /**
