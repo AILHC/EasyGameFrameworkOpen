@@ -18,7 +18,7 @@
     由于CocosCreator3d暂时不支持npm，可以复制dist/systemjs目录下的文件到项目中
     设置index.js为插件就可以使用了
 
-
+    
 1. 基础使用
 ```ts
     import { NodeCtrl } from "@ailhc/dpctrl-c3d"
@@ -26,6 +26,7 @@
 
     }
 ```
+2. 详细使用文档:[display-ctrl/README.md](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl#readme)
 ## 发布日志
  
 *********
