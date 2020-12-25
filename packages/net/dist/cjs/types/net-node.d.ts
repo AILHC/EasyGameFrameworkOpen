@@ -1,0 +1,34 @@
+export declare class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType> {
+    private _socket;
+    private _defaultExceptionHandler;
+    private _protoHandler;
+    private _curReconnectCount;
+    private _config;
+    private _inited;
+    private _connectOpt;
+    private _isReconnecting;
+    private _reconnectTimerId;
+    private _reqId;
+    private _pushHandlerMap;
+    private _oncePushHandlerMap;
+    private _resHandlerMap;
+    private _socketEventHandler;
+    init(socket: net.ISocket, exceptionHandler: net.IExceptionHandler<any>, protoHandler?: net.IProtoHandler<ProtoKeyType>, config?: net.INodeConfig): void;
+    private get socketEventHandler();
+    connect(option: net.ISocketConnectOptions): void;
+    disconnect(): void;
+    private _onSocketError;
+    private _onSocketMsg;
+    private _runHandler;
+    private _onSocketClosed;
+    private _onSocketConnected;
+    private _stopReconnect;
+    reconnect(): void;
+    request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void;
+    notify(protoKey: ProtoKeyType, data: any): void;
+    onPush<ResData = any>(protoKey: ProtoKeyType, handler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void;
+    oncePush<ResData = any>(protoKey: ProtoKeyType, handler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void;
+    offPush(protoKey: ProtoKeyType, callback: net.ValueCallback<net.IDecodePackage>, context?: any, onceOnly?: boolean): void;
+    offPushAll(protoKey?: ProtoKeyType): void;
+    private _removeHandlers;
+}
