@@ -12,21 +12,28 @@ declare global {
         testA: "testA",
         testB: "testB",
         testC: "testC",
-        testD: "testD"
+        testD: "testD",
+        //消息类型key提示
+        objTypeTest: "objTypeTest"
     }
     interface ITestValueType extends broadcast.IMsgValueType {
         testA: string,
         testB: string,
         testC: string,
-        testD: string
+        testD: string,
+        //对应消息类型的发消息和收消息的类型声明
+        objTypeTest: { a: number, b: string, c: boolean }
+
     }
     interface ITestResultType extends broadcast.IResultType {
         testC: string,
+        //双向通信返回数据类型声明
+        objTypeTest: { callbackDataA: { hahah: string } }
     }
 }
 @ccclass
 export default class TestBroadcast extends cc.Component {
-    private _broadcast: Broadcast<ITestKey>
+    private _broadcast: Broadcast<ITestKey, ITestValueType, ITestResultType>
 
     @property(cc.EditBox)
     broadcastAEdit: cc.EditBox = null;
@@ -92,8 +99,7 @@ export default class TestBroadcast extends cc.Component {
         this.clickOffListenA.on(cc.Node.EventType.MOUSE_DOWN, () => {
             this._broadcast.off("testA", onceTestAListener);
         });
-
-
+        
 
         const testBListener = (msg: string) => {
             this.reciveBLabel.string = msg;
