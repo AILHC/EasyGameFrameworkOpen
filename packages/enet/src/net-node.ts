@@ -3,20 +3,81 @@ import { WSocket } from "./wsocket";
 export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
 
     protected _socket: net.ISocket;
+    /**
+     * 网络事件处理器
+     */
     protected _netEventHandler: net.INetEventHandler;
+    /**
+     * 协议处理器
+     */
     protected _protoHandler: net.IProtoHandler;
+    /**
+     * 当前重连次数
+     */
     protected _curReconnectCount: number = 0;
+    /**
+     * 重连配置
+     */
     protected _reConnectCfg: net.IReconnectConfig;
+    /**
+     * 是否初始化
+     */
     protected _inited: boolean;
+    /**
+     * 连接参数对象
+     */
     protected _connectOpt: net.ISocketConnectOptions;
+    /**
+     * 是否正在重连
+     */
     protected _isReconnecting: boolean;
-    protected _reconnectTimerId: NodeJS.Timeout;
+    /**
+     * 计时器id
+     */
+    protected _reconnectTimerId: any;
+    /**
+     * 请求id 
+     * 会自增
+     */
     protected _reqId: number = 1;
+    /**
+     * 永久监听处理器字典
+     * key为请求key  = protoKey
+     * value为 回调处理器或回调函数
+     */
     protected _pushHandlerMap: { [key: string]: (net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>)[] };
+    /**
+     * 一次监听推送处理器字典
+     * key为请求key  = protoKey
+     * value为 回调处理器或回调函数
+     */
     protected _oncePushHandlerMap: { [key: string]: (net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>)[] };
+    /**
+     * 请求响应回调字典
+     * key为请求key  = protoKey_reqId
+     * value为 回调处理器或回调函数
+     */
     protected _resHandlerMap: { [key: string]: net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage> };
+    /**socket事件处理器 */
     protected _socketEventHandler: net.ISocketEventHandler;
-    init(config?: net.INodeConfig): void {
+    /**
+     * 获取socket事件处理器
+     */
+    protected get socketEventHandler(): net.ISocketEventHandler {
+        if (!this._socketEventHandler) {
+            this._socketEventHandler = {
+                onSocketClosed: this._onSocketClosed.bind(this),
+                onSocketConnected: this._onSocketConnected.bind(this),
+                onSocketError: this._onSocketError.bind(this),
+                onSocketMsg: this._onSocketMsg.bind(this),
+
+            }
+        };
+
+
+        return this._socketEventHandler;
+    }
+    public init(config?: net.INodeConfig): void {
         if (this._inited) return;
 
         this._protoHandler = config && config.protoHandler ? config.protoHandler : new DefaultProtoHandler();
@@ -48,20 +109,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
 
         this._socket.setEventHandler(this.socketEventHandler);
     }
-    protected get socketEventHandler(): net.ISocketEventHandler {
-        if (!this._socketEventHandler) {
-            this._socketEventHandler = {
-                onSocketClosed: this._onSocketClosed.bind(this),
-                onSocketConnected: this._onSocketConnected.bind(this),
-                onSocketError: this._onSocketError.bind(this),
-                onSocketMsg: this._onSocketMsg.bind(this),
 
-            }
-        };
-
-
-        return this._socketEventHandler;
-    }
     public connect(option: net.ISocketConnectOptions): void {
         if (this._inited && this._socket) {
             this._connectOpt = option;
