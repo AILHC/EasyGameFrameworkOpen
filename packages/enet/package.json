@@ -1,5 +1,5 @@
 {
-  "name": "@ailhc/net",
+  "name": "@ailhc/enet",
   "version": "0.0.1",
   "description": "General front-end Socket network management module, with high scalability, development does not need to care about the implementation of the underlying socket, communication protocols, developers can customize the implementation of different underlying sockets and communication protocols",
   "keywords": [],
@@ -25,8 +25,8 @@
     "watch:cjs": "egf build -w true -f cjs",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd:net",
-    "build:iife": "egf build -f iife:net",
+    "build:umd": "egf build -f umd:enet",
+    "build:iife": "egf build -f iife:enet",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife",
     "test": "jest",
     "testc": "jest --coverage"
@@ -34,7 +34,7 @@
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
-  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/net#readme",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
   "dependencies": {},
   "devDependencies": {
     "@ailhc/egf-cli": "1.0.2",
