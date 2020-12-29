@@ -4,7 +4,7 @@ import { WSocket } from "../src/wsocket";
 test("init NetNode", () => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -18,7 +18,10 @@ test("init NetNode", () => {
 
     }
     const socketSetEventHandlerSpy = jest.spyOn(webSocket, "setEventHandler");
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     expect(netNode["_socket"]).toBe(webSocket);
     expect(netNode["_protoHandler"]).toBeDefined();
     expect(netNode["_pushHandlerMap"]).toBeDefined();
@@ -28,7 +31,7 @@ test("init NetNode", () => {
 test("connect wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -41,7 +44,10 @@ test("connect wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     netNode.connect({
         url: "wss://echo.websocket.org"
     });
@@ -49,7 +55,7 @@ test("connect wss://echo.websocket.org success", (done) => {
 test("connect wss://echo.websocket.org fail", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -62,8 +68,11 @@ test("connect wss://echo.websocket.org fail", (done) => {
 
 
     }
-    const errorSpy = jest.spyOn(excetionHandler, "onError");
-    netNode.init(webSocket, excetionHandler);
+    const errorSpy = jest.spyOn(netEventHandler, "onError");
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     netNode.connect({
         url: "wss://echo.webssza1212ocket.org"
     });
@@ -71,7 +80,7 @@ test("connect wss://echo.websocket.org fail", (done) => {
 test("request wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -89,7 +98,10 @@ test("request wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     netNode.connect({
         url: "wss://echo.websocket.org"
     });
@@ -97,7 +109,7 @@ test("request wss://echo.websocket.org success", (done) => {
 test("request wss://echo.websocket.org timeout", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -116,7 +128,11 @@ test("request wss://echo.websocket.org timeout", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler, null, { requestTimeout: 1 });
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler,
+        reConnectCfg: { requestTimeout: 1 }
+    });
     netNode.connect({
         url: "wss://echo.websocket.org"
     });
@@ -125,7 +141,7 @@ test("request wss://echo.websocket.org timeout", (done) => {
 test("notify wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -147,7 +163,10 @@ test("notify wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     const onMsgSpy = jest.spyOn(netNode["socketEventHandler"], "onSocketMsg");
     netNode.connect({
         url: "wss://echo.websocket.org"
@@ -156,7 +175,7 @@ test("notify wss://echo.websocket.org success", (done) => {
 test("onPush wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -171,7 +190,10 @@ test("onPush wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     const onTestPush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
         expect(data.data.testData).toBe("test");
     }
@@ -199,7 +221,7 @@ test("onPush wss://echo.websocket.org success", (done) => {
 test("oncePush wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -214,7 +236,10 @@ test("oncePush wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     const onTestOncePush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
         expect(data.data.testData).toBe("test");
         expect(netNode["_oncePushHandlerMap"]["test"]).toBeUndefined();
@@ -235,7 +260,7 @@ test("oncePush wss://echo.websocket.org success", (done) => {
 test("offPush wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -249,7 +274,10 @@ test("offPush wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     const onTestPush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
 
     }
@@ -268,7 +296,7 @@ test("offPush wss://echo.websocket.org success", (done) => {
 test("offPushAll wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
@@ -282,7 +310,10 @@ test("offPushAll wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     const onTestPush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
 
     }
@@ -298,12 +329,12 @@ test("offPushAll wss://echo.websocket.org success", (done) => {
 test("reconnect wss://echo.websockettttt.org fail", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
         onClosed(e) {
-            netNode.reconnect();
+            netNode.reConnect();
 
         },
         onConnectEnd() {
@@ -319,7 +350,10 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     netNode.connect({
         url: "wss://echo.websockettttt.org"
     });
@@ -327,18 +361,18 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
 test("reconnect wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const excetionHandler: net.IExceptionHandler = {
+    const netEventHandler: net.INetEventHandler = {
         onError(e) {
 
         },
         onClosed(e) {
-            netNode.reconnect();
+            netNode.reConnect();
 
         },
         onConnectEnd() {
             netNode["_connectOpt"].url = "wss://echo.websocket_test.org";
             webSocket.close();
-            
+
         },
         onReconnecting(curCount, totalCount) {
             if (curCount > 2) {
@@ -352,7 +386,10 @@ test("reconnect wss://echo.websocket.org success", (done) => {
 
 
     }
-    netNode.init(webSocket, excetionHandler);
+    netNode.init({
+        socket: webSocket,
+        netEventHandler: netEventHandler
+    });
     netNode.connect({
         url: "wss://echo.websocket.org"
     });
