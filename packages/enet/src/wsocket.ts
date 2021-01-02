@@ -1,19 +1,19 @@
 import { SocketState } from "./socketStateType";
 
-export class WSocket implements net.ISocket {
+export class WSocket implements enet.ISocket {
 
     private _sk: WebSocket;
-    private _eventHandler: net.ISocketEventHandler;
+    private _eventHandler: enet.ISocketEventHandler;
     public get state(): SocketState {
         return this._sk ? this._sk.readyState : SocketState.CLOSED;
     }
     public get isConnected(): boolean {
         return this._sk ? this._sk.readyState === SocketState.OPEN : false;
     }
-    setEventHandler(handler: net.ISocketEventHandler): void {
+    setEventHandler(handler: enet.ISocketEventHandler): void {
         this._eventHandler = handler;
     }
-    connect(opt: net.ISocketConnectOptions): boolean {
+    connect(opt: enet.ISocketConnectOptions): boolean {
         let url = opt.url;
         if (!url) {
             if (opt.host && opt.port) {
@@ -39,7 +39,7 @@ export class WSocket implements net.ISocket {
         }
 
     }
-    send(data: net.NetData): void {
+    send(data: enet.NetData): void {
         if (this._sk && this._sk.readyState === WebSocket.OPEN) {
             this._sk.send(data);
         } else {

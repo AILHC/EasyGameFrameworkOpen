@@ -1,5 +1,5 @@
 declare global {
-    namespace net {
+    namespace enet {
         /**网络数据格式 */
         type NetData = (string | ArrayBufferLike | Blob | ArrayBufferView);
         /**
@@ -231,4 +231,4 @@ declare global {
         }
     }
 }
-export {};
+export { };

@@ -1,5 +1,5 @@
 declare global {
-    namespace net {
+    namespace enet {
         /**网络数据格式 */
         type NetData = (string | ArrayBufferLike | Blob | ArrayBufferView);
         /**
@@ -59,7 +59,7 @@ declare global {
             binaryType?: "arraybuffer" | "blob";
         }
         /**
-         * 加密后的数据包
+         * 编码后的数据包
          */
         interface IEncodePackage {
             key: string,
@@ -82,13 +82,13 @@ declare global {
         interface IProtoHandler<ProtoKeyType = any> {
             protoKey2Key(protoKey: ProtoKeyType): string;
             /**
-             * 加密数据
+             * 数据编码
              * @param data
              * @param reqId
              */
             encode(protoKey: ProtoKeyType, data: any, reqId?: number): IEncodePackage
             /**
-             * 解析网络数据包，
+             * 解码网络数据包，
              * @param data 
              */
             decode(data: NetData): IDecodePackage
@@ -229,7 +229,7 @@ declare global {
              */
             init(config?: INodeConfig): void;
             /**
-             * 连接socket
+             * 连接
              * @param option 连接参数
              */
             connect(option: ISocketConnectOptions): void;
@@ -256,7 +256,7 @@ declare global {
              * @param protoKey 协议key
              * @param data 数据体
              */
-            notify(protoKey: ProtoKeyType, data: any): void
+            notify(protoKey: ProtoKeyType, data?: any): void
             /**
              * 监听推送
              * @param protoKey 
@@ -270,7 +270,7 @@ declare global {
              * @param protoKey 
              * @param handler 
              */
-            oncePush<ResData = any>(protoKey: ProtoKeyType, handler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void;
+            oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
             /**
              * 取消监听推送
              * @param protoKey 协议

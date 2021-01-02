@@ -4,7 +4,7 @@ import { WSocket } from "../src/wsocket";
 test("init NetNode", () => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -31,7 +31,7 @@ test("init NetNode", () => {
 test("connect wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -55,7 +55,7 @@ test("connect wss://echo.websocket.org success", (done) => {
 test("connect wss://echo.websocket.org fail", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -80,7 +80,7 @@ test("connect wss://echo.websocket.org fail", (done) => {
 test("request wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -109,7 +109,7 @@ test("request wss://echo.websocket.org success", (done) => {
 test("request wss://echo.websocket.org timeout", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -141,7 +141,7 @@ test("request wss://echo.websocket.org timeout", (done) => {
 test("notify wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -175,7 +175,7 @@ test("notify wss://echo.websocket.org success", (done) => {
 test("onPush wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -194,11 +194,11 @@ test("onPush wss://echo.websocket.org success", (done) => {
         socket: webSocket,
         netEventHandler: netEventHandler
     });
-    const onTestPush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
+    const onTestPush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
         expect(data.data.testData).toBe("test");
     }
     const context = {};
-    const onTestPush2: net.ICallbackHandler<net.IDecodePackage<{ testData: string }>> = {
+    const onTestPush2: enet.ICallbackHandler<enet.IDecodePackage<{ testData: string }>> = {
         context: context,
         method: (data, a1, a2, a3) => {
             expect(data.data.testData).toBe("test");
@@ -221,7 +221,7 @@ test("onPush wss://echo.websocket.org success", (done) => {
 test("oncePush wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -240,11 +240,11 @@ test("oncePush wss://echo.websocket.org success", (done) => {
         socket: webSocket,
         netEventHandler: netEventHandler
     });
-    const onTestOncePush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
+    const onTestOncePush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
         expect(data.data.testData).toBe("test");
         expect(netNode["_oncePushHandlerMap"]["test"]).toBeUndefined();
     }
-    const onTestOncePush2: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
+    const onTestOncePush2: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
 
         done();
     }
@@ -260,7 +260,7 @@ test("oncePush wss://echo.websocket.org success", (done) => {
 test("offPush wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -278,10 +278,10 @@ test("offPush wss://echo.websocket.org success", (done) => {
         socket: webSocket,
         netEventHandler: netEventHandler
     });
-    const onTestPush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
+    const onTestPush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
 
     }
-    const onTestPush2: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
+    const onTestPush2: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
 
     }
     netNode.onPush("test", onTestPush);
@@ -296,7 +296,7 @@ test("offPush wss://echo.websocket.org success", (done) => {
 test("offPushAll wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -314,7 +314,7 @@ test("offPushAll wss://echo.websocket.org success", (done) => {
         socket: webSocket,
         netEventHandler: netEventHandler
     });
-    const onTestPush: net.ValueCallback<net.IDecodePackage<{ testData: string }>> = (data) => {
+    const onTestPush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
 
     }
     netNode.onPush("test", onTestPush);
@@ -329,7 +329,7 @@ test("offPushAll wss://echo.websocket.org success", (done) => {
 test("reconnect wss://echo.websockettttt.org fail", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
@@ -361,7 +361,7 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
 test("reconnect wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
-    const netEventHandler: net.INetEventHandler = {
+    const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
         },
