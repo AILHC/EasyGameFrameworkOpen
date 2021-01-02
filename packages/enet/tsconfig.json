@@ -23,5 +23,9 @@
   "exclude": [
     "dist",
     "old"
+  ],
+
+  "dtsGenExclude": [
+    "__tests__/**/*"
   ]
 }

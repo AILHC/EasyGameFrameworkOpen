@@ -60,10 +60,16 @@ declare global {
             /**数据传输类型，arraybuffer,blob ,默认arraybuffer*/
             binaryType?: "arraybuffer" | "blob";
         }
+        /**
+         * 编码后的数据包
+         */
         interface IEncodePackage {
             key: string;
             data: NetData;
         }
+        /**
+         * 解析后的数据包
+         */
         interface IDecodePackage<T = any> {
             key: string;
             /**数据 */
@@ -78,36 +84,43 @@ declare global {
         interface IProtoHandler<ProtoKeyType = any> {
             protoKey2Key(protoKey: ProtoKeyType): string;
             /**
-             * 加密数据
+             * 数据编码
              * @param data
              * @param reqId
              */
             encode(protoKey: ProtoKeyType, data: any, reqId?: number): IEncodePackage;
             /**
-             * 解析网络数据包，
+             * 解码网络数据包，
              * @param data
              */
             decode(data: NetData): IDecodePackage;
         }
         type ValueCallback<T = any> = (data?: T, ...args: any[]) => void;
+        /**
+         * 回调对象
+         */
         interface ICallbackHandler<T> {
+            /**回调 */
             method: ValueCallback<T>;
+            /**上下文，this */
             context?: any;
+            /**透传数据，传参给method时，会拼接在数据对象参数后面 */
             args?: any[];
         }
         /**
-         *
+         * 异常处理器
          */
-        interface IExceptionHandler<ResData = any> {
+        interface INetEventHandler<ResData = any> {
             /**
              * 开始连接
+             * @param connectOpt 连接配置
              */
-            onStartConnenct?(): void;
+            onStartConnenct?(connectOpt: ISocketConnectOptions): void;
             /**
              * 连接结束
-             * @param isOk
+             * @param connectOpt 连接配置
              */
-            onConnectEnd?(): void;
+            onConnectEnd?(connectOpt: ISocketConnectOptions): void;
             /**
              * 网络出错
              * @param event
@@ -120,24 +133,29 @@ declare global {
             onClosed(event: any): void;
             /**
              * 开始重连
+             * @param reConnectCfg 重连配置
+             * @param connectOpt 连接配置
              */
-            onStartReconnect?(): void;
+            onStartReconnect?(reConnectCfg: IReconnectConfig, connectOpt: ISocketConnectOptions): void;
             /**
              * 再次尝试重连
              * @param curCount
-             * @param totalCount
+             * @param reConnectCfg 重连配置
+             * @param connectOpt 连接配置
              */
-            onReconnecting?(curCount: number, totalCount: number): void;
+            onReconnecting?(curCount: number, reConnectCfg: IReconnectConfig, connectOpt: ISocketConnectOptions): void;
             /**
              * 重连结束
              * @param isOk
+             * @param reConnectCfg 重连配置
+             * @param connectOpt 连接配置
              */
-            onReconnectEnd?(isOk: boolean): void;
+            onReconnectEnd?(isOk: boolean, reConnectCfg: IReconnectConfig, connectOpt: ISocketConnectOptions): void;
             /**
              * 开始请求
-             * @param key
+             * @param reqKey 请求key
              */
-            onStartRequest?(key: string): void;
+            onStartRequest?(reqKey: string): void;
             /**
              * 请求响应
              * @param res
@@ -150,7 +168,10 @@ declare global {
             onRequestTimeout?(key: string): void;
             onCustomError?(data: IDecodePackage<ResData>): void;
         }
-        interface INodeConfig {
+        /**
+         * 重连配置接口
+         */
+        interface IReconnectConfig {
             /**
              * 重连次数
              * 默认:4
@@ -167,28 +188,45 @@ declare global {
              */
             requestTimeout?: number;
         }
+        interface INodeConfig {
+            /**
+             * 底层socket实现
+             */
+            socket?: ISocket;
+            /**
+             * 网络事件处理器
+             * 默认：使用log输出方式
+             */
+            netEventHandler?: INetEventHandler;
+            /**
+             * 协议加解密处理器
+             * 默认: 使用字符串协议处理器
+             */
+            protoHandler?: IProtoHandler;
+            /**
+             * 重连配置
+             */
+            reConnectCfg?: IReconnectConfig;
+        }
         interface INode<ProtoKeyType> {
             /**
              * 初始化网络节点，注入自定义处理
-             * @param socket
-             * @param exceptionHandler
-             * @param protoHandler
-             * @param config 配置 重连次数，超时时间
+             * @param config 配置 重连次数，超时时间，网络事件处理，协议处理
              */
-            init(socket: ISocket, exceptionHandler: IExceptionHandler, protoHandler?: IProtoHandler<ProtoKeyType>, config?: INodeConfig): void;
+            init(config?: INodeConfig): void;
             /**
-             * 连接socket
+             * 连接
              * @param option 连接参数
              */
             connect(option: ISocketConnectOptions): void;
             /**
              * 断开连接
              */
-            disconnect(): void;
+            disConnect(): void;
             /**
              * 重连
              */
-            reconnect(): void;
+            reConnect(): void;
             /**
              * 请求协议接口，处理返回
              * @param protoKey 协议key
@@ -202,7 +240,7 @@ declare global {
              * @param protoKey 协议key
              * @param data 数据体
              */
-            notify(protoKey: ProtoKeyType, data: any): void;
+            notify(protoKey: ProtoKeyType, data?: any): void;
             /**
              * 监听推送
              * @param protoKey
@@ -214,7 +252,7 @@ declare global {
              * @param protoKey
              * @param handler
              */
-            oncePush<ResData = any>(protoKey: ProtoKeyType, handler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void;
+            oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
             /**
              * 取消监听推送
              * @param protoKey 协议
@@ -231,4 +269,4 @@ declare global {
         }
     }
 }
-export { };
+export {};
