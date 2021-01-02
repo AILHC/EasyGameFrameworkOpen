@@ -341,6 +341,8 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
                 for (let i = 0; i < files.length; i++) {
                     if (files[i] === "index.d.ts") continue;
                     // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
+                    const typeFilePath = path.join(typesDirPath, files[i]);
+                    console.log(typeFilePath);
                     str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
                     regexMatch = importRegex.exec(str);
                     if (regexMatch) {
