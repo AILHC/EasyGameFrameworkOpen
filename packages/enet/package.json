@@ -27,7 +27,8 @@
     "build:es": "egf build -f es",
     "build:umd": "egf build -f umd:enet",
     "build:iife": "egf build -f iife:enet",
-    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife",
+    "build:system": "egf build -f system:@ailhc/enet",
+    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
     "testc": "jest --coverage"
   },
@@ -35,7 +36,8 @@
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@ailhc/egf-cli": "1.0.2",
     "jest": "^25.3.0",
