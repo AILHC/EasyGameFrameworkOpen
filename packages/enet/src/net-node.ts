@@ -1,16 +1,18 @@
 import { WSocket } from "./wsocket";
 
-export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
-
-    protected _socket: net.ISocket;
+export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
+    /**
+     * 套接字实现
+     */
+    protected _socket: enet.ISocket;
     /**
      * 网络事件处理器
      */
-    protected _netEventHandler: net.INetEventHandler;
+    protected _netEventHandler: enet.INetEventHandler;
     /**
      * 协议处理器
      */
-    protected _protoHandler: net.IProtoHandler;
+    protected _protoHandler: enet.IProtoHandler;
     /**
      * 当前重连次数
      */
@@ -18,7 +20,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
     /**
      * 重连配置
      */
-    protected _reConnectCfg: net.IReconnectConfig;
+    protected _reConnectCfg: enet.IReconnectConfig;
     /**
      * 是否初始化
      */
@@ -26,7 +28,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
     /**
      * 连接参数对象
      */
-    protected _connectOpt: net.ISocketConnectOptions;
+    protected _connectOpt: enet.ISocketConnectOptions;
     /**
      * 是否正在重连
      */
@@ -45,25 +47,25 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
      * key为请求key  = protoKey
      * value为 回调处理器或回调函数
      */
-    protected _pushHandlerMap: { [key: string]: (net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>)[] };
+    protected _pushHandlerMap: { [key: string]: (enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>)[] };
     /**
      * 一次监听推送处理器字典
      * key为请求key  = protoKey
      * value为 回调处理器或回调函数
      */
-    protected _oncePushHandlerMap: { [key: string]: (net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>)[] };
+    protected _oncePushHandlerMap: { [key: string]: (enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>)[] };
     /**
      * 请求响应回调字典
      * key为请求key  = protoKey_reqId
      * value为 回调处理器或回调函数
      */
-    protected _resHandlerMap: { [key: string]: net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage> };
+    protected _resHandlerMap: { [key: string]: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage> };
     /**socket事件处理器 */
-    protected _socketEventHandler: net.ISocketEventHandler;
+    protected _socketEventHandler: enet.ISocketEventHandler;
     /**
      * 获取socket事件处理器
      */
-    protected get socketEventHandler(): net.ISocketEventHandler {
+    protected get socketEventHandler(): enet.ISocketEventHandler {
         if (!this._socketEventHandler) {
             this._socketEventHandler = {
                 onSocketClosed: this._onSocketClosed.bind(this),
@@ -77,7 +79,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
 
         return this._socketEventHandler;
     }
-    public init(config?: net.INodeConfig): void {
+    public init(config?: enet.INodeConfig): void {
         if (this._inited) return;
 
         this._protoHandler = config && config.protoHandler ? config.protoHandler : new DefaultProtoHandler();
@@ -110,7 +112,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
         this._socket.setEventHandler(this.socketEventHandler);
     }
 
-    public connect(option: net.ISocketConnectOptions): void {
+    public connect(option: enet.ISocketConnectOptions): void {
         if (this._inited && this._socket) {
             this._connectOpt = option;
             this._socket.connect(option);
@@ -149,7 +151,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
         }, this._reConnectCfg.connectTimeout)
 
     }
-    public request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void {
+    public request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void {
         if (!this._inited || !this._socket || !this._socket.isConnected) {
             console.error(`${this._inited ? (this._socket ? "socket is unconnected" : "socket is null") : "netNode is unInited"}`);
             return;
@@ -172,7 +174,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
         }
 
     }
-    public notify(protoKey: ProtoKeyType, data: any): void {
+    public notify(protoKey: ProtoKeyType, data?: any): void {
         if (!this._inited || !this._socket || !this._socket.isConnected) {
             console.error(`${this._inited ? (this._socket ? "socket is unconnected" : "socket is null") : "netNode is unInited"}`);
             return;
@@ -180,7 +182,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
         const encodePkg = this._protoHandler.encode(protoKey, data, -1);
         this._socket.send(encodePkg.data);
     }
-    public onPush<ResData = any>(protoKey: ProtoKeyType, handler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void {
+    public onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         if (!this._pushHandlerMap[key]) {
             this._pushHandlerMap[key] = [handler];
@@ -189,7 +191,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
         }
 
     }
-    public oncePush<ResData = any>(protoKey: ProtoKeyType, handler: net.ICallbackHandler<net.IDecodePackage<ResData>> | net.ValueCallback<net.IDecodePackage<ResData>>): void {
+    public oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         if (!this._oncePushHandlerMap[key]) {
             this._oncePushHandlerMap[key] = [handler];
@@ -197,16 +199,16 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
             this._oncePushHandlerMap[key].push(handler);
         }
     }
-    public offPush(protoKey: ProtoKeyType, callback: net.ValueCallback<net.IDecodePackage>, context?: any, onceOnly?: boolean): void {
+    public offPush(protoKey: ProtoKeyType, callback: enet.ValueCallback<enet.IDecodePackage>, context?: any, onceOnly?: boolean): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
-        let handlers: (net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>)[];
+        let handlers: (enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>)[];
         if (onceOnly) {
             handlers = this._oncePushHandlerMap[key];
         } else {
             handlers = this._pushHandlerMap[key];
         }
         if (handlers) {
-            let handler: net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>;
+            let handler: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>;
             let isEqual: boolean;
             for (let i = handlers.length - 1; i > -1; i--) {
                 handler = handlers[i];
@@ -250,15 +252,15 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
      * 当socket有消息
      * @param event 
      */
-    protected _onSocketMsg(event: { data: net.NetData }) {
+    protected _onSocketMsg(event: { data: enet.NetData }) {
         const depackage = this._protoHandler.decode(event.data);
         if (!depackage.data) {
             const netEventHandler = this._netEventHandler;
             netEventHandler.onCustomError && netEventHandler.onCustomError(depackage);
         } else {
-            let handler: net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>;
+            let handler: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>;
             let key: string;
-            if (depackage.reqId > 0) {
+            if (!isNaN(depackage.reqId) && depackage.reqId > 0) {
                 //请求
                 key = `${depackage.key}_${depackage.reqId}`;
                 handler = this._resHandlerMap[key];
@@ -318,7 +320,7 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
      * @param handler 回调
      * @param depackage 解析完成的数据包
      */
-    protected _runHandler(handler: net.ICallbackHandler<net.IDecodePackage> | net.ValueCallback<net.IDecodePackage>, depackage: net.IDecodePackage) {
+    protected _runHandler(handler: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>, depackage: enet.IDecodePackage) {
         if (typeof handler === "function") {
             handler(depackage);
         } else if (typeof handler === "object") {
@@ -340,28 +342,28 @@ export class NetNode<ProtoKeyType> implements net.INode<ProtoKeyType>{
     }
 
 }
-class DefaultProtoHandler<ProtoKeyType> implements net.IProtoHandler<ProtoKeyType> {
+class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyType> {
     protoKey2Key(protoKey: ProtoKeyType): string {
         return protoKey as any;
     }
-    encode(protoKey: ProtoKeyType, data: any, reqId?: number): net.IEncodePackage {
+    encode(protoKey: ProtoKeyType, data: any, reqId?: number): enet.IEncodePackage {
         const key = this.protoKey2Key(protoKey);
         return {
             key: protoKey as any,
             data: JSON.stringify({ key: key, reqId: reqId, data: data }),
         }
     }
-    decode(data: net.NetData): net.IDecodePackage<any> {
+    decode(data: enet.NetData): enet.IDecodePackage<any> {
         const parsedData: { key: string, reqId: number, data: any, code: number } = JSON.parse(data as string);
         return parsedData;
     }
 
 }
-class DefaultNetEventHandler implements net.INetEventHandler {
-    onStartConnenct?(connectOpt: net.ISocketConnectOptions): void {
+class DefaultNetEventHandler implements enet.INetEventHandler {
+    onStartConnenct?(connectOpt: enet.ISocketConnectOptions): void {
         console.log(`开始连接:${connectOpt.url}`)
     }
-    onConnectEnd?(connectOpt: net.ISocketConnectOptions): void {
+    onConnectEnd?(connectOpt: enet.ISocketConnectOptions): void {
         console.log(`连接成功:${connectOpt.url}`);
     }
     onError(event?: any): void {
@@ -372,25 +374,25 @@ class DefaultNetEventHandler implements net.INetEventHandler {
         console.error(`socket错误`);
         console.error(event);
     }
-    onStartReconnect?(reConnectCfg: net.IReconnectConfig, connectOpt: net.ISocketConnectOptions): void {
+    onStartReconnect?(reConnectCfg: enet.IReconnectConfig, connectOpt: enet.ISocketConnectOptions): void {
         console.log(`开始重连:${connectOpt.url}`);
     }
-    onReconnecting?(curCount: number, reConnectCfg: net.IReconnectConfig, connectOpt: net.ISocketConnectOptions): void {
+    onReconnecting?(curCount: number, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.ISocketConnectOptions): void {
         console.log(`url:${connectOpt.url}重连${curCount}次,剩余次数:${reConnectCfg.reconnectCount}`);
     }
-    onReconnectEnd?(isOk: boolean, reConnectCfg: net.IReconnectConfig, connectOpt: net.ISocketConnectOptions): void {
+    onReconnectEnd?(isOk: boolean, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.ISocketConnectOptions): void {
         console.log(`url:${connectOpt.url}重连 ${isOk ? "成功" : "失败"} `);
     }
     onStartRequest?(key: string): void {
         console.log(`开始请求:${key}`)
     }
-    onResponse?(dpkg: net.IDecodePackage<any>): void {
+    onResponse?(dpkg: enet.IDecodePackage<any>): void {
         console.log(`请求返回:${dpkg.key}`);
     }
     onRequestTimeout?(key: string): void {
         console.warn(`请求超时:${key}`)
     }
-    onCustomError?(dpkg: net.IDecodePackage<any>): void {
+    onCustomError?(dpkg: enet.IDecodePackage<any>): void {
         console.error(`协议:${dpkg.key},请求id:${dpkg.reqId},错误码:${dpkg.code},错误信息:${dpkg.errorMsg}`)
     }
 
