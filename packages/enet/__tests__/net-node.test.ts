@@ -89,9 +89,9 @@ test("request wss://echo.websocket.org success", (done) => {
 
         },
         onConnectEnd() {
-            netNode.request("test", { testData: "test" }, (data) => {
-                expect(data.key === "test").toBeTruthy();
-                expect(data.data.testData === "test").toBeTruthy();
+            netNode.request("requesttest1", { testData: "requesttest1" }, (data) => {
+                expect(data.key === "requesttest1").toBeTruthy();
+                expect(data.data.testData === "requesttest1").toBeTruthy();
                 done();
             })
         }
@@ -117,13 +117,13 @@ test("request wss://echo.websocket.org timeout", (done) => {
 
 
         },
-        onRequestTimeout(key) {
-            expect(key === "test_1").toBeTruthy();
-
+        onRequestTimeout(reqCfg) {
+            expect(reqCfg.protoKey === "requesttest2").toBeTruthy();
+            expect(reqCfg.reqId === 1).toBeTruthy();
             done();
         },
         onConnectEnd() {
-            netNode.request("test", { testData: "test" }, undefined);
+            netNode.request("requesttest2", { testData: "requesttest2" }, undefined);
         }
 
 
@@ -150,13 +150,13 @@ test("notify wss://echo.websocket.org success", (done) => {
 
         },
         onConnectEnd() {
-            netNode.notify("test", { testData: "test" });
+            netNode.notify("notify_test", { testData: "notify_test" });
             setTimeout(() => {
                 expect(onMsgSpy).toBeCalled();
                 const netData = onMsgSpy.mock.calls[0][0].data as string;
                 expect(netData).toBeDefined();
                 const data = JSON.parse(netData);
-                expect(data.key).toBe("test");
+                expect(data.key).toBe("notify_test");
                 done();
             }, 2000)
         }
@@ -184,7 +184,7 @@ test("onPush wss://echo.websocket.org success", (done) => {
 
         },
         onConnectEnd() {
-            netNode.notify("test", { testData: "test" });
+            netNode.notify("onPushtest", { testData: "onPushtest" });
 
         }
 
@@ -195,25 +195,25 @@ test("onPush wss://echo.websocket.org success", (done) => {
         netEventHandler: netEventHandler
     });
     const onTestPush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
-        expect(data.data.testData).toBe("test");
+        expect(data.data.testData).toBe("onPushtest");
     }
     const context = {};
     const onTestPush2: enet.ICallbackHandler<enet.IDecodePackage<{ testData: string }>> = {
         context: context,
         method: (data, a1, a2, a3) => {
-            expect(data.data.testData).toBe("test");
+            expect(data.data.testData).toBe("onPushtest");
             expect(a1).toBe(1);
             expect(a2).toBe(2);
             expect(a3).toBe(3);
-            expect(netNode["_pushHandlerMap"]["test"].length).toEqual(2);
+            expect(netNode["_pushHandlerMap"]["onPushtest"].length).toEqual(2);
             done();
         },
         args: [1, 2, 3]
     }
-    netNode.onPush("test", onTestPush);
-    netNode.onPush("test", onTestPush2);
-    expect(netNode["_pushHandlerMap"]["test"][0]).toEqual(onTestPush);
-    expect(netNode["_pushHandlerMap"]["test"].length).toEqual(2);
+    netNode.onPush("onPushtest", onTestPush);
+    netNode.onPush("onPushtest", onTestPush2);
+    expect(netNode["_pushHandlerMap"]["onPushtest"][0]).toEqual(onTestPush);
+    expect(netNode["_pushHandlerMap"]["onPushtest"].length).toEqual(2);
     netNode.connect({
         url: "wss://echo.websocket.org"
     });
@@ -230,7 +230,7 @@ test("oncePush wss://echo.websocket.org success", (done) => {
 
         },
         onConnectEnd() {
-            netNode.notify("test", { testData: "test" });
+            netNode.notify("oncePushtest", { testData: "oncePushtest" });
 
         }
 
@@ -241,18 +241,18 @@ test("oncePush wss://echo.websocket.org success", (done) => {
         netEventHandler: netEventHandler
     });
     const onTestOncePush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
-        expect(data.data.testData).toBe("test");
-        expect(netNode["_oncePushHandlerMap"]["test"]).toBeUndefined();
+        expect(data.data.testData).toBe("oncePushtest");
+        expect(netNode["_oncePushHandlerMap"]["oncePushtest"]).toBeUndefined();
     }
     const onTestOncePush2: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
 
         done();
     }
-    netNode.oncePush("test", onTestOncePush);
-    netNode.oncePush("test", onTestOncePush2);
+    netNode.oncePush("oncePushtest", onTestOncePush);
+    netNode.oncePush("oncePushtest", onTestOncePush2);
 
-    expect(netNode["_oncePushHandlerMap"]["test"][0]).toEqual(onTestOncePush);
-    expect(netNode["_oncePushHandlerMap"]["test"].length).toEqual(2);
+    expect(netNode["_oncePushHandlerMap"]["oncePushtest"][0]).toEqual(onTestOncePush);
+    expect(netNode["_oncePushHandlerMap"]["oncePushtest"].length).toEqual(2);
     netNode.connect({
         url: "wss://echo.websocket.org"
     });
