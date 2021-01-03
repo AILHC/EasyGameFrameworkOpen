@@ -258,6 +258,7 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	         * 异常处理器
 	         */
 	        interface INetEventHandler<ResData = any> {
+	            setNetNode(netNode: enet.INode): void;
 	            /**
 	             * 开始连接
 	             * @param connectOpt 连接配置
@@ -355,7 +356,7 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             */
 	            reConnectCfg?: IReconnectConfig;
 	        }
-	        interface INode<ProtoKeyType> {
+	        interface INode<ProtoKeyType = any> {
 	            /**
 	             * 初始化网络节点，注入自定义处理
 	             * @param config 配置 重连次数，超时时间，网络事件处理，协议处理
