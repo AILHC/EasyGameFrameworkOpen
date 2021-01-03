@@ -13,7 +13,7 @@ export class WSocket implements enet.ISocket {
     setEventHandler(handler: enet.ISocketEventHandler): void {
         this._eventHandler = handler;
     }
-    connect(opt: enet.ISocketConnectOptions): boolean {
+    connect(opt: enet.IConnectOptions): boolean {
         let url = opt.url;
         if (!url) {
             if (opt.host && opt.port) {

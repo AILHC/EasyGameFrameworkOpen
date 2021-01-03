@@ -28,7 +28,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     /**
      * 连接参数对象
      */
-    protected _connectOpt: enet.ISocketConnectOptions;
+    protected _connectOpt: enet.IConnectOptions;
     /**
      * 是否正在重连
      */
@@ -47,19 +47,19 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
      * key为请求key  = protoKey
      * value为 回调处理器或回调函数
      */
-    protected _pushHandlerMap: { [key: string]: (enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>)[] };
+    protected _pushHandlerMap: { [key: string]: enet.AnyCallback[] };
     /**
      * 一次监听推送处理器字典
      * key为请求key  = protoKey
      * value为 回调处理器或回调函数
      */
-    protected _oncePushHandlerMap: { [key: string]: (enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>)[] };
+    protected _oncePushHandlerMap: { [key: string]: enet.AnyCallback[] };
     /**
      * 请求响应回调字典
      * key为请求key  = protoKey_reqId
      * value为 回调处理器或回调函数
      */
-    protected _resHandlerMap: { [key: string]: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage> };
+    protected _reqCfgMap: { [key: string]: enet.IRequestConfig };
     /**socket事件处理器 */
     protected _socketEventHandler: enet.ISocketEventHandler;
     /**
@@ -88,7 +88,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         this._netEventHandler.setNetNode(this);
         this._pushHandlerMap = {};
         this._oncePushHandlerMap = {};
-        this._resHandlerMap = {};
+        this._reqCfgMap = {};
         const reConnectCfg = config.reConnectCfg;
         if (!reConnectCfg) {
             this._reConnectCfg = {
@@ -113,7 +113,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         this._socket.setEventHandler(this.socketEventHandler);
     }
 
-    public connect(option: enet.ISocketConnectOptions): void {
+    public connect(option: enet.IConnectOptions): void {
         if (this._inited && this._socket) {
             this._connectOpt = option;
             this._socket.connect(option);
@@ -150,23 +150,38 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }, this._reConnectCfg.connectTimeout)
 
     }
-    public request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void {
+    public request<ReqData = any, ResData = any>(
+        protoKey: ProtoKeyType,
+        data: ReqData,
+        resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>,
+        arg?: any
+    ): void {
         if (!this._isSocketReady()) return;
         const reqId = this._reqId;
         const encodePkg = this._protoHandler.encode(protoKey, data, reqId);
         if (encodePkg) {
-            this._socket.send(encodePkg.data);
             const reqKey = `${encodePkg.key}_${reqId}`;
-            this._resHandlerMap[reqKey] = resHandler;
+            let reqCfg: enet.IRequestConfig = {
+                reqId: reqId,
+                protoKey: encodePkg.key,
+                data: data,
+                resHandler: resHandler,
+
+            };
+            if (arg) reqCfg = Object.assign(reqCfg, arg);
+            this._reqCfgMap[reqKey] = reqCfg;
             this._reqId++;
 
-            this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqKey)
+            this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg);
             setTimeout(() => {
-                delete this._resHandlerMap[reqKey];
+                delete this._reqCfgMap[reqKey];
                 const netEventHandler = this._netEventHandler;
-                netEventHandler.onRequestTimeout && netEventHandler.onRequestTimeout(reqKey);
+                netEventHandler.onRequestTimeout && netEventHandler.onRequestTimeout(reqCfg);
 
             }, this._reConnectCfg.requestTimeout)
+            this._socket.send(encodePkg.data);
+
+
         }
 
     }
@@ -236,12 +251,29 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }
 
     }
+    /**
+     * 初始化好，socket开启
+     */
     protected _isSocketReady(): boolean {
         if (this._inited && this._socket && this._socket.isConnected) {
             return true;
         } else {
             console.error(`${this._inited ? (this._socket ? "socket is connected" : "socket is null") : "netNode is unInited"}`);
             return false;
+        }
+    }
+    /**
+     * 当socket连接成功
+     * @param event 
+     */
+    protected _onSocketConnected(event: any): void {
+        if (this._isReconnecting) {
+            this._stopReconnect();
+        } else {
+            const handler = this._netEventHandler;
+            const connectOpt = this._connectOpt;
+            connectOpt.connectEnd && connectOpt.connectEnd();
+            handler.onConnectEnd && handler.onConnectEnd(connectOpt);
         }
     }
     /**
@@ -263,21 +295,26 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         if (depackage.errorMsg) {
             netEventHandler.onCustomError && netEventHandler.onCustomError(depackage);
         } else {
-            let handler: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>;
-            let key: string;
-            if (!isNaN(depackage.reqId) && depackage.reqId > 0) {
+            let reqCfg: enet.IRequestConfig;
+            if (depackage.reqId > 0) {
                 //请求
-                key = `${depackage.key}_${depackage.reqId}`;
-                handler = this._resHandlerMap[key];
-                this._runHandler(handler, depackage);
+                const reqKey = `${depackage.key}_${depackage.reqId}`;
+                reqCfg = this._reqCfgMap[reqKey];
+                if (!reqCfg) return;
+                reqCfg.decodePkg = depackage;
+                this._runHandler(reqCfg.resHandler, depackage);
+                const netEventHandler = this._netEventHandler;
             } else {
-                key = depackage.key;
+                const pushKey = depackage.key;
                 //推送
-                let handlers = this._pushHandlerMap[key];
+                let handlers = this._pushHandlerMap[pushKey];
+                const onceHandlers = this._oncePushHandlerMap[pushKey];
                 if (!handlers) {
-                    handlers = this._oncePushHandlerMap[key];
-                    delete this._oncePushHandlerMap[key];
+                    handlers = onceHandlers;
+                } else if (onceHandlers) {
+                    handlers = handlers.concat(onceHandlers);
                 }
+                delete this._oncePushHandlerMap[pushKey];
                 if (handlers) {
                     for (let i = 0; i < handlers.length; i++) {
                         this._runHandler(handlers[i], depackage);
@@ -306,18 +343,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }
 
     }
-    /**
-     * 当socket连接成功
-     * @param event 
-     */
-    protected _onSocketConnected(event: any): void {
-        if (this._isReconnecting) {
-            this._stopReconnect();
-        } else {
-            const handler = this._netEventHandler;
-            handler.onConnectEnd && handler.onConnectEnd(this._connectOpt);
-        }
-    }
+
     /**
      * 执行回调，会并接上透传数据
      * @param handler 回调
@@ -367,10 +393,10 @@ class DefaultNetEventHandler implements enet.INetEventHandler {
     setNetNode(netNode: enet.INode<any>): void {
         this._net = netNode;
     }
-    onStartConnenct?(connectOpt: enet.ISocketConnectOptions): void {
+    onStartConnenct?(connectOpt: enet.IConnectOptions): void {
         console.log(`开始连接:${connectOpt.url}`)
     }
-    onConnectEnd?(connectOpt: enet.ISocketConnectOptions): void {
+    onConnectEnd?(connectOpt: enet.IConnectOptions): void {
         console.log(`连接成功:${connectOpt.url}`);
     }
     onError(event?: any): void {
@@ -381,23 +407,23 @@ class DefaultNetEventHandler implements enet.INetEventHandler {
         console.error(`socket错误`);
         console.error(event);
     }
-    onStartReconnect?(reConnectCfg: enet.IReconnectConfig, connectOpt: enet.ISocketConnectOptions): void {
+    onStartReconnect?(reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions): void {
         console.log(`开始重连:${connectOpt.url}`);
     }
-    onReconnecting?(curCount: number, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.ISocketConnectOptions): void {
+    onReconnecting?(curCount: number, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions): void {
         console.log(`url:${connectOpt.url}重连${curCount}次,剩余次数:${reConnectCfg.reconnectCount}`);
     }
-    onReconnectEnd?(isOk: boolean, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.ISocketConnectOptions): void {
+    onReconnectEnd?(isOk: boolean, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions): void {
         console.log(`url:${connectOpt.url}重连 ${isOk ? "成功" : "失败"} `);
     }
-    onStartRequest?(key: string): void {
-        console.log(`开始请求:${key}`)
+    onStartRequest?(reqCfg: enet.IRequestConfig): void {
+        console.log(`开始请求:${reqCfg.protoKey},id:${reqCfg.reqId}`)
     }
     onServerMsg?(dpkg: enet.IDecodePackage<any>): void {
         console.log(`请求返回:${dpkg.key}`);
     }
-    onRequestTimeout?(key: string): void {
-        console.warn(`请求超时:${key}`)
+    onRequestTimeout?(reqCfg: enet.IRequestConfig): void {
+        console.warn(`请求超时:${reqCfg.protoKey}`)
     }
     onCustomError?(dpkg: enet.IDecodePackage<any>): void {
         console.error(`协议:${dpkg.key},请求id:${dpkg.reqId},错误码:${dpkg.code},错误信息:${dpkg.errorMsg}`)
