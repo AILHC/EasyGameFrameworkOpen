@@ -85,6 +85,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         this._protoHandler = config && config.protoHandler ? config.protoHandler : new DefaultProtoHandler();
         this._socket = config && config.socket ? config.socket : new WSocket();
         this._netEventHandler = config && config.netEventHandler ? config.netEventHandler : new DefaultNetEventHandler();
+        this._netEventHandler.setNetNode(this);
         this._pushHandlerMap = {};
         this._oncePushHandlerMap = {};
         this._resHandlerMap = {};
@@ -128,11 +129,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
 
     public reConnect(): void {
-        if (!this._inited || !this._socket || this._socket.isConnected) {
-            console.error(`${this._inited ? (this._socket ? "socket is connected" : "socket is null") : "netNode is unInited"}`);
+        if (!this._isSocketReady()) {
             return;
         }
-
         if (this._curReconnectCount > this._reConnectCfg.reconnectCount) {
             this._stopReconnect(false);
             return;
@@ -152,10 +151,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
     }
     public request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void {
-        if (!this._inited || !this._socket || !this._socket.isConnected) {
-            console.error(`${this._inited ? (this._socket ? "socket is unconnected" : "socket is null") : "netNode is unInited"}`);
-            return;
-        }
+        if (!this._isSocketReady()) return;
         const reqId = this._reqId;
         const encodePkg = this._protoHandler.encode(protoKey, data, reqId);
         if (encodePkg) {
@@ -175,12 +171,12 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
     }
     public notify(protoKey: ProtoKeyType, data?: any): void {
-        if (!this._inited || !this._socket || !this._socket.isConnected) {
-            console.error(`${this._inited ? (this._socket ? "socket is unconnected" : "socket is null") : "netNode is unInited"}`);
-            return;
-        }
+        if (!this._isSocketReady()) return;
         const encodePkg = this._protoHandler.encode(protoKey, data, -1);
-        this._socket.send(encodePkg.data);
+        this.send(encodePkg.data);
+    }
+    public send(netData: enet.NetData): void {
+        this._socket.send(netData);
     }
     public onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
@@ -240,6 +236,14 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }
 
     }
+    protected _isSocketReady(): boolean {
+        if (this._inited && this._socket && this._socket.isConnected) {
+            return true;
+        } else {
+            console.error(`${this._inited ? (this._socket ? "socket is connected" : "socket is null") : "netNode is unInited"}`);
+            return false;
+        }
+    }
     /**
      * 当socket报错
      * @param event 
@@ -254,8 +258,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
      */
     protected _onSocketMsg(event: { data: enet.NetData }) {
         const depackage = this._protoHandler.decode(event.data);
-        if (!depackage.data) {
-            const netEventHandler = this._netEventHandler;
+        const netEventHandler = this._netEventHandler;
+        netEventHandler.onServerMsg && netEventHandler.onServerMsg(depackage)
+        if (depackage.errorMsg) {
             netEventHandler.onCustomError && netEventHandler.onCustomError(depackage);
         } else {
             let handler: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>;
@@ -265,8 +270,6 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
                 key = `${depackage.key}_${depackage.reqId}`;
                 handler = this._resHandlerMap[key];
                 this._runHandler(handler, depackage);
-                const netEventHandler = this._netEventHandler;
-                netEventHandler.onResponse && netEventHandler.onResponse(depackage);
             } else {
                 key = depackage.key;
                 //推送
@@ -360,6 +363,10 @@ class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyTy
 
 }
 class DefaultNetEventHandler implements enet.INetEventHandler {
+    private _net: enet.INode<any>;
+    setNetNode(netNode: enet.INode<any>): void {
+        this._net = netNode;
+    }
     onStartConnenct?(connectOpt: enet.ISocketConnectOptions): void {
         console.log(`开始连接:${connectOpt.url}`)
     }
@@ -386,7 +393,7 @@ class DefaultNetEventHandler implements enet.INetEventHandler {
     onStartRequest?(key: string): void {
         console.log(`开始请求:${key}`)
     }
-    onResponse?(dpkg: enet.IDecodePackage<any>): void {
+    onServerMsg?(dpkg: enet.IDecodePackage<any>): void {
         console.log(`请求返回:${dpkg.key}`);
     }
     onRequestTimeout?(key: string): void {

@@ -119,6 +119,7 @@ declare global {
          * 异常处理器
          */
         interface INetEventHandler<ResData = any> {
+            setNetNode(netNode: enet.INode): void;
             /**
              * 开始连接
              * @param connectOpt 连接配置
@@ -168,9 +169,9 @@ declare global {
             onStartRequest?(reqKey: string): void;
             /**
              * 请求响应
-             * @param res 
+             * @param decodePkg 
              */
-            onResponse?(res: IDecodePackage<ResData>): void;
+            onServerMsg?(decodePkg: IDecodePackage<ResData>): void;
             /**
              * 请求超时
              * @param key 
@@ -222,7 +223,7 @@ declare global {
             reConnectCfg?: IReconnectConfig
 
         }
-        interface INode<ProtoKeyType> {
+        interface INode<ProtoKeyType = any> {
             /**
              * 初始化网络节点，注入自定义处理
              * @param config 配置 重连次数，超时时间，网络事件处理，协议处理
@@ -250,6 +251,11 @@ declare global {
             request<ReqData = any, ResData = any>(
                 protoKey: ProtoKeyType, data: ReqData,
                 resHandler: ICallbackHandler<IDecodePackage<ResData>> | ValueCallback<IDecodePackage<ResData>>): void;
+            /**
+             * 发送网络数据
+             * @param netData 
+             */
+            send(netData: NetData): void;
             /**
              * 通知
              * 发送数据给服务器，不处理返回
