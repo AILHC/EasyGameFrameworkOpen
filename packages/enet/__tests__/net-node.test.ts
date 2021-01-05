@@ -39,6 +39,7 @@ test("connect wss://echo.websocket.org success", (done) => {
 
         },
         onConnectEnd() {
+            netNode.disConnect();
             done();
         }
 
@@ -61,6 +62,7 @@ test("connect wss://echo.websocket.org fail", (done) => {
         },
         onClosed(e) {
             expect(errorSpy).toBeCalledTimes(1);
+
             done();
         },
         onConnectEnd() {
@@ -92,6 +94,7 @@ test("request wss://echo.websocket.org success", (done) => {
             netNode.request("requesttest1", { testData: "requesttest1" }, (data) => {
                 expect(data.key === "requesttest1").toBeTruthy();
                 expect(data.data.testData === "requesttest1").toBeTruthy();
+                netNode.disConnect();
                 done();
             })
         }
@@ -101,37 +104,6 @@ test("request wss://echo.websocket.org success", (done) => {
     netNode.init({
         socket: webSocket,
         netEventHandler: netEventHandler
-    });
-    netNode.connect({
-        url: "wss://echo.websocket.org"
-    });
-}, 60000);
-test("request wss://echo.websocket.org timeout", (done) => {
-    const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
-    const netEventHandler: enet.INetEventHandler = {
-        onError(e) {
-
-        },
-        onClosed(e) {
-
-
-        },
-        onRequestTimeout(reqCfg) {
-            expect(reqCfg.protoKey === "requesttest2").toBeTruthy();
-            expect(reqCfg.reqId === 1).toBeTruthy();
-            done();
-        },
-        onConnectEnd() {
-            netNode.request("requesttest2", { testData: "requesttest2" }, undefined);
-        }
-
-
-    }
-    netNode.init({
-        socket: webSocket,
-        netEventHandler: netEventHandler,
-        reConnectCfg: { requestTimeout: 1 }
     });
     netNode.connect({
         url: "wss://echo.websocket.org"
@@ -157,6 +129,7 @@ test("notify wss://echo.websocket.org success", (done) => {
                 expect(netData).toBeDefined();
                 const data = JSON.parse(netData);
                 expect(data.key).toBe("notify_test");
+                netNode.disConnect();
                 done();
             }, 2000)
         }
@@ -206,7 +179,9 @@ test("onPush wss://echo.websocket.org success", (done) => {
             expect(a2).toBe(2);
             expect(a3).toBe(3);
             expect(netNode["_pushHandlerMap"]["onPushtest"].length).toEqual(2);
+            netNode.disConnect();
             done();
+            
         },
         args: [1, 2, 3]
     }
@@ -246,7 +221,9 @@ test("oncePush wss://echo.websocket.org success", (done) => {
     }
     const onTestOncePush2: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
 
+        netNode.disConnect();
         done();
+
     }
     netNode.oncePush("oncePushtest", onTestOncePush);
     netNode.oncePush("oncePushtest", onTestOncePush2);
@@ -340,11 +317,13 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
         onConnectEnd() {
 
         },
-        onReconnecting(curCount, totalCount) {
-
+        onReconnecting(curCount, reConnectCfg) {
+            expect(curCount).toBeDefined();
+            expect(reConnectCfg.reconnectCount).toBe(3);
         },
         onReconnectEnd(isOk) {
             expect(isOk).toBeFalsy();
+            netNode.disConnect();
             done();
         }
 
@@ -352,12 +331,17 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
     }
     netNode.init({
         socket: webSocket,
-        netEventHandler: netEventHandler
+        netEventHandler: netEventHandler,
+        reConnectCfg: {
+            reconnectCount: 3,
+            connectTimeout: 1000
+
+        }
     });
     netNode.connect({
         url: "wss://echo.websockettttt.org"
     });
-}, 120000);
+}, 60000);
 test("reconnect wss://echo.websocket.org success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
@@ -374,7 +358,7 @@ test("reconnect wss://echo.websocket.org success", (done) => {
             webSocket.close();
 
         },
-        onReconnecting(curCount, totalCount) {
+        onReconnecting(curCount, reConnectCfg) {
             if (curCount > 2) {
                 netNode["_connectOpt"].url = "wss://echo.websocket.org";
             }
@@ -393,4 +377,4 @@ test("reconnect wss://echo.websocket.org success", (done) => {
     netNode.connect({
         url: "wss://echo.websocket.org"
     });
-}, 120000);
+}, 60000);

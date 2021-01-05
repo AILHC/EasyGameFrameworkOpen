@@ -82,20 +82,24 @@ declare global {
             errorMsg?: string
         }
         interface IProtoHandler<ProtoKeyType = any> {
+            /**
+             * 协议key转字符串key
+             * @param protoKey 
+             */
             protoKey2Key(protoKey: ProtoKeyType): string;
             /**
              * 数据编码
              * @param data
              * @param reqId
              */
-            encode(protoKey: ProtoKeyType, data: any, reqId?: number): IEncodePackage
+            encode(protoKey: ProtoKeyType, msg: enet.IMessage): IEncodePackage
             /**
              * 解码网络数据包，
              * @param data 
              */
             decode(data: NetData): IDecodePackage
         }
-        type AnyCallback = enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>;
+        type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
 
         type ValueCallback<T = any> = (data?: T, ...args) => void;
         /**
@@ -149,11 +153,6 @@ declare global {
          */
         interface INetEventHandler<ResData = any> {
             /**
-             * 设置网络节点
-             * @param netNode 
-             */
-            setNetNode?(netNode: enet.INode): void;
-            /**
              * 开始连接
              * @param connectOpt 连接配置
              */
@@ -167,12 +166,12 @@ declare global {
              * 网络出错
              * @param event 
              */
-            onError(event?): void
+            onError(event: any, connectOpt: IConnectOptions): void
             /**
              * 连接断开
              * @param event 
              */
-            onClosed(event: any): void;
+            onClosed(event: any, connectOpt: IConnectOptions): void;
 
             /**
              * 开始重连
@@ -199,20 +198,20 @@ declare global {
              * 开始请求
              * @param reqCfg 请求配置
              */
-            onStartRequest?(reqCfg: enet.IRequestConfig): void;
+            onStartRequest?(reqCfg: enet.IRequestConfig, connectOpt: IConnectOptions): void;
             /**
              * 请求响应
              * @param decodePkg 
              */
-            onServerMsg?(decodePkg: IDecodePackage<ResData>): void;
-            /**
-             * 请求超时
-             * @param reqCfg 请求配置
-             */
-            onRequestTimeout?(reqCfg: enet.IRequestConfig): void;
+            onServerMsg?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions): void;
+
 
             // onPush(data: IDecodePackage<ResData>): void
-            onCustomError?(data: IDecodePackage<ResData>): void
+            onCustomError?(data: IDecodePackage<ResData>, connectOpt: IConnectOptions): void
+        }
+        interface IMessage {
+            reqId?: number,
+            data: any
         }
         /**
          * 重连配置接口
@@ -227,13 +226,7 @@ declare global {
              * 连接超时时间，单位毫秒
              * 默认: 120000 2分钟
              */
-            connectTimeout?: number;
-
-            /**
-             * 请求超时时间，单位毫秒
-             * 默认 60000 1分钟
-             */
-            requestTimeout?: number
+            connectTimeout?: number
         }
         interface INodeConfig {
             /**
@@ -246,7 +239,7 @@ declare global {
              */
             netEventHandler?: INetEventHandler,
             /**
-             * 协议加解密处理器
+             * 协议编码，解码处理器
              * 默认: 使用字符串协议处理器
              */
             protoHandler?: IProtoHandler
@@ -303,21 +296,21 @@ declare global {
              */
             onPush<ResData = any>(
                 protoKey: ProtoKeyType,
-                handler: ICallbackHandler<IDecodePackage<ResData>> | ValueCallback<IDecodePackage<ResData>>): void;
+                handler: enet.AnyCallback<ResData>): void;
             /**
              * 监听一次推送
              * @param protoKey 
              * @param handler 
              */
-            oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+            oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
             /**
              * 取消监听推送
              * @param protoKey 协议
-             * @param callback 回调引用
+             * @param callbackHandler 回调
              * @param context 指定上下文的监听
              * @param onceOnly 是否只取消 监听一次 的推送监听
              */
-            offPush(protoKey: ProtoKeyType, callback: ValueCallback, context?: any, onceOnly?: boolean): void
+            offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void
             /**
              * 取消所有监听
              * @param protoKey 指定协议的推送，如果为空，则取消所有协议的所有监听
