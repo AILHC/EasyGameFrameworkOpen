@@ -93,12 +93,12 @@ declare global {
              * @param data
              * @param reqId
              */
-            encode(protoKey: ProtoKeyType, msg: enet.IMessage): IEncodePackage
+            encode<T>(protoKey: ProtoKeyType, msg: enet.IMessage<T>): IEncodePackage
             /**
              * 解码网络数据包，
              * @param data 
              */
-            decode(data: NetData): IDecodePackage
+            decode<T>(data: NetData): IDecodePackage<T>
         }
         type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
 
@@ -210,9 +210,9 @@ declare global {
             // onPush(data: IDecodePackage<ResData>): void
             onCustomError?(data: IDecodePackage<ResData>, connectOpt: IConnectOptions): void
         }
-        interface IMessage {
+        interface IMessage<T = any> {
             reqId?: number,
-            data: any
+            data: T
         }
         /**
          * 重连配置接口

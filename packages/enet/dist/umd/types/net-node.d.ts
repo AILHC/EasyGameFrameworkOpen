@@ -26,7 +26,7 @@ export declare class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
     /**
      * 连接参数对象
      */
-    protected _connectOpt: enet.ISocketConnectOptions;
+    protected _connectOpt: enet.IConnectOptions;
     /**
      * 是否正在重连
      */
@@ -46,7 +46,7 @@ export declare class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
      * value为 回调处理器或回调函数
      */
     protected _pushHandlerMap: {
-        [key: string]: (enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>)[];
+        [key: string]: enet.AnyCallback[];
     };
     /**
      * 一次监听推送处理器字典
@@ -54,15 +54,15 @@ export declare class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
      * value为 回调处理器或回调函数
      */
     protected _oncePushHandlerMap: {
-        [key: string]: (enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>)[];
+        [key: string]: enet.AnyCallback[];
     };
     /**
      * 请求响应回调字典
      * key为请求key  = protoKey_reqId
      * value为 回调处理器或回调函数
      */
-    protected _resHandlerMap: {
-        [key: string]: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>;
+    protected _reqCfgMap: {
+        [key: string]: enet.IRequestConfig;
     };
     /**socket事件处理器 */
     protected _socketEventHandler: enet.ISocketEventHandler;
@@ -71,15 +71,25 @@ export declare class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
      */
     protected get socketEventHandler(): enet.ISocketEventHandler;
     init(config?: enet.INodeConfig): void;
-    connect(option: enet.ISocketConnectOptions): void;
+    connect(option: enet.IConnectOptions): void;
     disConnect(): void;
     reConnect(): void;
-    request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+    request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>, arg?: any): void;
     notify(protoKey: ProtoKeyType, data?: any): void;
+    send(netData: enet.NetData): void;
     onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
     oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
-    offPush(protoKey: ProtoKeyType, callback: enet.ValueCallback<enet.IDecodePackage>, context?: any, onceOnly?: boolean): void;
+    offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
     offPushAll(protoKey?: ProtoKeyType): void;
+    /**
+     * 初始化好，socket开启
+     */
+    protected _isSocketReady(): boolean;
+    /**
+     * 当socket连接成功
+     * @param event
+     */
+    protected _onSocketConnected(event: any): void;
     /**
      * 当socket报错
      * @param event
@@ -98,16 +108,11 @@ export declare class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
      */
     protected _onSocketClosed(event: any): void;
     /**
-     * 当socket连接成功
-     * @param event
-     */
-    protected _onSocketConnected(event: any): void;
-    /**
      * 执行回调，会并接上透传数据
      * @param handler 回调
      * @param depackage 解析完成的数据包
      */
-    protected _runHandler(handler: enet.ICallbackHandler<enet.IDecodePackage> | enet.ValueCallback<enet.IDecodePackage>, depackage: enet.IDecodePackage): void;
+    protected _runHandler(handler: enet.AnyCallback, depackage: enet.IDecodePackage): void;
     /**
      * 停止重连
      * @param isOk 重连是否成功

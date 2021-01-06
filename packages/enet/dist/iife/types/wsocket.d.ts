@@ -5,7 +5,7 @@ export declare class WSocket implements enet.ISocket {
     get state(): SocketState;
     get isConnected(): boolean;
     setEventHandler(handler: enet.ISocketEventHandler): void;
-    connect(opt: enet.ISocketConnectOptions): boolean;
+    connect(opt: enet.IConnectOptions): boolean;
     send(data: enet.NetData): void;
     close(): void;
 }
