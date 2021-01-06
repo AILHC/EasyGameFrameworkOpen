@@ -276,40 +276,36 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     protected _onSocketMsg(event: { data: enet.NetData }) {
         const depackage = this._protoHandler.decode(event.data);
         const netEventHandler = this._netEventHandler;
-        netEventHandler.onServerMsg && netEventHandler.onServerMsg(depackage, this._connectOpt)
-        if (depackage.errorMsg) {
-            netEventHandler.onCustomError && netEventHandler.onCustomError(depackage, this._connectOpt);
-        } else {
-            let reqCfg: enet.IRequestConfig;
-            if (depackage.reqId > 0) {
-                //请求
-                const reqKey = `${depackage.key}_${depackage.reqId}`;
-                reqCfg = this._reqCfgMap[reqKey];
-                if (!reqCfg) return;
-                reqCfg.decodePkg = depackage;
-                this._runHandler(reqCfg.resHandler, depackage);
-                const netEventHandler = this._netEventHandler;
-            } else {
-                const pushKey = depackage.key;
-                //推送
-                let handlers = this._pushHandlerMap[pushKey];
-                const onceHandlers = this._oncePushHandlerMap[pushKey];
-                if (!handlers) {
-                    handlers = onceHandlers;
-                } else if (onceHandlers) {
-                    handlers = handlers.concat(onceHandlers);
-                }
-                delete this._oncePushHandlerMap[pushKey];
-                if (handlers) {
-                    for (let i = 0; i < handlers.length; i++) {
-                        this._runHandler(handlers[i], depackage);
-                    }
-                }
 
+        let reqCfg: enet.IRequestConfig;
+        if (!isNaN(depackage.reqId) && depackage.reqId > 0) {
+            //请求
+            const reqKey = `${depackage.key}_${depackage.reqId}`;
+            reqCfg = this._reqCfgMap[reqKey];
+            if (!reqCfg) return;
+            reqCfg.decodePkg = depackage;
+            this._runHandler(reqCfg.resHandler, depackage);
+        } else {
+            const pushKey = depackage.key;
+            //推送
+            let handlers = this._pushHandlerMap[pushKey];
+            const onceHandlers = this._oncePushHandlerMap[pushKey];
+            if (!handlers) {
+                handlers = onceHandlers;
+            } else if (onceHandlers) {
+                handlers = handlers.concat(onceHandlers);
+            }
+            delete this._oncePushHandlerMap[pushKey];
+            if (handlers) {
+                for (let i = 0; i < handlers.length; i++) {
+                    this._runHandler(handlers[i], depackage);
+                }
             }
 
-
-
+        }
+        netEventHandler.onServerMsg && netEventHandler.onServerMsg(depackage, this._connectOpt, reqCfg)
+        if (depackage.errorMsg) {
+            netEventHandler.onCustomError && netEventHandler.onCustomError(depackage, this._connectOpt);
         }
 
     }

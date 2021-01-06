@@ -1,7 +1,7 @@
 declare global {
     namespace enet {
         /**网络数据格式 */
-        type NetData = (string | ArrayBufferLike | Blob | ArrayBufferView);
+        type NetData = (string | ArrayBufferLike | Blob | ArrayBufferView | Uint8Array);
         /**
          * socket 接口
          */
@@ -71,6 +71,7 @@ declare global {
          * 解析后的数据包
          */
         interface IDecodePackage<T = any> {
+            /**协议字符串key */
             key: string,
             /**数据 */
             data: T
@@ -203,7 +204,7 @@ declare global {
              * 请求响应
              * @param decodePkg 
              */
-            onServerMsg?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions): void;
+            onServerMsg?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
 
 
             // onPush(data: IDecodePackage<ResData>): void
