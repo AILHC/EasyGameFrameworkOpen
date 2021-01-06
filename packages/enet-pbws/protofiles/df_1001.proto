@@ -1,5 +1,5 @@
 import "df_1000.proto";
-package doomsday_pt;
+package pb_test;
 // 角色数据,(暂定这些数据，以后再加)
 message Pt_HeroMsg{
     required uint64 id = 1;       // 角色唯一ID

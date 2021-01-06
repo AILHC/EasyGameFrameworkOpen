@@ -6,20 +6,20 @@ var $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.ut
 // Exported root namespace
 var $root = $protobuf.roots["default"] || ($protobuf.roots["default"] = {});
 
-$root.doomsday_pt = (function() {
+$root.pb_test = (function() {
 
     /**
-     * Namespace doomsday_pt.
-     * @exports doomsday_pt
+     * Namespace pb_test.
+     * @exports pb_test
      * @namespace
      */
-    var doomsday_pt = {};
+    var pb_test = {};
 
-    doomsday_pt.ResData = (function() {
+    pb_test.ResData = (function() {
 
         /**
          * Properties of a ResData.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IResData
          * @property {number} result ResData result
          * @property {Array.<string>|null} [param] ResData param
@@ -27,11 +27,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new ResData.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a ResData.
          * @implements IResData
          * @constructor
-         * @param {doomsday_pt.IResData=} [properties] Properties to set
+         * @param {pb_test.IResData=} [properties] Properties to set
          */
         function ResData(properties) {
             this.param = [];
@@ -44,7 +44,7 @@ $root.doomsday_pt = (function() {
         /**
          * ResData result.
          * @member {number} result
-         * @memberof doomsday_pt.ResData
+         * @memberof pb_test.ResData
          * @instance
          */
         ResData.prototype.result = 0;
@@ -52,7 +52,7 @@ $root.doomsday_pt = (function() {
         /**
          * ResData param.
          * @member {Array.<string>} param
-         * @memberof doomsday_pt.ResData
+         * @memberof pb_test.ResData
          * @instance
          */
         ResData.prototype.param = $util.emptyArray;
@@ -60,21 +60,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new ResData instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.ResData
+         * @memberof pb_test.ResData
          * @static
-         * @param {doomsday_pt.IResData=} [properties] Properties to set
-         * @returns {doomsday_pt.ResData} ResData instance
+         * @param {pb_test.IResData=} [properties] Properties to set
+         * @returns {pb_test.ResData} ResData instance
          */
         ResData.create = function create(properties) {
             return new ResData(properties);
         };
 
         /**
-         * Encodes the specified ResData message. Does not implicitly {@link doomsday_pt.ResData.verify|verify} messages.
+         * Encodes the specified ResData message. Does not implicitly {@link pb_test.ResData.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.ResData
+         * @memberof pb_test.ResData
          * @static
-         * @param {doomsday_pt.IResData} message ResData message or plain object to encode
+         * @param {pb_test.IResData} message ResData message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -91,18 +91,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a ResData message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.ResData
+         * @memberof pb_test.ResData
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.ResData} ResData
+         * @returns {pb_test.ResData} ResData
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         ResData.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.ResData();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.ResData();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -127,7 +127,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a ResData message.
          * @function verify
-         * @memberof doomsday_pt.ResData
+         * @memberof pb_test.ResData
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -150,11 +150,11 @@ $root.doomsday_pt = (function() {
         return ResData;
     })();
 
-    doomsday_pt.Pt_GetAsset = (function() {
+    pb_test.Pt_GetAsset = (function() {
 
         /**
          * Properties of a Pt_GetAsset.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_GetAsset
          * @property {number} asset_type Pt_GetAsset asset_type
          * @property {number|Long} asset_num Pt_GetAsset asset_num
@@ -162,11 +162,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Pt_GetAsset.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_GetAsset.
          * @implements IPt_GetAsset
          * @constructor
-         * @param {doomsday_pt.IPt_GetAsset=} [properties] Properties to set
+         * @param {pb_test.IPt_GetAsset=} [properties] Properties to set
          */
         function Pt_GetAsset(properties) {
             if (properties)
@@ -178,7 +178,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_GetAsset asset_type.
          * @member {number} asset_type
-         * @memberof doomsday_pt.Pt_GetAsset
+         * @memberof pb_test.Pt_GetAsset
          * @instance
          */
         Pt_GetAsset.prototype.asset_type = 0;
@@ -186,7 +186,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_GetAsset asset_num.
          * @member {number|Long} asset_num
-         * @memberof doomsday_pt.Pt_GetAsset
+         * @memberof pb_test.Pt_GetAsset
          * @instance
          */
         Pt_GetAsset.prototype.asset_num = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
@@ -194,21 +194,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_GetAsset instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_GetAsset
+         * @memberof pb_test.Pt_GetAsset
          * @static
-         * @param {doomsday_pt.IPt_GetAsset=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_GetAsset} Pt_GetAsset instance
+         * @param {pb_test.IPt_GetAsset=} [properties] Properties to set
+         * @returns {pb_test.Pt_GetAsset} Pt_GetAsset instance
          */
         Pt_GetAsset.create = function create(properties) {
             return new Pt_GetAsset(properties);
         };
 
         /**
-         * Encodes the specified Pt_GetAsset message. Does not implicitly {@link doomsday_pt.Pt_GetAsset.verify|verify} messages.
+         * Encodes the specified Pt_GetAsset message. Does not implicitly {@link pb_test.Pt_GetAsset.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_GetAsset
+         * @memberof pb_test.Pt_GetAsset
          * @static
-         * @param {doomsday_pt.IPt_GetAsset} message Pt_GetAsset message or plain object to encode
+         * @param {pb_test.IPt_GetAsset} message Pt_GetAsset message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -223,18 +223,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Pt_GetAsset message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_GetAsset
+         * @memberof pb_test.Pt_GetAsset
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_GetAsset} Pt_GetAsset
+         * @returns {pb_test.Pt_GetAsset} Pt_GetAsset
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_GetAsset.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_GetAsset();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_GetAsset();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -259,7 +259,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_GetAsset message.
          * @function verify
-         * @memberof doomsday_pt.Pt_GetAsset
+         * @memberof pb_test.Pt_GetAsset
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -277,11 +277,11 @@ $root.doomsday_pt = (function() {
         return Pt_GetAsset;
     })();
 
-    doomsday_pt.Pt_BaseGoods = (function() {
+    pb_test.Pt_BaseGoods = (function() {
 
         /**
          * Properties of a Pt_BaseGoods.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_BaseGoods
          * @property {number} base_id Pt_BaseGoods base_id
          * @property {number} num Pt_BaseGoods num
@@ -289,11 +289,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Pt_BaseGoods.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_BaseGoods.
          * @implements IPt_BaseGoods
          * @constructor
-         * @param {doomsday_pt.IPt_BaseGoods=} [properties] Properties to set
+         * @param {pb_test.IPt_BaseGoods=} [properties] Properties to set
          */
         function Pt_BaseGoods(properties) {
             if (properties)
@@ -305,7 +305,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_BaseGoods base_id.
          * @member {number} base_id
-         * @memberof doomsday_pt.Pt_BaseGoods
+         * @memberof pb_test.Pt_BaseGoods
          * @instance
          */
         Pt_BaseGoods.prototype.base_id = 0;
@@ -313,7 +313,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_BaseGoods num.
          * @member {number} num
-         * @memberof doomsday_pt.Pt_BaseGoods
+         * @memberof pb_test.Pt_BaseGoods
          * @instance
          */
         Pt_BaseGoods.prototype.num = 0;
@@ -321,21 +321,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_BaseGoods instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_BaseGoods
+         * @memberof pb_test.Pt_BaseGoods
          * @static
-         * @param {doomsday_pt.IPt_BaseGoods=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_BaseGoods} Pt_BaseGoods instance
+         * @param {pb_test.IPt_BaseGoods=} [properties] Properties to set
+         * @returns {pb_test.Pt_BaseGoods} Pt_BaseGoods instance
          */
         Pt_BaseGoods.create = function create(properties) {
             return new Pt_BaseGoods(properties);
         };
 
         /**
-         * Encodes the specified Pt_BaseGoods message. Does not implicitly {@link doomsday_pt.Pt_BaseGoods.verify|verify} messages.
+         * Encodes the specified Pt_BaseGoods message. Does not implicitly {@link pb_test.Pt_BaseGoods.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_BaseGoods
+         * @memberof pb_test.Pt_BaseGoods
          * @static
-         * @param {doomsday_pt.IPt_BaseGoods} message Pt_BaseGoods message or plain object to encode
+         * @param {pb_test.IPt_BaseGoods} message Pt_BaseGoods message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -350,18 +350,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Pt_BaseGoods message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_BaseGoods
+         * @memberof pb_test.Pt_BaseGoods
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_BaseGoods} Pt_BaseGoods
+         * @returns {pb_test.Pt_BaseGoods} Pt_BaseGoods
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_BaseGoods.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_BaseGoods();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_BaseGoods();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -386,7 +386,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_BaseGoods message.
          * @function verify
-         * @memberof doomsday_pt.Pt_BaseGoods
+         * @memberof pb_test.Pt_BaseGoods
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -404,11 +404,11 @@ $root.doomsday_pt = (function() {
         return Pt_BaseGoods;
     })();
 
-    doomsday_pt.Pt_BaseGene = (function() {
+    pb_test.Pt_BaseGene = (function() {
 
         /**
          * Properties of a Pt_BaseGene.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_BaseGene
          * @property {number} base_id Pt_BaseGene base_id
          * @property {number} strg_rank Pt_BaseGene strg_rank
@@ -418,11 +418,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Pt_BaseGene.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_BaseGene.
          * @implements IPt_BaseGene
          * @constructor
-         * @param {doomsday_pt.IPt_BaseGene=} [properties] Properties to set
+         * @param {pb_test.IPt_BaseGene=} [properties] Properties to set
          */
         function Pt_BaseGene(properties) {
             if (properties)
@@ -434,7 +434,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_BaseGene base_id.
          * @member {number} base_id
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @instance
          */
         Pt_BaseGene.prototype.base_id = 0;
@@ -442,7 +442,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_BaseGene strg_rank.
          * @member {number} strg_rank
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @instance
          */
         Pt_BaseGene.prototype.strg_rank = 0;
@@ -450,7 +450,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_BaseGene star_rank.
          * @member {number} star_rank
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @instance
          */
         Pt_BaseGene.prototype.star_rank = 0;
@@ -458,7 +458,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_BaseGene limit_id.
          * @member {number} limit_id
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @instance
          */
         Pt_BaseGene.prototype.limit_id = 0;
@@ -466,21 +466,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_BaseGene instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @static
-         * @param {doomsday_pt.IPt_BaseGene=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_BaseGene} Pt_BaseGene instance
+         * @param {pb_test.IPt_BaseGene=} [properties] Properties to set
+         * @returns {pb_test.Pt_BaseGene} Pt_BaseGene instance
          */
         Pt_BaseGene.create = function create(properties) {
             return new Pt_BaseGene(properties);
         };
 
         /**
-         * Encodes the specified Pt_BaseGene message. Does not implicitly {@link doomsday_pt.Pt_BaseGene.verify|verify} messages.
+         * Encodes the specified Pt_BaseGene message. Does not implicitly {@link pb_test.Pt_BaseGene.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @static
-         * @param {doomsday_pt.IPt_BaseGene} message Pt_BaseGene message or plain object to encode
+         * @param {pb_test.IPt_BaseGene} message Pt_BaseGene message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -497,18 +497,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Pt_BaseGene message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_BaseGene} Pt_BaseGene
+         * @returns {pb_test.Pt_BaseGene} Pt_BaseGene
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_BaseGene.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_BaseGene();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_BaseGene();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -543,7 +543,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_BaseGene message.
          * @function verify
-         * @memberof doomsday_pt.Pt_BaseGene
+         * @memberof pb_test.Pt_BaseGene
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -565,24 +565,24 @@ $root.doomsday_pt = (function() {
         return Pt_BaseGene;
     })();
 
-    doomsday_pt.DrawAward = (function() {
+    pb_test.DrawAward = (function() {
 
         /**
          * Properties of a DrawAward.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IDrawAward
-         * @property {Array.<doomsday_pt.IPt_BaseGoods>|null} [award_goods] DrawAward award_goods
-         * @property {Array.<doomsday_pt.IPt_GetAsset>|null} [award_asset] DrawAward award_asset
-         * @property {Array.<doomsday_pt.IPt_BaseGene>|null} [award_genome] DrawAward award_genome
+         * @property {Array.<pb_test.IPt_BaseGoods>|null} [award_goods] DrawAward award_goods
+         * @property {Array.<pb_test.IPt_GetAsset>|null} [award_asset] DrawAward award_asset
+         * @property {Array.<pb_test.IPt_BaseGene>|null} [award_genome] DrawAward award_genome
          */
 
         /**
          * Constructs a new DrawAward.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a DrawAward.
          * @implements IDrawAward
          * @constructor
-         * @param {doomsday_pt.IDrawAward=} [properties] Properties to set
+         * @param {pb_test.IDrawAward=} [properties] Properties to set
          */
         function DrawAward(properties) {
             this.award_goods = [];
@@ -596,24 +596,24 @@ $root.doomsday_pt = (function() {
 
         /**
          * DrawAward award_goods.
-         * @member {Array.<doomsday_pt.IPt_BaseGoods>} award_goods
-         * @memberof doomsday_pt.DrawAward
+         * @member {Array.<pb_test.IPt_BaseGoods>} award_goods
+         * @memberof pb_test.DrawAward
          * @instance
          */
         DrawAward.prototype.award_goods = $util.emptyArray;
 
         /**
          * DrawAward award_asset.
-         * @member {Array.<doomsday_pt.IPt_GetAsset>} award_asset
-         * @memberof doomsday_pt.DrawAward
+         * @member {Array.<pb_test.IPt_GetAsset>} award_asset
+         * @memberof pb_test.DrawAward
          * @instance
          */
         DrawAward.prototype.award_asset = $util.emptyArray;
 
         /**
          * DrawAward award_genome.
-         * @member {Array.<doomsday_pt.IPt_BaseGene>} award_genome
-         * @memberof doomsday_pt.DrawAward
+         * @member {Array.<pb_test.IPt_BaseGene>} award_genome
+         * @memberof pb_test.DrawAward
          * @instance
          */
         DrawAward.prototype.award_genome = $util.emptyArray;
@@ -621,21 +621,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new DrawAward instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.DrawAward
+         * @memberof pb_test.DrawAward
          * @static
-         * @param {doomsday_pt.IDrawAward=} [properties] Properties to set
-         * @returns {doomsday_pt.DrawAward} DrawAward instance
+         * @param {pb_test.IDrawAward=} [properties] Properties to set
+         * @returns {pb_test.DrawAward} DrawAward instance
          */
         DrawAward.create = function create(properties) {
             return new DrawAward(properties);
         };
 
         /**
-         * Encodes the specified DrawAward message. Does not implicitly {@link doomsday_pt.DrawAward.verify|verify} messages.
+         * Encodes the specified DrawAward message. Does not implicitly {@link pb_test.DrawAward.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.DrawAward
+         * @memberof pb_test.DrawAward
          * @static
-         * @param {doomsday_pt.IDrawAward} message DrawAward message or plain object to encode
+         * @param {pb_test.IDrawAward} message DrawAward message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -644,48 +644,48 @@ $root.doomsday_pt = (function() {
                 writer = $Writer.create();
             if (message.award_goods != null && message.award_goods.length)
                 for (var i = 0; i < message.award_goods.length; ++i)
-                    $root.doomsday_pt.Pt_BaseGoods.encode(message.award_goods[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                    $root.pb_test.Pt_BaseGoods.encode(message.award_goods[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.award_asset != null && message.award_asset.length)
                 for (var i = 0; i < message.award_asset.length; ++i)
-                    $root.doomsday_pt.Pt_GetAsset.encode(message.award_asset[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    $root.pb_test.Pt_GetAsset.encode(message.award_asset[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.award_genome != null && message.award_genome.length)
                 for (var i = 0; i < message.award_genome.length; ++i)
-                    $root.doomsday_pt.Pt_BaseGene.encode(message.award_genome[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                    $root.pb_test.Pt_BaseGene.encode(message.award_genome[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a DrawAward message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.DrawAward
+         * @memberof pb_test.DrawAward
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.DrawAward} DrawAward
+         * @returns {pb_test.DrawAward} DrawAward
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         DrawAward.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.DrawAward();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.DrawAward();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
                     if (!(message.award_goods && message.award_goods.length))
                         message.award_goods = [];
-                    message.award_goods.push($root.doomsday_pt.Pt_BaseGoods.decode(reader, reader.uint32()));
+                    message.award_goods.push($root.pb_test.Pt_BaseGoods.decode(reader, reader.uint32()));
                     break;
                 case 2:
                     if (!(message.award_asset && message.award_asset.length))
                         message.award_asset = [];
-                    message.award_asset.push($root.doomsday_pt.Pt_GetAsset.decode(reader, reader.uint32()));
+                    message.award_asset.push($root.pb_test.Pt_GetAsset.decode(reader, reader.uint32()));
                     break;
                 case 3:
                     if (!(message.award_genome && message.award_genome.length))
                         message.award_genome = [];
-                    message.award_genome.push($root.doomsday_pt.Pt_BaseGene.decode(reader, reader.uint32()));
+                    message.award_genome.push($root.pb_test.Pt_BaseGene.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -698,7 +698,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a DrawAward message.
          * @function verify
-         * @memberof doomsday_pt.DrawAward
+         * @memberof pb_test.DrawAward
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -710,7 +710,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.award_goods))
                     return "award_goods: array expected";
                 for (var i = 0; i < message.award_goods.length; ++i) {
-                    var error = $root.doomsday_pt.Pt_BaseGoods.verify(message.award_goods[i]);
+                    var error = $root.pb_test.Pt_BaseGoods.verify(message.award_goods[i]);
                     if (error)
                         return "award_goods." + error;
                 }
@@ -719,7 +719,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.award_asset))
                     return "award_asset: array expected";
                 for (var i = 0; i < message.award_asset.length; ++i) {
-                    var error = $root.doomsday_pt.Pt_GetAsset.verify(message.award_asset[i]);
+                    var error = $root.pb_test.Pt_GetAsset.verify(message.award_asset[i]);
                     if (error)
                         return "award_asset." + error;
                 }
@@ -728,7 +728,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.award_genome))
                     return "award_genome: array expected";
                 for (var i = 0; i < message.award_genome.length; ++i) {
-                    var error = $root.doomsday_pt.Pt_BaseGene.verify(message.award_genome[i]);
+                    var error = $root.pb_test.Pt_BaseGene.verify(message.award_genome[i]);
                     if (error)
                         return "award_genome." + error;
                 }
@@ -739,11 +739,11 @@ $root.doomsday_pt = (function() {
         return DrawAward;
     })();
 
-    doomsday_pt.HeroExpMsg = (function() {
+    pb_test.HeroExpMsg = (function() {
 
         /**
          * Properties of a HeroExpMsg.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IHeroExpMsg
          * @property {number} hero_id HeroExpMsg hero_id
          * @property {number} grade HeroExpMsg grade
@@ -752,11 +752,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new HeroExpMsg.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a HeroExpMsg.
          * @implements IHeroExpMsg
          * @constructor
-         * @param {doomsday_pt.IHeroExpMsg=} [properties] Properties to set
+         * @param {pb_test.IHeroExpMsg=} [properties] Properties to set
          */
         function HeroExpMsg(properties) {
             if (properties)
@@ -768,7 +768,7 @@ $root.doomsday_pt = (function() {
         /**
          * HeroExpMsg hero_id.
          * @member {number} hero_id
-         * @memberof doomsday_pt.HeroExpMsg
+         * @memberof pb_test.HeroExpMsg
          * @instance
          */
         HeroExpMsg.prototype.hero_id = 0;
@@ -776,7 +776,7 @@ $root.doomsday_pt = (function() {
         /**
          * HeroExpMsg grade.
          * @member {number} grade
-         * @memberof doomsday_pt.HeroExpMsg
+         * @memberof pb_test.HeroExpMsg
          * @instance
          */
         HeroExpMsg.prototype.grade = 0;
@@ -784,7 +784,7 @@ $root.doomsday_pt = (function() {
         /**
          * HeroExpMsg exp.
          * @member {number} exp
-         * @memberof doomsday_pt.HeroExpMsg
+         * @memberof pb_test.HeroExpMsg
          * @instance
          */
         HeroExpMsg.prototype.exp = 0;
@@ -792,21 +792,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new HeroExpMsg instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.HeroExpMsg
+         * @memberof pb_test.HeroExpMsg
          * @static
-         * @param {doomsday_pt.IHeroExpMsg=} [properties] Properties to set
-         * @returns {doomsday_pt.HeroExpMsg} HeroExpMsg instance
+         * @param {pb_test.IHeroExpMsg=} [properties] Properties to set
+         * @returns {pb_test.HeroExpMsg} HeroExpMsg instance
          */
         HeroExpMsg.create = function create(properties) {
             return new HeroExpMsg(properties);
         };
 
         /**
-         * Encodes the specified HeroExpMsg message. Does not implicitly {@link doomsday_pt.HeroExpMsg.verify|verify} messages.
+         * Encodes the specified HeroExpMsg message. Does not implicitly {@link pb_test.HeroExpMsg.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.HeroExpMsg
+         * @memberof pb_test.HeroExpMsg
          * @static
-         * @param {doomsday_pt.IHeroExpMsg} message HeroExpMsg message or plain object to encode
+         * @param {pb_test.IHeroExpMsg} message HeroExpMsg message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -822,18 +822,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a HeroExpMsg message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.HeroExpMsg
+         * @memberof pb_test.HeroExpMsg
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.HeroExpMsg} HeroExpMsg
+         * @returns {pb_test.HeroExpMsg} HeroExpMsg
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         HeroExpMsg.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.HeroExpMsg();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.HeroExpMsg();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -863,7 +863,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a HeroExpMsg message.
          * @function verify
-         * @memberof doomsday_pt.HeroExpMsg
+         * @memberof pb_test.HeroExpMsg
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -883,23 +883,23 @@ $root.doomsday_pt = (function() {
         return HeroExpMsg;
     })();
 
-    doomsday_pt.BattleAward = (function() {
+    pb_test.BattleAward = (function() {
 
         /**
          * Properties of a BattleAward.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IBattleAward
-         * @property {Array.<doomsday_pt.IDrawAward>|null} [draw_award] BattleAward draw_award
-         * @property {Array.<doomsday_pt.IHeroExpMsg>|null} [hero_exp_msg] BattleAward hero_exp_msg
+         * @property {Array.<pb_test.IDrawAward>|null} [draw_award] BattleAward draw_award
+         * @property {Array.<pb_test.IHeroExpMsg>|null} [hero_exp_msg] BattleAward hero_exp_msg
          */
 
         /**
          * Constructs a new BattleAward.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a BattleAward.
          * @implements IBattleAward
          * @constructor
-         * @param {doomsday_pt.IBattleAward=} [properties] Properties to set
+         * @param {pb_test.IBattleAward=} [properties] Properties to set
          */
         function BattleAward(properties) {
             this.draw_award = [];
@@ -912,16 +912,16 @@ $root.doomsday_pt = (function() {
 
         /**
          * BattleAward draw_award.
-         * @member {Array.<doomsday_pt.IDrawAward>} draw_award
-         * @memberof doomsday_pt.BattleAward
+         * @member {Array.<pb_test.IDrawAward>} draw_award
+         * @memberof pb_test.BattleAward
          * @instance
          */
         BattleAward.prototype.draw_award = $util.emptyArray;
 
         /**
          * BattleAward hero_exp_msg.
-         * @member {Array.<doomsday_pt.IHeroExpMsg>} hero_exp_msg
-         * @memberof doomsday_pt.BattleAward
+         * @member {Array.<pb_test.IHeroExpMsg>} hero_exp_msg
+         * @memberof pb_test.BattleAward
          * @instance
          */
         BattleAward.prototype.hero_exp_msg = $util.emptyArray;
@@ -929,21 +929,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new BattleAward instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.BattleAward
+         * @memberof pb_test.BattleAward
          * @static
-         * @param {doomsday_pt.IBattleAward=} [properties] Properties to set
-         * @returns {doomsday_pt.BattleAward} BattleAward instance
+         * @param {pb_test.IBattleAward=} [properties] Properties to set
+         * @returns {pb_test.BattleAward} BattleAward instance
          */
         BattleAward.create = function create(properties) {
             return new BattleAward(properties);
         };
 
         /**
-         * Encodes the specified BattleAward message. Does not implicitly {@link doomsday_pt.BattleAward.verify|verify} messages.
+         * Encodes the specified BattleAward message. Does not implicitly {@link pb_test.BattleAward.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.BattleAward
+         * @memberof pb_test.BattleAward
          * @static
-         * @param {doomsday_pt.IBattleAward} message BattleAward message or plain object to encode
+         * @param {pb_test.IBattleAward} message BattleAward message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -952,40 +952,40 @@ $root.doomsday_pt = (function() {
                 writer = $Writer.create();
             if (message.draw_award != null && message.draw_award.length)
                 for (var i = 0; i < message.draw_award.length; ++i)
-                    $root.doomsday_pt.DrawAward.encode(message.draw_award[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                    $root.pb_test.DrawAward.encode(message.draw_award[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.hero_exp_msg != null && message.hero_exp_msg.length)
                 for (var i = 0; i < message.hero_exp_msg.length; ++i)
-                    $root.doomsday_pt.HeroExpMsg.encode(message.hero_exp_msg[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    $root.pb_test.HeroExpMsg.encode(message.hero_exp_msg[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a BattleAward message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.BattleAward
+         * @memberof pb_test.BattleAward
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.BattleAward} BattleAward
+         * @returns {pb_test.BattleAward} BattleAward
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         BattleAward.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.BattleAward();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.BattleAward();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
                     if (!(message.draw_award && message.draw_award.length))
                         message.draw_award = [];
-                    message.draw_award.push($root.doomsday_pt.DrawAward.decode(reader, reader.uint32()));
+                    message.draw_award.push($root.pb_test.DrawAward.decode(reader, reader.uint32()));
                     break;
                 case 2:
                     if (!(message.hero_exp_msg && message.hero_exp_msg.length))
                         message.hero_exp_msg = [];
-                    message.hero_exp_msg.push($root.doomsday_pt.HeroExpMsg.decode(reader, reader.uint32()));
+                    message.hero_exp_msg.push($root.pb_test.HeroExpMsg.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -998,7 +998,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a BattleAward message.
          * @function verify
-         * @memberof doomsday_pt.BattleAward
+         * @memberof pb_test.BattleAward
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1010,7 +1010,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.draw_award))
                     return "draw_award: array expected";
                 for (var i = 0; i < message.draw_award.length; ++i) {
-                    var error = $root.doomsday_pt.DrawAward.verify(message.draw_award[i]);
+                    var error = $root.pb_test.DrawAward.verify(message.draw_award[i]);
                     if (error)
                         return "draw_award." + error;
                 }
@@ -1019,7 +1019,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.hero_exp_msg))
                     return "hero_exp_msg: array expected";
                 for (var i = 0; i < message.hero_exp_msg.length; ++i) {
-                    var error = $root.doomsday_pt.HeroExpMsg.verify(message.hero_exp_msg[i]);
+                    var error = $root.pb_test.HeroExpMsg.verify(message.hero_exp_msg[i]);
                     if (error)
                         return "hero_exp_msg." + error;
                 }
@@ -1030,11 +1030,11 @@ $root.doomsday_pt = (function() {
         return BattleAward;
     })();
 
-    doomsday_pt.Pt_AttList = (function() {
+    pb_test.Pt_AttList = (function() {
 
         /**
          * Properties of a Pt_AttList.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_AttList
          * @property {number} att_id Pt_AttList att_id
          * @property {number} att_value Pt_AttList att_value
@@ -1042,11 +1042,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Pt_AttList.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_AttList.
          * @implements IPt_AttList
          * @constructor
-         * @param {doomsday_pt.IPt_AttList=} [properties] Properties to set
+         * @param {pb_test.IPt_AttList=} [properties] Properties to set
          */
         function Pt_AttList(properties) {
             if (properties)
@@ -1058,7 +1058,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_AttList att_id.
          * @member {number} att_id
-         * @memberof doomsday_pt.Pt_AttList
+         * @memberof pb_test.Pt_AttList
          * @instance
          */
         Pt_AttList.prototype.att_id = 0;
@@ -1066,7 +1066,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_AttList att_value.
          * @member {number} att_value
-         * @memberof doomsday_pt.Pt_AttList
+         * @memberof pb_test.Pt_AttList
          * @instance
          */
         Pt_AttList.prototype.att_value = 0;
@@ -1074,21 +1074,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_AttList instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_AttList
+         * @memberof pb_test.Pt_AttList
          * @static
-         * @param {doomsday_pt.IPt_AttList=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_AttList} Pt_AttList instance
+         * @param {pb_test.IPt_AttList=} [properties] Properties to set
+         * @returns {pb_test.Pt_AttList} Pt_AttList instance
          */
         Pt_AttList.create = function create(properties) {
             return new Pt_AttList(properties);
         };
 
         /**
-         * Encodes the specified Pt_AttList message. Does not implicitly {@link doomsday_pt.Pt_AttList.verify|verify} messages.
+         * Encodes the specified Pt_AttList message. Does not implicitly {@link pb_test.Pt_AttList.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_AttList
+         * @memberof pb_test.Pt_AttList
          * @static
-         * @param {doomsday_pt.IPt_AttList} message Pt_AttList message or plain object to encode
+         * @param {pb_test.IPt_AttList} message Pt_AttList message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1103,18 +1103,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Pt_AttList message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_AttList
+         * @memberof pb_test.Pt_AttList
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_AttList} Pt_AttList
+         * @returns {pb_test.Pt_AttList} Pt_AttList
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_AttList.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_AttList();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_AttList();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1139,7 +1139,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_AttList message.
          * @function verify
-         * @memberof doomsday_pt.Pt_AttList
+         * @memberof pb_test.Pt_AttList
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1157,25 +1157,25 @@ $root.doomsday_pt = (function() {
         return Pt_AttList;
     })();
 
-    doomsday_pt.Pt_HeroAttList = (function() {
+    pb_test.Pt_HeroAttList = (function() {
 
         /**
          * Properties of a Pt_HeroAttList.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_HeroAttList
          * @property {number|Long} hid Pt_HeroAttList hid
          * @property {number} hero_id Pt_HeroAttList hero_id
          * @property {number} index_id Pt_HeroAttList index_id
-         * @property {Array.<doomsday_pt.IPt_AttList>|null} [att_list] Pt_HeroAttList att_list
+         * @property {Array.<pb_test.IPt_AttList>|null} [att_list] Pt_HeroAttList att_list
          */
 
         /**
          * Constructs a new Pt_HeroAttList.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_HeroAttList.
          * @implements IPt_HeroAttList
          * @constructor
-         * @param {doomsday_pt.IPt_HeroAttList=} [properties] Properties to set
+         * @param {pb_test.IPt_HeroAttList=} [properties] Properties to set
          */
         function Pt_HeroAttList(properties) {
             this.att_list = [];
@@ -1188,7 +1188,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroAttList hid.
          * @member {number|Long} hid
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @memberof pb_test.Pt_HeroAttList
          * @instance
          */
         Pt_HeroAttList.prototype.hid = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
@@ -1196,7 +1196,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroAttList hero_id.
          * @member {number} hero_id
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @memberof pb_test.Pt_HeroAttList
          * @instance
          */
         Pt_HeroAttList.prototype.hero_id = 0;
@@ -1204,15 +1204,15 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroAttList index_id.
          * @member {number} index_id
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @memberof pb_test.Pt_HeroAttList
          * @instance
          */
         Pt_HeroAttList.prototype.index_id = 0;
 
         /**
          * Pt_HeroAttList att_list.
-         * @member {Array.<doomsday_pt.IPt_AttList>} att_list
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @member {Array.<pb_test.IPt_AttList>} att_list
+         * @memberof pb_test.Pt_HeroAttList
          * @instance
          */
         Pt_HeroAttList.prototype.att_list = $util.emptyArray;
@@ -1220,21 +1220,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_HeroAttList instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @memberof pb_test.Pt_HeroAttList
          * @static
-         * @param {doomsday_pt.IPt_HeroAttList=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_HeroAttList} Pt_HeroAttList instance
+         * @param {pb_test.IPt_HeroAttList=} [properties] Properties to set
+         * @returns {pb_test.Pt_HeroAttList} Pt_HeroAttList instance
          */
         Pt_HeroAttList.create = function create(properties) {
             return new Pt_HeroAttList(properties);
         };
 
         /**
-         * Encodes the specified Pt_HeroAttList message. Does not implicitly {@link doomsday_pt.Pt_HeroAttList.verify|verify} messages.
+         * Encodes the specified Pt_HeroAttList message. Does not implicitly {@link pb_test.Pt_HeroAttList.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @memberof pb_test.Pt_HeroAttList
          * @static
-         * @param {doomsday_pt.IPt_HeroAttList} message Pt_HeroAttList message or plain object to encode
+         * @param {pb_test.IPt_HeroAttList} message Pt_HeroAttList message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1246,25 +1246,25 @@ $root.doomsday_pt = (function() {
             writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.index_id);
             if (message.att_list != null && message.att_list.length)
                 for (var i = 0; i < message.att_list.length; ++i)
-                    $root.doomsday_pt.Pt_AttList.encode(message.att_list[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                    $root.pb_test.Pt_AttList.encode(message.att_list[i], writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Pt_HeroAttList message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @memberof pb_test.Pt_HeroAttList
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_HeroAttList} Pt_HeroAttList
+         * @returns {pb_test.Pt_HeroAttList} Pt_HeroAttList
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_HeroAttList.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_HeroAttList();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_HeroAttList();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1280,7 +1280,7 @@ $root.doomsday_pt = (function() {
                 case 4:
                     if (!(message.att_list && message.att_list.length))
                         message.att_list = [];
-                    message.att_list.push($root.doomsday_pt.Pt_AttList.decode(reader, reader.uint32()));
+                    message.att_list.push($root.pb_test.Pt_AttList.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1299,7 +1299,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_HeroAttList message.
          * @function verify
-         * @memberof doomsday_pt.Pt_HeroAttList
+         * @memberof pb_test.Pt_HeroAttList
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1317,7 +1317,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.att_list))
                     return "att_list: array expected";
                 for (var i = 0; i < message.att_list.length; ++i) {
-                    var error = $root.doomsday_pt.Pt_AttList.verify(message.att_list[i]);
+                    var error = $root.pb_test.Pt_AttList.verify(message.att_list[i]);
                     if (error)
                         return "att_list." + error;
                 }
@@ -1328,11 +1328,11 @@ $root.doomsday_pt = (function() {
         return Pt_HeroAttList;
     })();
 
-    doomsday_pt.Pt_SkillItem = (function() {
+    pb_test.Pt_SkillItem = (function() {
 
         /**
          * Properties of a Pt_SkillItem.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_SkillItem
          * @property {number} cfg_skill_id Pt_SkillItem cfg_skill_id
          * @property {number} lvl Pt_SkillItem lvl
@@ -1341,11 +1341,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Pt_SkillItem.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_SkillItem.
          * @implements IPt_SkillItem
          * @constructor
-         * @param {doomsday_pt.IPt_SkillItem=} [properties] Properties to set
+         * @param {pb_test.IPt_SkillItem=} [properties] Properties to set
          */
         function Pt_SkillItem(properties) {
             if (properties)
@@ -1357,7 +1357,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_SkillItem cfg_skill_id.
          * @member {number} cfg_skill_id
-         * @memberof doomsday_pt.Pt_SkillItem
+         * @memberof pb_test.Pt_SkillItem
          * @instance
          */
         Pt_SkillItem.prototype.cfg_skill_id = 0;
@@ -1365,7 +1365,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_SkillItem lvl.
          * @member {number} lvl
-         * @memberof doomsday_pt.Pt_SkillItem
+         * @memberof pb_test.Pt_SkillItem
          * @instance
          */
         Pt_SkillItem.prototype.lvl = 0;
@@ -1373,7 +1373,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_SkillItem extra_hurt.
          * @member {number} extra_hurt
-         * @memberof doomsday_pt.Pt_SkillItem
+         * @memberof pb_test.Pt_SkillItem
          * @instance
          */
         Pt_SkillItem.prototype.extra_hurt = 0;
@@ -1381,21 +1381,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_SkillItem instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_SkillItem
+         * @memberof pb_test.Pt_SkillItem
          * @static
-         * @param {doomsday_pt.IPt_SkillItem=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_SkillItem} Pt_SkillItem instance
+         * @param {pb_test.IPt_SkillItem=} [properties] Properties to set
+         * @returns {pb_test.Pt_SkillItem} Pt_SkillItem instance
          */
         Pt_SkillItem.create = function create(properties) {
             return new Pt_SkillItem(properties);
         };
 
         /**
-         * Encodes the specified Pt_SkillItem message. Does not implicitly {@link doomsday_pt.Pt_SkillItem.verify|verify} messages.
+         * Encodes the specified Pt_SkillItem message. Does not implicitly {@link pb_test.Pt_SkillItem.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_SkillItem
+         * @memberof pb_test.Pt_SkillItem
          * @static
-         * @param {doomsday_pt.IPt_SkillItem} message Pt_SkillItem message or plain object to encode
+         * @param {pb_test.IPt_SkillItem} message Pt_SkillItem message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1411,18 +1411,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Pt_SkillItem message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_SkillItem
+         * @memberof pb_test.Pt_SkillItem
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_SkillItem} Pt_SkillItem
+         * @returns {pb_test.Pt_SkillItem} Pt_SkillItem
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_SkillItem.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_SkillItem();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_SkillItem();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1452,7 +1452,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_SkillItem message.
          * @function verify
-         * @memberof doomsday_pt.Pt_SkillItem
+         * @memberof pb_test.Pt_SkillItem
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1472,24 +1472,24 @@ $root.doomsday_pt = (function() {
         return Pt_SkillItem;
     })();
 
-    doomsday_pt.Pt_WarHeroAtt = (function() {
+    pb_test.Pt_WarHeroAtt = (function() {
 
         /**
          * Properties of a Pt_WarHeroAtt.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_WarHeroAtt
-         * @property {doomsday_pt.IPt_HeroAttList} HeroAtt Pt_WarHeroAtt HeroAtt
-         * @property {Array.<doomsday_pt.IPt_SkillItem>|null} [skill_items] Pt_WarHeroAtt skill_items
-         * @property {Array.<doomsday_pt.IPt_SkillItem>|null} [p_skill_items] Pt_WarHeroAtt p_skill_items
+         * @property {pb_test.IPt_HeroAttList} HeroAtt Pt_WarHeroAtt HeroAtt
+         * @property {Array.<pb_test.IPt_SkillItem>|null} [skill_items] Pt_WarHeroAtt skill_items
+         * @property {Array.<pb_test.IPt_SkillItem>|null} [p_skill_items] Pt_WarHeroAtt p_skill_items
          */
 
         /**
          * Constructs a new Pt_WarHeroAtt.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_WarHeroAtt.
          * @implements IPt_WarHeroAtt
          * @constructor
-         * @param {doomsday_pt.IPt_WarHeroAtt=} [properties] Properties to set
+         * @param {pb_test.IPt_WarHeroAtt=} [properties] Properties to set
          */
         function Pt_WarHeroAtt(properties) {
             this.skill_items = [];
@@ -1502,24 +1502,24 @@ $root.doomsday_pt = (function() {
 
         /**
          * Pt_WarHeroAtt HeroAtt.
-         * @member {doomsday_pt.IPt_HeroAttList} HeroAtt
-         * @memberof doomsday_pt.Pt_WarHeroAtt
+         * @member {pb_test.IPt_HeroAttList} HeroAtt
+         * @memberof pb_test.Pt_WarHeroAtt
          * @instance
          */
         Pt_WarHeroAtt.prototype.HeroAtt = null;
 
         /**
          * Pt_WarHeroAtt skill_items.
-         * @member {Array.<doomsday_pt.IPt_SkillItem>} skill_items
-         * @memberof doomsday_pt.Pt_WarHeroAtt
+         * @member {Array.<pb_test.IPt_SkillItem>} skill_items
+         * @memberof pb_test.Pt_WarHeroAtt
          * @instance
          */
         Pt_WarHeroAtt.prototype.skill_items = $util.emptyArray;
 
         /**
          * Pt_WarHeroAtt p_skill_items.
-         * @member {Array.<doomsday_pt.IPt_SkillItem>} p_skill_items
-         * @memberof doomsday_pt.Pt_WarHeroAtt
+         * @member {Array.<pb_test.IPt_SkillItem>} p_skill_items
+         * @memberof pb_test.Pt_WarHeroAtt
          * @instance
          */
         Pt_WarHeroAtt.prototype.p_skill_items = $util.emptyArray;
@@ -1527,67 +1527,67 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_WarHeroAtt instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_WarHeroAtt
+         * @memberof pb_test.Pt_WarHeroAtt
          * @static
-         * @param {doomsday_pt.IPt_WarHeroAtt=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_WarHeroAtt} Pt_WarHeroAtt instance
+         * @param {pb_test.IPt_WarHeroAtt=} [properties] Properties to set
+         * @returns {pb_test.Pt_WarHeroAtt} Pt_WarHeroAtt instance
          */
         Pt_WarHeroAtt.create = function create(properties) {
             return new Pt_WarHeroAtt(properties);
         };
 
         /**
-         * Encodes the specified Pt_WarHeroAtt message. Does not implicitly {@link doomsday_pt.Pt_WarHeroAtt.verify|verify} messages.
+         * Encodes the specified Pt_WarHeroAtt message. Does not implicitly {@link pb_test.Pt_WarHeroAtt.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_WarHeroAtt
+         * @memberof pb_test.Pt_WarHeroAtt
          * @static
-         * @param {doomsday_pt.IPt_WarHeroAtt} message Pt_WarHeroAtt message or plain object to encode
+         * @param {pb_test.IPt_WarHeroAtt} message Pt_WarHeroAtt message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
         Pt_WarHeroAtt.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            $root.doomsday_pt.Pt_HeroAttList.encode(message.HeroAtt, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            $root.pb_test.Pt_HeroAttList.encode(message.HeroAtt, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.skill_items != null && message.skill_items.length)
                 for (var i = 0; i < message.skill_items.length; ++i)
-                    $root.doomsday_pt.Pt_SkillItem.encode(message.skill_items[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    $root.pb_test.Pt_SkillItem.encode(message.skill_items[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.p_skill_items != null && message.p_skill_items.length)
                 for (var i = 0; i < message.p_skill_items.length; ++i)
-                    $root.doomsday_pt.Pt_SkillItem.encode(message.p_skill_items[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+                    $root.pb_test.Pt_SkillItem.encode(message.p_skill_items[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Pt_WarHeroAtt message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_WarHeroAtt
+         * @memberof pb_test.Pt_WarHeroAtt
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_WarHeroAtt} Pt_WarHeroAtt
+         * @returns {pb_test.Pt_WarHeroAtt} Pt_WarHeroAtt
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_WarHeroAtt.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_WarHeroAtt();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_WarHeroAtt();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.HeroAtt = $root.doomsday_pt.Pt_HeroAttList.decode(reader, reader.uint32());
+                    message.HeroAtt = $root.pb_test.Pt_HeroAttList.decode(reader, reader.uint32());
                     break;
                 case 2:
                     if (!(message.skill_items && message.skill_items.length))
                         message.skill_items = [];
-                    message.skill_items.push($root.doomsday_pt.Pt_SkillItem.decode(reader, reader.uint32()));
+                    message.skill_items.push($root.pb_test.Pt_SkillItem.decode(reader, reader.uint32()));
                     break;
                 case 3:
                     if (!(message.p_skill_items && message.p_skill_items.length))
                         message.p_skill_items = [];
-                    message.p_skill_items.push($root.doomsday_pt.Pt_SkillItem.decode(reader, reader.uint32()));
+                    message.p_skill_items.push($root.pb_test.Pt_SkillItem.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1602,7 +1602,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_WarHeroAtt message.
          * @function verify
-         * @memberof doomsday_pt.Pt_WarHeroAtt
+         * @memberof pb_test.Pt_WarHeroAtt
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1611,7 +1611,7 @@ $root.doomsday_pt = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             {
-                var error = $root.doomsday_pt.Pt_HeroAttList.verify(message.HeroAtt);
+                var error = $root.pb_test.Pt_HeroAttList.verify(message.HeroAtt);
                 if (error)
                     return "HeroAtt." + error;
             }
@@ -1619,7 +1619,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.skill_items))
                     return "skill_items: array expected";
                 for (var i = 0; i < message.skill_items.length; ++i) {
-                    var error = $root.doomsday_pt.Pt_SkillItem.verify(message.skill_items[i]);
+                    var error = $root.pb_test.Pt_SkillItem.verify(message.skill_items[i]);
                     if (error)
                         return "skill_items." + error;
                 }
@@ -1628,7 +1628,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.p_skill_items))
                     return "p_skill_items: array expected";
                 for (var i = 0; i < message.p_skill_items.length; ++i) {
-                    var error = $root.doomsday_pt.Pt_SkillItem.verify(message.p_skill_items[i]);
+                    var error = $root.pb_test.Pt_SkillItem.verify(message.p_skill_items[i]);
                     if (error)
                         return "p_skill_items." + error;
                 }
@@ -1639,11 +1639,11 @@ $root.doomsday_pt = (function() {
         return Pt_WarHeroAtt;
     })();
 
-    doomsday_pt.Cs_10000001 = (function() {
+    pb_test.Cs_10000001 = (function() {
 
         /**
          * Properties of a Cs_10000001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ICs_10000001
          * @property {string} mg_name Cs_10000001 mg_name
          * @property {number} id Cs_10000001 id
@@ -1652,11 +1652,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Cs_10000001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Cs_10000001.
          * @implements ICs_10000001
          * @constructor
-         * @param {doomsday_pt.ICs_10000001=} [properties] Properties to set
+         * @param {pb_test.ICs_10000001=} [properties] Properties to set
          */
         function Cs_10000001(properties) {
             if (properties)
@@ -1668,7 +1668,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10000001 mg_name.
          * @member {string} mg_name
-         * @memberof doomsday_pt.Cs_10000001
+         * @memberof pb_test.Cs_10000001
          * @instance
          */
         Cs_10000001.prototype.mg_name = "";
@@ -1676,7 +1676,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10000001 id.
          * @member {number} id
-         * @memberof doomsday_pt.Cs_10000001
+         * @memberof pb_test.Cs_10000001
          * @instance
          */
         Cs_10000001.prototype.id = 0;
@@ -1684,7 +1684,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10000001 num.
          * @member {number} num
-         * @memberof doomsday_pt.Cs_10000001
+         * @memberof pb_test.Cs_10000001
          * @instance
          */
         Cs_10000001.prototype.num = 0;
@@ -1692,21 +1692,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Cs_10000001 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Cs_10000001
+         * @memberof pb_test.Cs_10000001
          * @static
-         * @param {doomsday_pt.ICs_10000001=} [properties] Properties to set
-         * @returns {doomsday_pt.Cs_10000001} Cs_10000001 instance
+         * @param {pb_test.ICs_10000001=} [properties] Properties to set
+         * @returns {pb_test.Cs_10000001} Cs_10000001 instance
          */
         Cs_10000001.create = function create(properties) {
             return new Cs_10000001(properties);
         };
 
         /**
-         * Encodes the specified Cs_10000001 message. Does not implicitly {@link doomsday_pt.Cs_10000001.verify|verify} messages.
+         * Encodes the specified Cs_10000001 message. Does not implicitly {@link pb_test.Cs_10000001.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Cs_10000001
+         * @memberof pb_test.Cs_10000001
          * @static
-         * @param {doomsday_pt.ICs_10000001} message Cs_10000001 message or plain object to encode
+         * @param {pb_test.ICs_10000001} message Cs_10000001 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1722,18 +1722,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Cs_10000001 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Cs_10000001
+         * @memberof pb_test.Cs_10000001
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Cs_10000001} Cs_10000001
+         * @returns {pb_test.Cs_10000001} Cs_10000001
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Cs_10000001.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Cs_10000001();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Cs_10000001();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -1763,7 +1763,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Cs_10000001 message.
          * @function verify
-         * @memberof doomsday_pt.Cs_10000001
+         * @memberof pb_test.Cs_10000001
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1783,22 +1783,22 @@ $root.doomsday_pt = (function() {
         return Cs_10000001;
     })();
 
-    doomsday_pt.Sc_10000001 = (function() {
+    pb_test.Sc_10000001 = (function() {
 
         /**
          * Properties of a Sc_10000001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ISc_10000001
-         * @property {doomsday_pt.IResData} res Sc_10000001 res
+         * @property {pb_test.IResData} res Sc_10000001 res
          */
 
         /**
          * Constructs a new Sc_10000001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Sc_10000001.
          * @implements ISc_10000001
          * @constructor
-         * @param {doomsday_pt.ISc_10000001=} [properties] Properties to set
+         * @param {pb_test.ISc_10000001=} [properties] Properties to set
          */
         function Sc_10000001(properties) {
             if (properties)
@@ -1809,8 +1809,8 @@ $root.doomsday_pt = (function() {
 
         /**
          * Sc_10000001 res.
-         * @member {doomsday_pt.IResData} res
-         * @memberof doomsday_pt.Sc_10000001
+         * @member {pb_test.IResData} res
+         * @memberof pb_test.Sc_10000001
          * @instance
          */
         Sc_10000001.prototype.res = null;
@@ -1818,51 +1818,51 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Sc_10000001 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Sc_10000001
+         * @memberof pb_test.Sc_10000001
          * @static
-         * @param {doomsday_pt.ISc_10000001=} [properties] Properties to set
-         * @returns {doomsday_pt.Sc_10000001} Sc_10000001 instance
+         * @param {pb_test.ISc_10000001=} [properties] Properties to set
+         * @returns {pb_test.Sc_10000001} Sc_10000001 instance
          */
         Sc_10000001.create = function create(properties) {
             return new Sc_10000001(properties);
         };
 
         /**
-         * Encodes the specified Sc_10000001 message. Does not implicitly {@link doomsday_pt.Sc_10000001.verify|verify} messages.
+         * Encodes the specified Sc_10000001 message. Does not implicitly {@link pb_test.Sc_10000001.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Sc_10000001
+         * @memberof pb_test.Sc_10000001
          * @static
-         * @param {doomsday_pt.ISc_10000001} message Sc_10000001 message or plain object to encode
+         * @param {pb_test.ISc_10000001} message Sc_10000001 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
         Sc_10000001.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            $root.doomsday_pt.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            $root.pb_test.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Sc_10000001 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Sc_10000001
+         * @memberof pb_test.Sc_10000001
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Sc_10000001} Sc_10000001
+         * @returns {pb_test.Sc_10000001} Sc_10000001
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Sc_10000001.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Sc_10000001();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_10000001();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.res = $root.doomsday_pt.ResData.decode(reader, reader.uint32());
+                    message.res = $root.pb_test.ResData.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1877,7 +1877,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Sc_10000001 message.
          * @function verify
-         * @memberof doomsday_pt.Sc_10000001
+         * @memberof pb_test.Sc_10000001
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1886,7 +1886,7 @@ $root.doomsday_pt = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             {
-                var error = $root.doomsday_pt.ResData.verify(message.res);
+                var error = $root.pb_test.ResData.verify(message.res);
                 if (error)
                     return "res." + error;
             }
@@ -1896,11 +1896,11 @@ $root.doomsday_pt = (function() {
         return Sc_10000001;
     })();
 
-    doomsday_pt.Pt_HeroMsg = (function() {
+    pb_test.Pt_HeroMsg = (function() {
 
         /**
          * Properties of a Pt_HeroMsg.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_HeroMsg
          * @property {number|Long} id Pt_HeroMsg id
          * @property {number} hero_id Pt_HeroMsg hero_id
@@ -1911,11 +1911,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Pt_HeroMsg.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_HeroMsg.
          * @implements IPt_HeroMsg
          * @constructor
-         * @param {doomsday_pt.IPt_HeroMsg=} [properties] Properties to set
+         * @param {pb_test.IPt_HeroMsg=} [properties] Properties to set
          */
         function Pt_HeroMsg(properties) {
             if (properties)
@@ -1927,7 +1927,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroMsg id.
          * @member {number|Long} id
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @instance
          */
         Pt_HeroMsg.prototype.id = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
@@ -1935,7 +1935,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroMsg hero_id.
          * @member {number} hero_id
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @instance
          */
         Pt_HeroMsg.prototype.hero_id = 0;
@@ -1943,7 +1943,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroMsg index_id.
          * @member {number} index_id
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @instance
          */
         Pt_HeroMsg.prototype.index_id = 0;
@@ -1951,7 +1951,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroMsg grade.
          * @member {number} grade
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @instance
          */
         Pt_HeroMsg.prototype.grade = 0;
@@ -1959,7 +1959,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_HeroMsg hero_name.
          * @member {string} hero_name
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @instance
          */
         Pt_HeroMsg.prototype.hero_name = "";
@@ -1967,21 +1967,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_HeroMsg instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @static
-         * @param {doomsday_pt.IPt_HeroMsg=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_HeroMsg} Pt_HeroMsg instance
+         * @param {pb_test.IPt_HeroMsg=} [properties] Properties to set
+         * @returns {pb_test.Pt_HeroMsg} Pt_HeroMsg instance
          */
         Pt_HeroMsg.create = function create(properties) {
             return new Pt_HeroMsg(properties);
         };
 
         /**
-         * Encodes the specified Pt_HeroMsg message. Does not implicitly {@link doomsday_pt.Pt_HeroMsg.verify|verify} messages.
+         * Encodes the specified Pt_HeroMsg message. Does not implicitly {@link pb_test.Pt_HeroMsg.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @static
-         * @param {doomsday_pt.IPt_HeroMsg} message Pt_HeroMsg message or plain object to encode
+         * @param {pb_test.IPt_HeroMsg} message Pt_HeroMsg message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -1999,18 +1999,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Pt_HeroMsg message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_HeroMsg} Pt_HeroMsg
+         * @returns {pb_test.Pt_HeroMsg} Pt_HeroMsg
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_HeroMsg.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_HeroMsg();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_HeroMsg();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2050,7 +2050,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_HeroMsg message.
          * @function verify
-         * @memberof doomsday_pt.Pt_HeroMsg
+         * @memberof pb_test.Pt_HeroMsg
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2074,11 +2074,11 @@ $root.doomsday_pt = (function() {
         return Pt_HeroMsg;
     })();
 
-    doomsday_pt.Pt_RoleInfo = (function() {
+    pb_test.Pt_RoleInfo = (function() {
 
         /**
          * Properties of a Pt_RoleInfo.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_RoleInfo
          * @property {number|Long} role_id Pt_RoleInfo role_id
          * @property {number} headicon_id Pt_RoleInfo headicon_id
@@ -2089,16 +2089,16 @@ $root.doomsday_pt = (function() {
          * @property {number} gold_coin Pt_RoleInfo gold_coin
          * @property {number} diamond Pt_RoleInfo diamond
          * @property {number} fighting Pt_RoleInfo fighting
-         * @property {Array.<doomsday_pt.IPt_HeroMsg>|null} [hero_list] Pt_RoleInfo hero_list
+         * @property {Array.<pb_test.IPt_HeroMsg>|null} [hero_list] Pt_RoleInfo hero_list
          */
 
         /**
          * Constructs a new Pt_RoleInfo.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_RoleInfo.
          * @implements IPt_RoleInfo
          * @constructor
-         * @param {doomsday_pt.IPt_RoleInfo=} [properties] Properties to set
+         * @param {pb_test.IPt_RoleInfo=} [properties] Properties to set
          */
         function Pt_RoleInfo(properties) {
             this.hero_list = [];
@@ -2111,7 +2111,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo role_id.
          * @member {number|Long} role_id
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.role_id = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
@@ -2119,7 +2119,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo headicon_id.
          * @member {number} headicon_id
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.headicon_id = 0;
@@ -2127,7 +2127,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo nickname.
          * @member {string} nickname
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.nickname = "";
@@ -2135,7 +2135,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo exp_pool.
          * @member {number|Long} exp_pool
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.exp_pool = $util.Long ? $util.Long.fromBits(0,0,true) : 0;
@@ -2143,7 +2143,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo vip_grade.
          * @member {number} vip_grade
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.vip_grade = 0;
@@ -2151,7 +2151,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo vip_exp.
          * @member {number} vip_exp
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.vip_exp = 0;
@@ -2159,7 +2159,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo gold_coin.
          * @member {number} gold_coin
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.gold_coin = 0;
@@ -2167,7 +2167,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo diamond.
          * @member {number} diamond
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.diamond = 0;
@@ -2175,15 +2175,15 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_RoleInfo fighting.
          * @member {number} fighting
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.fighting = 0;
 
         /**
          * Pt_RoleInfo hero_list.
-         * @member {Array.<doomsday_pt.IPt_HeroMsg>} hero_list
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @member {Array.<pb_test.IPt_HeroMsg>} hero_list
+         * @memberof pb_test.Pt_RoleInfo
          * @instance
          */
         Pt_RoleInfo.prototype.hero_list = $util.emptyArray;
@@ -2191,21 +2191,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_RoleInfo instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @static
-         * @param {doomsday_pt.IPt_RoleInfo=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_RoleInfo} Pt_RoleInfo instance
+         * @param {pb_test.IPt_RoleInfo=} [properties] Properties to set
+         * @returns {pb_test.Pt_RoleInfo} Pt_RoleInfo instance
          */
         Pt_RoleInfo.create = function create(properties) {
             return new Pt_RoleInfo(properties);
         };
 
         /**
-         * Encodes the specified Pt_RoleInfo message. Does not implicitly {@link doomsday_pt.Pt_RoleInfo.verify|verify} messages.
+         * Encodes the specified Pt_RoleInfo message. Does not implicitly {@link pb_test.Pt_RoleInfo.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @static
-         * @param {doomsday_pt.IPt_RoleInfo} message Pt_RoleInfo message or plain object to encode
+         * @param {pb_test.IPt_RoleInfo} message Pt_RoleInfo message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2223,25 +2223,25 @@ $root.doomsday_pt = (function() {
             writer.uint32(/* id 9, wireType 0 =*/72).uint32(message.fighting);
             if (message.hero_list != null && message.hero_list.length)
                 for (var i = 0; i < message.hero_list.length; ++i)
-                    $root.doomsday_pt.Pt_HeroMsg.encode(message.hero_list[i], writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+                    $root.pb_test.Pt_HeroMsg.encode(message.hero_list[i], writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Pt_RoleInfo message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_RoleInfo} Pt_RoleInfo
+         * @returns {pb_test.Pt_RoleInfo} Pt_RoleInfo
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_RoleInfo.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_RoleInfo();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_RoleInfo();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2275,7 +2275,7 @@ $root.doomsday_pt = (function() {
                 case 10:
                     if (!(message.hero_list && message.hero_list.length))
                         message.hero_list = [];
-                    message.hero_list.push($root.doomsday_pt.Pt_HeroMsg.decode(reader, reader.uint32()));
+                    message.hero_list.push($root.pb_test.Pt_HeroMsg.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2306,7 +2306,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_RoleInfo message.
          * @function verify
-         * @memberof doomsday_pt.Pt_RoleInfo
+         * @memberof pb_test.Pt_RoleInfo
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2336,7 +2336,7 @@ $root.doomsday_pt = (function() {
                 if (!Array.isArray(message.hero_list))
                     return "hero_list: array expected";
                 for (var i = 0; i < message.hero_list.length; ++i) {
-                    var error = $root.doomsday_pt.Pt_HeroMsg.verify(message.hero_list[i]);
+                    var error = $root.pb_test.Pt_HeroMsg.verify(message.hero_list[i]);
                     if (error)
                         return "hero_list." + error;
                 }
@@ -2347,11 +2347,11 @@ $root.doomsday_pt = (function() {
         return Pt_RoleInfo;
     })();
 
-    doomsday_pt.Pt_Currency = (function() {
+    pb_test.Pt_Currency = (function() {
 
         /**
          * Properties of a Pt_Currency.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface IPt_Currency
          * @property {number} vip_grade Pt_Currency vip_grade
          * @property {number} vip_exp Pt_Currency vip_exp
@@ -2362,11 +2362,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Pt_Currency.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Pt_Currency.
          * @implements IPt_Currency
          * @constructor
-         * @param {doomsday_pt.IPt_Currency=} [properties] Properties to set
+         * @param {pb_test.IPt_Currency=} [properties] Properties to set
          */
         function Pt_Currency(properties) {
             if (properties)
@@ -2378,7 +2378,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_Currency vip_grade.
          * @member {number} vip_grade
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @instance
          */
         Pt_Currency.prototype.vip_grade = 0;
@@ -2386,7 +2386,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_Currency vip_exp.
          * @member {number} vip_exp
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @instance
          */
         Pt_Currency.prototype.vip_exp = 0;
@@ -2394,7 +2394,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_Currency gold_coin.
          * @member {number} gold_coin
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @instance
          */
         Pt_Currency.prototype.gold_coin = 0;
@@ -2402,7 +2402,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_Currency diamond.
          * @member {number} diamond
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @instance
          */
         Pt_Currency.prototype.diamond = 0;
@@ -2410,7 +2410,7 @@ $root.doomsday_pt = (function() {
         /**
          * Pt_Currency fighting.
          * @member {number} fighting
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @instance
          */
         Pt_Currency.prototype.fighting = 0;
@@ -2418,21 +2418,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Pt_Currency instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @static
-         * @param {doomsday_pt.IPt_Currency=} [properties] Properties to set
-         * @returns {doomsday_pt.Pt_Currency} Pt_Currency instance
+         * @param {pb_test.IPt_Currency=} [properties] Properties to set
+         * @returns {pb_test.Pt_Currency} Pt_Currency instance
          */
         Pt_Currency.create = function create(properties) {
             return new Pt_Currency(properties);
         };
 
         /**
-         * Encodes the specified Pt_Currency message. Does not implicitly {@link doomsday_pt.Pt_Currency.verify|verify} messages.
+         * Encodes the specified Pt_Currency message. Does not implicitly {@link pb_test.Pt_Currency.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @static
-         * @param {doomsday_pt.IPt_Currency} message Pt_Currency message or plain object to encode
+         * @param {pb_test.IPt_Currency} message Pt_Currency message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2450,18 +2450,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Pt_Currency message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Pt_Currency} Pt_Currency
+         * @returns {pb_test.Pt_Currency} Pt_Currency
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Pt_Currency.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Pt_Currency();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Pt_Currency();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2501,7 +2501,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Pt_Currency message.
          * @function verify
-         * @memberof doomsday_pt.Pt_Currency
+         * @memberof pb_test.Pt_Currency
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2525,11 +2525,11 @@ $root.doomsday_pt = (function() {
         return Pt_Currency;
     })();
 
-    doomsday_pt.Cs_10010001 = (function() {
+    pb_test.Cs_10010001 = (function() {
 
         /**
          * Properties of a Cs_10010001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ICs_10010001
          * @property {number} account_id Cs_10010001 account_id
          * @property {string} token Cs_10010001 token
@@ -2537,11 +2537,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Cs_10010001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Cs_10010001.
          * @implements ICs_10010001
          * @constructor
-         * @param {doomsday_pt.ICs_10010001=} [properties] Properties to set
+         * @param {pb_test.ICs_10010001=} [properties] Properties to set
          */
         function Cs_10010001(properties) {
             if (properties)
@@ -2553,7 +2553,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10010001 account_id.
          * @member {number} account_id
-         * @memberof doomsday_pt.Cs_10010001
+         * @memberof pb_test.Cs_10010001
          * @instance
          */
         Cs_10010001.prototype.account_id = 0;
@@ -2561,7 +2561,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10010001 token.
          * @member {string} token
-         * @memberof doomsday_pt.Cs_10010001
+         * @memberof pb_test.Cs_10010001
          * @instance
          */
         Cs_10010001.prototype.token = "";
@@ -2569,21 +2569,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Cs_10010001 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Cs_10010001
+         * @memberof pb_test.Cs_10010001
          * @static
-         * @param {doomsday_pt.ICs_10010001=} [properties] Properties to set
-         * @returns {doomsday_pt.Cs_10010001} Cs_10010001 instance
+         * @param {pb_test.ICs_10010001=} [properties] Properties to set
+         * @returns {pb_test.Cs_10010001} Cs_10010001 instance
          */
         Cs_10010001.create = function create(properties) {
             return new Cs_10010001(properties);
         };
 
         /**
-         * Encodes the specified Cs_10010001 message. Does not implicitly {@link doomsday_pt.Cs_10010001.verify|verify} messages.
+         * Encodes the specified Cs_10010001 message. Does not implicitly {@link pb_test.Cs_10010001.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Cs_10010001
+         * @memberof pb_test.Cs_10010001
          * @static
-         * @param {doomsday_pt.ICs_10010001} message Cs_10010001 message or plain object to encode
+         * @param {pb_test.ICs_10010001} message Cs_10010001 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2598,18 +2598,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Cs_10010001 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Cs_10010001
+         * @memberof pb_test.Cs_10010001
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Cs_10010001} Cs_10010001
+         * @returns {pb_test.Cs_10010001} Cs_10010001
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Cs_10010001.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Cs_10010001();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Cs_10010001();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2634,7 +2634,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Cs_10010001 message.
          * @function verify
-         * @memberof doomsday_pt.Cs_10010001
+         * @memberof pb_test.Cs_10010001
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2652,23 +2652,23 @@ $root.doomsday_pt = (function() {
         return Cs_10010001;
     })();
 
-    doomsday_pt.Sc_10010001 = (function() {
+    pb_test.Sc_10010001 = (function() {
 
         /**
          * Properties of a Sc_10010001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ISc_10010001
-         * @property {doomsday_pt.IResData} res Sc_10010001 res
-         * @property {doomsday_pt.IPt_RoleInfo|null} [role_info] Sc_10010001 role_info
+         * @property {pb_test.IResData} res Sc_10010001 res
+         * @property {pb_test.IPt_RoleInfo|null} [role_info] Sc_10010001 role_info
          */
 
         /**
          * Constructs a new Sc_10010001.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Sc_10010001.
          * @implements ISc_10010001
          * @constructor
-         * @param {doomsday_pt.ISc_10010001=} [properties] Properties to set
+         * @param {pb_test.ISc_10010001=} [properties] Properties to set
          */
         function Sc_10010001(properties) {
             if (properties)
@@ -2679,16 +2679,16 @@ $root.doomsday_pt = (function() {
 
         /**
          * Sc_10010001 res.
-         * @member {doomsday_pt.IResData} res
-         * @memberof doomsday_pt.Sc_10010001
+         * @member {pb_test.IResData} res
+         * @memberof pb_test.Sc_10010001
          * @instance
          */
         Sc_10010001.prototype.res = null;
 
         /**
          * Sc_10010001 role_info.
-         * @member {doomsday_pt.IPt_RoleInfo|null|undefined} role_info
-         * @memberof doomsday_pt.Sc_10010001
+         * @member {pb_test.IPt_RoleInfo|null|undefined} role_info
+         * @memberof pb_test.Sc_10010001
          * @instance
          */
         Sc_10010001.prototype.role_info = null;
@@ -2696,56 +2696,56 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Sc_10010001 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Sc_10010001
+         * @memberof pb_test.Sc_10010001
          * @static
-         * @param {doomsday_pt.ISc_10010001=} [properties] Properties to set
-         * @returns {doomsday_pt.Sc_10010001} Sc_10010001 instance
+         * @param {pb_test.ISc_10010001=} [properties] Properties to set
+         * @returns {pb_test.Sc_10010001} Sc_10010001 instance
          */
         Sc_10010001.create = function create(properties) {
             return new Sc_10010001(properties);
         };
 
         /**
-         * Encodes the specified Sc_10010001 message. Does not implicitly {@link doomsday_pt.Sc_10010001.verify|verify} messages.
+         * Encodes the specified Sc_10010001 message. Does not implicitly {@link pb_test.Sc_10010001.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Sc_10010001
+         * @memberof pb_test.Sc_10010001
          * @static
-         * @param {doomsday_pt.ISc_10010001} message Sc_10010001 message or plain object to encode
+         * @param {pb_test.ISc_10010001} message Sc_10010001 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
         Sc_10010001.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            $root.doomsday_pt.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            $root.pb_test.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             if (message.role_info != null && message.hasOwnProperty("role_info"))
-                $root.doomsday_pt.Pt_RoleInfo.encode(message.role_info, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                $root.pb_test.Pt_RoleInfo.encode(message.role_info, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Sc_10010001 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Sc_10010001
+         * @memberof pb_test.Sc_10010001
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Sc_10010001} Sc_10010001
+         * @returns {pb_test.Sc_10010001} Sc_10010001
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Sc_10010001.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Sc_10010001();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_10010001();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.res = $root.doomsday_pt.ResData.decode(reader, reader.uint32());
+                    message.res = $root.pb_test.ResData.decode(reader, reader.uint32());
                     break;
                 case 2:
-                    message.role_info = $root.doomsday_pt.Pt_RoleInfo.decode(reader, reader.uint32());
+                    message.role_info = $root.pb_test.Pt_RoleInfo.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2760,7 +2760,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Sc_10010001 message.
          * @function verify
-         * @memberof doomsday_pt.Sc_10010001
+         * @memberof pb_test.Sc_10010001
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2769,12 +2769,12 @@ $root.doomsday_pt = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             {
-                var error = $root.doomsday_pt.ResData.verify(message.res);
+                var error = $root.pb_test.ResData.verify(message.res);
                 if (error)
                     return "res." + error;
             }
             if (message.role_info != null && message.hasOwnProperty("role_info")) {
-                var error = $root.doomsday_pt.Pt_RoleInfo.verify(message.role_info);
+                var error = $root.pb_test.Pt_RoleInfo.verify(message.role_info);
                 if (error)
                     return "role_info." + error;
             }
@@ -2784,11 +2784,11 @@ $root.doomsday_pt = (function() {
         return Sc_10010001;
     })();
 
-    doomsday_pt.Cs_10010002 = (function() {
+    pb_test.Cs_10010002 = (function() {
 
         /**
          * Properties of a Cs_10010002.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ICs_10010002
          * @property {number} account_id Cs_10010002 account_id
          * @property {string} token Cs_10010002 token
@@ -2798,11 +2798,11 @@ $root.doomsday_pt = (function() {
 
         /**
          * Constructs a new Cs_10010002.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Cs_10010002.
          * @implements ICs_10010002
          * @constructor
-         * @param {doomsday_pt.ICs_10010002=} [properties] Properties to set
+         * @param {pb_test.ICs_10010002=} [properties] Properties to set
          */
         function Cs_10010002(properties) {
             if (properties)
@@ -2814,7 +2814,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10010002 account_id.
          * @member {number} account_id
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @instance
          */
         Cs_10010002.prototype.account_id = 0;
@@ -2822,7 +2822,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10010002 token.
          * @member {string} token
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @instance
          */
         Cs_10010002.prototype.token = "";
@@ -2830,7 +2830,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10010002 nickname.
          * @member {string} nickname
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @instance
          */
         Cs_10010002.prototype.nickname = "";
@@ -2838,7 +2838,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10010002 hero_id.
          * @member {number} hero_id
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @instance
          */
         Cs_10010002.prototype.hero_id = 0;
@@ -2846,21 +2846,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Cs_10010002 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @static
-         * @param {doomsday_pt.ICs_10010002=} [properties] Properties to set
-         * @returns {doomsday_pt.Cs_10010002} Cs_10010002 instance
+         * @param {pb_test.ICs_10010002=} [properties] Properties to set
+         * @returns {pb_test.Cs_10010002} Cs_10010002 instance
          */
         Cs_10010002.create = function create(properties) {
             return new Cs_10010002(properties);
         };
 
         /**
-         * Encodes the specified Cs_10010002 message. Does not implicitly {@link doomsday_pt.Cs_10010002.verify|verify} messages.
+         * Encodes the specified Cs_10010002 message. Does not implicitly {@link pb_test.Cs_10010002.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @static
-         * @param {doomsday_pt.ICs_10010002} message Cs_10010002 message or plain object to encode
+         * @param {pb_test.ICs_10010002} message Cs_10010002 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -2877,18 +2877,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Cs_10010002 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Cs_10010002} Cs_10010002
+         * @returns {pb_test.Cs_10010002} Cs_10010002
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Cs_10010002.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Cs_10010002();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Cs_10010002();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -2923,7 +2923,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Cs_10010002 message.
          * @function verify
-         * @memberof doomsday_pt.Cs_10010002
+         * @memberof pb_test.Cs_10010002
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2945,22 +2945,22 @@ $root.doomsday_pt = (function() {
         return Cs_10010002;
     })();
 
-    doomsday_pt.Sc_10010002 = (function() {
+    pb_test.Sc_10010002 = (function() {
 
         /**
          * Properties of a Sc_10010002.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ISc_10010002
-         * @property {doomsday_pt.IResData} res Sc_10010002 res
+         * @property {pb_test.IResData} res Sc_10010002 res
          */
 
         /**
          * Constructs a new Sc_10010002.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Sc_10010002.
          * @implements ISc_10010002
          * @constructor
-         * @param {doomsday_pt.ISc_10010002=} [properties] Properties to set
+         * @param {pb_test.ISc_10010002=} [properties] Properties to set
          */
         function Sc_10010002(properties) {
             if (properties)
@@ -2971,8 +2971,8 @@ $root.doomsday_pt = (function() {
 
         /**
          * Sc_10010002 res.
-         * @member {doomsday_pt.IResData} res
-         * @memberof doomsday_pt.Sc_10010002
+         * @member {pb_test.IResData} res
+         * @memberof pb_test.Sc_10010002
          * @instance
          */
         Sc_10010002.prototype.res = null;
@@ -2980,51 +2980,51 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Sc_10010002 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Sc_10010002
+         * @memberof pb_test.Sc_10010002
          * @static
-         * @param {doomsday_pt.ISc_10010002=} [properties] Properties to set
-         * @returns {doomsday_pt.Sc_10010002} Sc_10010002 instance
+         * @param {pb_test.ISc_10010002=} [properties] Properties to set
+         * @returns {pb_test.Sc_10010002} Sc_10010002 instance
          */
         Sc_10010002.create = function create(properties) {
             return new Sc_10010002(properties);
         };
 
         /**
-         * Encodes the specified Sc_10010002 message. Does not implicitly {@link doomsday_pt.Sc_10010002.verify|verify} messages.
+         * Encodes the specified Sc_10010002 message. Does not implicitly {@link pb_test.Sc_10010002.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Sc_10010002
+         * @memberof pb_test.Sc_10010002
          * @static
-         * @param {doomsday_pt.ISc_10010002} message Sc_10010002 message or plain object to encode
+         * @param {pb_test.ISc_10010002} message Sc_10010002 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
         Sc_10010002.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            $root.doomsday_pt.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            $root.pb_test.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Sc_10010002 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Sc_10010002
+         * @memberof pb_test.Sc_10010002
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Sc_10010002} Sc_10010002
+         * @returns {pb_test.Sc_10010002} Sc_10010002
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Sc_10010002.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Sc_10010002();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_10010002();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.res = $root.doomsday_pt.ResData.decode(reader, reader.uint32());
+                    message.res = $root.pb_test.ResData.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3039,7 +3039,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Sc_10010002 message.
          * @function verify
-         * @memberof doomsday_pt.Sc_10010002
+         * @memberof pb_test.Sc_10010002
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -3048,7 +3048,7 @@ $root.doomsday_pt = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             {
-                var error = $root.doomsday_pt.ResData.verify(message.res);
+                var error = $root.pb_test.ResData.verify(message.res);
                 if (error)
                     return "res." + error;
             }
@@ -3058,22 +3058,22 @@ $root.doomsday_pt = (function() {
         return Sc_10010002;
     })();
 
-    doomsday_pt.Cs_10010003 = (function() {
+    pb_test.Cs_10010003 = (function() {
 
         /**
          * Properties of a Cs_10010003.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ICs_10010003
          * @property {number|null} [rand] Cs_10010003 rand
          */
 
         /**
          * Constructs a new Cs_10010003.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Cs_10010003.
          * @implements ICs_10010003
          * @constructor
-         * @param {doomsday_pt.ICs_10010003=} [properties] Properties to set
+         * @param {pb_test.ICs_10010003=} [properties] Properties to set
          */
         function Cs_10010003(properties) {
             if (properties)
@@ -3085,7 +3085,7 @@ $root.doomsday_pt = (function() {
         /**
          * Cs_10010003 rand.
          * @member {number} rand
-         * @memberof doomsday_pt.Cs_10010003
+         * @memberof pb_test.Cs_10010003
          * @instance
          */
         Cs_10010003.prototype.rand = 0;
@@ -3093,21 +3093,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Cs_10010003 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Cs_10010003
+         * @memberof pb_test.Cs_10010003
          * @static
-         * @param {doomsday_pt.ICs_10010003=} [properties] Properties to set
-         * @returns {doomsday_pt.Cs_10010003} Cs_10010003 instance
+         * @param {pb_test.ICs_10010003=} [properties] Properties to set
+         * @returns {pb_test.Cs_10010003} Cs_10010003 instance
          */
         Cs_10010003.create = function create(properties) {
             return new Cs_10010003(properties);
         };
 
         /**
-         * Encodes the specified Cs_10010003 message. Does not implicitly {@link doomsday_pt.Cs_10010003.verify|verify} messages.
+         * Encodes the specified Cs_10010003 message. Does not implicitly {@link pb_test.Cs_10010003.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Cs_10010003
+         * @memberof pb_test.Cs_10010003
          * @static
-         * @param {doomsday_pt.ICs_10010003} message Cs_10010003 message or plain object to encode
+         * @param {pb_test.ICs_10010003} message Cs_10010003 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -3122,18 +3122,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Cs_10010003 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Cs_10010003
+         * @memberof pb_test.Cs_10010003
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Cs_10010003} Cs_10010003
+         * @returns {pb_test.Cs_10010003} Cs_10010003
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Cs_10010003.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Cs_10010003();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Cs_10010003();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -3151,7 +3151,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Cs_10010003 message.
          * @function verify
-         * @memberof doomsday_pt.Cs_10010003
+         * @memberof pb_test.Cs_10010003
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -3168,22 +3168,22 @@ $root.doomsday_pt = (function() {
         return Cs_10010003;
     })();
 
-    doomsday_pt.Sc_10010003 = (function() {
+    pb_test.Sc_10010003 = (function() {
 
         /**
          * Properties of a Sc_10010003.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ISc_10010003
          * @property {number} interval Sc_10010003 interval
          */
 
         /**
          * Constructs a new Sc_10010003.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Sc_10010003.
          * @implements ISc_10010003
          * @constructor
-         * @param {doomsday_pt.ISc_10010003=} [properties] Properties to set
+         * @param {pb_test.ISc_10010003=} [properties] Properties to set
          */
         function Sc_10010003(properties) {
             if (properties)
@@ -3195,7 +3195,7 @@ $root.doomsday_pt = (function() {
         /**
          * Sc_10010003 interval.
          * @member {number} interval
-         * @memberof doomsday_pt.Sc_10010003
+         * @memberof pb_test.Sc_10010003
          * @instance
          */
         Sc_10010003.prototype.interval = 0;
@@ -3203,21 +3203,21 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Sc_10010003 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Sc_10010003
+         * @memberof pb_test.Sc_10010003
          * @static
-         * @param {doomsday_pt.ISc_10010003=} [properties] Properties to set
-         * @returns {doomsday_pt.Sc_10010003} Sc_10010003 instance
+         * @param {pb_test.ISc_10010003=} [properties] Properties to set
+         * @returns {pb_test.Sc_10010003} Sc_10010003 instance
          */
         Sc_10010003.create = function create(properties) {
             return new Sc_10010003(properties);
         };
 
         /**
-         * Encodes the specified Sc_10010003 message. Does not implicitly {@link doomsday_pt.Sc_10010003.verify|verify} messages.
+         * Encodes the specified Sc_10010003 message. Does not implicitly {@link pb_test.Sc_10010003.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Sc_10010003
+         * @memberof pb_test.Sc_10010003
          * @static
-         * @param {doomsday_pt.ISc_10010003} message Sc_10010003 message or plain object to encode
+         * @param {pb_test.ISc_10010003} message Sc_10010003 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
@@ -3231,18 +3231,18 @@ $root.doomsday_pt = (function() {
         /**
          * Decodes a Sc_10010003 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Sc_10010003
+         * @memberof pb_test.Sc_10010003
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Sc_10010003} Sc_10010003
+         * @returns {pb_test.Sc_10010003} Sc_10010003
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Sc_10010003.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Sc_10010003();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_10010003();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
@@ -3262,7 +3262,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Sc_10010003 message.
          * @function verify
-         * @memberof doomsday_pt.Sc_10010003
+         * @memberof pb_test.Sc_10010003
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -3278,22 +3278,22 @@ $root.doomsday_pt = (function() {
         return Sc_10010003;
     })();
 
-    doomsday_pt.Sc_10010004 = (function() {
+    pb_test.Sc_10010004 = (function() {
 
         /**
          * Properties of a Sc_10010004.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ISc_10010004
-         * @property {doomsday_pt.IResData} res Sc_10010004 res
+         * @property {pb_test.IResData} res Sc_10010004 res
          */
 
         /**
          * Constructs a new Sc_10010004.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Sc_10010004.
          * @implements ISc_10010004
          * @constructor
-         * @param {doomsday_pt.ISc_10010004=} [properties] Properties to set
+         * @param {pb_test.ISc_10010004=} [properties] Properties to set
          */
         function Sc_10010004(properties) {
             if (properties)
@@ -3304,8 +3304,8 @@ $root.doomsday_pt = (function() {
 
         /**
          * Sc_10010004 res.
-         * @member {doomsday_pt.IResData} res
-         * @memberof doomsday_pt.Sc_10010004
+         * @member {pb_test.IResData} res
+         * @memberof pb_test.Sc_10010004
          * @instance
          */
         Sc_10010004.prototype.res = null;
@@ -3313,51 +3313,51 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Sc_10010004 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Sc_10010004
+         * @memberof pb_test.Sc_10010004
          * @static
-         * @param {doomsday_pt.ISc_10010004=} [properties] Properties to set
-         * @returns {doomsday_pt.Sc_10010004} Sc_10010004 instance
+         * @param {pb_test.ISc_10010004=} [properties] Properties to set
+         * @returns {pb_test.Sc_10010004} Sc_10010004 instance
          */
         Sc_10010004.create = function create(properties) {
             return new Sc_10010004(properties);
         };
 
         /**
-         * Encodes the specified Sc_10010004 message. Does not implicitly {@link doomsday_pt.Sc_10010004.verify|verify} messages.
+         * Encodes the specified Sc_10010004 message. Does not implicitly {@link pb_test.Sc_10010004.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Sc_10010004
+         * @memberof pb_test.Sc_10010004
          * @static
-         * @param {doomsday_pt.ISc_10010004} message Sc_10010004 message or plain object to encode
+         * @param {pb_test.ISc_10010004} message Sc_10010004 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
         Sc_10010004.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            $root.doomsday_pt.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            $root.pb_test.ResData.encode(message.res, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Sc_10010004 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Sc_10010004
+         * @memberof pb_test.Sc_10010004
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Sc_10010004} Sc_10010004
+         * @returns {pb_test.Sc_10010004} Sc_10010004
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Sc_10010004.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Sc_10010004();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_10010004();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.res = $root.doomsday_pt.ResData.decode(reader, reader.uint32());
+                    message.res = $root.pb_test.ResData.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3372,7 +3372,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Sc_10010004 message.
          * @function verify
-         * @memberof doomsday_pt.Sc_10010004
+         * @memberof pb_test.Sc_10010004
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -3381,7 +3381,7 @@ $root.doomsday_pt = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             {
-                var error = $root.doomsday_pt.ResData.verify(message.res);
+                var error = $root.pb_test.ResData.verify(message.res);
                 if (error)
                     return "res." + error;
             }
@@ -3391,22 +3391,22 @@ $root.doomsday_pt = (function() {
         return Sc_10010004;
     })();
 
-    doomsday_pt.Sc_10010005 = (function() {
+    pb_test.Sc_10010005 = (function() {
 
         /**
          * Properties of a Sc_10010005.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @interface ISc_10010005
-         * @property {doomsday_pt.IPt_Currency} currency Sc_10010005 currency
+         * @property {pb_test.IPt_Currency} currency Sc_10010005 currency
          */
 
         /**
          * Constructs a new Sc_10010005.
-         * @memberof doomsday_pt
+         * @memberof pb_test
          * @classdesc Represents a Sc_10010005.
          * @implements ISc_10010005
          * @constructor
-         * @param {doomsday_pt.ISc_10010005=} [properties] Properties to set
+         * @param {pb_test.ISc_10010005=} [properties] Properties to set
          */
         function Sc_10010005(properties) {
             if (properties)
@@ -3417,8 +3417,8 @@ $root.doomsday_pt = (function() {
 
         /**
          * Sc_10010005 currency.
-         * @member {doomsday_pt.IPt_Currency} currency
-         * @memberof doomsday_pt.Sc_10010005
+         * @member {pb_test.IPt_Currency} currency
+         * @memberof pb_test.Sc_10010005
          * @instance
          */
         Sc_10010005.prototype.currency = null;
@@ -3426,51 +3426,51 @@ $root.doomsday_pt = (function() {
         /**
          * Creates a new Sc_10010005 instance using the specified properties.
          * @function create
-         * @memberof doomsday_pt.Sc_10010005
+         * @memberof pb_test.Sc_10010005
          * @static
-         * @param {doomsday_pt.ISc_10010005=} [properties] Properties to set
-         * @returns {doomsday_pt.Sc_10010005} Sc_10010005 instance
+         * @param {pb_test.ISc_10010005=} [properties] Properties to set
+         * @returns {pb_test.Sc_10010005} Sc_10010005 instance
          */
         Sc_10010005.create = function create(properties) {
             return new Sc_10010005(properties);
         };
 
         /**
-         * Encodes the specified Sc_10010005 message. Does not implicitly {@link doomsday_pt.Sc_10010005.verify|verify} messages.
+         * Encodes the specified Sc_10010005 message. Does not implicitly {@link pb_test.Sc_10010005.verify|verify} messages.
          * @function encode
-         * @memberof doomsday_pt.Sc_10010005
+         * @memberof pb_test.Sc_10010005
          * @static
-         * @param {doomsday_pt.ISc_10010005} message Sc_10010005 message or plain object to encode
+         * @param {pb_test.ISc_10010005} message Sc_10010005 message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
         Sc_10010005.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            $root.doomsday_pt.Pt_Currency.encode(message.currency, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            $root.pb_test.Pt_Currency.encode(message.currency, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
         /**
          * Decodes a Sc_10010005 message from the specified reader or buffer.
          * @function decode
-         * @memberof doomsday_pt.Sc_10010005
+         * @memberof pb_test.Sc_10010005
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {doomsday_pt.Sc_10010005} Sc_10010005
+         * @returns {pb_test.Sc_10010005} Sc_10010005
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
         Sc_10010005.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.doomsday_pt.Sc_10010005();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_10010005();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.currency = $root.doomsday_pt.Pt_Currency.decode(reader, reader.uint32());
+                    message.currency = $root.pb_test.Pt_Currency.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -3485,7 +3485,7 @@ $root.doomsday_pt = (function() {
         /**
          * Verifies a Sc_10010005 message.
          * @function verify
-         * @memberof doomsday_pt.Sc_10010005
+         * @memberof pb_test.Sc_10010005
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -3494,7 +3494,7 @@ $root.doomsday_pt = (function() {
             if (typeof message !== "object" || message === null)
                 return "object expected";
             {
-                var error = $root.doomsday_pt.Pt_Currency.verify(message.currency);
+                var error = $root.pb_test.Pt_Currency.verify(message.currency);
                 if (error)
                     return "currency." + error;
             }
@@ -3504,5 +3504,5 @@ $root.doomsday_pt = (function() {
         return Sc_10010005;
     })();
 
-    return doomsday_pt;
+    return pb_test;
 })();

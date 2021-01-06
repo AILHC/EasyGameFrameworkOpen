@@ -31,17 +31,15 @@
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
     "testc": "jest --coverage",
-    "genProtoJs":"pb-egf generate"
+    "genProtoJs": "egf-pb generate"
   },
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
-  "dependencies": {
-    "@ailhc/enet": "0.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "egf-protobuf": "^1.0.2",
+    "@ailhc/enet": "0.0.1",
     "@ailhc/egf-cli": "1.0.2",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1"
