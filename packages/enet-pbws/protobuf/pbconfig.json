@@ -1,0 +1,16 @@
+{
+	"options": {
+		"no-create": false,
+		"no-verify": false,
+		"no-convert": true,
+		"no-delimited": true,
+		"no-encode":false,
+		"no-decode":false
+	},
+	
+	"outputFileType":1,
+	"dtsOutDir":"../__tests__/libs",
+	"sourceRoot": "../protofiles",
+	"outFileName":"proto_bundle",
+	"outputDir":"../__tests__/protojs"
+}

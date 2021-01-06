@@ -46,6 +46,5 @@
     "@ailhc/enet": "0.0.1"
   },
   "dependencies": {
-    "pinus-protocol": "^1.4.10"
   }
 }
