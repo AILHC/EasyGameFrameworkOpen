@@ -1,0 +1,85 @@
+import "df_1000.proto";
+package doomsday_pt;
+// 角色数据,(暂定这些数据，以后再加)
+message Pt_HeroMsg{
+    required uint64 id = 1;       // 角色唯一ID
+    required uint32 hero_id = 2;    // 角色表的配置ID
+    required uint32 index_id = 3;  // 角色获取的的序列id
+    required uint32 grade = 4;    // 等级
+    required string hero_name = 5;    // 角色昵称
+}
+
+message Pt_RoleInfo{
+    required uint64 role_id = 1;    // 玩家唯一iD
+    required uint32 headicon_id = 2;  // 玩家第一个角色id -》用于获取头像
+    required string nickname = 3;  // 昵称
+    required uint64 exp_pool = 4;      // 经验池
+    required uint32 vip_grade = 5; // vip等级
+    required uint32 vip_exp = 6;   // vip 经验
+    required uint32 gold_coin = 7; // 金币
+    required uint32 diamond  = 8; // 钻石
+    required uint32 fighting = 9; // 战斗力
+    repeated Pt_HeroMsg hero_list = 10;   // 角色列表
+}
+
+
+// 属性
+message Pt_Currency{
+//    required uint32 exp_pool = 1;      // 经验
+    required uint32 vip_grade = 1; // vip等级
+    required uint32 vip_exp = 2;   // vip 经验
+    required uint32 gold_coin = 3; // 金币
+    required uint32 diamond  = 4; // 钻石
+    required uint32 fighting = 5; // 战斗力
+}
+
+
+
+// 登陆
+message Cs_10010001{
+    required uint32 account_id = 1;  // 用户登陆名
+    required string token = 2;   // token
+}
+
+message Sc_10010001{
+    required ResData res = 1;
+    optional Pt_RoleInfo role_info = 2;
+}
+
+
+
+// 创建角色
+message Cs_10010002{
+    required uint32 account_id = 1;  // 用户登陆名
+    required string token = 2;   // token
+    required string nickname = 3; // 昵称
+    required uint32 hero_id = 4;    // 角色Id
+}
+
+message Sc_10010002{
+    required ResData res = 1;
+}
+
+
+// 心跳包
+message Cs_10010003{
+    optional uint32 rand = 1;  // 值随便发
+}
+
+message Sc_10010003{
+    required uint32 interval = 1;  // 间隔时间
+}
+
+
+// 服务器推送错误码
+message Sc_10010004{
+    required ResData res = 1;
+}
+
+
+// 更新货币与等级经验
+message Sc_10010005{
+    required Pt_Currency currency = 1;
+}
+
+

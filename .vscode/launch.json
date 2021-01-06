@@ -130,6 +130,21 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
+            "name": "enet-pbws Unit Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest.js"
+            },
+            "args": [
+                "--runInBand"
+            ],
+            "cwd": "${workspaceFolder}/packages/enet-pbws",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
             "type": "node",
             "name": "Unit Test Current File",
             "request": "launch",

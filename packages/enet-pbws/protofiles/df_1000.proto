@@ -1,0 +1,98 @@
+package doomsday_pt;
+
+message ResData{
+    required uint32 result = 1;         // 结果值
+    repeated string param = 2;               // 消息参数
+}
+
+
+
+
+message Pt_GetAsset{
+    required uint32 asset_type = 1;  // 1-钻石，2-金币，3-经验
+    required uint64 asset_num = 2;   // 货币数量
+}
+
+
+// 显示获得物品
+message Pt_BaseGoods{
+    required uint32 base_id = 1;    // 物品配置表id
+    required uint32 num = 2;        // 数量
+}
+
+// 显示获得的 基因组
+message Pt_BaseGene{
+    required uint32 base_id = 1;    // 物品配置表id
+    required uint32 strg_rank = 2;        // 变异等级
+    required uint32 star_rank = 3;        // 融合星级
+    required uint32 limit_id = 4;        // 职业分类 0 -通用
+}
+
+
+message DrawAward{
+    repeated Pt_BaseGoods award_goods = 1;   // 物品的奖励
+    repeated Pt_GetAsset award_asset = 2;     // 货币的奖励
+    repeated Pt_BaseGene award_genome = 3;     // 基因的奖励
+}
+
+message HeroExpMsg{
+    required uint32 hero_id = 1;  // 英雄配置表id
+    required uint32 grade = 2;      // 当前英雄的等级
+    required uint32 exp = 3;        // 当前英雄的经验
+}
+
+message BattleAward {
+    repeated DrawAward draw_award = 1;    // 战斗胜利奖励的物品列表
+    repeated HeroExpMsg hero_exp_msg = 2;    // 战斗胜利奖励的角色列表
+}
+
+
+
+
+// 角色-属性列表
+message Pt_AttList{
+    required uint32 att_id = 1;                      // 属性序号
+    required uint32 att_value = 2;                      //  属性值
+}
+
+// 角色-属性列表
+message Pt_HeroAttList{
+    required uint64 hid = 1;                      // 角色 唯一id或怪生配置表id
+    required uint32 hero_id = 2;                      // 角色id, 如果是怪物些属性为0
+    required uint32 index_id = 3;                      // 角色序号， 如果是怪物些属性为0
+    repeated Pt_AttList att_list = 4;                      //  属性列表
+}
+
+
+// 技能数据
+message Pt_SkillItem{
+    required uint32 cfg_skill_id = 1;
+    required uint32 lvl = 2;
+    required int32 extra_hurt = 3;
+}
+
+
+// 战斗单位初始化数据
+message Pt_WarHeroAtt{
+    required Pt_HeroAttList HeroAtt = 1;                      // 角色数据
+    repeated Pt_SkillItem skill_items = 2;                    // 主动技能列表
+    repeated Pt_SkillItem p_skill_items = 3;                  // 被动技能列表
+}
+
+
+
+
+
+
+
+
+
+message Cs_10000001{
+    required string mg_name = 1;  // GM指令名称
+    required uint32 id = 2;       // 指令id
+    required int32 num = 3;      // 指令数量
+}
+
+message Sc_10000001{
+    required ResData res = 1;     // 结果
+}
