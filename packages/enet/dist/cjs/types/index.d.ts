@@ -247,12 +247,12 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             * @param data
 	             * @param reqId
 	             */
-	            encode(protoKey: ProtoKeyType, msg: enet.IMessage): IEncodePackage;
+	            encode<T>(protoKey: ProtoKeyType, msg: enet.IMessage<T>): IEncodePackage;
 	            /**
 	             * 解码网络数据包，
 	             * @param data
 	             */
-	            decode(data: NetData): IDecodePackage;
+	            decode<T>(data: NetData): IDecodePackage<T>;
 	        }
 	        type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
 	        type ValueCallback<T = any> = (data?: T, ...args: any[]) => void;
@@ -348,9 +348,9 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	            onServerMsg?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
 	            onCustomError?(data: IDecodePackage<ResData>, connectOpt: IConnectOptions): void;
 	        }
-	        interface IMessage {
+	        interface IMessage<T = any> {
 	            reqId?: number;
-	            data: any;
+	            data: T;
 	        }
 	        /**
 	         * 重连配置接口
