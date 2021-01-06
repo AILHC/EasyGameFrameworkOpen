@@ -1,7 +1,8 @@
 type Long = protobuf.Long;
+// DO NOT EDIT! This is a generated file. Edit the JSDoc in src/*.js instead and run 'npm run types'.
 
-/** Namespace doomsday_pt. */
-declare namespace doomsday_pt {
+/** Namespace pb_test. */
+declare namespace pb_test {
 
     /** Properties of a ResData. */
     interface IResData {
@@ -20,28 +21,28 @@ declare namespace doomsday_pt {
          * Constructs a new ResData.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IResData);
+        constructor(properties?: pb_test.IResData);
 
         /** ResData result. */
         public result: number;
 
         /** ResData param. */
-        public param: [ 'Array' ].<string>;
+        public param: string[];
 
         /**
          * Creates a new ResData instance using the specified properties.
          * @param [properties] Properties to set
          * @returns ResData instance
          */
-        public static create(properties?: doomsday_pt.IResData): doomsday_pt.ResData;
+        public static create(properties?: pb_test.IResData): pb_test.ResData;
 
         /**
-         * Encodes the specified ResData message. Does not implicitly {@link doomsday_pt.ResData.verify|verify} messages.
+         * Encodes the specified ResData message. Does not implicitly {@link pb_test.ResData.verify|verify} messages.
          * @param message ResData message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IResData, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IResData, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a ResData message from the specified reader or buffer.
@@ -51,14 +52,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.ResData;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.ResData;
 
         /**
          * Verifies a ResData message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_GetAsset. */
@@ -78,7 +79,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_GetAsset.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_GetAsset);
+        constructor(properties?: pb_test.IPt_GetAsset);
 
         /** Pt_GetAsset asset_type. */
         public asset_type: number;
@@ -91,15 +92,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Pt_GetAsset instance
          */
-        public static create(properties?: doomsday_pt.IPt_GetAsset): doomsday_pt.Pt_GetAsset;
+        public static create(properties?: pb_test.IPt_GetAsset): pb_test.Pt_GetAsset;
 
         /**
-         * Encodes the specified Pt_GetAsset message. Does not implicitly {@link doomsday_pt.Pt_GetAsset.verify|verify} messages.
+         * Encodes the specified Pt_GetAsset message. Does not implicitly {@link pb_test.Pt_GetAsset.verify|verify} messages.
          * @param message Pt_GetAsset message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_GetAsset, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_GetAsset, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_GetAsset message from the specified reader or buffer.
@@ -109,14 +110,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_GetAsset;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_GetAsset;
 
         /**
          * Verifies a Pt_GetAsset message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_BaseGoods. */
@@ -136,7 +137,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_BaseGoods.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_BaseGoods);
+        constructor(properties?: pb_test.IPt_BaseGoods);
 
         /** Pt_BaseGoods base_id. */
         public base_id: number;
@@ -149,15 +150,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Pt_BaseGoods instance
          */
-        public static create(properties?: doomsday_pt.IPt_BaseGoods): doomsday_pt.Pt_BaseGoods;
+        public static create(properties?: pb_test.IPt_BaseGoods): pb_test.Pt_BaseGoods;
 
         /**
-         * Encodes the specified Pt_BaseGoods message. Does not implicitly {@link doomsday_pt.Pt_BaseGoods.verify|verify} messages.
+         * Encodes the specified Pt_BaseGoods message. Does not implicitly {@link pb_test.Pt_BaseGoods.verify|verify} messages.
          * @param message Pt_BaseGoods message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_BaseGoods, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_BaseGoods, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_BaseGoods message from the specified reader or buffer.
@@ -167,14 +168,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_BaseGoods;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_BaseGoods;
 
         /**
          * Verifies a Pt_BaseGoods message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_BaseGene. */
@@ -200,7 +201,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_BaseGene.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_BaseGene);
+        constructor(properties?: pb_test.IPt_BaseGene);
 
         /** Pt_BaseGene base_id. */
         public base_id: number;
@@ -219,15 +220,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Pt_BaseGene instance
          */
-        public static create(properties?: doomsday_pt.IPt_BaseGene): doomsday_pt.Pt_BaseGene;
+        public static create(properties?: pb_test.IPt_BaseGene): pb_test.Pt_BaseGene;
 
         /**
-         * Encodes the specified Pt_BaseGene message. Does not implicitly {@link doomsday_pt.Pt_BaseGene.verify|verify} messages.
+         * Encodes the specified Pt_BaseGene message. Does not implicitly {@link pb_test.Pt_BaseGene.verify|verify} messages.
          * @param message Pt_BaseGene message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_BaseGene, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_BaseGene, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_BaseGene message from the specified reader or buffer.
@@ -237,27 +238,27 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_BaseGene;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_BaseGene;
 
         /**
          * Verifies a Pt_BaseGene message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a DrawAward. */
     interface IDrawAward {
 
         /** DrawAward award_goods */
-        award_goods?: (doomsday_pt.IPt_BaseGoods[]|null);
+        award_goods?: (pb_test.IPt_BaseGoods[]|null);
 
         /** DrawAward award_asset */
-        award_asset?: (doomsday_pt.IPt_GetAsset[]|null);
+        award_asset?: (pb_test.IPt_GetAsset[]|null);
 
         /** DrawAward award_genome */
-        award_genome?: (doomsday_pt.IPt_BaseGene[]|null);
+        award_genome?: (pb_test.IPt_BaseGene[]|null);
     }
 
     /** Represents a DrawAward. */
@@ -267,31 +268,31 @@ declare namespace doomsday_pt {
          * Constructs a new DrawAward.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IDrawAward);
+        constructor(properties?: pb_test.IDrawAward);
 
         /** DrawAward award_goods. */
-        public award_goods: [ 'Array' ].<doomsday_pt.IPt_BaseGoods>;
+        public award_goods: pb_test.IPt_BaseGoods[];
 
         /** DrawAward award_asset. */
-        public award_asset: [ 'Array' ].<doomsday_pt.IPt_GetAsset>;
+        public award_asset: pb_test.IPt_GetAsset[];
 
         /** DrawAward award_genome. */
-        public award_genome: [ 'Array' ].<doomsday_pt.IPt_BaseGene>;
+        public award_genome: pb_test.IPt_BaseGene[];
 
         /**
          * Creates a new DrawAward instance using the specified properties.
          * @param [properties] Properties to set
          * @returns DrawAward instance
          */
-        public static create(properties?: doomsday_pt.IDrawAward): doomsday_pt.DrawAward;
+        public static create(properties?: pb_test.IDrawAward): pb_test.DrawAward;
 
         /**
-         * Encodes the specified DrawAward message. Does not implicitly {@link doomsday_pt.DrawAward.verify|verify} messages.
+         * Encodes the specified DrawAward message. Does not implicitly {@link pb_test.DrawAward.verify|verify} messages.
          * @param message DrawAward message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IDrawAward, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IDrawAward, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a DrawAward message from the specified reader or buffer.
@@ -301,14 +302,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.DrawAward;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.DrawAward;
 
         /**
          * Verifies a DrawAward message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a HeroExpMsg. */
@@ -331,7 +332,7 @@ declare namespace doomsday_pt {
          * Constructs a new HeroExpMsg.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IHeroExpMsg);
+        constructor(properties?: pb_test.IHeroExpMsg);
 
         /** HeroExpMsg hero_id. */
         public hero_id: number;
@@ -347,15 +348,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns HeroExpMsg instance
          */
-        public static create(properties?: doomsday_pt.IHeroExpMsg): doomsday_pt.HeroExpMsg;
+        public static create(properties?: pb_test.IHeroExpMsg): pb_test.HeroExpMsg;
 
         /**
-         * Encodes the specified HeroExpMsg message. Does not implicitly {@link doomsday_pt.HeroExpMsg.verify|verify} messages.
+         * Encodes the specified HeroExpMsg message. Does not implicitly {@link pb_test.HeroExpMsg.verify|verify} messages.
          * @param message HeroExpMsg message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IHeroExpMsg, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IHeroExpMsg, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a HeroExpMsg message from the specified reader or buffer.
@@ -365,24 +366,24 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.HeroExpMsg;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.HeroExpMsg;
 
         /**
          * Verifies a HeroExpMsg message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a BattleAward. */
     interface IBattleAward {
 
         /** BattleAward draw_award */
-        draw_award?: (doomsday_pt.IDrawAward[]|null);
+        draw_award?: (pb_test.IDrawAward[]|null);
 
         /** BattleAward hero_exp_msg */
-        hero_exp_msg?: (doomsday_pt.IHeroExpMsg[]|null);
+        hero_exp_msg?: (pb_test.IHeroExpMsg[]|null);
     }
 
     /** Represents a BattleAward. */
@@ -392,28 +393,28 @@ declare namespace doomsday_pt {
          * Constructs a new BattleAward.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IBattleAward);
+        constructor(properties?: pb_test.IBattleAward);
 
         /** BattleAward draw_award. */
-        public draw_award: [ 'Array' ].<doomsday_pt.IDrawAward>;
+        public draw_award: pb_test.IDrawAward[];
 
         /** BattleAward hero_exp_msg. */
-        public hero_exp_msg: [ 'Array' ].<doomsday_pt.IHeroExpMsg>;
+        public hero_exp_msg: pb_test.IHeroExpMsg[];
 
         /**
          * Creates a new BattleAward instance using the specified properties.
          * @param [properties] Properties to set
          * @returns BattleAward instance
          */
-        public static create(properties?: doomsday_pt.IBattleAward): doomsday_pt.BattleAward;
+        public static create(properties?: pb_test.IBattleAward): pb_test.BattleAward;
 
         /**
-         * Encodes the specified BattleAward message. Does not implicitly {@link doomsday_pt.BattleAward.verify|verify} messages.
+         * Encodes the specified BattleAward message. Does not implicitly {@link pb_test.BattleAward.verify|verify} messages.
          * @param message BattleAward message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IBattleAward, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IBattleAward, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a BattleAward message from the specified reader or buffer.
@@ -423,14 +424,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.BattleAward;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.BattleAward;
 
         /**
          * Verifies a BattleAward message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_AttList. */
@@ -450,7 +451,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_AttList.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_AttList);
+        constructor(properties?: pb_test.IPt_AttList);
 
         /** Pt_AttList att_id. */
         public att_id: number;
@@ -463,15 +464,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Pt_AttList instance
          */
-        public static create(properties?: doomsday_pt.IPt_AttList): doomsday_pt.Pt_AttList;
+        public static create(properties?: pb_test.IPt_AttList): pb_test.Pt_AttList;
 
         /**
-         * Encodes the specified Pt_AttList message. Does not implicitly {@link doomsday_pt.Pt_AttList.verify|verify} messages.
+         * Encodes the specified Pt_AttList message. Does not implicitly {@link pb_test.Pt_AttList.verify|verify} messages.
          * @param message Pt_AttList message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_AttList, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_AttList, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_AttList message from the specified reader or buffer.
@@ -481,14 +482,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_AttList;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_AttList;
 
         /**
          * Verifies a Pt_AttList message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_HeroAttList. */
@@ -504,7 +505,7 @@ declare namespace doomsday_pt {
         index_id: number;
 
         /** Pt_HeroAttList att_list */
-        att_list?: (doomsday_pt.IPt_AttList[]|null);
+        att_list?: (pb_test.IPt_AttList[]|null);
     }
 
     /** Represents a Pt_HeroAttList. */
@@ -514,7 +515,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_HeroAttList.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_HeroAttList);
+        constructor(properties?: pb_test.IPt_HeroAttList);
 
         /** Pt_HeroAttList hid. */
         public hid: (number|Long);
@@ -526,22 +527,22 @@ declare namespace doomsday_pt {
         public index_id: number;
 
         /** Pt_HeroAttList att_list. */
-        public att_list: [ 'Array' ].<doomsday_pt.IPt_AttList>;
+        public att_list: pb_test.IPt_AttList[];
 
         /**
          * Creates a new Pt_HeroAttList instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Pt_HeroAttList instance
          */
-        public static create(properties?: doomsday_pt.IPt_HeroAttList): doomsday_pt.Pt_HeroAttList;
+        public static create(properties?: pb_test.IPt_HeroAttList): pb_test.Pt_HeroAttList;
 
         /**
-         * Encodes the specified Pt_HeroAttList message. Does not implicitly {@link doomsday_pt.Pt_HeroAttList.verify|verify} messages.
+         * Encodes the specified Pt_HeroAttList message. Does not implicitly {@link pb_test.Pt_HeroAttList.verify|verify} messages.
          * @param message Pt_HeroAttList message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_HeroAttList, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_HeroAttList, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_HeroAttList message from the specified reader or buffer.
@@ -551,14 +552,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_HeroAttList;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_HeroAttList;
 
         /**
          * Verifies a Pt_HeroAttList message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_SkillItem. */
@@ -581,7 +582,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_SkillItem.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_SkillItem);
+        constructor(properties?: pb_test.IPt_SkillItem);
 
         /** Pt_SkillItem cfg_skill_id. */
         public cfg_skill_id: number;
@@ -597,15 +598,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Pt_SkillItem instance
          */
-        public static create(properties?: doomsday_pt.IPt_SkillItem): doomsday_pt.Pt_SkillItem;
+        public static create(properties?: pb_test.IPt_SkillItem): pb_test.Pt_SkillItem;
 
         /**
-         * Encodes the specified Pt_SkillItem message. Does not implicitly {@link doomsday_pt.Pt_SkillItem.verify|verify} messages.
+         * Encodes the specified Pt_SkillItem message. Does not implicitly {@link pb_test.Pt_SkillItem.verify|verify} messages.
          * @param message Pt_SkillItem message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_SkillItem, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_SkillItem, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_SkillItem message from the specified reader or buffer.
@@ -615,27 +616,27 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_SkillItem;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_SkillItem;
 
         /**
          * Verifies a Pt_SkillItem message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_WarHeroAtt. */
     interface IPt_WarHeroAtt {
 
         /** Pt_WarHeroAtt HeroAtt */
-        HeroAtt: doomsday_pt.IPt_HeroAttList;
+        HeroAtt: pb_test.IPt_HeroAttList;
 
         /** Pt_WarHeroAtt skill_items */
-        skill_items?: (doomsday_pt.IPt_SkillItem[]|null);
+        skill_items?: (pb_test.IPt_SkillItem[]|null);
 
         /** Pt_WarHeroAtt p_skill_items */
-        p_skill_items?: (doomsday_pt.IPt_SkillItem[]|null);
+        p_skill_items?: (pb_test.IPt_SkillItem[]|null);
     }
 
     /** Represents a Pt_WarHeroAtt. */
@@ -645,31 +646,31 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_WarHeroAtt.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_WarHeroAtt);
+        constructor(properties?: pb_test.IPt_WarHeroAtt);
 
         /** Pt_WarHeroAtt HeroAtt. */
-        public HeroAtt: doomsday_pt.IPt_HeroAttList;
+        public HeroAtt: pb_test.IPt_HeroAttList;
 
         /** Pt_WarHeroAtt skill_items. */
-        public skill_items: [ 'Array' ].<doomsday_pt.IPt_SkillItem>;
+        public skill_items: pb_test.IPt_SkillItem[];
 
         /** Pt_WarHeroAtt p_skill_items. */
-        public p_skill_items: [ 'Array' ].<doomsday_pt.IPt_SkillItem>;
+        public p_skill_items: pb_test.IPt_SkillItem[];
 
         /**
          * Creates a new Pt_WarHeroAtt instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Pt_WarHeroAtt instance
          */
-        public static create(properties?: doomsday_pt.IPt_WarHeroAtt): doomsday_pt.Pt_WarHeroAtt;
+        public static create(properties?: pb_test.IPt_WarHeroAtt): pb_test.Pt_WarHeroAtt;
 
         /**
-         * Encodes the specified Pt_WarHeroAtt message. Does not implicitly {@link doomsday_pt.Pt_WarHeroAtt.verify|verify} messages.
+         * Encodes the specified Pt_WarHeroAtt message. Does not implicitly {@link pb_test.Pt_WarHeroAtt.verify|verify} messages.
          * @param message Pt_WarHeroAtt message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_WarHeroAtt, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_WarHeroAtt, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_WarHeroAtt message from the specified reader or buffer.
@@ -679,14 +680,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_WarHeroAtt;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_WarHeroAtt;
 
         /**
          * Verifies a Pt_WarHeroAtt message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Cs_10000001. */
@@ -709,7 +710,7 @@ declare namespace doomsday_pt {
          * Constructs a new Cs_10000001.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ICs_10000001);
+        constructor(properties?: pb_test.ICs_10000001);
 
         /** Cs_10000001 mg_name. */
         public mg_name: string;
@@ -725,15 +726,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Cs_10000001 instance
          */
-        public static create(properties?: doomsday_pt.ICs_10000001): doomsday_pt.Cs_10000001;
+        public static create(properties?: pb_test.ICs_10000001): pb_test.Cs_10000001;
 
         /**
-         * Encodes the specified Cs_10000001 message. Does not implicitly {@link doomsday_pt.Cs_10000001.verify|verify} messages.
+         * Encodes the specified Cs_10000001 message. Does not implicitly {@link pb_test.Cs_10000001.verify|verify} messages.
          * @param message Cs_10000001 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ICs_10000001, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ICs_10000001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Cs_10000001 message from the specified reader or buffer.
@@ -743,21 +744,21 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10000001;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Cs_10000001;
 
         /**
          * Verifies a Cs_10000001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Sc_10000001. */
     interface ISc_10000001 {
 
         /** Sc_10000001 res */
-        res: doomsday_pt.IResData;
+        res: pb_test.IResData;
     }
 
     /** Represents a Sc_10000001. */
@@ -767,25 +768,25 @@ declare namespace doomsday_pt {
          * Constructs a new Sc_10000001.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ISc_10000001);
+        constructor(properties?: pb_test.ISc_10000001);
 
         /** Sc_10000001 res. */
-        public res: doomsday_pt.IResData;
+        public res: pb_test.IResData;
 
         /**
          * Creates a new Sc_10000001 instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Sc_10000001 instance
          */
-        public static create(properties?: doomsday_pt.ISc_10000001): doomsday_pt.Sc_10000001;
+        public static create(properties?: pb_test.ISc_10000001): pb_test.Sc_10000001;
 
         /**
-         * Encodes the specified Sc_10000001 message. Does not implicitly {@link doomsday_pt.Sc_10000001.verify|verify} messages.
+         * Encodes the specified Sc_10000001 message. Does not implicitly {@link pb_test.Sc_10000001.verify|verify} messages.
          * @param message Sc_10000001 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ISc_10000001, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ISc_10000001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Sc_10000001 message from the specified reader or buffer.
@@ -795,14 +796,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10000001;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Sc_10000001;
 
         /**
          * Verifies a Sc_10000001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_HeroMsg. */
@@ -831,7 +832,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_HeroMsg.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_HeroMsg);
+        constructor(properties?: pb_test.IPt_HeroMsg);
 
         /** Pt_HeroMsg id. */
         public id: (number|Long);
@@ -853,15 +854,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Pt_HeroMsg instance
          */
-        public static create(properties?: doomsday_pt.IPt_HeroMsg): doomsday_pt.Pt_HeroMsg;
+        public static create(properties?: pb_test.IPt_HeroMsg): pb_test.Pt_HeroMsg;
 
         /**
-         * Encodes the specified Pt_HeroMsg message. Does not implicitly {@link doomsday_pt.Pt_HeroMsg.verify|verify} messages.
+         * Encodes the specified Pt_HeroMsg message. Does not implicitly {@link pb_test.Pt_HeroMsg.verify|verify} messages.
          * @param message Pt_HeroMsg message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_HeroMsg, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_HeroMsg, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_HeroMsg message from the specified reader or buffer.
@@ -871,14 +872,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_HeroMsg;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_HeroMsg;
 
         /**
          * Verifies a Pt_HeroMsg message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_RoleInfo. */
@@ -912,7 +913,7 @@ declare namespace doomsday_pt {
         fighting: number;
 
         /** Pt_RoleInfo hero_list */
-        hero_list?: (doomsday_pt.IPt_HeroMsg[]|null);
+        hero_list?: (pb_test.IPt_HeroMsg[]|null);
     }
 
     /** Represents a Pt_RoleInfo. */
@@ -922,7 +923,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_RoleInfo.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_RoleInfo);
+        constructor(properties?: pb_test.IPt_RoleInfo);
 
         /** Pt_RoleInfo role_id. */
         public role_id: (number|Long);
@@ -952,22 +953,22 @@ declare namespace doomsday_pt {
         public fighting: number;
 
         /** Pt_RoleInfo hero_list. */
-        public hero_list: [ 'Array' ].<doomsday_pt.IPt_HeroMsg>;
+        public hero_list: pb_test.IPt_HeroMsg[];
 
         /**
          * Creates a new Pt_RoleInfo instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Pt_RoleInfo instance
          */
-        public static create(properties?: doomsday_pt.IPt_RoleInfo): doomsday_pt.Pt_RoleInfo;
+        public static create(properties?: pb_test.IPt_RoleInfo): pb_test.Pt_RoleInfo;
 
         /**
-         * Encodes the specified Pt_RoleInfo message. Does not implicitly {@link doomsday_pt.Pt_RoleInfo.verify|verify} messages.
+         * Encodes the specified Pt_RoleInfo message. Does not implicitly {@link pb_test.Pt_RoleInfo.verify|verify} messages.
          * @param message Pt_RoleInfo message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_RoleInfo, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_RoleInfo, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_RoleInfo message from the specified reader or buffer.
@@ -977,14 +978,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_RoleInfo;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_RoleInfo;
 
         /**
          * Verifies a Pt_RoleInfo message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Pt_Currency. */
@@ -1013,7 +1014,7 @@ declare namespace doomsday_pt {
          * Constructs a new Pt_Currency.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.IPt_Currency);
+        constructor(properties?: pb_test.IPt_Currency);
 
         /** Pt_Currency vip_grade. */
         public vip_grade: number;
@@ -1035,15 +1036,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Pt_Currency instance
          */
-        public static create(properties?: doomsday_pt.IPt_Currency): doomsday_pt.Pt_Currency;
+        public static create(properties?: pb_test.IPt_Currency): pb_test.Pt_Currency;
 
         /**
-         * Encodes the specified Pt_Currency message. Does not implicitly {@link doomsday_pt.Pt_Currency.verify|verify} messages.
+         * Encodes the specified Pt_Currency message. Does not implicitly {@link pb_test.Pt_Currency.verify|verify} messages.
          * @param message Pt_Currency message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.IPt_Currency, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.IPt_Currency, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Pt_Currency message from the specified reader or buffer.
@@ -1053,14 +1054,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_Currency;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Pt_Currency;
 
         /**
          * Verifies a Pt_Currency message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Cs_10010001. */
@@ -1080,7 +1081,7 @@ declare namespace doomsday_pt {
          * Constructs a new Cs_10010001.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ICs_10010001);
+        constructor(properties?: pb_test.ICs_10010001);
 
         /** Cs_10010001 account_id. */
         public account_id: number;
@@ -1093,15 +1094,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Cs_10010001 instance
          */
-        public static create(properties?: doomsday_pt.ICs_10010001): doomsday_pt.Cs_10010001;
+        public static create(properties?: pb_test.ICs_10010001): pb_test.Cs_10010001;
 
         /**
-         * Encodes the specified Cs_10010001 message. Does not implicitly {@link doomsday_pt.Cs_10010001.verify|verify} messages.
+         * Encodes the specified Cs_10010001 message. Does not implicitly {@link pb_test.Cs_10010001.verify|verify} messages.
          * @param message Cs_10010001 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ICs_10010001, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ICs_10010001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Cs_10010001 message from the specified reader or buffer.
@@ -1111,24 +1112,24 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10010001;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Cs_10010001;
 
         /**
          * Verifies a Cs_10010001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Sc_10010001. */
     interface ISc_10010001 {
 
         /** Sc_10010001 res */
-        res: doomsday_pt.IResData;
+        res: pb_test.IResData;
 
         /** Sc_10010001 role_info */
-        role_info?: (doomsday_pt.IPt_RoleInfo|null);
+        role_info?: (pb_test.IPt_RoleInfo|null);
     }
 
     /** Represents a Sc_10010001. */
@@ -1138,28 +1139,28 @@ declare namespace doomsday_pt {
          * Constructs a new Sc_10010001.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ISc_10010001);
+        constructor(properties?: pb_test.ISc_10010001);
 
         /** Sc_10010001 res. */
-        public res: doomsday_pt.IResData;
+        public res: pb_test.IResData;
 
         /** Sc_10010001 role_info. */
-        public role_info?: (doomsday_pt.IPt_RoleInfo|null);
+        public role_info?: (pb_test.IPt_RoleInfo|null);
 
         /**
          * Creates a new Sc_10010001 instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Sc_10010001 instance
          */
-        public static create(properties?: doomsday_pt.ISc_10010001): doomsday_pt.Sc_10010001;
+        public static create(properties?: pb_test.ISc_10010001): pb_test.Sc_10010001;
 
         /**
-         * Encodes the specified Sc_10010001 message. Does not implicitly {@link doomsday_pt.Sc_10010001.verify|verify} messages.
+         * Encodes the specified Sc_10010001 message. Does not implicitly {@link pb_test.Sc_10010001.verify|verify} messages.
          * @param message Sc_10010001 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ISc_10010001, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ISc_10010001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Sc_10010001 message from the specified reader or buffer.
@@ -1169,14 +1170,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010001;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Sc_10010001;
 
         /**
          * Verifies a Sc_10010001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Cs_10010002. */
@@ -1202,7 +1203,7 @@ declare namespace doomsday_pt {
          * Constructs a new Cs_10010002.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ICs_10010002);
+        constructor(properties?: pb_test.ICs_10010002);
 
         /** Cs_10010002 account_id. */
         public account_id: number;
@@ -1221,15 +1222,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Cs_10010002 instance
          */
-        public static create(properties?: doomsday_pt.ICs_10010002): doomsday_pt.Cs_10010002;
+        public static create(properties?: pb_test.ICs_10010002): pb_test.Cs_10010002;
 
         /**
-         * Encodes the specified Cs_10010002 message. Does not implicitly {@link doomsday_pt.Cs_10010002.verify|verify} messages.
+         * Encodes the specified Cs_10010002 message. Does not implicitly {@link pb_test.Cs_10010002.verify|verify} messages.
          * @param message Cs_10010002 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ICs_10010002, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ICs_10010002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Cs_10010002 message from the specified reader or buffer.
@@ -1239,21 +1240,21 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10010002;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Cs_10010002;
 
         /**
          * Verifies a Cs_10010002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Sc_10010002. */
     interface ISc_10010002 {
 
         /** Sc_10010002 res */
-        res: doomsday_pt.IResData;
+        res: pb_test.IResData;
     }
 
     /** Represents a Sc_10010002. */
@@ -1263,25 +1264,25 @@ declare namespace doomsday_pt {
          * Constructs a new Sc_10010002.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ISc_10010002);
+        constructor(properties?: pb_test.ISc_10010002);
 
         /** Sc_10010002 res. */
-        public res: doomsday_pt.IResData;
+        public res: pb_test.IResData;
 
         /**
          * Creates a new Sc_10010002 instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Sc_10010002 instance
          */
-        public static create(properties?: doomsday_pt.ISc_10010002): doomsday_pt.Sc_10010002;
+        public static create(properties?: pb_test.ISc_10010002): pb_test.Sc_10010002;
 
         /**
-         * Encodes the specified Sc_10010002 message. Does not implicitly {@link doomsday_pt.Sc_10010002.verify|verify} messages.
+         * Encodes the specified Sc_10010002 message. Does not implicitly {@link pb_test.Sc_10010002.verify|verify} messages.
          * @param message Sc_10010002 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ISc_10010002, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ISc_10010002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Sc_10010002 message from the specified reader or buffer.
@@ -1291,14 +1292,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010002;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Sc_10010002;
 
         /**
          * Verifies a Sc_10010002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Cs_10010003. */
@@ -1315,7 +1316,7 @@ declare namespace doomsday_pt {
          * Constructs a new Cs_10010003.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ICs_10010003);
+        constructor(properties?: pb_test.ICs_10010003);
 
         /** Cs_10010003 rand. */
         public rand: number;
@@ -1325,15 +1326,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Cs_10010003 instance
          */
-        public static create(properties?: doomsday_pt.ICs_10010003): doomsday_pt.Cs_10010003;
+        public static create(properties?: pb_test.ICs_10010003): pb_test.Cs_10010003;
 
         /**
-         * Encodes the specified Cs_10010003 message. Does not implicitly {@link doomsday_pt.Cs_10010003.verify|verify} messages.
+         * Encodes the specified Cs_10010003 message. Does not implicitly {@link pb_test.Cs_10010003.verify|verify} messages.
          * @param message Cs_10010003 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ICs_10010003, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ICs_10010003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Cs_10010003 message from the specified reader or buffer.
@@ -1343,14 +1344,14 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10010003;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Cs_10010003;
 
         /**
          * Verifies a Cs_10010003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Sc_10010003. */
@@ -1367,7 +1368,7 @@ declare namespace doomsday_pt {
          * Constructs a new Sc_10010003.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ISc_10010003);
+        constructor(properties?: pb_test.ISc_10010003);
 
         /** Sc_10010003 interval. */
         public interval: number;
@@ -1377,15 +1378,15 @@ declare namespace doomsday_pt {
          * @param [properties] Properties to set
          * @returns Sc_10010003 instance
          */
-        public static create(properties?: doomsday_pt.ISc_10010003): doomsday_pt.Sc_10010003;
+        public static create(properties?: pb_test.ISc_10010003): pb_test.Sc_10010003;
 
         /**
-         * Encodes the specified Sc_10010003 message. Does not implicitly {@link doomsday_pt.Sc_10010003.verify|verify} messages.
+         * Encodes the specified Sc_10010003 message. Does not implicitly {@link pb_test.Sc_10010003.verify|verify} messages.
          * @param message Sc_10010003 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ISc_10010003, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ISc_10010003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Sc_10010003 message from the specified reader or buffer.
@@ -1395,21 +1396,21 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010003;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Sc_10010003;
 
         /**
          * Verifies a Sc_10010003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Sc_10010004. */
     interface ISc_10010004 {
 
         /** Sc_10010004 res */
-        res: doomsday_pt.IResData;
+        res: pb_test.IResData;
     }
 
     /** Represents a Sc_10010004. */
@@ -1419,25 +1420,25 @@ declare namespace doomsday_pt {
          * Constructs a new Sc_10010004.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ISc_10010004);
+        constructor(properties?: pb_test.ISc_10010004);
 
         /** Sc_10010004 res. */
-        public res: doomsday_pt.IResData;
+        public res: pb_test.IResData;
 
         /**
          * Creates a new Sc_10010004 instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Sc_10010004 instance
          */
-        public static create(properties?: doomsday_pt.ISc_10010004): doomsday_pt.Sc_10010004;
+        public static create(properties?: pb_test.ISc_10010004): pb_test.Sc_10010004;
 
         /**
-         * Encodes the specified Sc_10010004 message. Does not implicitly {@link doomsday_pt.Sc_10010004.verify|verify} messages.
+         * Encodes the specified Sc_10010004 message. Does not implicitly {@link pb_test.Sc_10010004.verify|verify} messages.
          * @param message Sc_10010004 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ISc_10010004, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ISc_10010004, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Sc_10010004 message from the specified reader or buffer.
@@ -1447,21 +1448,21 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010004;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Sc_10010004;
 
         /**
          * Verifies a Sc_10010004 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 
     /** Properties of a Sc_10010005. */
     interface ISc_10010005 {
 
         /** Sc_10010005 currency */
-        currency: doomsday_pt.IPt_Currency;
+        currency: pb_test.IPt_Currency;
     }
 
     /** Represents a Sc_10010005. */
@@ -1471,25 +1472,25 @@ declare namespace doomsday_pt {
          * Constructs a new Sc_10010005.
          * @param [properties] Properties to set
          */
-        constructor(properties?: doomsday_pt.ISc_10010005);
+        constructor(properties?: pb_test.ISc_10010005);
 
         /** Sc_10010005 currency. */
-        public currency: doomsday_pt.IPt_Currency;
+        public currency: pb_test.IPt_Currency;
 
         /**
          * Creates a new Sc_10010005 instance using the specified properties.
          * @param [properties] Properties to set
          * @returns Sc_10010005 instance
          */
-        public static create(properties?: doomsday_pt.ISc_10010005): doomsday_pt.Sc_10010005;
+        public static create(properties?: pb_test.ISc_10010005): pb_test.Sc_10010005;
 
         /**
-         * Encodes the specified Sc_10010005 message. Does not implicitly {@link doomsday_pt.Sc_10010005.verify|verify} messages.
+         * Encodes the specified Sc_10010005 message. Does not implicitly {@link pb_test.Sc_10010005.verify|verify} messages.
          * @param message Sc_10010005 message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: doomsday_pt.ISc_10010005, writer?: protobuf.Writer): protobuf.Writer;
+        public static encode(message: pb_test.ISc_10010005, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
          * Decodes a Sc_10010005 message from the specified reader or buffer.
@@ -1499,13 +1500,13 @@ declare namespace doomsday_pt {
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010005;
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Sc_10010005;
 
         /**
          * Verifies a Sc_10010005 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
-        public static verify(message: [ 'object' ].<string, any>): (string|null);
+        public static verify(message: { [k: string]: any }): (string|null);
     }
 }

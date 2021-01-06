@@ -1,4 +1,4 @@
-package doomsday_pt;
+package pb_test;
 
 message ResData{
     required uint32 result = 1;         // 结果值
