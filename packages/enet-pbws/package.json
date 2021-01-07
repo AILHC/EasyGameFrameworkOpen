@@ -37,11 +37,11 @@
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
-  "dependencies": {},
   "devDependencies": {
-    "@ailhc/enet": "0.0.1",
     "@ailhc/egf-cli": "1.0.2",
+    "@ailhc/enet": "0.0.1",
     "jest": "^25.3.0",
+    "mock-socket": "^9.0.3",
     "ts-jest": "^25.3.1"
   }
 }

@@ -51,7 +51,7 @@ declare global {
         }
         interface IConnectOptions {
             url?: string; //与 protocol + host+port 二选一
-            /**协议头 ws 或者 wss */
+            /**是否使用ssh,即 true wss,false ws */
             protocol?: boolean;
             host?: string;
             port?: string;
