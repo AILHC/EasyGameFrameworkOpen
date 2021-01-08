@@ -223,7 +223,9 @@
         public get readAvailable() {
             return this.write_position - this._position;
         }
-
+        /**
+         * 获取0~到当前write_position长度的buffer
+         */
         public get buffer(): ArrayBuffer {
             return this.data.buffer.slice(0, this.write_position);
         }

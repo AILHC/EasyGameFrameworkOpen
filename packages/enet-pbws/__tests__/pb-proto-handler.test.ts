@@ -1,7 +1,9 @@
+import { NetNode } from "@ailhc/enet";
 import { PbProtoHandler } from "@ailhc/enet-pbws/src/PbProtoHandler";
-
+import WS from "jest-websocket-mock"
+const wsUrl = "ws://localhost:1234";
 require("./protojs/proto_bundle.js")
-test("doomsday_pt is defined", function () {
+test("pb_test is defined", function () {
     expect(pb_test).toBeDefined();
 })
 test("protoHandler init", function () {
@@ -37,3 +39,32 @@ test("protoHandler decode ok", function () {
     expect(decodePkg.data).toBeDefined();
     expect(decodePkg.data.res.result).toBe(1);
 })
+// test("request server ", async (done) => {
+//     const protoHandler = new PbProtoHandler(pb_test);
+//     const netNode = new NetNode();
+//     const server = new WS(wsUrl);
+//     netNode.init({
+//         protoHandler: protoHandler
+//     });
+
+//     netNode.connect({ url: wsUrl });
+
+//     await server.connected
+
+//     netNode.request("Cs_10000001", { mg_name: "haha", id: 1, num: 3 }, (decodePkg) => {
+//         const data = decodePkg.data;
+
+//     })
+//     await server.nextMessage;
+//     const netData = server.messages[0] as any;
+//     expect(netData).toBeDefined();
+//     const decodePkg = protoHandler.decode(netData);
+//     expect(decodePkg.data).toBeDefined();
+//     expect(decodePkg.key).toBe("Cs_10000001");
+//     expect(decodePkg.data.id).toBe(1);
+//     const encodePkg = protoHandler.encode("Sc_10000001", { reqId: decodePkg.reqId, data: { res: { result: 1, param: ["1"] } } });
+
+//     server.send(encodePkg.data);//这个mockserver没法直接发送Unit8Array数据
+
+
+// })
