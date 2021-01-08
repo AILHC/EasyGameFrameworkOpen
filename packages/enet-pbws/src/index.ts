@@ -1,2 +1,2 @@
-export * from "./ByteArray";
-export * from "./PbProtoHandler";
+export * from "./byte";
+export * from "./pb-proto-handler";
