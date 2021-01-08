@@ -1,5 +1,5 @@
 import { } from "@ailhc/enet";
-import { ByteArray, Endian } from "@ailhc/enet-pbws/src/ByteArray";
+import { Byte } from "./byte";
 interface IPbProtoIns {
     /**
      * 编码
@@ -20,7 +20,7 @@ interface IPbProtoIns {
 }
 export class PbProtoHandler implements enet.IProtoHandler {
     private _protoMap: { [key: string]: IPbProtoIns };
-    private _byteArray: ByteArray = new ByteArray();
+    private _byteUtil: Byte = new Byte();
     constructor(pbProtoJs: any) {
         if (!pbProtoJs) {
             throw "pbProtojs is undefined";
@@ -31,7 +31,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
         return protoKey;
     }
     encode(protoKey: string, msg: enet.IMessage): enet.IEncodePackage {
-
+        const byteUtil = this._byteUtil;
         const proto = this._protoMap[protoKey];
         let encodePkg: enet.IEncodePackage;
         if (!proto) {
@@ -41,37 +41,37 @@ export class PbProtoHandler implements enet.IProtoHandler {
             if (!err) {
 
                 const buf = proto.encode(msg.data).finish();
-                this._byteArray.clear();
-                this._byteArray.endian = Endian.LITTLE_ENDIAN;
-                this._byteArray.writeUTF(protoKey);
-                this._byteArray.writeUnsignedInt(!isNaN(msg.reqId) && msg.reqId > 0 ? msg.reqId : 0);
-                this._byteArray._writeUint8Array(buf);
+                byteUtil.clear();
+                byteUtil.endian = Byte.LITTLE_ENDIAN;
+                
+                byteUtil.writeUTFString(protoKey);
+                byteUtil.writeUint32(!isNaN(msg.reqId) && msg.reqId > 0 ? msg.reqId : 0);
+                byteUtil.writeUint8Array(buf);
                 encodePkg = {
                     key: protoKey,
-                    data: this._byteArray.rawBuffer
+                    data: byteUtil.buffer
                 }
             } else {
                 console.error(`协议:${protoKey}数据错误`, err, msg);
             }
         }
-        this._byteArray.clear();
+        byteUtil.clear();
         return encodePkg;
     }
     decode(data: enet.NetData): enet.IDecodePackage<any> {
-        const byteArr = this._byteArray;
-        byteArr.clear();
-        byteArr.endian = Endian.LITTLE_ENDIAN;
+        const byteUtil = this._byteUtil;
+        byteUtil.clear();
+        byteUtil.endian = Byte.LITTLE_ENDIAN;
         if (data instanceof ArrayBuffer) {
-            byteArr.buffer = data;
+            byteUtil.writeArrayBuffer(data)
         } else if (data instanceof Uint8Array) {
-            byteArr._writeUint8Array(data as Uint8Array);
+            byteUtil.writeUint8Array(data as Uint8Array);
         }
-
-        byteArr.position = 0;
-        const protoKey = byteArr.readUTF();
-        const reqId = byteArr.readUnsignedInt();
-        byteArr.readBytes(byteArr, 0, byteArr.length - byteArr.position);
-        const dataBytes = byteArr.bytes;
+        //位置归零，用于读数据
+        byteUtil.pos = 0;
+        const protoKey = byteUtil.readUTFString();
+        const reqId = byteUtil.getUint32();
+        const dataBytes = byteUtil.getUint8Array(byteUtil.pos, byteUtil.length);
         const proto = this._protoMap[protoKey];
         const decodePkg = {
             reqId: reqId,
