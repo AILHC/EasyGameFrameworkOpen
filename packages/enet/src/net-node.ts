@@ -1,3 +1,4 @@
+import { SocketState } from "./socketStateType";
 import { WSocket } from "./wsocket";
 
 export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
@@ -164,7 +165,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         const reqId = this._reqId;
         const encodePkg = this._protoHandler.encode(protoKey, { reqId: reqId, data: data });
         if (encodePkg) {
-            
+
             let reqCfg: enet.IRequestConfig = {
                 reqId: reqId,
                 protoKey: encodePkg.key,
@@ -250,10 +251,12 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
      * 初始化好，socket开启
      */
     protected _isSocketReady(): boolean {
-        if (this._inited && this._socket && this._socket.isConnected) {
+        const socket = this._socket;
+        const socketIsReady = socket && (socket.state === SocketState.CONNECTING || socket.state === SocketState.OPEN);
+        if (this._inited && socketIsReady) {
             return true;
         } else {
-            console.error(`${this._inited ? (this._socket ? "socket is connected" : "socket is null") : "netNode is unInited"}`);
+            console.error(`${this._inited ? (socketIsReady ? "socket is ready" : "socket is null or unready") : "netNode is unInited"}`);
             return false;
         }
     }

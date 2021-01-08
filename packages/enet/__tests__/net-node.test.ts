@@ -358,7 +358,7 @@ test("reconnect server success", async (done) => {
 
         },
         onReconnecting(curCount, reConnectCfg) {
-            
+
         },
         onReconnectEnd(isOk) {
             expect(isOk).toBeTruthy();
@@ -383,3 +383,48 @@ test("reconnect server success", async (done) => {
     await server.connected
 
 });
+test("send message on netNode connecting", async (done) => {
+    const netNode = new NetNode<string>();
+    const netEventHandler: enet.INetEventHandler = {
+        onError(e) {
+
+        },
+        onClosed(e) {
+            netNode.reConnect();
+
+        },
+        onConnectEnd() {
+
+        },
+        onReconnecting(curCount, reConnectCfg) {
+        },
+        onReconnectEnd(isOk) {
+            expect(isOk).toBeTruthy();
+        }
+
+
+    }
+    netNode.init({
+        netEventHandler: netEventHandler
+    });
+    netNode.connect({
+        url: wsUrl
+    });
+    let connectCount = 0;
+    server.on("connection", (socket) => {
+        connectCount++;
+        if (connectCount <= 2) {
+            socket.close();
+        }
+    })
+    netNode.notify("testNotify", { testData: "testNotify" });
+    
+    await server.connected
+    // netNode.notify("testNotify", { testData: "testNotify" });
+    
+    await server.closed
+    
+    await expect(server).toReceiveMessage(JSON.stringify({ key: "testNotify", msg: { data: { testData: "testNotify" } } }));
+    done();
+
+})
