@@ -70,8 +70,8 @@ export class PbProtoHandler implements enet.IProtoHandler {
         //位置归零，用于读数据
         byteUtil.pos = 0;
         const protoKey = byteUtil.readUTFString();
-        const reqId = byteUtil.getUint32();
-        const dataBytes = byteUtil.getUint8Array(byteUtil.pos, byteUtil.length);
+        const reqId = byteUtil.readUint32();
+        const dataBytes = byteUtil.readUint8Array(byteUtil.pos, byteUtil.length);
         const proto = this._protoMap[protoKey];
         const decodePkg = {
             reqId: reqId,
