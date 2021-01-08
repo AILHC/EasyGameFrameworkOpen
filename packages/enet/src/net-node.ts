@@ -69,7 +69,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
      * key为请求key  = protoKey_reqId
      * value为 回调处理器或回调函数
      */
-    protected _reqCfgMap: { [key: string]: enet.IRequestConfig };
+    protected _reqCfgMap: { [key: number]: enet.IRequestConfig };
     /**socket事件处理器 */
     protected _socketEventHandler: enet.ISocketEventHandler;
     /**
@@ -97,7 +97,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         this._pushHandlerMap = {};
         this._oncePushHandlerMap = {};
         this._reqCfgMap = {};
-        const reConnectCfg = config.reConnectCfg;
+        const reConnectCfg = config && config.reConnectCfg;
         if (!reConnectCfg) {
             this._reConnectCfg = {
                 reconnectCount: 4,
@@ -164,7 +164,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         const reqId = this._reqId;
         const encodePkg = this._protoHandler.encode(protoKey, { reqId: reqId, data: data });
         if (encodePkg) {
-            const reqKey = `${encodePkg.key}_${reqId}`;
+            
             let reqCfg: enet.IRequestConfig = {
                 reqId: reqId,
                 protoKey: encodePkg.key,
@@ -173,7 +173,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
             };
             if (arg) reqCfg = Object.assign(reqCfg, arg);
-            this._reqCfgMap[reqKey] = reqCfg;
+            this._reqCfgMap[reqId] = reqCfg;
             this._reqId++;
             this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg, this._connectOpt);
             this.send(encodePkg.data);
@@ -290,8 +290,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         let reqCfg: enet.IRequestConfig;
         if (!isNaN(depackage.reqId) && depackage.reqId > 0) {
             //请求
-            const reqKey = `${depackage.key}_${depackage.reqId}`;
-            reqCfg = this._reqCfgMap[reqKey];
+            const reqId = depackage.reqId;
+            reqCfg = this._reqCfgMap[reqId];
             if (!reqCfg) return;
             reqCfg.decodePkg = depackage;
             this._runHandler(reqCfg.resHandler, depackage);
