@@ -48,7 +48,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
                 this._byteArray._writeUint8Array(buf);
                 encodePkg = {
                     key: protoKey,
-                    data: this._byteArray.bytes
+                    data: this._byteArray.rawBuffer
                 }
             } else {
                 console.error(`协议:${protoKey}数据错误`, err, msg);
@@ -61,7 +61,12 @@ export class PbProtoHandler implements enet.IProtoHandler {
         const byteArr = this._byteArray;
         byteArr.clear();
         byteArr.endian = Endian.LITTLE_ENDIAN;
-        byteArr._writeUint8Array(data as Uint8Array);
+        if (data instanceof ArrayBuffer) {
+            byteArr.buffer = data;
+        } else if (data instanceof Uint8Array) {
+            byteArr._writeUint8Array(data as Uint8Array);
+        }
+
         byteArr.position = 0;
         const protoKey = byteArr.readUTF();
         const reqId = byteArr.readUnsignedInt();
@@ -78,12 +83,12 @@ export class PbProtoHandler implements enet.IProtoHandler {
         if (!proto) {
             decodePkg.errorMsg = `没有这个协议:${protoKey}`;
         } else {
-            const data = proto.decode(dataBytes);
-            const err = proto.verify(data);
+            const decodeData = proto.decode(dataBytes);
+            const err = proto.verify(decodeData);
             if (err) {
                 decodePkg.errorMsg = err;
             } else {
-                decodePkg.data = data;
+                decodePkg.data = decodeData;
             }
         }
         return decodePkg;
