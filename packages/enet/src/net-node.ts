@@ -1,6 +1,16 @@
 import { WSocket } from "./wsocket";
 
 export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
+    public get netEventHandler(): enet.INetEventHandler<any> {
+        return this._netEventHandler
+    }
+    public get protoHandler(): enet.IProtoHandler<any> {
+        return this._protoHandler;
+    };
+
+    public get socket(): enet.ISocket {
+        return this._socket;
+    };
     /**
      * 套接字实现
      */

@@ -251,6 +251,12 @@ declare global {
 
         }
         interface INode<ProtoKeyType = any> {
+            /**网络事件处理器 */
+            netEventHandler: enet.INetEventHandler,
+            /**协议处理器 */
+            protoHandler: enet.IProtoHandler
+            /**套接字实现 */
+            socket: enet.ISocket;
             /**
              * 初始化网络节点，注入自定义处理
              * @param config 配置 重连次数，超时时间，网络事件处理，协议处理
