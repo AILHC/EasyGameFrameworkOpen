@@ -1,9 +1,19 @@
+import WS from "jest-websocket-mock";
+import { SocketState } from "../src";
 import { NetNode } from "../src/net-node"
 import { WSocket } from "../src/wsocket";
+const wsUrl = "ws://localhost:1235";
+let server: WS;
+beforeEach(async () => {
+    server = new WS(wsUrl);
+});
+
+afterEach(() => {
+    WS.clean();
+});
 
 test("init NetNode", () => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
@@ -17,20 +27,18 @@ test("init NetNode", () => {
 
 
     }
-    const socketSetEventHandlerSpy = jest.spyOn(webSocket, "setEventHandler");
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
-    expect(netNode["_socket"]).toBe(webSocket);
+
     expect(netNode["_protoHandler"]).toBeDefined();
     expect(netNode["_pushHandlerMap"]).toBeDefined();
     expect(netNode["_oncePushHandlerMap"]).toBeDefined();
-    expect(socketSetEventHandlerSpy).toBeCalledTimes(1);
+    expect(netNode.socket).toBeDefined();
+    expect(netNode.socket["_eventHandler"]).toBeDefined();
 })
-test("connect wss://echo.websocket.org success", (done) => {
+test("connect socket success", async (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
@@ -46,23 +54,22 @@ test("connect wss://echo.websocket.org success", (done) => {
 
     }
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
     netNode.connect({
-        url: "wss://echo.websocket.org"
+        url: wsUrl
     });
-}, 60000)
-test("connect wss://echo.websocket.org fail", (done) => {
+    expect(netNode.socket.state).toBe(SocketState.CONNECTING);
+    await server.connected;
+
+})
+test("connect server fail", (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
-
         },
         onClosed(e) {
             expect(errorSpy).toBeCalledTimes(1);
-
             done();
         },
         onConnectEnd() {
@@ -72,16 +79,15 @@ test("connect wss://echo.websocket.org fail", (done) => {
     }
     const errorSpy = jest.spyOn(netEventHandler, "onError");
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
     netNode.connect({
-        url: "wss://echo.webssza1212ocket.org"
+        url: wsUrl + "4"
     });
-}, 60000);
-test("request wss://echo.websocket.org success", (done) => {
+
+});
+test("request server success", async (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
@@ -93,7 +99,7 @@ test("request wss://echo.websocket.org success", (done) => {
         onConnectEnd() {
             netNode.request("requesttest1", { testData: "requesttest1" }, (data) => {
                 expect(data.key === "requesttest1").toBeTruthy();
-                expect(data.data.testData === "requesttest1").toBeTruthy();
+                expect(data.data.testData === "responese1").toBeTruthy();
                 netNode.disConnect();
                 done();
             })
@@ -102,50 +108,43 @@ test("request wss://echo.websocket.org success", (done) => {
 
     }
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
     netNode.connect({
-        url: "wss://echo.websocket.org"
+        url: wsUrl
     });
-}, 60000);
+    await server.connected;
+    const receiveMsg = JSON.stringify({ key: "requesttest1", msg: { reqId: netNode["_reqId"] - 1, data: { testData: "requesttest1" } } });
+    await expect(server).toReceiveMessage(receiveMsg);
+    expect(server).toHaveReceivedMessages([receiveMsg])
+    server.send(JSON.stringify({ key: "requesttest1", msg: { reqId: netNode["_reqId"] - 1, data: { testData: "responese1" } } }));
+});
 
-test("notify wss://echo.websocket.org success", (done) => {
+test("notify server success", async (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
-
         },
         onClosed(e) {
-
-
         },
         onConnectEnd() {
             netNode.notify("notify_test", { testData: "notify_test" });
-            setTimeout(() => {
-                expect(onMsgSpy).toBeCalled();
-                const netData = onMsgSpy.mock.calls[0][0].data as string;
-                expect(netData).toBeDefined();
-                const data = JSON.parse(netData);
-                expect(data.key).toBe("notify_test");
-                netNode.disConnect();
-                done();
-            }, 2000)
         }
 
 
     }
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
-    const onMsgSpy = jest.spyOn(netNode["socketEventHandler"], "onSocketMsg");
     netNode.connect({
-        url: "wss://echo.websocket.org"
+        url: wsUrl
     });
-}, 60000);
-test("onPush wss://echo.websocket.org success", (done) => {
+    await expect(server).toReceiveMessage(JSON.stringify({ key: "notify_test", msg: { data: { testData: "notify_test" } } }));
+    netNode.disConnect();
+    done();
+
+});
+test("onPush server success", async (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
@@ -157,7 +156,6 @@ test("onPush wss://echo.websocket.org success", (done) => {
 
         },
         onConnectEnd() {
-            netNode.notify("onPushtest", { testData: "onPushtest" });
 
         }
 
@@ -181,7 +179,7 @@ test("onPush wss://echo.websocket.org success", (done) => {
             expect(netNode["_pushHandlerMap"]["onPushtest"].length).toEqual(2);
             netNode.disConnect();
             done();
-            
+
         },
         args: [1, 2, 3]
     }
@@ -190,10 +188,12 @@ test("onPush wss://echo.websocket.org success", (done) => {
     expect(netNode["_pushHandlerMap"]["onPushtest"][0]).toEqual(onTestPush);
     expect(netNode["_pushHandlerMap"]["onPushtest"].length).toEqual(2);
     netNode.connect({
-        url: "wss://echo.websocket.org"
+        url: wsUrl
     });
-}, 60000);
-test("oncePush wss://echo.websocket.org success", (done) => {
+    await server.connected;
+    server.send(JSON.stringify({ key: "onPushtest", msg: { data: { testData: "onPushtest" } } }));
+});
+test("oncePush server success", async (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
@@ -231,10 +231,12 @@ test("oncePush wss://echo.websocket.org success", (done) => {
     expect(netNode["_oncePushHandlerMap"]["oncePushtest"][0]).toEqual(onTestOncePush);
     expect(netNode["_oncePushHandlerMap"]["oncePushtest"].length).toEqual(2);
     netNode.connect({
-        url: "wss://echo.websocket.org"
+        url: wsUrl
     });
-}, 60000);
-test("offPush wss://echo.websocket.org success", (done) => {
+    await server.connected;
+    server.send(JSON.stringify({ key: "oncePushtest", msg: { data: { testData: "oncePushtest" } } }))
+});
+test("offPush success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
@@ -270,7 +272,7 @@ test("offPush wss://echo.websocket.org success", (done) => {
     expect(netNode["_pushHandlerMap"]["test"][0]).toEqual(onTestPush2);
     done()
 });
-test("offPushAll wss://echo.websocket.org success", (done) => {
+test("offPushAll  success", (done) => {
     const netNode = new NetNode<string>();
     const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
@@ -303,9 +305,8 @@ test("offPushAll wss://echo.websocket.org success", (done) => {
     expect(netNode["_oncePushHandlerMap"]["testOnce"]).toBeUndefined();
     done()
 });
-test("reconnect wss://echo.websockettttt.org fail", (done) => {
+test("reconnect server fail", async (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
@@ -315,7 +316,7 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
 
         },
         onConnectEnd() {
-
+            expect(netNode.socket.isConnected).toBeTruthy();
         },
         onReconnecting(curCount, reConnectCfg) {
             expect(curCount).toBeDefined();
@@ -330,7 +331,6 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
 
     }
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler,
         reConnectCfg: {
             reconnectCount: 3,
@@ -339,12 +339,13 @@ test("reconnect wss://echo.websockettttt.org fail", (done) => {
         }
     });
     netNode.connect({
-        url: "wss://echo.websockettttt.org"
+        url: wsUrl
     });
-}, 60000);
-test("reconnect wss://echo.websocket.org success", (done) => {
+    await server.connected
+    server.close();
+});
+test("reconnect server success", async (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
@@ -354,14 +355,10 @@ test("reconnect wss://echo.websocket.org success", (done) => {
 
         },
         onConnectEnd() {
-            netNode["_connectOpt"].url = "wss://echo.websocket_test.org";
-            webSocket.close();
 
         },
         onReconnecting(curCount, reConnectCfg) {
-            if (curCount > 2) {
-                netNode["_connectOpt"].url = "wss://echo.websocket.org";
-            }
+            
         },
         onReconnectEnd(isOk) {
             expect(isOk).toBeTruthy();
@@ -371,10 +368,18 @@ test("reconnect wss://echo.websocket.org success", (done) => {
 
     }
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
     netNode.connect({
-        url: "wss://echo.websocket.org"
+        url: wsUrl
     });
-}, 60000);
+    let connectCount = 0;
+    server.on("connection", (socket) => {
+        connectCount++;
+        if (connectCount <= 2) {
+            socket.close();
+        }
+    })
+    await server.connected
+
+});
