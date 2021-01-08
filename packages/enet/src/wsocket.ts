@@ -40,10 +40,10 @@ export class WSocket implements enet.ISocket {
 
     }
     send(data: enet.NetData): void {
-        if (this._sk && this._sk.readyState === WebSocket.OPEN) {
+        if (this._sk) {
             this._sk.send(data);
         } else {
-            console.error(`socket is not ready ok`);
+            console.error(`socket is null`);
         }
     }
 
