@@ -264,9 +264,9 @@ declare global {
             init(config?: INodeConfig): void;
             /**
              * 连接
-             * @param option 连接参数
+             * @param option 连接参数:可以直接传url|options
              */
-            connect(option: IConnectOptions): void;
+            connect(option: string | enet.IConnectOptions): void;
             /**
              * 断开连接
              */
