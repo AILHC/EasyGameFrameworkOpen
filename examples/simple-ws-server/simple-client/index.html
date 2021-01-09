@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>WebSocket Echo Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var ws = new WebSocket("ws://localhost:8181");
+        ws.onopen = function (e) {
+            console.log('Connection to server opened');
+        }
+        function sendMessage() {
+            ws.send($('#message').val());
+        }
+    </script>
+</head>
+
+<body>
+    <div class="vertical-center">
+        <div class="container">
+            <p> </p>
+            <form role="form" id="chat_form" onsubmit="sendMessage(); return false;">
+                <div class="form-group">
+                    <input class="form-control" type="text" name="message" id="message"
+                        placeholder="Type text to echo in here" value="" />
+                </div>
+                <button type="button" id="send" class="btn btn-primary" onclick="sendMessage();">
+                    Send!
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
