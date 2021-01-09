@@ -1,0 +1,16 @@
+{
+  "name": "simple-ws-server",
+  "version": "1.0.0",
+  "description": "simple-ws-server",
+  "main": "index.js",
+  "repository": "https://github.com/AILHC/EasyGameFrameworkOpen.git",
+  "author": "AILHC",
+  "license": "MIT",
+  "dependencies": {
+    "@types/ws": "^7.4.0",
+    "ws": "^7.4.2"
+  },
+  "scripts": {
+    "start": "node ./bin/ws-server.js"
+  }
+}
