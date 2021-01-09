@@ -118,14 +118,22 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         this._socket.setEventHandler(this.socketEventHandler);
     }
 
-    public connect(option: enet.IConnectOptions): void {
-        if (this._inited && this._socket) {
+    public connect(option: string | enet.IConnectOptions): void {
+        const socket = this._socket;
+        const socketInCloseState = socket && (socket.state === SocketState.CLOSING || socket.state === SocketState.CLOSED)
+        if (this._inited && socketInCloseState) {
+            if (typeof option === "string") {
+                option = {
+                    url: option
+                }
+
+            }
             this._connectOpt = option;
             this._socket.connect(option);
             const netEventHandler = this._netEventHandler;
             netEventHandler.onStartConnenct && netEventHandler.onStartConnenct(option);
         } else {
-            console.error(`没有初始化`);
+            console.error(`is not inited${socket ? " , socket state" + socket.state : ""}`);
         }
     }
     public disConnect(): void {
