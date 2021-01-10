@@ -10,6 +10,7 @@
         ".github": true,
         "bin": true
     },
+    "clang-format.style": "google",
     "eslint.validate": [
         "javascript",
         {
@@ -24,7 +25,11 @@
     "eslint.format.enable": true,
     "eslint.packageManager": "yarn",
     "liveServer.settings.port": 5501,
-    "export-typescript.excludes":["*.{spec.ts,spec.tsx}"],
-    "export-typescript.includes":["*.{ts,tsx}"],
+    "export-typescript.excludes": [
+        "*.{spec.ts,spec.tsx}"
+    ],
+    "export-typescript.includes": [
+        "*.{ts,tsx}"
+    ],
     "export-typescript.exportStar": true
 }
