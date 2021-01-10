@@ -1,0 +1,54 @@
+import "df_1000.proto";
+package doomsday_pt;
+
+
+// 道具列表
+message Pt_GoodsList{
+    required uint32 goods_id = 1;                   //  道具id
+    required uint32 goods_bought = 2;               // 道具已购买数量
+}
+
+// 刷新道具
+message Pt_Goodsfresh{
+    required uint32 goods_id = 1;                   //  道具id
+    required uint32 goods_num = 2;               // 拥有道具数量
+}
+
+// 商店信息
+message Cs_10050001{
+    required uint32 shop_type = 1 ;                   // 商店类型
+    required uint32 shop_lv = 2 ;                   // 商店等级
+}
+
+message Sc_10050001{
+    repeated Pt_GoodsList goods_list = 1;                      //  道具列表
+    required Pt_Goodsfresh goods_fresh = 2;                      //  刷新道具
+}
+
+// 购买物品
+message Cs_10050002{
+    required uint32 shop_type = 1 ;                   // 商店类型
+    required uint32 shop_lv = 2 ;                   // 商店等级
+    required uint32 goods_id = 3 ;                   // 物品id
+}
+
+message Sc_10050002{
+    required ResData res = 1;                      //  错误码信息
+    required Pt_GoodsList goods_list = 2;                      //  购买物品的信息
+}
+
+
+// 刷新商店
+message Cs_10050003{
+    required uint32 shop_type = 1 ;                   // 商店类型
+    required uint32 shop_lv = 2 ;                   // 商店等级
+    required uint32 fresh_goodsid = 3 ;                   // 刷新工具id
+}
+
+message Sc_10050003{
+    required ResData res = 1;                      //  错误码信息
+    repeated Pt_GoodsList goods_list = 2;                      //  道具列表
+}
+
+
+

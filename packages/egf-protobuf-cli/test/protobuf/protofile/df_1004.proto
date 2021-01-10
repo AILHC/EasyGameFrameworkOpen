@@ -1,0 +1,28 @@
+
+package doomsday_pt;
+//位置
+message Pt_Pos {
+    required float x = 1;
+    required float y = 2;
+}
+
+message Cs_10040001 {
+    required uint32 id = 1;  // 不要传
+}
+message Sc_10040001{
+    repeated uint32 id_list = 1;  // 角色id列表
+}
+
+//请求计算站位点
+message Cs_10040002 {
+    required uint32 atk_id = 1;//攻击者id
+    required uint32 tar_id = 2;//目标id
+
+}
+//返回站位点
+message Sc_10040002 {
+    optional Pt_Pos tar_pos = 1;
+}
+
+
+
