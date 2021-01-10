@@ -1,0 +1,20 @@
+package pb_test;
+
+message HeartBeat {
+    
+}
+message LoginReq {
+    required string name = 1;
+    required string pwd = 2;
+}
+message LoginRes {
+    required uint32 uid = 1;
+}
+
+message ChatMsg {
+    required uint32 uid = 1;
+    required string msg = 2;
+}
+message Kick {
+
+}
