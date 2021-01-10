@@ -1,0 +1,71 @@
+import "df_1000.proto";
+package doomsday_pt;
+
+
+// 角色面板-属性列表
+message Pt_AttList{
+    required uint32 att_id = 1;                      // 角色序号
+    required uint32 att_value = 2;                      //  属性值
+}
+
+// 角色面板
+message Pt_HeroPanel{
+    required uint64 power = 1;                      //  战力
+    required string heroname = 2;                      //  角色昵称
+}
+
+// 经验面板-角色基本信息
+message Pt_HeroInfo{
+    required uint64 hero_id = 1;                      //  角色id
+    required uint32 index_id = 2;                      // 角色序号
+    required string heroname = 3;                      // 角色昵称
+    required uint64 exper = 4;                      //  角色经验值
+    required uint32 grade = 5;                      //  角色等级
+}
+
+
+
+
+// 角色详细属性
+message Cs_10020001{
+    required uint64 hero_id = 1;               //   角色id
+}
+
+message Sc_10020001{
+    repeated Pt_AttList att_list = 1;                      //  角色属性列表
+}
+
+
+
+// 角色面板
+message Cs_10020002{
+    required uint64 hero_id = 1;               //   角色id
+}
+
+
+message Sc_10020002{
+    required Pt_HeroPanel HeroPanel = 1;               //角色面板
+    repeated Pt_AttList att_list = 2;                      //  角色属性列表
+}
+
+
+// 经验面板
+message Cs_10020003{
+    optional uint32 rand = 1;  // 值不用发
+}
+
+message Sc_10020003{
+    required uint64 exper_pool = 1;                      //  经验池的值 0-未开启 或已用完
+    repeated Pt_HeroInfo hero_list = 2;                      //  角色列表
+}
+
+// 经验面板-角色升级
+message Cs_10020004{
+    required uint64 hero_id = 1;               //   角色id
+}
+
+message Sc_10020004{
+    required ResData res = 1;                      //  错误码信息
+    required Pt_HeroInfo hero_info = 2;            //  单个角色信息
+}
+

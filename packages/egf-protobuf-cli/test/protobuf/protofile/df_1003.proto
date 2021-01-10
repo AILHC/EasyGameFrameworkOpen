@@ -1,0 +1,80 @@
+import "df_1000.proto";
+package doomsday_pt;
+
+
+message Pt_GoodsMsg {
+    required uint64 id = 1;    // 唯一id
+    required uint32 base_id = 2;    // 物品配置表id
+    required uint32 num = 3;        // 数量
+    optional uint32 valid_time = 4;     // 到期时间戳
+}
+
+
+// 上线时推送背包列表和仓库列表
+message Sc_10030001{
+    required uint32 now_time = 1;           // 当前时间戳
+    repeated Pt_GoodsMsg bag_msg = 2;       // 背包物品列表
+    repeated Pt_GoodsMsg entrepot_msg = 3;  // 仓库物品列表
+}
+
+
+// 当物品数据发生改变时推送的物品列表
+message Sc_10030002{
+    required uint32 location = 1;   // 1-背包，2-仓库
+    repeated Pt_GoodsMsg goods_msg = 2;       // 背包物品列表
+}
+
+
+// 出售
+message Cs_10030003{
+    required uint64 id = 1;    // 物品唯一id
+    required uint32 num = 2;    // 出售的数量
+}
+
+message Sc_10030003{
+    required ResData res = 1;   // 出售成功后也会推送10030002协议
+}
+
+
+
+// 放入仓库
+message Cs_10030004{
+    required uint64 id = 1;    // 物品唯一id
+}
+
+message Sc_10030004{
+    required ResData res = 1;  // 出售成功后也会推送10030002协议
+}
+
+
+
+// 背包整理
+message Cs_10030005{
+    optional uint32 id = 1;     // 不要传
+}
+
+message Sc_10030005{
+    required ResData res = 1;   // 出售成功后也会推送10030002协议
+}
+
+
+// 仓库取出放入背包
+message Cs_10030006{
+    required uint64 id = 1;    // 物品唯一id
+}
+
+message Sc_10030006{
+    required ResData res = 1;   // 出售成功后也会推送10030002协议
+}
+
+
+// 礼包的使用
+message Cs_10030007{
+    required uint64 id = 1;       // 物品唯一id
+    required uint32 use_num = 2;  // 使用的数量
+    optional uint32 select_id = 3;  // N选1时，用户选择的物品id
+}
+
+message Sc_10030007{
+    required ResData res = 1;   // 出售成功后也会推送10030002协议
+}
