@@ -1,4 +1,5 @@
 import { } from "@ailhc/enet";
+import { PackageType } from "@ailhc/enet/src/pkg-type";
 import { Byte } from "./byte";
 interface IPbProtoIns {
     /**
@@ -19,46 +20,74 @@ interface IPbProtoIns {
     verify(data: any): any;
 }
 export class PbProtoHandler implements enet.IProtoHandler {
-    private _protoMap: { [key: string]: IPbProtoIns };
-    private _byteUtil: Byte = new Byte();
-    constructor(pbProtoJs: any) {
+    protected _protoMap: { [key: string]: IPbProtoIns };
+    protected _byteUtil: Byte = new Byte();
+    /**数据包类型协议 {PackageType: 对应的协议key} */
+    protected _pkgTypeProtoKeyMap: { [key: number]: any };
+    /**
+     * 
+     * @param pbProtoJs 协议导出js对象
+     * @param pkgTypeProtoKeyMap 数据包类型协议 {PackageType} 对应的协议key
+     */
+
+    constructor(pbProtoJs: any, pkgTypeProtoKeyMap?: { [key: number]: any }) {
         if (!pbProtoJs) {
             throw "pbProtojs is undefined";
         }
         this._protoMap = pbProtoJs;
+        pkgTypeProtoKeyMap = pkgTypeProtoKeyMap ? pkgTypeProtoKeyMap : {};
+        this._pkgTypeProtoKeyMap = pkgTypeProtoKeyMap;
+        for (let key in pkgTypeProtoKeyMap) {
+            pkgTypeProtoKeyMap[pkgTypeProtoKeyMap[key]] = key;
+        }
     }
     protoKey2Key(protoKey: string): string {
         return protoKey;
     }
-    encode(protoKey: string, msg: enet.IMessage): enet.IEncodePackage {
+    protected _encodeData(protoKey: string, data: any, reqId?: number): enet.NetData {
         const byteUtil = this._byteUtil;
         const proto = this._protoMap[protoKey];
-        let encodePkg: enet.IEncodePackage;
+        let netData: enet.NetData;
         if (!proto) {
             console.error(`没有这个协议:${protoKey}`);
         } else {
-            const err = proto.verify(msg.data);
+            const err = proto.verify(data);
             if (!err) {
 
-                const buf = proto.encode(msg.data).finish();
+                const buf = proto.encode(data).finish();
                 byteUtil.clear();
                 byteUtil.endian = Byte.LITTLE_ENDIAN;
-                
+
                 byteUtil.writeUTFString(protoKey);
-                byteUtil.writeUint32(!isNaN(msg.reqId) && msg.reqId > 0 ? msg.reqId : 0);
                 byteUtil.writeUint8Array(buf);
-                encodePkg = {
-                    key: protoKey,
-                    data: byteUtil.buffer
+                if (!isNaN(reqId)) {
+                    byteUtil.writeUint32(reqId > 0 ? reqId : 0);
                 }
+                netData = byteUtil.buffer
             } else {
-                console.error(`协议:${protoKey}数据错误`, err, msg);
+                console.error(`协议:${protoKey}数据错误`, err, data);
             }
         }
         byteUtil.clear();
-        return encodePkg;
+        return netData;
+    };
+    encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): enet.NetData {
+        let netData: enet.NetData;
+        if (pkg.type === PackageType.DATA) {
+            const msg: enet.IMessage = pkg.msg as any;
+            netData = this._encodeData(msg.key, msg.data, msg.reqId)
+        } else {
+            const protoKey = this._pkgTypeProtoKeyMap[pkg.type];
+            if (protoKey) {
+                netData = this._encodeData(protoKey, pkg.msg);
+            }
+        }
+        return netData;
     }
-    decode(data: enet.NetData): enet.IDecodePackage<any> {
+    encodeMsg<T>(msg: enet.IMessage<T, any>, useCrypto?: boolean): enet.NetData {
+        return this._encodeData(msg.key, msg.data, msg.reqId);
+    }
+    decodePkg<T>(data: enet.NetData): enet.IDecodePackage<T> {
         const byteUtil = this._byteUtil;
         byteUtil.clear();
         byteUtil.endian = Byte.LITTLE_ENDIAN;
@@ -70,11 +99,12 @@ export class PbProtoHandler implements enet.IProtoHandler {
         //位置归零，用于读数据
         byteUtil.pos = 0;
         const protoKey = byteUtil.readUTFString();
-        const reqId = byteUtil.readUint32();
         const dataBytes = byteUtil.readUint8Array(byteUtil.pos, byteUtil.length);
+        const reqId = byteUtil.readUint32NoError();
         const proto = this._protoMap[protoKey];
-        const decodePkg = {
+        const decodePkg: enet.IDecodePackage<T> = {
             reqId: reqId,
+            type: undefined,
             data: undefined,
             errorMsg: undefined,
             code: undefined,
@@ -83,6 +113,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
         if (!proto) {
             decodePkg.errorMsg = `没有这个协议:${protoKey}`;
         } else {
+
             const decodeData = proto.decode(dataBytes);
             const err = proto.verify(decodeData);
             if (err) {
@@ -90,10 +121,10 @@ export class PbProtoHandler implements enet.IProtoHandler {
             } else {
                 decodePkg.data = decodeData;
             }
+            decodePkg.type = this._pkgTypeProtoKeyMap[protoKey];
+
         }
         return decodePkg;
-
-
     }
 
 }
