@@ -1,6 +1,7 @@
 import WS from "jest-websocket-mock";
 import { SocketState } from "../src";
 import { NetNode } from "../src/net-node"
+import { PackageType } from "../src/pkg-type";
 import { WSocket } from "../src/wsocket";
 const wsUrl = "ws://localhost:1235";
 let server: WS;
@@ -56,11 +57,15 @@ test("connect socket success", async (done) => {
     netNode.init({
         netEventHandler: netEventHandler
     });
-    netNode.connect({
-        url: wsUrl
-    });
+    netNode.connect(wsUrl);
     expect(netNode.socket.state).toBe(SocketState.CONNECTING);
     await server.connected;
+    await server.nextMessage;//handshake
+    server.send(JSON.stringify(
+        {
+            type: PackageType.HANDSHAKE
+        } as enet.IPackage)
+    );
 
 })
 test("connect server fail", (done) => {
@@ -114,11 +119,32 @@ test("request server success", async (done) => {
         url: wsUrl
     });
     await server.connected;
-    const receiveMsg = JSON.stringify({ key: "requesttest1", msg: { reqId: netNode["_reqId"] - 1, data: { testData: "requesttest1" } } });
-    await expect(server).toReceiveMessage(receiveMsg);
-    expect(server).toHaveReceivedMessages([receiveMsg])
-    server.send(JSON.stringify({ key: "requesttest1", msg: { reqId: netNode["_reqId"] - 1, data: { testData: "responese1" } } }));
-});
+    await server.nextMessage;//hanshake
+    server.send(JSON.stringify(
+        {
+            type: PackageType.HANDSHAKE
+        } as enet.IPackage));
+    await server.nextMessage;//hanshake_ack
+
+    const receiveMsg = JSON.stringify(
+        {
+            type: PackageType.DATA,
+            msg: {
+                key: "requesttest1", reqId: netNode["_reqId"] - 1,
+                data: { testData: "requesttest1" }
+            }
+        } as enet.IPackage);
+
+    await expect(server).toReceiveMessage(receiveMsg)
+    server.send(JSON.stringify(
+        {
+            type: PackageType.DATA,
+            msg: {
+                key: "requesttest1", reqId: netNode["_reqId"] - 1,
+                data: { testData: "responese1" }
+            }
+        } as enet.IPackage));
+}, 12000);
 
 test("notify server success", async (done) => {
     const netNode = new NetNode<string>();
@@ -139,7 +165,24 @@ test("notify server success", async (done) => {
     netNode.connect({
         url: wsUrl
     });
-    await expect(server).toReceiveMessage(JSON.stringify({ key: "notify_test", msg: { data: { testData: "notify_test" } } }));
+    await server.connected;
+    await server.nextMessage;
+    server.send(JSON.stringify(
+        {
+            type: PackageType.HANDSHAKE
+        } as enet.IPackage));
+    await server.nextMessage;//hanshake_ack
+    expect(server).toHaveReceivedMessages([
+        JSON.stringify(
+            {
+                type: PackageType.DATA,
+                msg: {
+                    key: "notify_test",
+                    data: { testData: "notify_test" }
+                }
+            } as enet.IPackage
+        )]
+    );
     netNode.disConnect();
     done();
 
@@ -191,6 +234,12 @@ test("onPush server success", async (done) => {
         url: wsUrl
     });
     await server.connected;
+    await server.nextMessage;
+    server.send(JSON.stringify(
+        {
+            type: PackageType.HANDSHAKE
+        } as enet.IPackage));
+    await server.nextMessage;//hanshake_ack
     server.send(JSON.stringify({ key: "onPushtest", msg: { data: { testData: "onPushtest" } } }));
 });
 test("oncePush server success", async (done) => {
@@ -418,12 +467,12 @@ test("send message on netNode connecting", async (done) => {
         }
     })
     netNode.notify("testNotify", { testData: "testNotify" });
-    
+
     await server.connected
     // netNode.notify("testNotify", { testData: "testNotify" });
-    
+
     await server.closed
-    
+
     await expect(server).toReceiveMessage(JSON.stringify({ key: "testNotify", msg: { data: { testData: "testNotify" } } }));
     done();
 

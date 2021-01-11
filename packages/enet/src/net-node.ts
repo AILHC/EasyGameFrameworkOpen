@@ -1,3 +1,4 @@
+import { PackageType } from "./pkg-type";
 import { SocketState } from "./socketStateType";
 import { WSocket } from "./wsocket";
 
@@ -73,6 +74,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     protected _reqCfgMap: { [key: number]: enet.IRequestConfig };
     /**socket事件处理器 */
     protected _socketEventHandler: enet.ISocketEventHandler;
+
+
     /**
      * 获取socket事件处理器
      */
@@ -89,6 +92,12 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
         return this._socketEventHandler;
     }
+    /**数据包类型处理 */
+    protected _pkgTypeHandlers: { [key: number]: (dpkg: enet.IDecodePackage) => void };
+    /**心跳配置 */
+    protected _heartbeatConfig: enet.IHeartBeatConfig;
+    /**心跳间隔阈值 默认100毫秒 */
+    protected _heartbeatGapThreashold: number;
     public init(config?: enet.INodeConfig): void {
         if (this._inited) return;
 
@@ -113,18 +122,26 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
                 this._reConnectCfg.connectTimeout = 60000;
             }
         }
+        this._heartbeatGapThreashold = isNaN(config.heartbeatGapThreashold) ? 100 : config.heartbeatGapThreashold;
         this._inited = true;
 
         this._socket.setEventHandler(this.socketEventHandler);
+
+        this._pkgTypeHandlers = {};
+        this._pkgTypeHandlers[PackageType.HANDSHAKE] = this._onHandshake.bind(this);
+        this._pkgTypeHandlers[PackageType.HEARTBEAT] = this._heartbeat.bind(this);
+        this._pkgTypeHandlers[PackageType.DATA] = this._onData.bind(this);
+        this._pkgTypeHandlers[PackageType.KICK] = this._onKick.bind(this)
     }
 
-    public connect(option: string | enet.IConnectOptions): void {
+    public connect(option: string | enet.IConnectOptions, connectEnd?: VoidFunction): void {
         const socket = this._socket;
         const socketInCloseState = socket && (socket.state === SocketState.CLOSING || socket.state === SocketState.CLOSED)
         if (this._inited && socketInCloseState) {
             if (typeof option === "string") {
                 option = {
-                    url: option
+                    url: option,
+                    connectEnd: connectEnd
                 }
 
             }
@@ -171,12 +188,13 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     ): void {
         if (!this._isSocketReady()) return;
         const reqId = this._reqId;
-        const encodePkg = this._protoHandler.encode(protoKey, { reqId: reqId, data: data });
+        const protoHandler = this._protoHandler;
+        const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data });
         if (encodePkg) {
 
             let reqCfg: enet.IRequestConfig = {
                 reqId: reqId,
-                protoKey: encodePkg.key,
+                protoKey: protoHandler.protoKey2Key(protoKey),
                 data: data,
                 resHandler: resHandler,
 
@@ -185,14 +203,15 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
             this._reqCfgMap[reqId] = reqCfg;
             this._reqId++;
             this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg, this._connectOpt);
-            this.send(encodePkg.data);
+            this.send(encodePkg);
         }
 
     }
     public notify(protoKey: ProtoKeyType, data?: any): void {
         if (!this._isSocketReady()) return;
-        const encodePkg = this._protoHandler.encode(protoKey, { data: data });
-        this.send(encodePkg.data);
+
+        const encodePkg = this._protoHandler.encodeMsg({ key: protoKey, data: data } as enet.IMessage);
+        this.send(encodePkg);
     }
     public send(netData: enet.NetData): void {
         this._socket.send(netData);
@@ -255,8 +274,97 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }
 
     }
+    protected _onHandshake(dpkg: enet.IDecodePackage) {
+        if (dpkg.errorMsg) {
+            return;
+        }
+        this._handshakeInit(dpkg);
+        const ackPkg = this._protoHandler.getHandShakeAckPkg();
+        this.send(ackPkg);
+        const connectOpt = this._connectOpt;
+        connectOpt.connectEnd && connectOpt.connectEnd();
+        this._netEventHandler.onConnectEnd && this._netEventHandler.onConnectEnd(connectOpt);
+    }
+    protected _handshakeInit(dpkg: enet.IDecodePackage) {
+        const data = dpkg.data as enet.IHandShakeRes;
+        const heartbeatCfg: enet.IHeartBeatConfig = {} as any;
+        if (data && data.sys && data.sys.heartbeat) {
+            heartbeatCfg.heartbeatInterval = data.sys.heartbeat * 1000;   // heartbeat interval
+            heartbeatCfg.heartbeatTimeout = isNaN(data.sys.hbTimeOut) ? data.sys.heartbeat * 2 : data.sys.hbTimeOut;        // max heartbeat timeout
+        } else {
+            heartbeatCfg.heartbeatInterval = 0;
+            heartbeatCfg.heartbeatTimeout = 0;
+        }
+        this._heartbeatConfig = heartbeatCfg;
+    }
+    protected _heartbeatTimeoutId: number;
+    protected _heartbeatTimeId: number;
+    protected _netHeartbeatTimeoutTime: number;
+    protected _heartbeat(dpkg: enet.IDecodePackage) {
+        const heartbeatCfg = this._heartbeatConfig;
+        const protoHandler = this._protoHandler;
+        if (!heartbeatCfg || !heartbeatCfg.heartbeatInterval || !protoHandler.getHeartBeatPkg) {
+            return;
+        }
+        if (this._heartbeatTimeoutId) {
+            return;
+        }
+        this._heartbeatTimeId = setTimeout(() => {
+            this._heartbeatTimeId = undefined;
+            const heartbeatPkg = protoHandler.getHeartBeatPkg();
+            this.send(heartbeatPkg);
+            this._netHeartbeatTimeoutTime = Date.now() + heartbeatCfg.heartbeatTimeout;
+            this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), heartbeatCfg.heartbeatTimeout);
+        }, heartbeatCfg.heartbeatInterval)
+    }
+    protected _heartbeatTimeoutCb() {
+        var gap = this._netHeartbeatTimeoutTime - Date.now();
+        if (gap > this._reConnectCfg) {
+            this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), gap);
+        } else {
+            console.error('server heartbeat timeout');
+            this.disConnect();
+        }
+    }
+    protected _onData(dpkg: enet.IDecodePackage) {
+        if (dpkg.errorMsg) {
+            return;
+        }
+        let reqCfg: enet.IRequestConfig;
+        if (!isNaN(dpkg.reqId) && dpkg.reqId > 0) {
+            //请求
+            const reqId = dpkg.reqId;
+            reqCfg = this._reqCfgMap[reqId];
+            if (!reqCfg) return;
+            reqCfg.decodePkg = dpkg;
+            this._runHandler(reqCfg.resHandler, dpkg);
+        } else {
+            const pushKey = dpkg.key;
+            //推送
+            let handlers = this._pushHandlerMap[pushKey];
+            const onceHandlers = this._oncePushHandlerMap[pushKey];
+            if (!handlers) {
+                handlers = onceHandlers;
+            } else if (onceHandlers) {
+                handlers = handlers.concat(onceHandlers);
+            }
+            delete this._oncePushHandlerMap[pushKey];
+            if (handlers) {
+                for (let i = 0; i < handlers.length; i++) {
+                    this._runHandler(handlers[i], dpkg);
+                }
+            }
+
+        }
+        const netEventHandler = this._netEventHandler;
+        netEventHandler.onData && netEventHandler.onData(dpkg, this._connectOpt, reqCfg)
+
+    }
+    protected _onKick(dpkg: enet.IDecodePackage) {
+        this._netEventHandler.onKick && this._netEventHandler.onKick(dpkg, this._connectOpt);
+    }
     /**
-     * 初始化好，socket开启
+     * socket状态是否准备好
      */
     protected _isSocketReady(): boolean {
         const socket = this._socket;
@@ -278,8 +386,15 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         } else {
             const handler = this._netEventHandler;
             const connectOpt = this._connectOpt;
-            connectOpt.connectEnd && connectOpt.connectEnd();
-            handler.onConnectEnd && handler.onConnectEnd(connectOpt);
+            const protoHandler = this._protoHandler;
+            if (protoHandler && protoHandler.getHandShakeReqPkg) {
+                const handShakeNetData = protoHandler.getHandShakeReqPkg(connectOpt.handShakeReq);
+                this.send(handShakeNetData);
+            } else {
+                connectOpt.connectEnd && connectOpt.connectEnd();
+                handler.onConnectEnd && handler.onConnectEnd(connectOpt);
+            }
+
         }
     }
     /**
@@ -295,39 +410,17 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
      * @param event 
      */
     protected _onSocketMsg(event: { data: enet.NetData }) {
-        const depackage = this._protoHandler.decode(event.data);
+        const depackage = this._protoHandler.decodePkg(event.data);
         const netEventHandler = this._netEventHandler;
-
-        let reqCfg: enet.IRequestConfig;
-        if (!isNaN(depackage.reqId) && depackage.reqId > 0) {
-            //请求
-            const reqId = depackage.reqId;
-            reqCfg = this._reqCfgMap[reqId];
-            if (!reqCfg) return;
-            reqCfg.decodePkg = depackage;
-            this._runHandler(reqCfg.resHandler, depackage);
-        } else {
-            const pushKey = depackage.key;
-            //推送
-            let handlers = this._pushHandlerMap[pushKey];
-            const onceHandlers = this._oncePushHandlerMap[pushKey];
-            if (!handlers) {
-                handlers = onceHandlers;
-            } else if (onceHandlers) {
-                handlers = handlers.concat(onceHandlers);
-            }
-            delete this._oncePushHandlerMap[pushKey];
-            if (handlers) {
-                for (let i = 0; i < handlers.length; i++) {
-                    this._runHandler(handlers[i], depackage);
-                }
-            }
-
-        }
-        netEventHandler.onServerMsg && netEventHandler.onServerMsg(depackage, this._connectOpt, reqCfg)
+        this._pkgTypeHandlers[depackage.type] && this._pkgTypeHandlers[depackage.type](depackage);
         if (depackage.errorMsg) {
             netEventHandler.onCustomError && netEventHandler.onCustomError(depackage, this._connectOpt);
         }
+
+        if (depackage.type === PackageType.DATA) {
+
+        }
+
 
     }
     /**
@@ -374,20 +467,33 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
 }
 class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyType> {
+    encodePkg(pkg: enet.IPackage<any>): enet.NetData {
+        return JSON.stringify(pkg)
+    }
+    getHandShakeReqPkg?<T>(data?: T): enet.NetData {
+        const pkg: enet.IPackage = { type: PackageType.HANDSHAKE, msg: data }
+        return JSON.stringify(pkg)
+    }
+    getHandShakeAckPkg?(): enet.NetData {
+        const pkg: enet.IPackage = { type: PackageType.HANDSHAKE_ACK }
+        return JSON.stringify(pkg)
+    }
     protoKey2Key(protoKey: ProtoKeyType): string {
         return protoKey as any;
     }
-    encode(protoKey: ProtoKeyType, msg: enet.IMessage): enet.IEncodePackage {
-        const key = this.protoKey2Key(protoKey);
-        return {
-            key: protoKey as any,
-            data: JSON.stringify({ key: key, msg: msg }),
-        }
+    encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>): enet.NetData {
+        return JSON.stringify({ type: PackageType.DATA, msg: msg } as enet.IPackage)
     }
-    decode(data: enet.NetData): enet.IDecodePackage<any> {
-        const parsedData: { key: string, msg: enet.IMessage } = JSON.parse(data as string);
-
-        return { key: parsedData.key, data: parsedData.msg.data, reqId: parsedData.msg.reqId };
+    decodePkg(data: enet.NetData): enet.IDecodePackage<any> {
+        const parsedData: { type: number, msg: enet.IMessage } = JSON.parse(data as string);
+        return {
+            key: parsedData.msg && parsedData.msg.key, type: parsedData.type ? parsedData.type : PackageType.DATA,
+            data: parsedData.msg && parsedData.msg.data, reqId: parsedData.msg && parsedData.msg.reqId
+        };
+    }
+    getHeartBeatPkg(): enet.NetData {
+        const pkg: enet.IPackage = { type: PackageType.HEARTBEAT }
+        return JSON.stringify(pkg)
     }
 
 }
@@ -419,7 +525,7 @@ class DefaultNetEventHandler implements enet.INetEventHandler {
     onStartRequest?(reqCfg: enet.IRequestConfig, connectOpt: enet.IConnectOptions): void {
         console.log(`开始请求:${reqCfg.protoKey},id:${reqCfg.reqId}`)
     }
-    onServerMsg?(dpkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions): void {
+    onData?(dpkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions): void {
         console.log(`请求返回:${dpkg.key}`);
     }
     onRequestTimeout?(reqCfg: enet.IRequestConfig, connectOpt: enet.IConnectOptions): void {
@@ -427,6 +533,9 @@ class DefaultNetEventHandler implements enet.INetEventHandler {
     }
     onCustomError?(dpkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions): void {
         console.error(`协议:${dpkg.key},请求id:${dpkg.reqId},错误码:${dpkg.code},错误信息:${dpkg.errorMsg}`)
+    }
+    onKick(dpkg: enet.IDecodePackage<any>, copt: enet.IConnectOptions) {
+        console.log(`被踢下线了`);
     }
 
 
