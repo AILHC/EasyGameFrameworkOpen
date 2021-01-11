@@ -228,6 +228,16 @@ export class Byte {
         this._pos_ += 4;
         return v;
     }
+    /**
+     * 从字节流的当前字节偏移量位置处读取一个 Uint32 值。读不到不报错，返回undefined;
+     * @return Uint32 值。
+     */
+    readUint32NoError(): number {
+        if (this._pos_ + 4 > this._length) return undefined;
+        var v: number = this._d_.getUint32(this._pos_, this._xd_);
+        this._pos_ += 4;
+        return v;
+    }
 
     /**
      * 在字节流的当前字节偏移量位置处写入指定的 Int32 值。
@@ -361,19 +371,17 @@ export class Byte {
                 c2 = u[this._pos_++];
                 c3 = u[this._pos_++];
                 //v += f(((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 << 6) & 0x7F) | (u[_pos_++] & 0x7F));
-                const _code = ((c & 0x0F)<< 18)| ((c2 & 0x7F)<< 12)| ((c3 & 0x7F)<< 6)| (u[this._pos_++] & 0x7F);
-				if( _code >= 0x10000 )
-				{
-					const _offset = _code - 0x10000;
-					const _lead = 0xd800 | (_offset >> 10);
-					const _trail = 0xdc00 | (_offset & 0x3ff);
-					strs[n++]=f(_lead);
-					strs[n++]=f(_trail);
-				}
-				else
-				{
-					strs[n++]=f(_code);
-				}
+                const _code = ((c & 0x0F) << 18) | ((c2 & 0x7F) << 12) | ((c3 & 0x7F) << 6) | (u[this._pos_++] & 0x7F);
+                if (_code >= 0x10000) {
+                    const _offset = _code - 0x10000;
+                    const _lead = 0xd800 | (_offset >> 10);
+                    const _trail = 0xdc00 | (_offset & 0x3ff);
+                    strs[n++] = f(_lead);
+                    strs[n++] = f(_trail);
+                }
+                else {
+                    strs[n++] = f(_code);
+                }
             }
             i++;
         }
@@ -470,24 +478,23 @@ export class Byte {
                 this._ensureWrite(this._pos_ + 2);
                 this._u8d_.set([0xC0 | (c >> 6), 0x80 | (c & 0x3F)], this._pos_);
                 this._pos_ += 2;
-            } else if (c >= 0xD800 && c <=0xDBFF){
-				i++;
-				const c2=value.charCodeAt(i);
-				if( !Number.isNaN(c2) && c2>=0xDC00 && c2<=0xDFFF )
-				{
-					const _p1 = (c & 0x3FF) + 0x40;
-					const _p2 = c2 & 0x3FF;
+            } else if (c >= 0xD800 && c <= 0xDBFF) {
+                i++;
+                const c2 = value.charCodeAt(i);
+                if (!Number.isNaN(c2) && c2 >= 0xDC00 && c2 <= 0xDFFF) {
+                    const _p1 = (c & 0x3FF) + 0x40;
+                    const _p2 = c2 & 0x3FF;
 
-					const _b1 = 0xF0 | ((_p1>>8) & 0x3F);
-					const _b2 = 0x80 | ((_p1>>2) & 0x3F);
-					const _b3 = 0x80 | ((_p1 & 0x3)<<4) | ((_p2>>6) & 0xF);
-					const _b4 = 0x80 | (_p2 & 0x3F);
+                    const _b1 = 0xF0 | ((_p1 >> 8) & 0x3F);
+                    const _b2 = 0x80 | ((_p1 >> 2) & 0x3F);
+                    const _b3 = 0x80 | ((_p1 & 0x3) << 4) | ((_p2 >> 6) & 0xF);
+                    const _b4 = 0x80 | (_p2 & 0x3F);
 
-					this._ensureWrite(this._pos_+4);
-					this._u8d_.set([_b1, _b2, _b3, _b4],this._pos_);
-					this._pos_+=4;
-				}
-			} else if (c <= 0xFFFF) {
+                    this._ensureWrite(this._pos_ + 4);
+                    this._u8d_.set([_b1, _b2, _b3, _b4], this._pos_);
+                    this._pos_ += 4;
+                }
+            } else if (c <= 0xFFFF) {
                 this._ensureWrite(this._pos_ + 3);
                 this._u8d_.set([0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F)], this._pos_);
                 this._pos_ += 3;
@@ -511,13 +518,13 @@ export class Byte {
         var dPos: number = this.pos - tPos - 2;
         //trace("writeLen:",dPos,"pos:",tPos);
         this._d_.setUint16(tPos, dPos, this._xd_);
-	}
-	
-	/**
-	 * <p>将 UTF-8 字符串写入字节流。先写入以字节表示的 UTF-8 字符串长度（作为 32 位整数），然后写入表示字符串字符的字节。</p>
-	 * @param	value 要写入的字符串值。
-	 */
-    writeUTFString32(value:string):void {
+    }
+
+    /**
+     * <p>将 UTF-8 字符串写入字节流。先写入以字节表示的 UTF-8 字符串长度（作为 32 位整数），然后写入表示字符串字符的字节。</p>
+     * @param	value 要写入的字符串值。
+     */
+    writeUTFString32(value: string): void {
         var tPos = this.pos;
         this.writeUint32(1);
         this.writeUTFBytes(value);
@@ -539,10 +546,10 @@ export class Byte {
         return this.readUTFBytes(this.readUint16());
     }
 
-	/**
-	 * @private
-	 */
-    readUTFString32():string {
+    /**
+     * @private
+     */
+    readUTFString32(): string {
         return this.readUTFBytes(this.readUint32());
     }
 
@@ -608,13 +615,13 @@ export class Byte {
         this._pos_ += length;
     }
     /**
-	*<p>将指定 Uint8Array 对象中的以 offset 为起始偏移量， length 为长度的字节序列写入字节流。</p>
-	*<p>如果省略 length 参数，则使用默认长度 0，该方法将从 offset 开始写入整个缓冲区；如果还省略了 offset 参数，则写入整个缓冲区。</p>
-	*<p>如果 offset 或 length 小于0，本函数将抛出异常。</p>
-	*@param uint8Array 需要写入的 Uint8Array 对象。
-	*@param offset Uint8Array 对象的索引的偏移量（以字节为单位）
-	*@param length 从 Uint8Array 对象写入到 Byte 对象的长度（以字节为单位）
-	*/
+    *<p>将指定 Uint8Array 对象中的以 offset 为起始偏移量， length 为长度的字节序列写入字节流。</p>
+    *<p>如果省略 length 参数，则使用默认长度 0，该方法将从 offset 开始写入整个缓冲区；如果还省略了 offset 参数，则写入整个缓冲区。</p>
+    *<p>如果 offset 或 length 小于0，本函数将抛出异常。</p>
+    *@param uint8Array 需要写入的 Uint8Array 对象。
+    *@param offset Uint8Array 对象的索引的偏移量（以字节为单位）
+    *@param length 从 Uint8Array 对象写入到 Byte 对象的长度（以字节为单位）
+    */
     public writeUint8Array(uint8Array: Uint8Array, offset?: number, length?: number) {
         (offset === void 0) && (offset = 0);
         (length === void 0) && (length = 0);
