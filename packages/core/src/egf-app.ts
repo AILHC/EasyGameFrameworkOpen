@@ -6,24 +6,11 @@ export class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
     public static readonly STOP: number = 4;
     protected _state: number = 0;
     protected _moduleMap: { [key: string]: egf.IModule } = {};
-    protected _proxyModuleMap: { [key: string]: egf.IModule };
     public get state(): number {
         return this._state;
     }
     public get moduleMap(): ModuleMap {
-        const moduleMap = this._moduleMap;
-        if (!this._proxyModuleMap) {
-            this._proxyModuleMap = new Proxy(moduleMap, {
-                get(target, key) {
-                    if (typeof key === "string") {
-                        return moduleMap[key];
-                    } else {
-                        return null;
-                    }
-                }
-            });
-        }
-        return this._proxyModuleMap as any;
+        return this._moduleMap as any;
     }
     public async bootstrap(bootLoaders?: egf.IBootLoader[]): Promise<boolean> {
         this.setState(App.BOOTING);
