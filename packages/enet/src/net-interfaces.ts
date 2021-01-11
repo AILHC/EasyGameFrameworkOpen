@@ -59,20 +59,24 @@ declare global {
             binaryType?: "arraybuffer" | "blob";
             /**连接结束 */
             connectEnd?: VoidFunction
+            /**握手数据 */
+            handShakeReq?: IHandShakeReq
         }
         /**
          * 编码后的数据包
          */
-        interface IEncodePackage {
-            key: string,
-            data: NetData
-        }
         /**
          * 解析后的数据包
          */
         interface IDecodePackage<T = any> {
             /**协议字符串key */
             key: string,
+
+            /**
+             * 数据包类型
+             * 默认使用 PackageType 中的DATA  类型 4
+             */
+            type: number
             /**数据 */
             data: T
             /**请求id */
@@ -82,6 +86,28 @@ declare global {
             /**错误信息 */
             errorMsg?: string
         }
+
+        interface IHandShakeReq {
+            sys?: {
+                /**客户端类型 */
+                type?: number
+                version?: string
+            }
+            user?: any
+        }
+        interface IHandShakeRes {
+            sys?: {
+                /**心跳间隔 */
+                heartbeat: number,
+                /**心跳超时 */
+                hbTimeOut: number
+            },
+            user?: any
+        }
+        interface IHeartBeatConfig {
+            heartbeatInterval: number,
+            heartbeatTimeout: number
+        }
         interface IProtoHandler<ProtoKeyType = any> {
             /**
              * 协议key转字符串key
@@ -89,16 +115,35 @@ declare global {
              */
             protoKey2Key(protoKey: ProtoKeyType): string;
             /**
-             * 数据编码
+             * 编码数据包
+             * @param pkg 
+             */
+            encodePkg(pkg: enet.IPackage): NetData
+            /**
+             * 编码消息数据包
              * @param data
              * @param reqId
              */
-            encode<T>(protoKey: ProtoKeyType, msg: enet.IMessage<T>): IEncodePackage
+            encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>): NetData
             /**
              * 解码网络数据包，
              * @param data 
              */
-            decode<T>(data: NetData): IDecodePackage<T>
+            decodePkg<T>(data: NetData): IDecodePackage<T>
+            /**
+             * 获取心跳包，用于发送给后端
+             */
+            getHeartBeatPkg?(): NetData;
+            /**
+             * 获取握手请求编码数据包
+             * @param data 
+             */
+            getHandShakeReqPkg?<T>(data?: T): NetData;
+            /**
+             * 获取握手成功后回应编码数据包
+             */
+            getHandShakeAckPkg?(): NetData;
+
         }
         type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
 
@@ -204,15 +249,29 @@ declare global {
              * 请求响应
              * @param decodePkg 
              */
-            onServerMsg?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
-
-
-            // onPush(data: IDecodePackage<ResData>): void
+            onData?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
+            /**
+             * 被踢下线
+             * @param decodePkg 
+             * @param connectOpt 
+             */
+            onKick?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions): void
+            /**
+             * 错误信息
+             * @param data 
+             * @param connectOpt 
+             */
             onCustomError?(data: IDecodePackage<ResData>, connectOpt: IConnectOptions): void
         }
-        interface IMessage<T = any> {
+        interface IMessage<T = any, ProtoKeyType = any> {
             reqId?: number,
+            /**协议key */
+            key: ProtoKeyType,
             data: T
+        }
+        interface IPackage<T = any> {
+            type: number,
+            msg?: T
         }
         /**
          * 重连配置接口
@@ -245,10 +304,11 @@ declare global {
              */
             protoHandler?: IProtoHandler
             /**
-             * 重连配置
+             * 重连配置，有默认值
              */
             reConnectCfg?: IReconnectConfig
-
+            /**心跳间隔阈值 ,默认100*/
+            heartbeatGapThreashold?: number
         }
         interface INode<ProtoKeyType = any> {
             /**网络事件处理器 */
