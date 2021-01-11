@@ -7,6 +7,7 @@ const matched = require("matched")
 const fs = require("fs");
 const npmDts = require("npm-dts");
 const dtsGenerator = require('dts-generator');
+const jsonPlugin = require("@rollup/plugin-json");
 
 var curPackFiles = null;  //当前包的所有的文件
 var mentry = 'multientry:entry-point';
@@ -207,6 +208,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         input: entry,
         plugins: [
             // myMultiInput(),
+            jsonPlugin(),
             typescript(tsOptions),
             rollupCjs(),
             nodeResolve({

@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The Extension library build package based on Rollup's EasyGameFramework can also be used to build other libraries",
   "keywords": [
     "cli",
@@ -34,6 +34,7 @@
     "url": "git+https://github.com/AILHC/EasyGameClientFrameworkOpen.git"
   },
   "dependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "cmdjs": "^0.0.14",
     "colors": "^1.4.0",
     "commander": "^4.1.0",
