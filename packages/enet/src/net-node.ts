@@ -97,7 +97,10 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     /**心跳配置 */
     protected _heartbeatConfig: enet.IHeartBeatConfig;
     /**心跳间隔阈值 默认100毫秒 */
-    protected _heartbeatGapThreashold: number;
+    protected _gapThreashold: number;
+    /**使用加密 */
+    protected _useCrypto: boolean;
+
     public init(config?: enet.INodeConfig): void {
         if (this._inited) return;
 
@@ -122,7 +125,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
                 this._reConnectCfg.connectTimeout = 60000;
             }
         }
-        this._heartbeatGapThreashold = isNaN(config.heartbeatGapThreashold) ? 100 : config.heartbeatGapThreashold;
+        this._gapThreashold = isNaN(config.heartbeatGapThreashold) ? 100 : config.heartbeatGapThreashold;
+        this._useCrypto = config.useCrypto;
         this._inited = true;
 
         this._socket.setEventHandler(this.socketEventHandler);
@@ -155,6 +159,16 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     }
     public disConnect(): void {
         this._socket.close();
+
+        //清理心跳定时器
+        if (this._heartbeatTimeId) {
+            clearTimeout(this._heartbeatTimeId);
+            this._heartbeatTimeId = undefined;
+        }
+        if (this._heartbeatTimeoutId) {
+            clearTimeout(this._heartbeatTimeoutId);
+            this._heartbeatTimeoutId = undefined;
+        }
     }
 
 
@@ -189,7 +203,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         if (!this._isSocketReady()) return;
         const reqId = this._reqId;
         const protoHandler = this._protoHandler;
-        const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data });
+        const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data }, this._useCrypto);
         if (encodePkg) {
 
             let reqCfg: enet.IRequestConfig = {
@@ -210,7 +224,13 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     public notify(protoKey: ProtoKeyType, data?: any): void {
         if (!this._isSocketReady()) return;
 
-        const encodePkg = this._protoHandler.encodeMsg({ key: protoKey, data: data } as enet.IMessage);
+        const encodePkg = this._protoHandler.encodeMsg(
+            {
+                key: protoKey,
+                data: data
+            } as enet.IMessage,
+            this._useCrypto);
+
         this.send(encodePkg);
     }
     public send(netData: enet.NetData): void {
@@ -279,7 +299,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
             return;
         }
         this._handshakeInit(dpkg);
-        const ackPkg = this._protoHandler.getHandShakeAckPkg();
+        const ackPkg = this._protoHandler.encodePkg({ type: PackageType.HANDSHAKE_ACK });
         this.send(ackPkg);
         const connectOpt = this._connectOpt;
         connectOpt.connectEnd && connectOpt.connectEnd();
@@ -289,8 +309,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         const data = dpkg.data as enet.IHandShakeRes;
         const heartbeatCfg: enet.IHeartBeatConfig = {} as any;
         if (data && data.sys && data.sys.heartbeat) {
-            heartbeatCfg.heartbeatInterval = data.sys.heartbeat * 1000;   // heartbeat interval
-            heartbeatCfg.heartbeatTimeout = isNaN(data.sys.hbTimeOut) ? data.sys.heartbeat * 2 : data.sys.hbTimeOut;        // max heartbeat timeout
+            heartbeatCfg.heartbeatInterval = Math.floor(data.sys.heartbeat * 1000);   // heartbeat interval
+            heartbeatCfg.heartbeatTimeout = Math.floor(isNaN(data.sys.hbTimeOut) ? data.sys.heartbeat * 2 : data.sys.hbTimeOut * 1000);        // max heartbeat timeout
         } else {
             heartbeatCfg.heartbeatInterval = 0;
             heartbeatCfg.heartbeatTimeout = 0;
@@ -299,11 +319,11 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     }
     protected _heartbeatTimeoutId: number;
     protected _heartbeatTimeId: number;
-    protected _netHeartbeatTimeoutTime: number;
+    protected _nextHeartbeatTimeoutTime: number;
     protected _heartbeat(dpkg: enet.IDecodePackage) {
         const heartbeatCfg = this._heartbeatConfig;
         const protoHandler = this._protoHandler;
-        if (!heartbeatCfg || !heartbeatCfg.heartbeatInterval || !protoHandler.getHeartBeatPkg) {
+        if (!heartbeatCfg || !heartbeatCfg.heartbeatInterval) {
             return;
         }
         if (this._heartbeatTimeoutId) {
@@ -311,16 +331,20 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }
         this._heartbeatTimeId = setTimeout(() => {
             this._heartbeatTimeId = undefined;
-            const heartbeatPkg = protoHandler.getHeartBeatPkg();
+            const heartbeatPkg = protoHandler.encodePkg({ type: PackageType.HEARTBEAT }, this._useCrypto);
             this.send(heartbeatPkg);
-            this._netHeartbeatTimeoutTime = Date.now() + heartbeatCfg.heartbeatTimeout;
-            this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), heartbeatCfg.heartbeatTimeout);
-        }, heartbeatCfg.heartbeatInterval)
+            this._nextHeartbeatTimeoutTime = Date.now() + heartbeatCfg.heartbeatTimeout;
+
+            this._heartbeatTimeoutId = setTimeout(
+                this._heartbeatTimeoutCb.bind(this),
+                heartbeatCfg.heartbeatTimeout) as any;
+
+        }, heartbeatCfg.heartbeatInterval) as any;
     }
     protected _heartbeatTimeoutCb() {
-        var gap = this._netHeartbeatTimeoutTime - Date.now();
+        var gap = this._nextHeartbeatTimeoutTime - Date.now();
         if (gap > this._reConnectCfg) {
-            this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), gap);
+            this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), gap) as any;
         } else {
             console.error('server heartbeat timeout');
             this.disConnect();
@@ -387,8 +411,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
             const handler = this._netEventHandler;
             const connectOpt = this._connectOpt;
             const protoHandler = this._protoHandler;
-            if (protoHandler && protoHandler.getHandShakeReqPkg) {
-                const handShakeNetData = protoHandler.getHandShakeReqPkg(connectOpt.handShakeReq);
+            if (protoHandler && connectOpt.handShakeReq) {
+                const handShakeNetData = protoHandler.encodePkg<enet.IHandShakeReq>({ type: PackageType.HANDSHAKE, msg: connectOpt.handShakeReq });
                 this.send(handShakeNetData);
             } else {
                 connectOpt.connectEnd && connectOpt.connectEnd();
@@ -412,13 +436,18 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
     protected _onSocketMsg(event: { data: enet.NetData }) {
         const depackage = this._protoHandler.decodePkg(event.data);
         const netEventHandler = this._netEventHandler;
-        this._pkgTypeHandlers[depackage.type] && this._pkgTypeHandlers[depackage.type](depackage);
+        const pkgTypeHandler = this._pkgTypeHandlers[depackage.type];
+        if (pkgTypeHandler) {
+            pkgTypeHandler(depackage);
+        } else {
+            console.error(`There is no handler of this type:${depackage.type}`)
+        }
         if (depackage.errorMsg) {
             netEventHandler.onCustomError && netEventHandler.onCustomError(depackage, this._connectOpt);
         }
-
-        if (depackage.type === PackageType.DATA) {
-
+        //更新心跳超时时间
+        if (this._nextHeartbeatTimeoutTime) {
+            this._nextHeartbeatTimeoutTime = Date.now() + this._heartbeatConfig.heartbeatTimeout;
         }
 
 
@@ -467,33 +496,32 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
 }
 class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyType> {
-    encodePkg(pkg: enet.IPackage<any>): enet.NetData {
-        return JSON.stringify(pkg)
-    }
-    getHandShakeReqPkg?<T>(data?: T): enet.NetData {
-        const pkg: enet.IPackage = { type: PackageType.HANDSHAKE, msg: data }
-        return JSON.stringify(pkg)
-    }
-    getHandShakeAckPkg?(): enet.NetData {
-        const pkg: enet.IPackage = { type: PackageType.HANDSHAKE_ACK }
+    encodePkg(pkg: enet.IPackage<any>, useCrypto?: boolean): enet.NetData {
         return JSON.stringify(pkg)
     }
     protoKey2Key(protoKey: ProtoKeyType): string {
         return protoKey as any;
     }
-    encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>): enet.NetData {
+    encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): enet.NetData {
         return JSON.stringify({ type: PackageType.DATA, msg: msg } as enet.IPackage)
     }
     decodePkg(data: enet.NetData): enet.IDecodePackage<any> {
-        const parsedData: { type: number, msg: enet.IMessage } = JSON.parse(data as string);
-        return {
-            key: parsedData.msg && parsedData.msg.key, type: parsedData.type ? parsedData.type : PackageType.DATA,
-            data: parsedData.msg && parsedData.msg.data, reqId: parsedData.msg && parsedData.msg.reqId
-        };
-    }
-    getHeartBeatPkg(): enet.NetData {
-        const pkg: enet.IPackage = { type: PackageType.HEARTBEAT }
-        return JSON.stringify(pkg)
+        const parsedData: { type: number, msg: any } = JSON.parse(data as string);
+
+        if (parsedData.type === PackageType.DATA) {
+            const msg: enet.IMessage = parsedData.msg;
+            return {
+                key: msg && msg.key, type: PackageType.DATA,
+                data: msg.data, reqId: parsedData.msg && parsedData.msg.reqId
+            } as enet.IDecodePackage;
+        } else {
+
+            return {
+                type: parsedData.type,
+                data: parsedData.msg
+            } as enet.IDecodePackage;
+        }
+
     }
 
 }

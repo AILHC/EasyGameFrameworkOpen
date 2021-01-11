@@ -69,16 +69,17 @@ declare global {
          * 解析后的数据包
          */
         interface IDecodePackage<T = any> {
-            /**协议字符串key */
-            key: string,
+
 
             /**
              * 数据包类型
              * 默认使用 PackageType 中的DATA  类型 4
              */
             type: number
+            /**协议字符串key */
+            key?: string,
             /**数据 */
-            data: T
+            data?: T
             /**请求id */
             reqId?: number,
             /**错误码 */
@@ -90,16 +91,21 @@ declare global {
         interface IHandShakeReq {
             sys?: {
                 /**客户端类型 */
-                type?: number
-                version?: string
+                type?: number | string
+                /**客户端版本 */
+                version?: number | string,
+                /**协议版本 */
+                protoVersion?: number | string
+                /**rsa 校验 */
+                rsa?: any
             }
             user?: any
         }
         interface IHandShakeRes {
             sys?: {
-                /**心跳间隔 */
+                /**心跳间隔 ,秒*/
                 heartbeat: number,
-                /**心跳超时 */
+                /**心跳超时 ,秒*/
                 hbTimeOut: number
             },
             user?: any
@@ -117,32 +123,20 @@ declare global {
             /**
              * 编码数据包
              * @param pkg 
+             * @param useCrypto 是否加密
              */
-            encodePkg(pkg: enet.IPackage): NetData
+            encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): NetData
             /**
              * 编码消息数据包
-             * @param data
-             * @param reqId
+             * @param msg 消息包
+             * @param useCrypto 是否加密
              */
-            encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>): NetData
+            encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): NetData
             /**
              * 解码网络数据包，
              * @param data 
              */
             decodePkg<T>(data: NetData): IDecodePackage<T>
-            /**
-             * 获取心跳包，用于发送给后端
-             */
-            getHeartBeatPkg?(): NetData;
-            /**
-             * 获取握手请求编码数据包
-             * @param data 
-             */
-            getHandShakeReqPkg?<T>(data?: T): NetData;
-            /**
-             * 获取握手成功后回应编码数据包
-             */
-            getHandShakeAckPkg?(): NetData;
 
         }
         type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
@@ -309,6 +303,8 @@ declare global {
             reConnectCfg?: IReconnectConfig
             /**心跳间隔阈值 ,默认100*/
             heartbeatGapThreashold?: number
+            /**使用加密 */
+            useCrypto?: boolean
         }
         interface INode<ProtoKeyType = any> {
             /**网络事件处理器 */

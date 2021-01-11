@@ -10,7 +10,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
-    WS.clean();
+    server.close();
 });
 
 test("init NetNode", () => {
@@ -38,7 +38,7 @@ test("init NetNode", () => {
     expect(netNode.socket).toBeDefined();
     expect(netNode.socket["_eventHandler"]).toBeDefined();
 })
-test("connect socket success", async (done) => {
+test("connect server success", async (done) => {
     const netNode = new NetNode<string>();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
@@ -60,14 +60,8 @@ test("connect socket success", async (done) => {
     netNode.connect(wsUrl);
     expect(netNode.socket.state).toBe(SocketState.CONNECTING);
     await server.connected;
-    await server.nextMessage;//handshake
-    server.send(JSON.stringify(
-        {
-            type: PackageType.HANDSHAKE
-        } as enet.IPackage)
-    );
 
-})
+});
 test("connect server fail", (done) => {
     const netNode = new NetNode<string>();
     const netEventHandler: enet.INetEventHandler = {
@@ -91,6 +85,154 @@ test("connect server fail", (done) => {
     });
 
 });
+test("connect with handshake server success", async () => {
+    const netNode = new NetNode<string>();
+    const netEventHandler: enet.INetEventHandler = {
+        onError(e) {
+
+        },
+        onClosed(e) {
+
+        },
+        onConnectEnd() {
+        }
+
+
+    }
+    netNode.init({
+        netEventHandler: netEventHandler
+    });
+    netNode.connect({
+        url: wsUrl,
+        handShakeReq: {}
+    });
+    expect(netNode.socket.state).toBe(SocketState.CONNECTING);
+    await server.connected;
+    await expect(server).toReceiveMessage(
+        JSON.stringify(
+            {
+                type: PackageType.HANDSHAKE,
+                msg: {}
+            } as enet.IPackage<enet.IHandShakeReq>
+        )
+    )
+    server.send(JSON.stringify(
+        {
+            type: PackageType.HANDSHAKE,
+            msg: { sys: { heartbeat: 0, hbTimeOut: 0 } } as enet.IHandShakeRes
+
+        } as enet.IPackage)
+    );
+    await expect(server).toReceiveMessage(
+        JSON.stringify(
+            {
+                type: PackageType.HANDSHAKE_ACK
+            } as enet.IPackage
+        )
+    );
+
+})
+test("send heartbeat to server success", async (done) => {
+    const heartbeatSvr = new WS("ws://localhost:4321");
+    const netNode = new NetNode<string>();
+    const netEventHandler: enet.INetEventHandler = {
+        onError(e) {
+
+        },
+        onClosed(e) {
+
+        },
+        onConnectEnd() {
+        }
+
+
+    }
+    netNode.init({
+        netEventHandler: netEventHandler
+    });
+    netNode.connect({
+        url: "ws://localhost:4321",
+        handShakeReq: {}
+    });
+    expect(netNode.socket.state).toBe(SocketState.CONNECTING);
+    await heartbeatSvr.connected;
+    await expect(heartbeatSvr).toReceiveMessage(
+        JSON.stringify(
+            {
+                type: PackageType.HANDSHAKE,
+                msg: {}
+            } as enet.IPackage<enet.IHandShakeReq>
+        )
+    )
+    heartbeatSvr.send(JSON.stringify(
+        {
+            type: PackageType.HANDSHAKE,
+            msg: {
+                sys: { heartbeat: 0.2, hbTimeOut: 0.4 }
+            } as enet.IHandShakeRes
+
+        } as enet.IPackage)
+    );
+    await expect(heartbeatSvr).toReceiveMessage(
+        JSON.stringify(
+            {
+                type: PackageType.HANDSHAKE_ACK
+            } as enet.IPackage
+        )
+    );
+
+    expect(netNode["_heartbeatConfig"].heartbeatInterval).toBe(Math.floor(0.2 * 1000));
+
+    expect(netNode["_heartbeatConfig"].heartbeatTimeout).toBe(Math.floor(0.4 * 1000));
+
+    heartbeatSvr.send(
+        JSON.stringify(
+            {
+                type: PackageType.HEARTBEAT
+            } as enet.IPackage
+        )
+    );
+
+    await expect(heartbeatSvr).toReceiveMessage(JSON.stringify(
+        {
+            type: PackageType.HEARTBEAT
+        } as enet.IPackage));
+    netNode.disConnect();
+    expect(netNode["_heartbeatTimeId"]).toBeUndefined();
+    expect(netNode["_heartbeatTimeoutId"]).toBeUndefined();
+
+    heartbeatSvr.close();
+    done();
+
+})
+test("server kick client", async function (done) {
+    const netNode = new NetNode<string>();
+    const netEventHandler: enet.INetEventHandler = {
+        onError(e) {
+
+        },
+        onClosed(e) {
+            done();
+        },
+        onConnectEnd() {
+        },
+        onKick() {
+            netNode.disConnect();
+        }
+
+
+    }
+    netNode.init({
+        netEventHandler: netEventHandler
+    });
+    netNode.connect(wsUrl);
+    expect(netNode.socket.state).toBe(SocketState.CONNECTING);
+    await server.connected;
+    server.send(JSON.stringify({
+        type: PackageType.KICK
+
+    } as enet.IPackage))
+})
 test("request server success", async (done) => {
     const netNode = new NetNode<string>();
     const netEventHandler: enet.INetEventHandler = {
@@ -118,19 +260,13 @@ test("request server success", async (done) => {
     netNode.connect({
         url: wsUrl
     });
-    await server.connected;
-    await server.nextMessage;//hanshake
-    server.send(JSON.stringify(
-        {
-            type: PackageType.HANDSHAKE
-        } as enet.IPackage));
-    await server.nextMessage;//hanshake_ack
 
+    await server.connected;
     const receiveMsg = JSON.stringify(
         {
             type: PackageType.DATA,
             msg: {
-                key: "requesttest1", reqId: netNode["_reqId"] - 1,
+                key: "requesttest1", reqId: 1,
                 data: { testData: "requesttest1" }
             }
         } as enet.IPackage);
@@ -140,11 +276,11 @@ test("request server success", async (done) => {
         {
             type: PackageType.DATA,
             msg: {
-                key: "requesttest1", reqId: netNode["_reqId"] - 1,
+                key: "requesttest1", reqId: 1,
                 data: { testData: "responese1" }
             }
         } as enet.IPackage));
-}, 12000);
+});
 
 test("notify server success", async (done) => {
     const netNode = new NetNode<string>();
@@ -165,14 +301,8 @@ test("notify server success", async (done) => {
     netNode.connect({
         url: wsUrl
     });
-    await server.connected;
-    await server.nextMessage;
-    server.send(JSON.stringify(
-        {
-            type: PackageType.HANDSHAKE
-        } as enet.IPackage));
-    await server.nextMessage;//hanshake_ack
-    expect(server).toHaveReceivedMessages([
+
+    await expect(server).toReceiveMessage(
         JSON.stringify(
             {
                 type: PackageType.DATA,
@@ -181,7 +311,7 @@ test("notify server success", async (done) => {
                     data: { testData: "notify_test" }
                 }
             } as enet.IPackage
-        )]
+        )
     );
     netNode.disConnect();
     done();
@@ -189,7 +319,6 @@ test("notify server success", async (done) => {
 });
 test("onPush server success", async (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
@@ -205,7 +334,6 @@ test("onPush server success", async (done) => {
 
     }
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
     const onTestPush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
@@ -234,17 +362,15 @@ test("onPush server success", async (done) => {
         url: wsUrl
     });
     await server.connected;
-    await server.nextMessage;
     server.send(JSON.stringify(
         {
-            type: PackageType.HANDSHAKE
-        } as enet.IPackage));
-    await server.nextMessage;//hanshake_ack
-    server.send(JSON.stringify({ key: "onPushtest", msg: { data: { testData: "onPushtest" } } }));
+            type: PackageType.DATA,
+            msg: { key: "onPushtest", data: { testData: "onPushtest" } }
+        } as enet.IPackage
+    ));
 });
 test("oncePush server success", async (done) => {
     const netNode = new NetNode<string>();
-    const webSocket = new WSocket();
     const netEventHandler: enet.INetEventHandler = {
         onError(e) {
 
@@ -254,14 +380,12 @@ test("oncePush server success", async (done) => {
 
         },
         onConnectEnd() {
-            netNode.notify("oncePushtest", { testData: "oncePushtest" });
 
         }
 
 
     }
     netNode.init({
-        socket: webSocket,
         netEventHandler: netEventHandler
     });
     const onTestOncePush: enet.ValueCallback<enet.IDecodePackage<{ testData: string }>> = (data) => {
@@ -283,7 +407,13 @@ test("oncePush server success", async (done) => {
         url: wsUrl
     });
     await server.connected;
-    server.send(JSON.stringify({ key: "oncePushtest", msg: { data: { testData: "oncePushtest" } } }))
+
+    server.send(JSON.stringify(
+        {
+            type: PackageType.DATA,
+            msg: { key: "oncePushtest", data: { testData: "oncePushtest" } } as enet.IMessage
+        } as enet.IPackage
+    ))
 });
 test("offPush success", (done) => {
     const netNode = new NetNode<string>();
@@ -471,9 +601,16 @@ test("send message on netNode connecting", async (done) => {
     await server.connected
     // netNode.notify("testNotify", { testData: "testNotify" });
 
-    await server.closed
+    await server.closed;
 
-    await expect(server).toReceiveMessage(JSON.stringify({ key: "testNotify", msg: { data: { testData: "testNotify" } } }));
+    await expect(server).toReceiveMessage(
+        JSON.stringify(
+            {
+                type: PackageType.DATA,
+                msg: { key: "testNotify", data: { testData: "testNotify" } }
+            } as enet.IPackage
+        )
+    );
     done();
 
 })
