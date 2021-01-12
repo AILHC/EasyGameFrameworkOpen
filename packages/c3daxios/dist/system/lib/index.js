@@ -219,8 +219,8 @@ System.register('c3daxios', [], function (exports) {
        */
       function isStandardBrowserEnv() {
         if (typeof navigator !== 'undefined' && (navigator.product === 'ReactNative' ||
-                                                 navigator.product === 'NativeScript' ||
-                                                 navigator.product === 'NS')) {
+          navigator.product === 'NativeScript' ||
+          navigator.product === 'NS')) {
           return false;
         }
         return (
@@ -589,7 +589,7 @@ System.register('c3daxios', [], function (exports) {
       var cookies = (
         utils.isStandardBrowserEnv() ?
 
-        // Standard browser envs support document.cookie
+          // Standard browser envs support document.cookie
           (function standardBrowserEnv() {
             return {
               write: function write(name, value, expires, path, domain, secure) {
@@ -626,12 +626,12 @@ System.register('c3daxios', [], function (exports) {
             };
           })() :
 
-        // Non standard browser env (web workers, react-native) lack needed support.
+          // Non standard browser env (web workers, react-native) lack needed support.
           (function nonStandardBrowserEnv() {
             return {
-              write: function write() {},
+              write: function write() { },
               read: function read() { return null; },
-              remove: function remove() {}
+              remove: function remove() { }
             };
           })()
       );
@@ -731,8 +731,8 @@ System.register('c3daxios', [], function (exports) {
       var isURLSameOrigin = (
         utils.isStandardBrowserEnv() ?
 
-        // Standard browser envs have full support of the APIs needed to test
-        // whether the request URL is of the same origin as current location.
+          // Standard browser envs have full support of the APIs needed to test
+          // whether the request URL is of the same origin as current location.
           (function standardBrowserEnv() {
             var msie = /(msie|trident)/i.test(navigator.userAgent);
             var urlParsingNode = document.createElement('a');
@@ -748,7 +748,7 @@ System.register('c3daxios', [], function (exports) {
               var href = url;
 
               if (msie) {
-              // IE needs attribute set twice to normalize properties
+                // IE needs attribute set twice to normalize properties
                 urlParsingNode.setAttribute('href', href);
                 href = urlParsingNode.href;
               }
@@ -781,11 +781,11 @@ System.register('c3daxios', [], function (exports) {
             return function isURLSameOrigin(requestURL) {
               var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
               return (parsed.protocol === originURL.protocol &&
-                  parsed.host === originURL.host);
+                parsed.host === originURL.host);
             };
           })() :
 
-        // Non standard browser envs (web workers, react-native) lack needed support.
+          // Non standard browser envs (web workers, react-native) lack needed support.
           (function nonStandardBrowserEnv() {
             return function isURLSameOrigin() {
               return true;
@@ -1279,7 +1279,7 @@ System.register('c3daxios', [], function (exports) {
       // Provide aliases for supported request methods
       utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
         /*eslint func-names:0*/
-        Axios.prototype[method] = function(url, config) {
+        Axios.prototype[method] = function (url, config) {
           return this.request(mergeConfig(config || {}, {
             method: method,
             url: url,
@@ -1290,7 +1290,7 @@ System.register('c3daxios', [], function (exports) {
 
       utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
         /*eslint func-names:0*/
-        Axios.prototype[method] = function(url, data, config) {
+        Axios.prototype[method] = function (url, data, config) {
           return this.request(mergeConfig(config || {}, {
             method: method,
             url: url,
