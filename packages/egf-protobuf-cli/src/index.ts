@@ -148,20 +148,23 @@ export async function generate(projRootDir: string) {
         }
     }
     if (!pbconfig.concatPbjsLib) {
-        const pbjsLibOutFile = path.join(projRootDir, pbconfig.pbjsLibDir, "protobuf-library.min.js");
-        const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
-        if (!isPbjsLibExit) {
-            const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
-            const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
-            if (!isPbjsLibDirExit) {
-                await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
-                    console.log(res);
-                });
+        if (pbconfig.pbjsLibDir) {
+            const pbjsLibOutFile = path.join(projRootDir, pbconfig.pbjsLibDir, "protobuf-library.min.js");
+            const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
+            if (!isPbjsLibExit) {
+                const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
+                const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
+                if (!isPbjsLibDirExit) {
+                    await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
+                        console.log(res);
+                    });
+                }
+                console.log("[egf-protobuf]写入protobufjs库文件");
+                await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
+                console.log("[egf-protobuf]写入客户端的protobufjs库文件");
             }
-            console.log("[egf-protobuf]写入protobufjs库文件");
-            await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
-            console.log("[egf-protobuf]写入客户端的protobufjs库文件");
         }
+
     }
 
     const dtsOut = path.join(projRootDir, pbconfig.dtsOutDir, pbconfig.outFileName + ".d.ts");

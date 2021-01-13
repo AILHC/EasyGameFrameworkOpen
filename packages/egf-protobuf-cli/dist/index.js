@@ -246,6 +246,7 @@ function generate(projRootDir) {
                     _a.label = 24;
                 case 24:
                     if (!!pbconfig.concatPbjsLib) return [3 /*break*/, 30];
+                    if (!pbconfig.pbjsLibDir) return [3 /*break*/, 30];
                     pbjsLibOutFile = path.join(projRootDir, pbconfig.pbjsLibDir, "protobuf-library.min.js");
                     return [4 /*yield*/, fs.existsAsync(pbjsLibOutFile)];
                 case 25:

@@ -28,7 +28,7 @@ declare type EgfProtobufConfig = {
     },
     /**是否合并protobufjs库 */
     concatPbjsLib: boolean
-    /**pbjs库输出文件夹,concatPbjsLib为true时有效 */
+    /**pbjs库输出文件夹,concatPbjsLib为true时有效，不填就不输出 */
     pbjsLibDir?: string
     /**输出protojs文件类型  0 全部（js和.min.js）1(js) 2(.min.js)*/
     outputFileType: 0 | 1 | 2,
