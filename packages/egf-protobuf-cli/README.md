@@ -102,6 +102,8 @@ declare type EgfProtobufConfig = {
 
 
 ## 更新日志
+### 1.3.1
+1. pbjsLibDir填空则不输出 库文件
 ### 1.3.0
 1. 优化项目初始化逻辑
 2. 优化配置文件配置体验(由json配置改为js配置，并提供类型提示)
