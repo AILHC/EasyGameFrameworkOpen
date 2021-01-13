@@ -1,6 +1,21 @@
 import { } from "@ailhc/enet";
 import { PackageType } from "@ailhc/enet/src/pkg-type";
 import { Byte } from "./byte";
+declare global {
+    interface IHandShakeReq {
+        sys?: {
+            /**客户端类型 */
+            type?: number | string
+            /**客户端版本 */
+            version?: number | string,
+            /**协议版本 */
+            protoVersion?: number | string
+            /**rsa 校验 */
+            rsa?: any
+        }
+        user?: any
+    }
+}
 interface IPbProtoIns {
     /**
      * 编码
@@ -41,6 +56,11 @@ export class PbProtoHandler implements enet.IProtoHandler {
             pkgTypeProtoKeyMap[pkgTypeProtoKeyMap[key]] = key;
         }
     }
+    private _heartbeatCfg: enet.IHeartBeatConfig;
+    public get heartbeatConfig(): enet.IHeartBeatConfig {
+        return this._heartbeatCfg;
+    };
+
     protoKey2Key(protoKey: string): string {
         return protoKey;
     }

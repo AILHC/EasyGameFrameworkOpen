@@ -3,28 +3,28 @@ import { SocketState } from "./socketStateType";
 import { WSocket } from "./wsocket";
 
 export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
-    public get netEventHandler(): enet.INetEventHandler<any> {
-        return this._netEventHandler
-    }
-    public get protoHandler(): enet.IProtoHandler<any> {
-        return this._protoHandler;
-    };
-
-    public get socket(): enet.ISocket {
-        return this._socket;
-    };
+    
     /**
      * 套接字实现
      */
     protected _socket: enet.ISocket;
+    public get socket(): enet.ISocket {
+        return this._socket;
+    };
     /**
      * 网络事件处理器
      */
     protected _netEventHandler: enet.INetEventHandler;
+    public get netEventHandler(): enet.INetEventHandler<any> {
+        return this._netEventHandler
+    }
     /**
      * 协议处理器
      */
     protected _protoHandler: enet.IProtoHandler;
+    public get protoHandler(): enet.IProtoHandler<any> {
+        return this._protoHandler;
+    };
     /**
      * 当前重连次数
      */
@@ -306,15 +306,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         this._netEventHandler.onConnectEnd && this._netEventHandler.onConnectEnd(connectOpt);
     }
     protected _handshakeInit(dpkg: enet.IDecodePackage) {
-        const data = dpkg.data as enet.IHandShakeRes;
-        const heartbeatCfg: enet.IHeartBeatConfig = {} as any;
-        if (data && data.sys && data.sys.heartbeat) {
-            heartbeatCfg.heartbeatInterval = Math.floor(data.sys.heartbeat * 1000);   // heartbeat interval
-            heartbeatCfg.heartbeatTimeout = Math.floor(isNaN(data.sys.hbTimeOut) ? data.sys.heartbeat * 2 : data.sys.hbTimeOut * 1000);        // max heartbeat timeout
-        } else {
-            heartbeatCfg.heartbeatInterval = 0;
-            heartbeatCfg.heartbeatTimeout = 0;
-        }
+
+        const heartbeatCfg = this.protoHandler.heartbeatConfig;
+
         this._heartbeatConfig = heartbeatCfg;
     }
     protected _heartbeatTimeoutId: number;
@@ -412,7 +406,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
             const connectOpt = this._connectOpt;
             const protoHandler = this._protoHandler;
             if (protoHandler && connectOpt.handShakeReq) {
-                const handShakeNetData = protoHandler.encodePkg<enet.IHandShakeReq>({ type: PackageType.HANDSHAKE, msg: connectOpt.handShakeReq });
+                const handShakeNetData = protoHandler.encodePkg({ type: PackageType.HANDSHAKE, msg: connectOpt.handShakeReq });
                 this.send(handShakeNetData);
             } else {
                 connectOpt.connectEnd && connectOpt.connectEnd();
@@ -496,6 +490,10 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
 }
 class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyType> {
+    private _heartbeatCfg: enet.IHeartBeatConfig;
+    public get heartbeatConfig(): enet.IHeartBeatConfig {
+        return this._heartbeatCfg;
+    }
     encodePkg(pkg: enet.IPackage<any>, useCrypto?: boolean): enet.NetData {
         return JSON.stringify(pkg)
     }
@@ -507,17 +505,20 @@ class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyTy
     }
     decodePkg(data: enet.NetData): enet.IDecodePackage<any> {
         const parsedData: { type: number, msg: any } = JSON.parse(data as string);
-
+        const pkgType = parsedData.type;
+        
         if (parsedData.type === PackageType.DATA) {
             const msg: enet.IMessage = parsedData.msg;
             return {
-                key: msg && msg.key, type: PackageType.DATA,
+                key: msg && msg.key, type: pkgType,
                 data: msg.data, reqId: parsedData.msg && parsedData.msg.reqId
             } as enet.IDecodePackage;
         } else {
-
+            if (pkgType === PackageType.HANDSHAKE) {
+                this._heartbeatCfg = parsedData.msg;
+            }
             return {
-                type: parsedData.type,
+                type: pkgType,
                 data: parsedData.msg
             } as enet.IDecodePackage;
         }
@@ -526,7 +527,6 @@ class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyTy
 
 }
 class DefaultNetEventHandler implements enet.INetEventHandler {
-    private _net: enet.INode<any>;
     onStartConnenct?(connectOpt: enet.IConnectOptions): void {
         console.log(`开始连接:${connectOpt.url}`)
     }
