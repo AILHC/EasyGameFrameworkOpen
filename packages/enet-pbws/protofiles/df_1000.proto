@@ -1,3 +1,5 @@
+syntax = "proto2";
+
 package pb_test;
 
 message ResData{
@@ -95,4 +97,15 @@ message Cs_10000001{
 
 message Sc_10000001{
     required ResData res = 1;     // 结果
+}
+
+message Cs_Handshake {
+    
+}
+
+
+message Sc_Handshake {
+    required uint32 heartbeat = 1;
+    required uint32 heartbeatTimeout = 2;
+    required ResData res = 3;
 }

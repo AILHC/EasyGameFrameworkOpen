@@ -113,13 +113,16 @@ test("connect with handshake server success", async () => {
             {
                 type: PackageType.HANDSHAKE,
                 msg: {}
-            } as enet.IPackage<enet.IHandShakeReq>
+            } as enet.IPackage
         )
     )
     server.send(JSON.stringify(
         {
             type: PackageType.HANDSHAKE,
-            msg: { sys: { heartbeat: 0, hbTimeOut: 0 } } as enet.IHandShakeRes
+            msg: {
+                heartbeatInterval: 200,
+                heartbeatTimeout: 400
+            } as enet.IDefaultHandshakeRes
 
         } as enet.IPackage)
     );
@@ -161,15 +164,16 @@ test("send heartbeat to server success", async (done) => {
             {
                 type: PackageType.HANDSHAKE,
                 msg: {}
-            } as enet.IPackage<enet.IHandShakeReq>
+            } as enet.IPackage
         )
     )
     heartbeatSvr.send(JSON.stringify(
         {
             type: PackageType.HANDSHAKE,
             msg: {
-                sys: { heartbeat: 0.2, hbTimeOut: 0.4 }
-            } as enet.IHandShakeRes
+                heartbeatInterval: 200,
+                heartbeatTimeout: 400
+            } as enet.IDefaultHandshakeRes
 
         } as enet.IPackage)
     );

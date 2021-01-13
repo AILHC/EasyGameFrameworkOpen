@@ -14,31 +14,29 @@ test("protoHandler init", function () {
     expect(protoHandler["_protoMap"]["Cs_10000001"].encode).toBeDefined();
     expect(protoHandler["_protoMap"]["Cs_10000001"].verify).toBeDefined();
 })
-test("protoHandler encode ok", function () {
+test("protoHandler encodeMsg ok", function () {
     const protoHandler = new PbProtoHandler(pb_test);
-    const encodePkg = protoHandler.encode("Cs_10000001", { reqId: 0, data: { mg_name: "hahah", id: 2, num: 3 } });
-    expect(encodePkg).toBeDefined();
-    expect(encodePkg.data).toBeDefined();
-    expect(encodePkg.key).toBe("Cs_10000001");
-
+    const netData = protoHandler.encodeMsg({ key: "Cs_10000001", reqId: 0, data: { mg_name: "hahah", id: 2, num: 3 } });
+    expect(netData).toBeDefined();
 });
 
-test("protoHandler encode fail", function () {
+test("protoHandler encodeMsg fail", function () {
     const protoHandler = new PbProtoHandler(pb_test);
-    const encodePkg = protoHandler.encode("Cs_10000001", { reqId: 0, data: { mg_name: 1, id: "2" } });
+    const encodePkg = protoHandler.encodeMsg({ key: "Cs_10000001", reqId: 0, data: { mg_name: 1, id: "2" } });
     expect(encodePkg).toBeUndefined();
 
 });
 
-test("protoHandler decode ok", function () {
+test("protoHandler decodePkg ok", function () {
     const protoHandler = new PbProtoHandler(pb_test);
-    const encodePkg = protoHandler.encode("Sc_10000001", { reqId: 0, data: { res: { result: 1 } } });
-    const decodePkg = protoHandler.decode(encodePkg.data);
+    const encodeData = protoHandler.encodeMsg({ key: "Sc_10000001", reqId: 0, data: { res: { result: 1 } } });
+    const decodePkg = protoHandler.decodePkg<pb_test.Sc_10000001>(encodeData);
     expect(decodePkg).toBeDefined();
     expect(decodePkg.errorMsg).toBeUndefined();
     expect(decodePkg.data).toBeDefined();
     expect(decodePkg.data.res.result).toBe(1);
 })
+
 // test("request server ", async (done) => {
 //     const protoHandler = new PbProtoHandler(pb_test);
 //     const netNode = new NetNode();

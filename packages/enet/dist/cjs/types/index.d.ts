@@ -52,7 +52,7 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             */
 	            onSocketConnected?: (event: any) => void;
 	        }
-	        interface IConnectOptions {
+	        interface IConnectOptions<T = any> {
 	            url?: string;
 	            /**是否使用ssh,即 true wss,false ws */
 	            protocol?: boolean;
@@ -63,7 +63,7 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	            /**连接结束 */
 	            connectEnd?: VoidFunction;
 	            /**握手数据 */
-	            handShakeReq?: IHandShakeReq;
+	            handShakeReq?: T;
 	        }
 	        /**
 	         * 编码后的数据包
@@ -88,30 +88,13 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	            /**错误信息 */
 	            errorMsg?: string;
 	        }
-	        interface IHandShakeReq {
-	            sys?: {
-	                /**客户端类型 */
-	                type?: number | string;
-	                /**客户端版本 */
-	                version?: number | string;
-	                /**协议版本 */
-	                protoVersion?: number | string;
-	                /**rsa 校验 */
-	                rsa?: any;
-	            };
-	            user?: any;
-	        }
-	        interface IHandShakeRes {
-	            sys?: {
-	                /**心跳间隔 ,秒*/
-	                heartbeat: number;
-	                /**心跳超时 ,秒*/
-	                hbTimeOut: number;
-	            };
-	            user?: any;
+	        /**默认握手返回 */
+	        interface IDefaultHandshakeRes extends IHeartBeatConfig {
 	        }
 	        interface IHeartBeatConfig {
+	            /**心跳间隔，毫秒 */
 	            heartbeatInterval: number;
+	            /**心跳超时时间，毫秒 */
 	            heartbeatTimeout: number;
 	        }
 	        interface IProtoHandler<ProtoKeyType = any> {
@@ -137,6 +120,10 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             * @param data
 	             */
 	            decodePkg<T>(data: NetData): IDecodePackage<T>;
+	            /**
+	             * 心跳配置
+	             */
+	            heartbeatConfig: enet.IHeartBeatConfig;
 	        }
 	        type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
 	        type ValueCallback<T = any> = (data?: T, ...args: any[]) => void;
