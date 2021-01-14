@@ -2006,23 +2006,29 @@ $root.pb_test = (function() {
         return Cs_Handshake;
     })();
 
-    pb_test.Cs_Handshake_Ack = (function() {
+    pb_test.Sc_Handshake = (function() {
 
         /**
-         * Properties of a Cs_Handshake_Ack.
+         * Properties of a Sc_Handshake.
          * @memberof pb_test
-         * @interface ICs_Handshake_Ack
+         * @interface ISc_Handshake
+         * @property {number} heartbeatInterval Sc_Handshake heartbeatInterval
+         * @property {number} heartbeatTimeout Sc_Handshake heartbeatTimeout
+         * @property {number} code 返回码
+         * RES_OK 200
+         * RES_FAIL 500
+         * RES_OLD_CLIENT 501
          */
 
         /**
-         * Constructs a new Cs_Handshake_Ack.
+         * Constructs a new Sc_Handshake.
          * @memberof pb_test
-         * @classdesc Represents a Cs_Handshake_Ack.
-         * @implements ICs_Handshake_Ack
+         * @classdesc Represents a Sc_Handshake.
+         * @implements ISc_Handshake
          * @constructor
-         * @param {pb_test.ICs_Handshake_Ack=} [properties] Properties to set
+         * @param {pb_test.ISc_Handshake=} [properties] Properties to set
          */
-        function Cs_Handshake_Ack(properties) {
+        function Sc_Handshake(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -2030,73 +2036,124 @@ $root.pb_test = (function() {
         }
 
         /**
-         * Creates a new Cs_Handshake_Ack instance using the specified properties.
-         * @function create
-         * @memberof pb_test.Cs_Handshake_Ack
-         * @static
-         * @param {pb_test.ICs_Handshake_Ack=} [properties] Properties to set
-         * @returns {pb_test.Cs_Handshake_Ack} Cs_Handshake_Ack instance
+         * Sc_Handshake heartbeatInterval.
+         * @member {number} heartbeatInterval
+         * @memberof pb_test.Sc_Handshake
+         * @instance
          */
-        Cs_Handshake_Ack.create = function create(properties) {
-            return new Cs_Handshake_Ack(properties);
+        Sc_Handshake.prototype.heartbeatInterval = 0;
+
+        /**
+         * Sc_Handshake heartbeatTimeout.
+         * @member {number} heartbeatTimeout
+         * @memberof pb_test.Sc_Handshake
+         * @instance
+         */
+        Sc_Handshake.prototype.heartbeatTimeout = 0;
+
+        /**
+         * 返回码
+         * RES_OK 200
+         * RES_FAIL 500
+         * RES_OLD_CLIENT 501
+         * @member {number} code
+         * @memberof pb_test.Sc_Handshake
+         * @instance
+         */
+        Sc_Handshake.prototype.code = 0;
+
+        /**
+         * Creates a new Sc_Handshake instance using the specified properties.
+         * @function create
+         * @memberof pb_test.Sc_Handshake
+         * @static
+         * @param {pb_test.ISc_Handshake=} [properties] Properties to set
+         * @returns {pb_test.Sc_Handshake} Sc_Handshake instance
+         */
+        Sc_Handshake.create = function create(properties) {
+            return new Sc_Handshake(properties);
         };
 
         /**
-         * Encodes the specified Cs_Handshake_Ack message. Does not implicitly {@link pb_test.Cs_Handshake_Ack.verify|verify} messages.
+         * Encodes the specified Sc_Handshake message. Does not implicitly {@link pb_test.Sc_Handshake.verify|verify} messages.
          * @function encode
-         * @memberof pb_test.Cs_Handshake_Ack
+         * @memberof pb_test.Sc_Handshake
          * @static
-         * @param {pb_test.ICs_Handshake_Ack} message Cs_Handshake_Ack message or plain object to encode
+         * @param {pb_test.ISc_Handshake} message Sc_Handshake message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        Cs_Handshake_Ack.encode = function encode(message, writer) {
+        Sc_Handshake.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.heartbeatInterval);
+            writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.heartbeatTimeout);
+            writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.code);
             return writer;
         };
 
         /**
-         * Decodes a Cs_Handshake_Ack message from the specified reader or buffer.
+         * Decodes a Sc_Handshake message from the specified reader or buffer.
          * @function decode
-         * @memberof pb_test.Cs_Handshake_Ack
+         * @memberof pb_test.Sc_Handshake
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {pb_test.Cs_Handshake_Ack} Cs_Handshake_Ack
+         * @returns {pb_test.Sc_Handshake} Sc_Handshake
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        Cs_Handshake_Ack.decode = function decode(reader, length) {
+        Sc_Handshake.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Cs_Handshake_Ack();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_Handshake();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
+                case 1:
+                    message.heartbeatInterval = reader.uint32();
+                    break;
+                case 2:
+                    message.heartbeatTimeout = reader.uint32();
+                    break;
+                case 3:
+                    message.code = reader.uint32();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
                 }
             }
+            if (!message.hasOwnProperty("heartbeatInterval"))
+                throw $util.ProtocolError("missing required 'heartbeatInterval'", { instance: message });
+            if (!message.hasOwnProperty("heartbeatTimeout"))
+                throw $util.ProtocolError("missing required 'heartbeatTimeout'", { instance: message });
+            if (!message.hasOwnProperty("code"))
+                throw $util.ProtocolError("missing required 'code'", { instance: message });
             return message;
         };
 
         /**
-         * Verifies a Cs_Handshake_Ack message.
+         * Verifies a Sc_Handshake message.
          * @function verify
-         * @memberof pb_test.Cs_Handshake_Ack
+         * @memberof pb_test.Sc_Handshake
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        Cs_Handshake_Ack.verify = function verify(message) {
+        Sc_Handshake.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
+            if (!$util.isInteger(message.heartbeatInterval))
+                return "heartbeatInterval: integer expected";
+            if (!$util.isInteger(message.heartbeatTimeout))
+                return "heartbeatTimeout: integer expected";
+            if (!$util.isInteger(message.code))
+                return "code: integer expected";
             return null;
         };
 
-        return Cs_Handshake_Ack;
+        return Sc_Handshake;
     })();
 
     pb_test.Heartbeat = (function() {
@@ -2192,29 +2249,24 @@ $root.pb_test = (function() {
         return Heartbeat;
     })();
 
-    pb_test.Sc_Handshake = (function() {
+    pb_test.Kick = (function() {
 
         /**
-         * Properties of a Sc_Handshake.
+         * Properties of a Kick.
          * @memberof pb_test
-         * @interface ISc_Handshake
-         * @property {number} heartbeat Sc_Handshake heartbeat
-         * @property {number} heartbeatTimeout Sc_Handshake heartbeatTimeout
-         * @property {number} code 返回码
-         * RES_OK 200
-         * RES_FAIL 500
-         * RES_OLD_CLIENT 501
+         * @interface IKick
+         * @property {number} code Kick code
          */
 
         /**
-         * Constructs a new Sc_Handshake.
+         * Constructs a new Kick.
          * @memberof pb_test
-         * @classdesc Represents a Sc_Handshake.
-         * @implements ISc_Handshake
+         * @classdesc Represents a Kick.
+         * @implements IKick
          * @constructor
-         * @param {pb_test.ISc_Handshake=} [properties] Properties to set
+         * @param {pb_test.IKick=} [properties] Properties to set
          */
-        function Sc_Handshake(properties) {
+        function Kick(properties) {
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -2222,87 +2274,60 @@ $root.pb_test = (function() {
         }
 
         /**
-         * Sc_Handshake heartbeat.
-         * @member {number} heartbeat
-         * @memberof pb_test.Sc_Handshake
-         * @instance
-         */
-        Sc_Handshake.prototype.heartbeat = 0;
-
-        /**
-         * Sc_Handshake heartbeatTimeout.
-         * @member {number} heartbeatTimeout
-         * @memberof pb_test.Sc_Handshake
-         * @instance
-         */
-        Sc_Handshake.prototype.heartbeatTimeout = 0;
-
-        /**
-         * 返回码
-         * RES_OK 200
-         * RES_FAIL 500
-         * RES_OLD_CLIENT 501
+         * Kick code.
          * @member {number} code
-         * @memberof pb_test.Sc_Handshake
+         * @memberof pb_test.Kick
          * @instance
          */
-        Sc_Handshake.prototype.code = 0;
+        Kick.prototype.code = 0;
 
         /**
-         * Creates a new Sc_Handshake instance using the specified properties.
+         * Creates a new Kick instance using the specified properties.
          * @function create
-         * @memberof pb_test.Sc_Handshake
+         * @memberof pb_test.Kick
          * @static
-         * @param {pb_test.ISc_Handshake=} [properties] Properties to set
-         * @returns {pb_test.Sc_Handshake} Sc_Handshake instance
+         * @param {pb_test.IKick=} [properties] Properties to set
+         * @returns {pb_test.Kick} Kick instance
          */
-        Sc_Handshake.create = function create(properties) {
-            return new Sc_Handshake(properties);
+        Kick.create = function create(properties) {
+            return new Kick(properties);
         };
 
         /**
-         * Encodes the specified Sc_Handshake message. Does not implicitly {@link pb_test.Sc_Handshake.verify|verify} messages.
+         * Encodes the specified Kick message. Does not implicitly {@link pb_test.Kick.verify|verify} messages.
          * @function encode
-         * @memberof pb_test.Sc_Handshake
+         * @memberof pb_test.Kick
          * @static
-         * @param {pb_test.ISc_Handshake} message Sc_Handshake message or plain object to encode
+         * @param {pb_test.IKick} message Kick message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        Sc_Handshake.encode = function encode(message, writer) {
+        Kick.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.heartbeat);
-            writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.heartbeatTimeout);
-            writer.uint32(/* id 3, wireType 0 =*/24).uint32(message.code);
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.code);
             return writer;
         };
 
         /**
-         * Decodes a Sc_Handshake message from the specified reader or buffer.
+         * Decodes a Kick message from the specified reader or buffer.
          * @function decode
-         * @memberof pb_test.Sc_Handshake
+         * @memberof pb_test.Kick
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {pb_test.Sc_Handshake} Sc_Handshake
+         * @returns {pb_test.Kick} Kick
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        Sc_Handshake.decode = function decode(reader, length) {
+        Kick.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Sc_Handshake();
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.Kick();
             while (reader.pos < end) {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.heartbeat = reader.uint32();
-                    break;
-                case 2:
-                    message.heartbeatTimeout = reader.uint32();
-                    break;
-                case 3:
                     message.code = reader.uint32();
                     break;
                 default:
@@ -2310,36 +2335,28 @@ $root.pb_test = (function() {
                     break;
                 }
             }
-            if (!message.hasOwnProperty("heartbeat"))
-                throw $util.ProtocolError("missing required 'heartbeat'", { instance: message });
-            if (!message.hasOwnProperty("heartbeatTimeout"))
-                throw $util.ProtocolError("missing required 'heartbeatTimeout'", { instance: message });
             if (!message.hasOwnProperty("code"))
                 throw $util.ProtocolError("missing required 'code'", { instance: message });
             return message;
         };
 
         /**
-         * Verifies a Sc_Handshake message.
+         * Verifies a Kick message.
          * @function verify
-         * @memberof pb_test.Sc_Handshake
+         * @memberof pb_test.Kick
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        Sc_Handshake.verify = function verify(message) {
+        Kick.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (!$util.isInteger(message.heartbeat))
-                return "heartbeat: integer expected";
-            if (!$util.isInteger(message.heartbeatTimeout))
-                return "heartbeatTimeout: integer expected";
             if (!$util.isInteger(message.code))
                 return "code: integer expected";
             return null;
         };
 
-        return Sc_Handshake;
+        return Kick;
     })();
 
     pb_test.Pt_HeroMsg = (function() {
