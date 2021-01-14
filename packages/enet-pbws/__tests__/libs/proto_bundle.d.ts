@@ -806,6 +806,224 @@ declare namespace pb_test {
         public static verify(message: { [k: string]: any }): (string|null);
     }
 
+    /** Properties of a Cs_Handshake. */
+    interface ICs_Handshake {
+
+        /** Cs_Handshake ver */
+        ver: string;
+    }
+
+    /** Represents a Cs_Handshake. */
+    class Cs_Handshake implements ICs_Handshake {
+
+        /**
+         * Constructs a new Cs_Handshake.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pb_test.ICs_Handshake);
+
+        /** Cs_Handshake ver. */
+        public ver: string;
+
+        /**
+         * Creates a new Cs_Handshake instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Cs_Handshake instance
+         */
+        public static create(properties?: pb_test.ICs_Handshake): pb_test.Cs_Handshake;
+
+        /**
+         * Encodes the specified Cs_Handshake message. Does not implicitly {@link pb_test.Cs_Handshake.verify|verify} messages.
+         * @param message Cs_Handshake message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pb_test.ICs_Handshake, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
+         * Decodes a Cs_Handshake message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Cs_Handshake
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Cs_Handshake;
+
+        /**
+         * Verifies a Cs_Handshake message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+    }
+
+    /** Properties of a Cs_Handshake_Ack. */
+    interface ICs_Handshake_Ack {
+    }
+
+    /** Represents a Cs_Handshake_Ack. */
+    class Cs_Handshake_Ack implements ICs_Handshake_Ack {
+
+        /**
+         * Constructs a new Cs_Handshake_Ack.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pb_test.ICs_Handshake_Ack);
+
+        /**
+         * Creates a new Cs_Handshake_Ack instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Cs_Handshake_Ack instance
+         */
+        public static create(properties?: pb_test.ICs_Handshake_Ack): pb_test.Cs_Handshake_Ack;
+
+        /**
+         * Encodes the specified Cs_Handshake_Ack message. Does not implicitly {@link pb_test.Cs_Handshake_Ack.verify|verify} messages.
+         * @param message Cs_Handshake_Ack message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pb_test.ICs_Handshake_Ack, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
+         * Decodes a Cs_Handshake_Ack message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Cs_Handshake_Ack
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Cs_Handshake_Ack;
+
+        /**
+         * Verifies a Cs_Handshake_Ack message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+    }
+
+    /** Properties of a Heartbeat. */
+    interface IHeartbeat {
+    }
+
+    /** Represents a Heartbeat. */
+    class Heartbeat implements IHeartbeat {
+
+        /**
+         * Constructs a new Heartbeat.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pb_test.IHeartbeat);
+
+        /**
+         * Creates a new Heartbeat instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Heartbeat instance
+         */
+        public static create(properties?: pb_test.IHeartbeat): pb_test.Heartbeat;
+
+        /**
+         * Encodes the specified Heartbeat message. Does not implicitly {@link pb_test.Heartbeat.verify|verify} messages.
+         * @param message Heartbeat message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pb_test.IHeartbeat, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
+         * Decodes a Heartbeat message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Heartbeat
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Heartbeat;
+
+        /**
+         * Verifies a Heartbeat message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+    }
+
+    /** Properties of a Sc_Handshake. */
+    interface ISc_Handshake {
+
+        /** Sc_Handshake heartbeat */
+        heartbeat: number;
+
+        /** Sc_Handshake heartbeatTimeout */
+        heartbeatTimeout: number;
+
+        /**
+         * 返回码
+         * RES_OK 200
+         * RES_FAIL 500
+         * RES_OLD_CLIENT 501
+         */
+        code: number;
+    }
+
+    /** Represents a Sc_Handshake. */
+    class Sc_Handshake implements ISc_Handshake {
+
+        /**
+         * Constructs a new Sc_Handshake.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pb_test.ISc_Handshake);
+
+        /** Sc_Handshake heartbeat. */
+        public heartbeat: number;
+
+        /** Sc_Handshake heartbeatTimeout. */
+        public heartbeatTimeout: number;
+
+        /**
+         * 返回码
+         * RES_OK 200
+         * RES_FAIL 500
+         * RES_OLD_CLIENT 501
+         */
+        public code: number;
+
+        /**
+         * Creates a new Sc_Handshake instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns Sc_Handshake instance
+         */
+        public static create(properties?: pb_test.ISc_Handshake): pb_test.Sc_Handshake;
+
+        /**
+         * Encodes the specified Sc_Handshake message. Does not implicitly {@link pb_test.Sc_Handshake.verify|verify} messages.
+         * @param message Sc_Handshake message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pb_test.ISc_Handshake, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
+         * Decodes a Sc_Handshake message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns Sc_Handshake
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.Sc_Handshake;
+
+        /**
+         * Verifies a Sc_Handshake message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+    }
+
     /** Properties of a Pt_HeroMsg. */
     interface IPt_HeroMsg {
 

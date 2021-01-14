@@ -1,7 +1,7 @@
 import { NetNode } from "@ailhc/enet";
 import WS from "jest-websocket-mock"
 import { PbProtoHandler } from "../src";
-const wsUrl = "ws://localhost:1234";
+require("../protobuf/library/protobuf-library.js")
 require("./protojs/proto_bundle.js")
 test("pb_test is defined", function () {
     expect(pb_test).toBeDefined();
