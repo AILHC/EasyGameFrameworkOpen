@@ -32,7 +32,7 @@ test("protoHandler decodePkg ok", function () {
     const encodeData = protoHandler.encodeMsg({ key: "Sc_10000001", reqId: 0, data: { res: { result: 1 } } });
     const decodePkg = protoHandler.decodePkg<pb_test.Sc_10000001>(encodeData);
     expect(decodePkg).toBeDefined();
-    expect(decodePkg.errorMsg).toBeUndefined();
+    expect(decodePkg.errorMsg).toBeNull();
     expect(decodePkg.data).toBeDefined();
     expect(decodePkg.data.res.result).toBe(1);
 })

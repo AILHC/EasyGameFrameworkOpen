@@ -103,14 +103,8 @@ message Sc_10000001{
 message Cs_Handshake {
     required string ver = 1;
 }
-message Cs_Handshake_Ack {
-    
-}
-message Heartbeat {
-
-}
 message Sc_Handshake {
-    required uint32 heartbeat = 1;
+    required uint32 heartbeatInterval = 1;
     required uint32 heartbeatTimeout = 2;
     /**
     返回码
@@ -119,4 +113,10 @@ message Sc_Handshake {
     RES_OLD_CLIENT 501
      */
     required uint32 code = 3;
+}
+message Heartbeat {
+
+}
+message Kick {
+    required uint32 code = 1;
 }
