@@ -64,7 +64,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
     protoKey2Key(protoKey: string): string {
         return protoKey;
     }
-    protected _encodeData(protoKey: string, data: any, reqId?: number): enet.NetData {
+    protected _encodeData(pkgType: number, protoKey: string, data: any, reqId?: number): enet.NetData {
         const byteUtil = this._byteUtil;
         const proto = this._protoMap[protoKey];
         let netData: enet.NetData;
@@ -77,7 +77,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
                 const buf = proto.encode(data).finish();
                 byteUtil.clear();
                 byteUtil.endian = Byte.LITTLE_ENDIAN;
-
+                byteUtil.writeUint32(pkgType);
                 byteUtil.writeUTFString(protoKey);
                 byteUtil.writeUint8Array(buf);
                 if (!isNaN(reqId)) {
@@ -95,17 +95,20 @@ export class PbProtoHandler implements enet.IProtoHandler {
         let netData: enet.NetData;
         if (pkg.type === PackageType.DATA) {
             const msg: enet.IMessage = pkg.msg as any;
-            netData = this._encodeData(msg.key, msg.data, msg.reqId)
+            netData = this.encodeMsg(msg)
         } else {
+            if (pkg.type === PackageType.HANDSHAKE_ACK || pkg.type === PackageType.HEARTBEAT) {
+                pkg.msg = {} as any;
+            }
             const protoKey = this._pkgTypeProtoKeyMap[pkg.type];
             if (protoKey) {
-                netData = this._encodeData(protoKey, pkg.msg);
+                netData = this._encodeData(pkg.type, protoKey, pkg.msg);
             }
         }
         return netData;
     }
     encodeMsg<T>(msg: enet.IMessage<T, any>, useCrypto?: boolean): enet.NetData {
-        return this._encodeData(msg.key, msg.data, msg.reqId);
+        return this._encodeData(PackageType.DATA, msg.key, msg.data, msg.reqId);
     }
     decodePkg<T>(data: enet.NetData): enet.IDecodePackage<T> {
         const byteUtil = this._byteUtil;
@@ -118,6 +121,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
         }
         //位置归零，用于读数据
         byteUtil.pos = 0;
+        const pkgType = byteUtil.readUint32();
         const protoKey = byteUtil.readUTFString();
         const dataBytes = byteUtil.readUint8Array(byteUtil.pos, byteUtil.length);
         const reqId = byteUtil.readUint32NoError();
@@ -141,7 +145,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
             } else {
                 decodePkg.data = decodeData;
             }
-            decodePkg.type = this._pkgTypeProtoKeyMap[protoKey];
+            decodePkg.type = pkgType;
 
         }
         return decodePkg;

@@ -99,13 +99,24 @@ message Sc_10000001{
     required ResData res = 1;     // 结果
 }
 
+
 message Cs_Handshake {
+    required string ver = 1;
+}
+message Cs_Handshake_Ack {
     
 }
+message Heartbeat {
 
-
+}
 message Sc_Handshake {
     required uint32 heartbeat = 1;
     required uint32 heartbeatTimeout = 2;
-    required ResData res = 3;
+    /**
+    返回码
+    RES_OK 200 
+    RES_FAIL 500 
+    RES_OLD_CLIENT 501
+     */
+    required uint32 code = 3;
 }
