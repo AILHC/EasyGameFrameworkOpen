@@ -14,10 +14,11 @@
     "sourceMap": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
+    "esModuleInterop": false,
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "removeComments": false,
+    "noEmitOnError": false,
     "outDir": "./bin"
   }
 }

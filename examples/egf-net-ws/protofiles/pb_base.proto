@@ -1,0 +1,37 @@
+package pb_test;
+
+message HeartBeat {
+    
+}
+message Kick {
+
+}
+message Cs_Login {
+    required string name = 1;
+}
+message Sc_Login {
+    required uint32 uid = 1;
+}
+
+message Sc_userEnter {
+    required string name = 1;
+    required string uid = 2;
+
+}
+
+message Sc_userLeave {
+    required string uid = 2;
+
+}
+
+message ChatMsg {
+    required uint32 uid = 1;
+    required string msg = 2;
+}
+message Cs_SendMsg {
+    required ChatMsg msg = 1;
+}
+message Sc_Msg {
+    required ChatMsg msg =1;
+}
+

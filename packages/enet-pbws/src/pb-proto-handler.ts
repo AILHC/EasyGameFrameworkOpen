@@ -1,6 +1,7 @@
 import { } from "@ailhc/enet";
-import { PackageType } from "@ailhc/enet/src/pkg-type";
+import { PackageType } from "./pkg-type";
 import { Byte } from "./byte";
+
 declare global {
     interface IHandShakeReq {
         sys?: {

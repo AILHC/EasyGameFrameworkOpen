@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
   "devDependencies": {
-    "egf-protobuf": "1.3.1",
+    "egf-protobuf": "1.3.2",
     "@ailhc/egf-cli": "1.0.3",
     "@ailhc/enet": "0.0.1",
     "jest": "^25.3.0",

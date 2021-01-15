@@ -22,7 +22,7 @@
   },
   "exclude": [
     "dist",
-    "old"
+    "protobuf"
   ],
 
   "dtsGenExclude": [

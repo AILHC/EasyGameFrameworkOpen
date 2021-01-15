@@ -221,7 +221,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }
 
     }
-    public notify(protoKey: ProtoKeyType, data?: any): void {
+    public notify<T>(protoKey: ProtoKeyType, data?: T): void {
         if (!this._isSocketReady()) return;
 
         const encodePkg = this._protoHandler.encodeMsg(

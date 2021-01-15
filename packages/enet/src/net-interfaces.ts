@@ -338,7 +338,7 @@ declare global {
              * @param protoKey 协议key
              * @param data 数据体
              */
-            notify(protoKey: ProtoKeyType, data?: any): void
+            notify<T>(protoKey: ProtoKeyType, data?: T): void
             /**
              * 监听推送
              * @param protoKey 
