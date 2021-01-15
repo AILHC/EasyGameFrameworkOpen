@@ -102,6 +102,9 @@ declare type EgfProtobufConfig = {
 
 
 ## 更新日志
+### 1.3.2
+1. 配置文件增加tsconfig.json提供类型提示
+
 ### 1.3.1
 1. pbjsLibDir填空则不输出 库文件
 ### 1.3.0
