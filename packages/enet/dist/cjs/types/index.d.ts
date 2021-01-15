@@ -322,7 +322,7 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             * @param protoKey 协议key
 	             * @param data 数据体
 	             */
-	            notify(protoKey: ProtoKeyType, data?: any): void;
+	            notify<T>(protoKey: ProtoKeyType, data?: T): void;
 	            /**
 	             * 监听推送
 	             * @param protoKey
@@ -398,21 +398,21 @@ declare module '@ailhc/enet/src/wsocket' {
 }
 declare module '@ailhc/enet/src/net-node' {
 	export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
-	    get netEventHandler(): enet.INetEventHandler<any>;
-	    get protoHandler(): enet.IProtoHandler<any>;
-	    get socket(): enet.ISocket;
 	    /**
 	     * 套接字实现
 	     */
 	    protected _socket: enet.ISocket;
+	    get socket(): enet.ISocket;
 	    /**
 	     * 网络事件处理器
 	     */
 	    protected _netEventHandler: enet.INetEventHandler;
+	    get netEventHandler(): enet.INetEventHandler<any>;
 	    /**
 	     * 协议处理器
 	     */
 	    protected _protoHandler: enet.IProtoHandler;
+	    get protoHandler(): enet.IProtoHandler<any>;
 	    /**
 	     * 当前重连次数
 	     */
@@ -487,7 +487,7 @@ declare module '@ailhc/enet/src/net-node' {
 	    disConnect(): void;
 	    reConnect(): void;
 	    request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>, arg?: any): void;
-	    notify(protoKey: ProtoKeyType, data?: any): void;
+	    notify<T>(protoKey: ProtoKeyType, data?: T): void;
 	    send(netData: enet.NetData): void;
 	    onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
 	    oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
@@ -545,6 +545,7 @@ declare module '@ailhc/enet/src/net-node' {
 declare module '@ailhc/enet' {
 	export * from '@ailhc/enet/src/net-interfaces';
 	export * from '@ailhc/enet/src/net-node';
+	export * from '@ailhc/enet/src/pkg-type';
 	export * from '@ailhc/enet/src/socketStateType';
 	export * from '@ailhc/enet/src/wsocket';
 

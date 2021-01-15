@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -87,7 +87,7 @@ process.on('unhandledRejection', function (reason, p) {
 });
 function generate(projRootDir) {
     return __awaiter(this, void 0, void 0, function () {
-        var pbconfigPath, pbconfig, pbjsFilePaths, clientPbjsFilePath, serverOutputConfig, serverPbjsFilePath, i, dirname, isPbjsDirExit, protoRoot, fileList, protoList, args, pbjsResult, pbjsLib, outPbj, minjs, pbjsLibOutFile, isPbjsLibExit, isPbjsLibDirName, isPbjsLibDirExit, pbjsLibOutFile, isPbjsLibExit, isPbjsLibDirName, isPbjsLibDirExit, dtsOut, isExit_dts, pbtsResult, dtsOutDirPath, isExit_dtsOutDir;
+        var pbconfigPath, pbconfig, pbjsFilePaths, clientPbjsFilePath, serverOutputConfig, serverPbjsFilePath, i, dirname, isPbjsDirExit, protoRoot, fileList, protoList, args, pbjsResult, libType, pbjsLib, outPbj, minjs, pbtsResult, clientDtsOut, dtsOutFilePaths, serverDtsOut, dtsOutFilePath, i, isExit_dts, dtsOutDirPath, isExit_dtsOutDir;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -186,10 +186,12 @@ function generate(projRootDir) {
                         })];
                 case 11:
                     pbjsResult = _a.sent();
-                    return [4 /*yield*/, fs.readFileAsync(path.join(root, 'pblib/protobuf-library.min.js')).catch(function (res) { console.log(res); })];
+                    typeof window !== "undefined" && window || typeof global !== "undefined" && global || typeof self !== "undefined" && self || this;
+                    libType = "minimal";
+                    return [4 /*yield*/, fs.readFileAsync(path.join(root, "pblib/" + libType + "/protobuf.min.js")).catch(function (res) { console.log(res); })];
                 case 12:
                     pbjsLib = _a.sent();
-                    outPbj = (pbconfig.concatPbjsLib ? pbjsLib : "") + 'var $protobuf = window.protobuf;\n$protobuf.roots.default=window;\n' + pbjsResult;
+                    outPbj = (pbconfig.concatPbjsLib ? pbjsLib : "") + ' (function(global){global.$protobuf = global.protobuf;\n$protobuf.roots.default=global;})(typeof window !== "undefined" && window|| typeof global !== "undefined" && global|| typeof self   !== "undefined" && self|| this)\n' + pbjsResult;
                     console.log("[egf-protobuf]解析proto文件->完成");
                     if (!(pbconfig.outputFileType === 0 || pbconfig.outputFileType === 1)) return [3 /*break*/, 14];
                     console.log("[egf-protobuf]输出客户端proto文件的js文件");
@@ -203,7 +205,7 @@ function generate(projRootDir) {
                     if (!(pbconfig.outputFileType === 0 || pbconfig.outputFileType === 2)) return [3 /*break*/, 16];
                     console.log("[egf-protobuf]生成客户端的 .min.js文件");
                     minjs = UglifyJS.minify(outPbj);
-                    return [4 /*yield*/, fs.writeFileAsync(clientPbjsFilePath, outPbj, 'utf-8').catch(function (res) { console.log(res); })];
+                    return [4 /*yield*/, fs.writeFileAsync(clientPbjsFilePath, minjs, 'utf-8').catch(function (res) { console.log(res); })];
                 case 15:
                     _a.sent();
                     ;
@@ -219,74 +221,41 @@ function generate(projRootDir) {
                     console.log("[egf-protobuf]输出服务端proto文件的js文件->完成");
                     _a.label = 18;
                 case 18:
-                    if (!(serverOutputConfig && serverOutputConfig.pbjsLibDir)) return [3 /*break*/, 24];
-                    pbjsLibOutFile = path.join(projRootDir, serverOutputConfig.pbjsLibDir, "protobuf-library.js");
-                    return [4 /*yield*/, fs.existsAsync(pbjsLibOutFile)];
-                case 19:
-                    isPbjsLibExit = _a.sent();
-                    if (!!isPbjsLibExit) return [3 /*break*/, 24];
-                    isPbjsLibDirName = path.dirname(pbjsLibOutFile);
-                    return [4 /*yield*/, fs.existsAsync(isPbjsLibDirName)];
-                case 20:
-                    isPbjsLibDirExit = _a.sent();
-                    if (!!isPbjsLibDirExit) return [3 /*break*/, 22];
-                    return [4 /*yield*/, fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
-                            console.log(res);
-                        })];
-                case 21:
-                    _a.sent();
-                    _a.label = 22;
-                case 22:
-                    console.log("[egf-protobuf]写入服务端protobufjs库文件");
-                    return [4 /*yield*/, fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res); })];
-                case 23:
-                    _a.sent();
-                    ;
-                    console.log("[egf-protobuf]写入服务端protobufjs库文件->完成");
-                    _a.label = 24;
-                case 24:
-                    if (!!pbconfig.concatPbjsLib) return [3 /*break*/, 30];
-                    if (!pbconfig.pbjsLibDir) return [3 /*break*/, 30];
-                    pbjsLibOutFile = path.join(projRootDir, pbconfig.pbjsLibDir, "protobuf-library.min.js");
-                    return [4 /*yield*/, fs.existsAsync(pbjsLibOutFile)];
-                case 25:
-                    isPbjsLibExit = _a.sent();
-                    if (!!isPbjsLibExit) return [3 /*break*/, 30];
-                    isPbjsLibDirName = path.dirname(pbjsLibOutFile);
-                    return [4 /*yield*/, fs.existsAsync(isPbjsLibDirName)];
-                case 26:
-                    isPbjsLibDirExit = _a.sent();
-                    if (!!isPbjsLibDirExit) return [3 /*break*/, 28];
-                    return [4 /*yield*/, fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
-                            console.log(res);
-                        })];
-                case 27:
-                    _a.sent();
-                    _a.label = 28;
-                case 28:
-                    console.log("[egf-protobuf]写入protobufjs库文件");
-                    return [4 /*yield*/, fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res); })];
-                case 29:
-                    _a.sent();
-                    ;
-                    console.log("[egf-protobuf]写入客户端的protobufjs库文件");
-                    _a.label = 30;
-                case 30:
-                    dtsOut = path.join(projRootDir, pbconfig.dtsOutDir, pbconfig.outFileName + ".d.ts");
-                    return [4 /*yield*/, fs.existsAsync(dtsOut)];
-                case 31:
-                    isExit_dts = _a.sent();
-                    if (!isExit_dts) return [3 /*break*/, 33];
-                    console.log("[egf-protobuf]\u5220\u9664\u65E7.d.ts\u6587\u4EF6:" + dtsOut);
-                    return [4 /*yield*/, new Promise(function (res, rej) {
-                            rimraf_1.default(dtsOut, function () {
-                                res();
-                            });
-                        })];
-                case 32:
-                    _a.sent();
-                    _a.label = 33;
-                case 33:
+                    // if (serverOutputConfig && serverOutputConfig.pbjsLibDir) {
+                    //     const pbjsLibOutFile = path.join(projRootDir, serverOutputConfig.pbjsLibDir, "protobuf.js");
+                    //     const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
+                    //     if (!isPbjsLibExit) {
+                    //         const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
+                    //         const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
+                    //         if (!isPbjsLibDirExit) {
+                    //             await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
+                    //                 console.log(res);
+                    //             });
+                    //         }
+                    //         console.log("[egf-protobuf]写入服务端protobufjs库文件");
+                    //         fs.copyAsync(path.join(root, `pblib/${libType}`), path.join(projRootDir, serverOutputConfig.pbjsLibDir))
+                    //         // await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
+                    //         console.log("[egf-protobuf]写入服务端protobufjs库文件->完成");
+                    //     }
+                    // }
+                    // if (!pbconfig.concatPbjsLib) {
+                    //     if (pbconfig.pbjsLibDir) {
+                    //         const pbjsLibOutFile = path.join(projRootDir, pbconfig.pbjsLibDir, "protobuf-library.min.js");
+                    //         const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
+                    //         if (!isPbjsLibExit) {
+                    //             const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
+                    //             const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
+                    //             if (!isPbjsLibDirExit) {
+                    //                 await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
+                    //                     console.log(res);
+                    //                 });
+                    //             }
+                    //             console.log("[egf-protobuf]写入protobufjs库文件");
+                    //             await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
+                    //             console.log("[egf-protobuf]写入客户端的protobufjs库文件");
+                    //         }
+                    //     }
+                    // }
                     console.log("[egf-protobuf]解析js文件生成.d.ts中");
                     return [4 /*yield*/, new Promise(function (res) {
                             pbts.main(['--main', pbjsFilePaths[0]], function (err, output) {
@@ -296,33 +265,60 @@ function generate(projRootDir) {
                                 res(output);
                                 return {};
                             });
-                        })
-                        // pbtsResult = await fs.readFileAsync(tempfile, 'utf-8').catch(function (res) { console.log(res) }) as any;
-                    ];
-                case 34:
+                        })];
+                case 19:
                     pbtsResult = _a.sent();
-                    // pbtsResult = await fs.readFileAsync(tempfile, 'utf-8').catch(function (res) { console.log(res) }) as any;
                     pbtsResult = pbtsResult.replace(/\$protobuf/gi, "protobuf").replace(/export namespace/gi, 'declare namespace');
                     pbtsResult = 'type Long = protobuf.Long;\n' + pbtsResult;
                     console.log("[egf-protobuf]解析js文件->完成");
-                    dtsOutDirPath = path.dirname(dtsOut);
-                    if (!(projRootDir !== dtsOutDirPath)) return [3 /*break*/, 37];
+                    console.log("[egf-protobuf]生成.d.ts文件->");
+                    clientDtsOut = path.join(projRootDir, pbconfig.dtsOutDir, pbconfig.outFileName + ".d.ts");
+                    dtsOutFilePaths = [clientDtsOut];
+                    if (serverOutputConfig && serverOutputConfig.dtsOutDir) {
+                        serverDtsOut = path.join(projRootDir, serverOutputConfig.dtsOutDir, pbconfig.outFileName + ".d.ts");
+                        dtsOutFilePaths.push(serverDtsOut);
+                    }
+                    i = 0;
+                    _a.label = 20;
+                case 20:
+                    if (!(i < dtsOutFilePaths.length)) return [3 /*break*/, 29];
+                    dtsOutFilePath = dtsOutFilePaths[i];
+                    return [4 /*yield*/, fs.existsAsync(dtsOutFilePath)];
+                case 21:
+                    isExit_dts = _a.sent();
+                    if (!isExit_dts) return [3 /*break*/, 23];
+                    console.log("[egf-protobuf]\u5220\u9664\u65E7.d.ts\u6587\u4EF6:" + dtsOutFilePath);
+                    return [4 /*yield*/, new Promise(function (res, rej) {
+                            rimraf_1.default(dtsOutFilePath, function () {
+                                res();
+                            });
+                        })];
+                case 22:
+                    _a.sent();
+                    _a.label = 23;
+                case 23:
+                    dtsOutDirPath = path.dirname(dtsOutFilePath);
+                    if (!(projRootDir !== dtsOutDirPath)) return [3 /*break*/, 26];
                     return [4 /*yield*/, fs.existsAsync(dtsOutDirPath)];
-                case 35:
+                case 24:
                     isExit_dtsOutDir = _a.sent();
-                    if (!!isExit_dtsOutDir) return [3 /*break*/, 37];
+                    if (!!isExit_dtsOutDir) return [3 /*break*/, 26];
                     //
                     console.log("[egf-protobuf]\u521B\u5EFA.d.ts \u7684\u6587\u4EF6\u5939:" + dtsOutDirPath + "->");
                     return [4 /*yield*/, fs.mkdirAsync(dtsOutDirPath)];
-                case 36:
+                case 25:
                     _a.sent();
-                    _a.label = 37;
-                case 37:
-                    console.log("[egf-protobuf]生成.d.ts文件->");
-                    return [4 /*yield*/, fs.writeFileAsync(dtsOut, pbtsResult, 'utf-8').catch(function (res) { console.log(res); })];
-                case 38:
+                    _a.label = 26;
+                case 26: return [4 /*yield*/, fs.writeFileAsync(dtsOutFilePath, pbtsResult, 'utf-8').catch(function (res) { console.log(res); })];
+                case 27:
                     _a.sent();
                     ;
+                    _a.label = 28;
+                case 28:
+                    i++;
+                    return [3 /*break*/, 20];
+                case 29:
+                    // pbtsResult = await fs.readFileAsync(tempfile, 'utf-8').catch(function (res) { console.log(res) }) as any;
                     console.log("[egf-protobuf]生成.d.ts文件->完成");
                     return [2 /*return*/];
             }

@@ -112,8 +112,10 @@ export async function generate(projRootDir: string) {
             return {}
         })
     })
-    let pbjsLib = await fs.readFileAsync(path.join(root, 'pblib/protobuf-library.min.js')).catch(function (res) { console.log(res) });
-    let outPbj = (pbconfig.concatPbjsLib ? pbjsLib : "") + 'var $protobuf = window.protobuf;\n$protobuf.roots.default=window;\n' + pbjsResult;
+    typeof window !== "undefined" && window || typeof global !== "undefined" && global || typeof self !== "undefined" && self || this;
+    const libType = "minimal";
+    let pbjsLib = await fs.readFileAsync(path.join(root, `pblib/${libType}/protobuf.min.js`)).catch(function (res) { console.log(res) });
+    let outPbj = (pbconfig.concatPbjsLib ? pbjsLib : "") + ' (function(global){global.$protobuf = global.protobuf;\n$protobuf.roots.default=global;})(typeof window !== "undefined" && window|| typeof global !== "undefined" && global|| typeof self   !== "undefined" && self|| this)\n' + pbjsResult;
     console.log("[egf-protobuf]解析proto文件->完成");
     if (pbconfig.outputFileType === 0 || pbconfig.outputFileType === 1) {
         console.log("[egf-protobuf]输出客户端proto文件的js文件");
@@ -123,7 +125,7 @@ export async function generate(projRootDir: string) {
     if (pbconfig.outputFileType === 0 || pbconfig.outputFileType === 2) {
         console.log("[egf-protobuf]生成客户端的 .min.js文件");
         const minjs = UglifyJS.minify(outPbj);
-        await fs.writeFileAsync(clientPbjsFilePath, outPbj, 'utf-8').catch(function (res) { console.log(res) });;
+        await fs.writeFileAsync(clientPbjsFilePath, minjs, 'utf-8').catch(function (res) { console.log(res) });;
         console.log("[egf-protobuf]生成客户端的.min.js文件->完成");
     }
     if (serverPbjsFilePath) {
@@ -131,53 +133,44 @@ export async function generate(projRootDir: string) {
         await fs.writeFileAsync(serverPbjsFilePath, outPbj, 'utf-8').catch(function (res) { console.log(res) });;
         console.log("[egf-protobuf]输出服务端proto文件的js文件->完成");
     }
-    if (serverOutputConfig && serverOutputConfig.pbjsLibDir) {
-        const pbjsLibOutFile = path.join(projRootDir, serverOutputConfig.pbjsLibDir, "protobuf-library.js");
-        const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
-        if (!isPbjsLibExit) {
-            const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
-            const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
-            if (!isPbjsLibDirExit) {
-                await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
-                    console.log(res);
-                });
-            }
-            console.log("[egf-protobuf]写入服务端protobufjs库文件");
-            await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
-            console.log("[egf-protobuf]写入服务端protobufjs库文件->完成");
-        }
-    }
-    if (!pbconfig.concatPbjsLib) {
-        if (pbconfig.pbjsLibDir) {
-            const pbjsLibOutFile = path.join(projRootDir, pbconfig.pbjsLibDir, "protobuf-library.min.js");
-            const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
-            if (!isPbjsLibExit) {
-                const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
-                const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
-                if (!isPbjsLibDirExit) {
-                    await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
-                        console.log(res);
-                    });
-                }
-                console.log("[egf-protobuf]写入protobufjs库文件");
-                await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
-                console.log("[egf-protobuf]写入客户端的protobufjs库文件");
-            }
-        }
+    // if (serverOutputConfig && serverOutputConfig.pbjsLibDir) {
+    //     const pbjsLibOutFile = path.join(projRootDir, serverOutputConfig.pbjsLibDir, "protobuf.js");
+    //     const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
+    //     if (!isPbjsLibExit) {
+    //         const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
+    //         const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
+    //         if (!isPbjsLibDirExit) {
+    //             await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
+    //                 console.log(res);
+    //             });
+    //         }
+    //         console.log("[egf-protobuf]写入服务端protobufjs库文件");
+    //         fs.copyAsync(path.join(root, `pblib/${libType}`), path.join(projRootDir, serverOutputConfig.pbjsLibDir))
+    //         // await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
+    //         console.log("[egf-protobuf]写入服务端protobufjs库文件->完成");
+    //     }
+    // }
+    // if (!pbconfig.concatPbjsLib) {
+    //     if (pbconfig.pbjsLibDir) {
+    //         const pbjsLibOutFile = path.join(projRootDir, pbconfig.pbjsLibDir, "protobuf-library.min.js");
+    //         const isPbjsLibExit = await fs.existsAsync(pbjsLibOutFile);
+    //         if (!isPbjsLibExit) {
+    //             const isPbjsLibDirName = path.dirname(pbjsLibOutFile);
+    //             const isPbjsLibDirExit = await fs.existsAsync(isPbjsLibDirName);
+    //             if (!isPbjsLibDirExit) {
+    //                 await fs.mkdirpAsync(isPbjsLibDirName).catch(function (res) {
+    //                     console.log(res);
+    //                 });
+    //             }
+    //             console.log("[egf-protobuf]写入protobufjs库文件");
+    //             await fs.writeFileAsync(pbjsLibOutFile, pbjsLib, 'utf-8').catch(function (res) { console.log(res) });;
+    //             console.log("[egf-protobuf]写入客户端的protobufjs库文件");
+    //         }
+    //     }
 
-    }
+    // }
 
-    const dtsOut = path.join(projRootDir, pbconfig.dtsOutDir, pbconfig.outFileName + ".d.ts");
 
-    const isExit_dts = await fs.existsAsync(dtsOut);
-    if (isExit_dts) {
-        console.log(`[egf-protobuf]删除旧.d.ts文件:${dtsOut}`);
-        await new Promise<void>((res, rej) => {
-            rimraf(dtsOut, function () {
-                res();
-            })
-        })
-    }
     console.log("[egf-protobuf]解析js文件生成.d.ts中");
     let pbtsResult = await new Promise<string>((res) => {
         pbts.main(['--main', pbjsFilePaths[0]], (err, output) => {
@@ -188,22 +181,48 @@ export async function generate(projRootDir: string) {
             return {}
         })
     })
-    // pbtsResult = await fs.readFileAsync(tempfile, 'utf-8').catch(function (res) { console.log(res) }) as any;
-
     pbtsResult = pbtsResult.replace(/\$protobuf/gi, "protobuf").replace(/export namespace/gi, 'declare namespace');
     pbtsResult = 'type Long = protobuf.Long;\n' + pbtsResult;
     console.log("[egf-protobuf]解析js文件->完成");
-    const dtsOutDirPath = path.dirname(dtsOut)
-    if (projRootDir !== dtsOutDirPath) {
-        const isExit_dtsOutDir = await fs.existsAsync(dtsOutDirPath);
-        if (!isExit_dtsOutDir) {
-            //
-            console.log(`[egf-protobuf]创建.d.ts 的文件夹:${dtsOutDirPath}->`);
-            await fs.mkdirAsync(dtsOutDirPath);
-        }
-    }
     console.log("[egf-protobuf]生成.d.ts文件->");
-    await fs.writeFileAsync(dtsOut, pbtsResult, 'utf-8').catch(function (res) { console.log(res) });;
+
+    const clientDtsOut = path.join(projRootDir, pbconfig.dtsOutDir, pbconfig.outFileName + ".d.ts");
+    const dtsOutFilePaths: string[] = [clientDtsOut];
+
+    let serverDtsOut: string;
+    if (serverOutputConfig && serverOutputConfig.dtsOutDir) {
+        serverDtsOut = path.join(projRootDir, serverOutputConfig.dtsOutDir, pbconfig.outFileName + ".d.ts");
+        dtsOutFilePaths.push(serverDtsOut);
+    }
+    let dtsOutFilePath: string;
+    for (let i = 0; i < dtsOutFilePaths.length; i++) {
+        dtsOutFilePath = dtsOutFilePaths[i];
+        const isExit_dts = await fs.existsAsync(dtsOutFilePath);
+        if (isExit_dts) {
+            console.log(`[egf-protobuf]删除旧.d.ts文件:${dtsOutFilePath}`);
+            await new Promise<void>((res, rej) => {
+                rimraf(dtsOutFilePath, function () {
+                    res();
+                })
+            })
+        }
+        const dtsOutDirPath = path.dirname(dtsOutFilePath)
+        if (projRootDir !== dtsOutDirPath) {
+            const isExit_dtsOutDir = await fs.existsAsync(dtsOutDirPath);
+            if (!isExit_dtsOutDir) {
+                //
+                console.log(`[egf-protobuf]创建.d.ts 的文件夹:${dtsOutDirPath}->`);
+                await fs.mkdirAsync(dtsOutDirPath);
+            }
+        }
+        await fs.writeFileAsync(dtsOutFilePath, pbtsResult, 'utf-8').catch(function (res) { console.log(res) });;
+    }
+
+
+    // pbtsResult = await fs.readFileAsync(tempfile, 'utf-8').catch(function (res) { console.log(res) }) as any;
+
+
+
     console.log("[egf-protobuf]生成.d.ts文件->完成");
 
 }

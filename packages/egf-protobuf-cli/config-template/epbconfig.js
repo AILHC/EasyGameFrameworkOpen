@@ -18,6 +18,7 @@ module.exports = {
 	// serverOutputConfig: {
 	// 	pbjsLibDir: "server/libs",
 	// 	pbjsOutDir: "server/protojs"
+	// 	dtsOutDir: "server/libs"
 
 	// }
 

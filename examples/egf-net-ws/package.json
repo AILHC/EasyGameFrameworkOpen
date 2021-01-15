@@ -8,12 +8,19 @@
   "scripts": {
     "genPb": "egf-pb g",
     "pbInit": "egf-pb i",
-    "build-svr":"cd egf-net-ws-server && tsc --b",
-    "start-svr":"cd egf-net-ws-server && node ./bin/ws-server.js"
+    "build-svr": "cd egf-net-ws-server && tsc --b",
+    "start-svr": "cd egf-net-ws-server && node ./bin/src/ws-server.js",
+    "dev_svr": "ts-node --transpile-only ./egf-net-ws-server/src/ws-server.ts"
   },
   "dependencies": {
-    "egf-protobuf": "1.2.0",
+    "@ailhc/enet": "0.0.1",
+    "@ailhc/enet-pbws": "0.0.1",
     "@types/ws": "^7.4.0",
+    "egf-protobuf": "1.3.2",
+    "ts-node": "^9.1.1",
     "ws": "^7.4.2"
+  },
+  "devDependencies": {
+    "ts-node": "^9.1.1"
   }
 }

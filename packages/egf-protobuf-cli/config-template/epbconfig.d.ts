@@ -40,14 +40,22 @@ declare type EgfProtobufConfig = {
     sourceRoot: string,
     /**生成js的输出路径 */
     outputDir: string
-
+    /**库类型 
+     * 默认minimal ，暂不支持使用其他类型
+     * full 支持所有特性
+     * light light库的预构建浏览器版本，适合与反射、静态代码和JSON描述符/模块一起使用。
+     * minimal 包含预构建的浏览器版本的最小库，只适合与静态生成的代码一起使用。
+     * */
+    libType: "full" | "light" | "minimal"
 
     /**服务端输出配置 */
     serverOutputConfig: {
         /**protobufjs库输出目录 */
         pbjsLibDir: string,
         /**生成的proto js文件输出 */
-        pbjsOutDir: string
+        pbjsOutDir: string,
+        /**声明文件输出路径 */
+        dtsOutDir: string
     }
 
 
