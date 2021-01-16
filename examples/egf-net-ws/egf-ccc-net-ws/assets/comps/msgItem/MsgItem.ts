@@ -24,8 +24,17 @@ export default class MsgItem extends cc.Component {
 
     }
     setData(name: string, msg: string) {
-        this.userNameLabel.string = name;
+        this.userNameLabel.string = name + ":";
+
         this.msgLabel.string = msg;
+        this.userNameLabel["_forceUpdateRenderData"]();
+        this.msgLabel["_forceUpdateRenderData"]();
+        const msgHeight = this.msgLabel.node.height;
+        this.node.height = msgHeight + this.userNameLabel.node.height + 10;
+        // this.scheduleOnce(() => {
+
+        // }, 0.01)
     }
+
     // update (dt) {}
 }

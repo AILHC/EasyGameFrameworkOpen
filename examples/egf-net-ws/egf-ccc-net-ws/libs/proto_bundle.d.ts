@@ -207,7 +207,7 @@ declare namespace pb_test {
         name: string;
 
         /** Sc_userEnter uid */
-        uid: string;
+        uid: number;
     }
 
     /** Represents a Sc_userEnter. */
@@ -223,7 +223,7 @@ declare namespace pb_test {
         public name: string;
 
         /** Sc_userEnter uid. */
-        public uid: string;
+        public uid: number;
 
         /**
          * Creates a new Sc_userEnter instance using the specified properties.
@@ -262,7 +262,7 @@ declare namespace pb_test {
     interface ISc_userLeave {
 
         /** Sc_userLeave uid */
-        uid: string;
+        uid: number;
     }
 
     /** Represents a Sc_userLeave. */
@@ -275,7 +275,7 @@ declare namespace pb_test {
         constructor(properties?: pb_test.ISc_userLeave);
 
         /** Sc_userLeave uid. */
-        public uid: string;
+        public uid: number;
 
         /**
          * Creates a new Sc_userLeave instance using the specified properties.

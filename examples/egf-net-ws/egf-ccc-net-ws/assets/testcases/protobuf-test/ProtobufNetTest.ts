@@ -8,18 +8,12 @@
 const { ccclass, property } = cc._decorator;
 import { NetNode } from "@ailhc/enet";
 import { PbProtoHandler } from "@ailhc/enet-pbws";
-import { App } from "@ailhc/egf-core";
-import { setModuleMap } from "./ModuleMap";
-import MsgPanel from "../comps/msgPanel/MsgPanel";
-declare global {
-    interface IModuleMap {
-        netMgr: NetNode<string>
-    }
-}
+import MsgPanel from "../../comps/msgPanel/MsgPanel";
 @ccclass
-export default class AppMain extends cc.Component implements enet.INetEventHandler {
+export default class ProtobufNetTest extends cc.Component implements enet.INetEventHandler {
 
-
+    @property(cc.Node)
+    connectPanel: cc.Node = null;
     @property(cc.Node)
     loginPanel: cc.Node = null;
 
@@ -48,24 +42,26 @@ export default class AppMain extends cc.Component implements enet.INetEventHandl
     msgInputEdit: cc.EditBox = null;
 
     @property(MsgPanel)
-    msgPanelComp: MsgPanel;
+    msgPanelComp: MsgPanel = null;
 
     private _uid: number;
     userMap: { [key: number]: string } = {};
+    private _userName: string;
 
 
     onLoad() {
-        const app = new App<IModuleMap>();
 
-        const netMgr = new NetNode();
+        const netMgr = new NetNode<string>();
         this._net = netMgr;
         const protoHandler = new PbProtoHandler(pb_test);
         netMgr.init({
             netEventHandler: this,
             protoHandler: protoHandler
         })
-        app.loadModule(netMgr, "netMgr");
-        setModuleMap(app.moduleMap);
+        netMgr.onPush<pb_test.ISc_Msg>("Sc_Msg", { method: this.onMsgPush, context: this });
+        netMgr.onPush<pb_test.ISc_userEnter>("Sc_userEnter", { method: this.onUserEnter, context: this });
+        netMgr.onPush<pb_test.ISc_userLeave>("Sc_userLeave", { method: this.onUserLeave, context: this });
+
     }
     start() {
 
@@ -76,13 +72,20 @@ export default class AppMain extends cc.Component implements enet.INetEventHandl
     onUserEnter(dpkg: enet.IDecodePackage<pb_test.ISc_userEnter>) {
         if (!dpkg.errorMsg) {
             this.userMap[dpkg.data.uid] = dpkg.data.name;
+            this.msgPanelComp.addMsg({ name: "系统", msg: `[${dpkg.data.name}]进了` });
         } else {
             console.error(dpkg.errorMsg);
         }
     }
     onUserLeave(dpkg: enet.IDecodePackage<pb_test.ISc_userLeave>) {
         if (!dpkg.errorMsg) {
-            delete this.userMap[dpkg.data.uid];
+            if (this.userMap[dpkg.data.uid]) {
+                const leaveUserName = this.userMap[dpkg.data.uid];
+                this.msgPanelComp.addMsg({ name: "系统", msg: `[${leaveUserName}]离开了` });
+                delete this.userMap[dpkg.data.uid];
+            }
+
+
         } else {
             console.error(dpkg.errorMsg);
         }
@@ -90,11 +93,18 @@ export default class AppMain extends cc.Component implements enet.INetEventHandl
     onMsgPush(dpkg: enet.IDecodePackage<pb_test.ISc_Msg>) {
         if (!dpkg.errorMsg) {
             const svrMsg = dpkg.data.msg;
-            if (this.userMap[svrMsg.uid]) {
-                const msgData = { name: this.userMap[svrMsg.uid], msg: svrMsg.msg }
-                this.msgPanelComp.addMsg(msgData);
+            let userName: string;
+            if (this._uid === svrMsg.uid) {
+                userName = "我";
+            } else if (this.userMap[svrMsg.uid]) {
+                userName = this.userMap[svrMsg.uid];
             } else {
                 console.error(`没有这个用户:${svrMsg.uid}`)
+
+            }
+            if (userName) {
+                const msgData = { name: userName, msg: svrMsg.msg }
+                this.msgPanelComp.addMsg(msgData);
             }
         } else {
             console.error(dpkg.errorMsg);
@@ -107,6 +117,7 @@ export default class AppMain extends cc.Component implements enet.INetEventHandl
         }
         this._net.request<pb_test.ICs_Login, pb_test.ISc_Login>("Cs_Login", { name: nameStr }, (data) => {
             if (!data.errorMsg) {
+                this._userName = nameStr;
                 this._uid = data.data.uid;
                 this.hideLoginPanel();
                 this.showChatPanel();
@@ -121,67 +132,85 @@ export default class AppMain extends cc.Component implements enet.INetEventHandl
         }
         this._net.notify<pb_test.ICs_SendMsg>("Cs_SendMsg", { msg: { uid: this._uid, msg: msg } })
     }
-
-    //聊天面板
-    showChatPanel() {
-        this.chatPanel.active = true;
+    //#region 遮罩提示面板
+    public showMaskPanel() {
+        if (!this.maskPanel.active) this.maskPanel.active = true;
+        if (!isNaN(this._hideMaskTimeId)) {
+            clearTimeout(this._hideMaskTimeId);
+        }
     }
-    hideChatPanel() {
-        this.chatPanel.active = false;
+    public updateMaskPanelTips(tips: string) {
+        this.maskTips.string = tips;
     }
+    private _hideMaskTimeId: number;
+    public hideMaskPanel() {
+        this._hideMaskTimeId = setTimeout(() => {
+            this.maskPanel.active = false;
+        }, 1000) as any;
+    }
+    //#endregion
 
-    //聊天面板
+    //#region 连接面板
+    showConnectPanel() {
+        this.connectPanel.active = true;
+    }
+    hideConnectPanel() {
+        this.connectPanel.active = false;
+    }
+    //#endregion
 
-    //登录面板
+    //#region 登录面板
     showLoginPanel() {
         this.loginPanel.active = true;
     }
     hideLoginPanel() {
         this.loginPanel.active = false;
     }
-    //登录面板
+    //#endregion
+
+    //#region 聊天面板
+    showChatPanel() {
+        this.chatPanel.active = true;
+    }
+    hideChatPanel() {
+        this.chatPanel.active = false;
+    }
+    //#endregion
 
     onStartConnenct?(connectOpt: enet.IConnectOptions<any>): void {
-        this.maskPanel.active = true;
-        this.maskPanel.getChildByName("tips").getComponent(cc.Label).string = "连接服务器中";
+        this.showMaskPanel()
+        this.updateMaskPanelTips("连接服务器中");
     }
     onConnectEnd?(connectOpt: enet.IConnectOptions<any>): void {
-        this.maskPanel.active = false;
-        this.maskPanel.getChildByName("tips").getComponent(cc.Label).string = "连接服务器成功";
-
-        this.loginPanel.getChildByName("loginBtn").active = true;
-        this.loginPanel.getChildByName("nameInput").active = true;
-
-        this.loginPanel.getChildByName("connectBtn").active = false;
+        this.updateMaskPanelTips("连接服务器成功");
+        this.hideMaskPanel();
+        this.showLoginPanel();
 
 
     }
     onError(event: any, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
+        this.maskTips.string = "连接出错";
     }
     onClosed(event: any, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
+        this.hideMaskPanel();
+
     }
     onStartReconnect?(reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
     }
     onReconnecting?(curCount: number, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
     }
     onReconnectEnd?(isOk: boolean, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
     }
     onStartRequest?(reqCfg: enet.IRequestConfig, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
+        this.updateMaskPanelTips("请求中");
+        this.showMaskPanel();
     }
     onData?(decodePkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions<any>, reqCfg?: enet.IRequestConfig): void {
-        throw new Error("Method not implemented.");
+        this.hideMaskPanel();
     }
     onKick?(decodePkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
     }
     onCustomError?(data: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions<any>): void {
-        throw new Error("Method not implemented.");
     }
 
     // update (dt) {}

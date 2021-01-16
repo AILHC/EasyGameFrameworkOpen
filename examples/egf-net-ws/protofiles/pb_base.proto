@@ -15,12 +15,12 @@ message Sc_Login {
 
 message Sc_userEnter {
     required string name = 1;
-    required string uid = 2;
+    required uint32 uid = 2;
 
 }
 
 message Sc_userLeave {
-    required string uid = 2;
+    required uint32 uid = 2;
 
 }
 

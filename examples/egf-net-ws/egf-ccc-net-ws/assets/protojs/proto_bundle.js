@@ -428,7 +428,7 @@ $root.pb_test = (function() {
          * @memberof pb_test
          * @interface ISc_userEnter
          * @property {string} name Sc_userEnter name
-         * @property {string} uid Sc_userEnter uid
+         * @property {number} uid Sc_userEnter uid
          */
 
         /**
@@ -456,11 +456,11 @@ $root.pb_test = (function() {
 
         /**
          * Sc_userEnter uid.
-         * @member {string} uid
+         * @member {number} uid
          * @memberof pb_test.Sc_userEnter
          * @instance
          */
-        Sc_userEnter.prototype.uid = "";
+        Sc_userEnter.prototype.uid = 0;
 
         /**
          * Creates a new Sc_userEnter instance using the specified properties.
@@ -487,7 +487,7 @@ $root.pb_test = (function() {
             if (!writer)
                 writer = $Writer.create();
             writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
-            writer.uint32(/* id 2, wireType 2 =*/18).string(message.uid);
+            writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.uid);
             return writer;
         };
 
@@ -513,7 +513,7 @@ $root.pb_test = (function() {
                     message.name = reader.string();
                     break;
                 case 2:
-                    message.uid = reader.string();
+                    message.uid = reader.uint32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -540,8 +540,8 @@ $root.pb_test = (function() {
                 return "object expected";
             if (!$util.isString(message.name))
                 return "name: string expected";
-            if (!$util.isString(message.uid))
-                return "uid: string expected";
+            if (!$util.isInteger(message.uid))
+                return "uid: integer expected";
             return null;
         };
 
@@ -554,7 +554,7 @@ $root.pb_test = (function() {
          * Properties of a Sc_userLeave.
          * @memberof pb_test
          * @interface ISc_userLeave
-         * @property {string} uid Sc_userLeave uid
+         * @property {number} uid Sc_userLeave uid
          */
 
         /**
@@ -574,11 +574,11 @@ $root.pb_test = (function() {
 
         /**
          * Sc_userLeave uid.
-         * @member {string} uid
+         * @member {number} uid
          * @memberof pb_test.Sc_userLeave
          * @instance
          */
-        Sc_userLeave.prototype.uid = "";
+        Sc_userLeave.prototype.uid = 0;
 
         /**
          * Creates a new Sc_userLeave instance using the specified properties.
@@ -604,7 +604,7 @@ $root.pb_test = (function() {
         Sc_userLeave.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            writer.uint32(/* id 2, wireType 2 =*/18).string(message.uid);
+            writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.uid);
             return writer;
         };
 
@@ -627,7 +627,7 @@ $root.pb_test = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 2:
-                    message.uid = reader.string();
+                    message.uid = reader.uint32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -650,8 +650,8 @@ $root.pb_test = (function() {
         Sc_userLeave.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (!$util.isString(message.uid))
-                return "uid: string expected";
+            if (!$util.isInteger(message.uid))
+                return "uid: integer expected";
             return null;
         };
 
