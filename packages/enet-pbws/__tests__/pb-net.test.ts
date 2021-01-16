@@ -71,7 +71,7 @@ test("connect server with handshake", async function (done) {
     //发个心跳
     const heartbeatNetData = svrEncodePkg(PackageType.HEARTBEAT, "Heartbeat", {});
     server.send(heartbeatNetData);
-    await new Promise((res) => {
+    await new Promise<void>((res) => {
         clientSocket.on("message", () => {
             res();
         })

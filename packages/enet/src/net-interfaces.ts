@@ -63,17 +63,19 @@ declare global {
             handShakeReq?: T
         }
         /**
-         * 编码后的数据包
-         */
-        /**
-         * 解析后的数据包
+         * 解码后的数据包
          */
         interface IDecodePackage<T = any> {
-
-
             /**
              * 数据包类型
              * 默认使用 PackageType 中的DATA  类型 4
+             * 
+             * 数据包类型
+             * 默认数据包类型
+             * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
+             * 2 HANDSHAKE_ACK 客户端回应服务端的握手包类型
+             * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
+             * 4 KICK 服务端发给客户端的下线数据包类型
              */
             type: number
             /**协议字符串key */
@@ -251,8 +253,16 @@ declare global {
             data: T
         }
         interface IPackage<T = any> {
+            /**
+             * 数据包类型
+             * 默认的数据包类型:
+             * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
+             * 2 HANDSHAKE_ACK 客户端回应服务端的握手包类型
+             * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
+             * 4 KICK 服务端发给客户端的下线数据包类型
+             */
             type: number,
-            msg?: T
+            data?: T
         }
         /**
          * 重连配置接口

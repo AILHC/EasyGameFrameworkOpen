@@ -3,7 +3,7 @@ import { SocketState } from "./socketStateType";
 import { WSocket } from "./wsocket";
 
 export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
-    
+
     /**
      * 套接字实现
      */
@@ -294,6 +294,10 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         }
 
     }
+    /**
+     * 握手包处理
+     * @param dpkg 
+     */
     protected _onHandshake(dpkg: enet.IDecodePackage) {
         if (dpkg.errorMsg) {
             return;
@@ -305,15 +309,26 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         connectOpt.connectEnd && connectOpt.connectEnd();
         this._netEventHandler.onConnectEnd && this._netEventHandler.onConnectEnd(connectOpt);
     }
+    /**
+     * 握手初始化
+     * @param dpkg 
+     */
     protected _handshakeInit(dpkg: enet.IDecodePackage) {
 
         const heartbeatCfg = this.protoHandler.heartbeatConfig;
 
         this._heartbeatConfig = heartbeatCfg;
     }
+    /**心跳超时定时器id */
     protected _heartbeatTimeoutId: number;
+    /**心跳定时器id */
     protected _heartbeatTimeId: number;
+    /**最新心跳超时时间 */
     protected _nextHeartbeatTimeoutTime: number;
+    /**
+     * 心跳包处理
+     * @param dpkg 
+     */
     protected _heartbeat(dpkg: enet.IDecodePackage) {
         const heartbeatCfg = this._heartbeatConfig;
         const protoHandler = this._protoHandler;
@@ -335,6 +350,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
 
         }, heartbeatCfg.heartbeatInterval) as any;
     }
+    /**
+     * 心跳超时处理
+     */
     protected _heartbeatTimeoutCb() {
         var gap = this._nextHeartbeatTimeoutTime - Date.now();
         if (gap > this._reConnectCfg) {
@@ -344,6 +362,10 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
             this.disConnect();
         }
     }
+    /**
+     * 数据包处理
+     * @param dpkg 
+     */
     protected _onData(dpkg: enet.IDecodePackage) {
         if (dpkg.errorMsg) {
             return;
@@ -378,6 +400,10 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
         netEventHandler.onData && netEventHandler.onData(dpkg, this._connectOpt, reqCfg)
 
     }
+    /**
+     * 踢下线数据包处理
+     * @param dpkg 
+     */
     protected _onKick(dpkg: enet.IDecodePackage) {
         this._netEventHandler.onKick && this._netEventHandler.onKick(dpkg, this._connectOpt);
     }
@@ -406,7 +432,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
             const connectOpt = this._connectOpt;
             const protoHandler = this._protoHandler;
             if (protoHandler && connectOpt.handShakeReq) {
-                const handShakeNetData = protoHandler.encodePkg({ type: PackageType.HANDSHAKE, msg: connectOpt.handShakeReq });
+                const handShakeNetData = protoHandler.encodePkg({ type: PackageType.HANDSHAKE, data: connectOpt.handShakeReq });
                 this.send(handShakeNetData);
             } else {
                 connectOpt.connectEnd && connectOpt.connectEnd();
@@ -501,25 +527,25 @@ class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyTy
         return protoKey as any;
     }
     encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): enet.NetData {
-        return JSON.stringify({ type: PackageType.DATA, msg: msg } as enet.IPackage)
+        return JSON.stringify({ type: PackageType.DATA, data: msg } as enet.IPackage)
     }
     decodePkg(data: enet.NetData): enet.IDecodePackage<any> {
-        const parsedData: { type: number, msg: any } = JSON.parse(data as string);
+        const parsedData: enet.IDecodePackage = JSON.parse(data as string);
         const pkgType = parsedData.type;
-        
+
         if (parsedData.type === PackageType.DATA) {
-            const msg: enet.IMessage = parsedData.msg;
+            const msg: enet.IMessage = parsedData.data;
             return {
                 key: msg && msg.key, type: pkgType,
-                data: msg.data, reqId: parsedData.msg && parsedData.msg.reqId
+                data: msg.data, reqId: parsedData.data && parsedData.data.reqId
             } as enet.IDecodePackage;
         } else {
             if (pkgType === PackageType.HANDSHAKE) {
-                this._heartbeatCfg = parsedData.msg;
+                this._heartbeatCfg = parsedData.data;
             }
             return {
                 type: pkgType,
-                data: parsedData.msg
+                data: parsedData.data
             } as enet.IDecodePackage;
         }
 
