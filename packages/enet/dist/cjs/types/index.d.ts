@@ -66,15 +66,19 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	            handShakeReq?: T;
 	        }
 	        /**
-	         * 编码后的数据包
-	         */
-	        /**
-	         * 解析后的数据包
+	         * 解码后的数据包
 	         */
 	        interface IDecodePackage<T = any> {
 	            /**
 	             * 数据包类型
 	             * 默认使用 PackageType 中的DATA  类型 4
+	             *
+	             * 数据包类型
+	             * 默认数据包类型
+	             * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
+	             * 2 HANDSHAKE_ACK 客户端回应服务端的握手包类型
+	             * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
+	             * 4 KICK 服务端发给客户端的下线数据包类型
 	             */
 	            type: number;
 	            /**协议字符串key */
@@ -237,8 +241,16 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	            data: T;
 	        }
 	        interface IPackage<T = any> {
+	            /**
+	             * 数据包类型
+	             * 默认的数据包类型:
+	             * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
+	             * 2 HANDSHAKE_ACK 客户端回应服务端的握手包类型
+	             * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
+	             * 4 KICK 服务端发给客户端的下线数据包类型
+	             */
 	            type: number;
-	            msg?: T;
+	            data?: T;
 	        }
 	        /**
 	         * 重连配置接口
@@ -493,14 +505,40 @@ declare module '@ailhc/enet/src/net-node' {
 	    oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
 	    offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
 	    offPushAll(protoKey?: ProtoKeyType): void;
+	    /**
+	     * 握手包处理
+	     * @param dpkg
+	     */
 	    protected _onHandshake(dpkg: enet.IDecodePackage): void;
+	    /**
+	     * 握手初始化
+	     * @param dpkg
+	     */
 	    protected _handshakeInit(dpkg: enet.IDecodePackage): void;
+	    /**心跳超时定时器id */
 	    protected _heartbeatTimeoutId: number;
+	    /**心跳定时器id */
 	    protected _heartbeatTimeId: number;
+	    /**最新心跳超时时间 */
 	    protected _nextHeartbeatTimeoutTime: number;
+	    /**
+	     * 心跳包处理
+	     * @param dpkg
+	     */
 	    protected _heartbeat(dpkg: enet.IDecodePackage): void;
+	    /**
+	     * 心跳超时处理
+	     */
 	    protected _heartbeatTimeoutCb(): void;
+	    /**
+	     * 数据包处理
+	     * @param dpkg
+	     */
 	    protected _onData(dpkg: enet.IDecodePackage): void;
+	    /**
+	     * 踢下线数据包处理
+	     * @param dpkg
+	     */
 	    protected _onKick(dpkg: enet.IDecodePackage): void;
 	    /**
 	     * socket状态是否准备好

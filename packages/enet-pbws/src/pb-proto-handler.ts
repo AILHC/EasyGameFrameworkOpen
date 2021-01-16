@@ -126,7 +126,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
         let protoKey: string;
         let data: any;
         if (pkgType === PackageType.DATA) {
-            const msg: enet.IMessage = pkg.msg as any;
+            const msg: enet.IMessage = pkg.data as any;
             byteUtil.writeUTFString(msg.key);
             const reqId = msg.reqId;
             byteUtil.writeUint32(!isNaN(reqId) && reqId > 0 ? reqId : 0);
@@ -135,7 +135,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
         } else {
             const protoKeyMap = this._pkgTypeProtoKeyMap;
             protoKey = protoKeyMap[pkgType] && protoKeyMap[pkgType].encode;
-            data = pkg.msg;
+            data = pkg.data;
 
         }
         if (protoKey && data) {
@@ -152,7 +152,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
         return netData;
     }
     encodeMsg<T>(msg: enet.IMessage<T, any>, useCrypto?: boolean): enet.NetData {
-        return this.encodePkg({ type: PackageType.DATA, msg: msg }, useCrypto);
+        return this.encodePkg({ type: PackageType.DATA, data: msg }, useCrypto);
     }
     decodePkg<T>(data: enet.NetData): enet.IDecodePackage<T> {
         const byteUtil = this._byteUtil;

@@ -112,14 +112,14 @@ test("connect with handshake server success", async () => {
         JSON.stringify(
             {
                 type: PackageType.HANDSHAKE,
-                msg: {}
+                data: {}
             } as enet.IPackage
         )
     )
     server.send(JSON.stringify(
         {
             type: PackageType.HANDSHAKE,
-            msg: {
+            data: {
                 heartbeatInterval: 200,
                 heartbeatTimeout: 400
             } as enet.IDefaultHandshakeRes
@@ -163,14 +163,14 @@ test("send heartbeat to server success", async (done) => {
         JSON.stringify(
             {
                 type: PackageType.HANDSHAKE,
-                msg: {}
+                data: {}
             } as enet.IPackage
         )
     )
     heartbeatSvr.send(JSON.stringify(
         {
             type: PackageType.HANDSHAKE,
-            msg: {
+            data: {
                 heartbeatInterval: 200,
                 heartbeatTimeout: 400
             } as enet.IDefaultHandshakeRes
@@ -269,7 +269,7 @@ test("request server success", async (done) => {
     const receiveMsg = JSON.stringify(
         {
             type: PackageType.DATA,
-            msg: {
+            data: {
                 key: "requesttest1", reqId: 1,
                 data: { testData: "requesttest1" }
             }
@@ -279,7 +279,7 @@ test("request server success", async (done) => {
     server.send(JSON.stringify(
         {
             type: PackageType.DATA,
-            msg: {
+            data: {
                 key: "requesttest1", reqId: 1,
                 data: { testData: "responese1" }
             }
@@ -310,7 +310,7 @@ test("notify server success", async (done) => {
         JSON.stringify(
             {
                 type: PackageType.DATA,
-                msg: {
+                data: {
                     key: "notify_test",
                     data: { testData: "notify_test" }
                 }
@@ -369,7 +369,7 @@ test("onPush server success", async (done) => {
     server.send(JSON.stringify(
         {
             type: PackageType.DATA,
-            msg: { key: "onPushtest", data: { testData: "onPushtest" } }
+            data: { key: "onPushtest", data: { testData: "onPushtest" } }
         } as enet.IPackage
     ));
 });
@@ -415,7 +415,7 @@ test("oncePush server success", async (done) => {
     server.send(JSON.stringify(
         {
             type: PackageType.DATA,
-            msg: { key: "oncePushtest", data: { testData: "oncePushtest" } } as enet.IMessage
+            data: { key: "oncePushtest", data: { testData: "oncePushtest" } } as enet.IMessage
         } as enet.IPackage
     ))
 });
@@ -611,7 +611,7 @@ test("send message on netNode connecting", async (done) => {
         JSON.stringify(
             {
                 type: PackageType.DATA,
-                msg: { key: "testNotify", data: { testData: "testNotify" } }
+                data: { key: "testNotify", data: { testData: "testNotify" } }
             } as enet.IPackage
         )
     );
