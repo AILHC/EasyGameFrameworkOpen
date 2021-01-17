@@ -1,6 +1,6 @@
 
 import WebSocket = require("ws")
-import config from "../config/config";
+import config from "./config";
 import { PackageType, PbProtoHandler } from "@ailhc/enet-pbws";
 require("../libs/protobuf.js");
 require("../protojs/proto_bundle.js");

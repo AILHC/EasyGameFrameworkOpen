@@ -9,7 +9,7 @@
     "genPb": "egf-pb g",
     "pbInit": "egf-pb i",
     "build-svr": "cd egf-net-ws-server && tsc --b",
-    "start-svr": "cd egf-net-ws-server && node ./bin/src/ws-server.js",
+    "start-svr": "cd egf-net-ws-server && node ./bin/ws-server.js",
     "dev_svr": "ts-node --transpile-only ./egf-net-ws-server/src/ws-server.ts"
   },
   "dependencies": {

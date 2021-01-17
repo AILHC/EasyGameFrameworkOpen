@@ -35,14 +35,19 @@ export default class SimpleTest extends cc.Component {
 
     start() {
         const netMgr = new NetNode<string>();
-        this._net = netMgr;
-        netMgr.init({
-            netEventHandler: this
-        })
+        netMgr.init()
         netMgr.onPush<string>("Msg", { method: this.onMsgPush, context: this });
+        netMgr.onPush<string>("Msg", (dpkg) => { console.log(dpkg.data) });
+        this._net = netMgr;
     }
     connectSvr() {
-        this._net.connect("wss://echo.websocket.org/");//这个比较慢
+        this.maskPanelComp.showMaskPanel()
+        this.maskPanelComp.updateMaskPanelTips("连接服务器中");
+        this._net.connect("wss://echo.websocket.org/", () => {
+            this.maskPanelComp.updateMaskPanelTips("连接服务器成功");
+            this.maskPanelComp.hideMaskPanel();
+            this.showChatPanel();
+        });//这个比较慢
     }
     sendMsg() {
         const msg = this.msgInputEdit.string;
@@ -76,41 +81,6 @@ export default class SimpleTest extends cc.Component {
         this.chatPanel.active = false;
     }
     //#endregion
-    onStartConnenct?(connectOpt: enet.IConnectOptions<any>): void {
-        this.maskPanelComp.showMaskPanel()
-        this.maskPanelComp.updateMaskPanelTips("连接服务器中");
-    }
-    onConnectEnd?(connectOpt: enet.IConnectOptions<any>): void {
-        this.maskPanelComp.updateMaskPanelTips("连接服务器成功");
-        this.maskPanelComp.hideMaskPanel();
-        this.showChatPanel();
-
-
-    }
-    onError(event: any, connectOpt: enet.IConnectOptions<any>): void {
-        this.maskPanelComp.updateMaskPanelTips("连接出错");
-    }
-    onClosed(event: any, connectOpt: enet.IConnectOptions<any>): void {
-        this.maskPanelComp.hideMaskPanel();
-
-    }
-    onStartReconnect?(reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions<any>): void {
-    }
-    onReconnecting?(curCount: number, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions<any>): void {
-    }
-    onReconnectEnd?(isOk: boolean, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions<any>): void {
-    }
-    onStartRequest?(reqCfg: enet.IRequestConfig, connectOpt: enet.IConnectOptions<any>): void {
-        this.maskPanelComp.updateMaskPanelTips("请求中");
-        this.maskPanelComp.showMaskPanel();
-    }
-    onData?(decodePkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions<any>, reqCfg?: enet.IRequestConfig): void {
-        this.maskPanelComp.hideMaskPanel();
-    }
-    onKick?(decodePkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions<any>): void {
-    }
-    onCustomError?(data: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions<any>): void {
-    }
 
     // update (dt) {}
 }
