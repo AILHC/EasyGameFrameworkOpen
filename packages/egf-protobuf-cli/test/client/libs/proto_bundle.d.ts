@@ -45,6 +45,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IResData, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified ResData message, length delimited. Does not implicitly {@link doomsday_pt.ResData.verify|verify} messages.
+         * @param message ResData message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IResData, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a ResData message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -55,32 +63,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.ResData;
 
         /**
+         * Decodes a ResData message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ResData
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.ResData;
+
+        /**
          * Verifies a ResData message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a ResData message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns ResData
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.ResData;
-
-        /**
-         * Creates a plain object from a ResData message. Also converts values to other types if specified.
-         * @param message ResData
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.ResData, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this ResData to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a DrawAward. */
@@ -130,6 +126,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IDrawAward, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified DrawAward message, length delimited. Does not implicitly {@link doomsday_pt.DrawAward.verify|verify} messages.
+         * @param message DrawAward message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IDrawAward, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a DrawAward message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -140,32 +144,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.DrawAward;
 
         /**
+         * Decodes a DrawAward message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns DrawAward
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.DrawAward;
+
+        /**
          * Verifies a DrawAward message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a DrawAward message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns DrawAward
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.DrawAward;
-
-        /**
-         * Creates a plain object from a DrawAward message. Also converts values to other types if specified.
-         * @param message DrawAward
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.DrawAward, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this DrawAward to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a HeroExpMsg. */
@@ -215,6 +207,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IHeroExpMsg, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified HeroExpMsg message, length delimited. Does not implicitly {@link doomsday_pt.HeroExpMsg.verify|verify} messages.
+         * @param message HeroExpMsg message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IHeroExpMsg, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a HeroExpMsg message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -225,32 +225,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.HeroExpMsg;
 
         /**
+         * Decodes a HeroExpMsg message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HeroExpMsg
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.HeroExpMsg;
+
+        /**
          * Verifies a HeroExpMsg message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a HeroExpMsg message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns HeroExpMsg
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.HeroExpMsg;
-
-        /**
-         * Creates a plain object from a HeroExpMsg message. Also converts values to other types if specified.
-         * @param message HeroExpMsg
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.HeroExpMsg, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this HeroExpMsg to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a BattleAward. */
@@ -294,6 +282,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IBattleAward, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified BattleAward message, length delimited. Does not implicitly {@link doomsday_pt.BattleAward.verify|verify} messages.
+         * @param message BattleAward message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IBattleAward, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a BattleAward message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -304,32 +300,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.BattleAward;
 
         /**
+         * Decodes a BattleAward message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns BattleAward
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.BattleAward;
+
+        /**
          * Verifies a BattleAward message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a BattleAward message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns BattleAward
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.BattleAward;
-
-        /**
-         * Creates a plain object from a BattleAward message. Also converts values to other types if specified.
-         * @param message BattleAward
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.BattleAward, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this BattleAward to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a GetGoods. */
@@ -373,6 +357,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IGetGoods, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified GetGoods message, length delimited. Does not implicitly {@link doomsday_pt.GetGoods.verify|verify} messages.
+         * @param message GetGoods message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IGetGoods, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a GetGoods message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -383,32 +375,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.GetGoods;
 
         /**
+         * Decodes a GetGoods message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns GetGoods
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.GetGoods;
+
+        /**
          * Verifies a GetGoods message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a GetGoods message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns GetGoods
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.GetGoods;
-
-        /**
-         * Creates a plain object from a GetGoods message. Also converts values to other types if specified.
-         * @param message GetGoods
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.GetGoods, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this GetGoods to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10000001. */
@@ -458,6 +438,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10000001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10000001 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10000001.verify|verify} messages.
+         * @param message Cs_10000001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10000001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10000001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -468,32 +456,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10000001;
 
         /**
+         * Decodes a Cs_10000001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10000001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10000001;
+
+        /**
          * Verifies a Cs_10000001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10000001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10000001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10000001;
-
-        /**
-         * Creates a plain object from a Cs_10000001 message. Also converts values to other types if specified.
-         * @param message Cs_10000001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10000001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10000001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10000001. */
@@ -531,6 +507,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10000001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10000001 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10000001.verify|verify} messages.
+         * @param message Sc_10000001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10000001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10000001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -541,32 +525,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10000001;
 
         /**
+         * Decodes a Sc_10000001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10000001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10000001;
+
+        /**
          * Verifies a Sc_10000001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10000001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10000001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10000001;
-
-        /**
-         * Creates a plain object from a Sc_10000001 message. Also converts values to other types if specified.
-         * @param message Sc_10000001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10000001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10000001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_HeroMsg. */
@@ -616,6 +588,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_HeroMsg, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_HeroMsg message, length delimited. Does not implicitly {@link doomsday_pt.Pt_HeroMsg.verify|verify} messages.
+         * @param message Pt_HeroMsg message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_HeroMsg, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_HeroMsg message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -626,32 +606,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_HeroMsg;
 
         /**
+         * Decodes a Pt_HeroMsg message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_HeroMsg
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_HeroMsg;
+
+        /**
          * Verifies a Pt_HeroMsg message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_HeroMsg message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_HeroMsg
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_HeroMsg;
-
-        /**
-         * Creates a plain object from a Pt_HeroMsg message. Also converts values to other types if specified.
-         * @param message Pt_HeroMsg
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_HeroMsg, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_HeroMsg to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_RoleInfo. */
@@ -737,6 +705,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_RoleInfo, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_RoleInfo message, length delimited. Does not implicitly {@link doomsday_pt.Pt_RoleInfo.verify|verify} messages.
+         * @param message Pt_RoleInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_RoleInfo, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_RoleInfo message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -747,32 +723,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_RoleInfo;
 
         /**
+         * Decodes a Pt_RoleInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_RoleInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_RoleInfo;
+
+        /**
          * Verifies a Pt_RoleInfo message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_RoleInfo message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_RoleInfo
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_RoleInfo;
-
-        /**
-         * Creates a plain object from a Pt_RoleInfo message. Also converts values to other types if specified.
-         * @param message Pt_RoleInfo
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_RoleInfo, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_RoleInfo to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_Currency. */
@@ -840,6 +804,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_Currency, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_Currency message, length delimited. Does not implicitly {@link doomsday_pt.Pt_Currency.verify|verify} messages.
+         * @param message Pt_Currency message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_Currency, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_Currency message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -850,32 +822,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_Currency;
 
         /**
+         * Decodes a Pt_Currency message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_Currency
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_Currency;
+
+        /**
          * Verifies a Pt_Currency message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_Currency message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_Currency
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_Currency;
-
-        /**
-         * Creates a plain object from a Pt_Currency message. Also converts values to other types if specified.
-         * @param message Pt_Currency
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_Currency, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_Currency to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10010001. */
@@ -919,6 +879,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10010001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10010001 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10010001.verify|verify} messages.
+         * @param message Cs_10010001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10010001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10010001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -929,32 +897,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10010001;
 
         /**
+         * Decodes a Cs_10010001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10010001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10010001;
+
+        /**
          * Verifies a Cs_10010001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10010001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10010001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10010001;
-
-        /**
-         * Creates a plain object from a Cs_10010001 message. Also converts values to other types if specified.
-         * @param message Cs_10010001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10010001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10010001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10010001. */
@@ -998,6 +954,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10010001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10010001 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10010001.verify|verify} messages.
+         * @param message Sc_10010001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10010001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10010001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1008,32 +972,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010001;
 
         /**
+         * Decodes a Sc_10010001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10010001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10010001;
+
+        /**
          * Verifies a Sc_10010001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10010001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10010001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10010001;
-
-        /**
-         * Creates a plain object from a Sc_10010001 message. Also converts values to other types if specified.
-         * @param message Sc_10010001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10010001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10010001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10010002. */
@@ -1089,6 +1041,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10010002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10010002 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10010002.verify|verify} messages.
+         * @param message Cs_10010002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10010002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10010002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1099,32 +1059,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10010002;
 
         /**
+         * Decodes a Cs_10010002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10010002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10010002;
+
+        /**
          * Verifies a Cs_10010002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10010002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10010002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10010002;
-
-        /**
-         * Creates a plain object from a Cs_10010002 message. Also converts values to other types if specified.
-         * @param message Cs_10010002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10010002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10010002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10010002. */
@@ -1162,6 +1110,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10010002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10010002 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10010002.verify|verify} messages.
+         * @param message Sc_10010002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10010002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10010002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1172,32 +1128,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010002;
 
         /**
+         * Decodes a Sc_10010002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10010002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10010002;
+
+        /**
          * Verifies a Sc_10010002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10010002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10010002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10010002;
-
-        /**
-         * Creates a plain object from a Sc_10010002 message. Also converts values to other types if specified.
-         * @param message Sc_10010002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10010002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10010002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10010003. */
@@ -1235,6 +1179,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10010003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10010003 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10010003.verify|verify} messages.
+         * @param message Cs_10010003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10010003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10010003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1245,32 +1197,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10010003;
 
         /**
+         * Decodes a Cs_10010003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10010003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10010003;
+
+        /**
          * Verifies a Cs_10010003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10010003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10010003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10010003;
-
-        /**
-         * Creates a plain object from a Cs_10010003 message. Also converts values to other types if specified.
-         * @param message Cs_10010003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10010003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10010003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10010003. */
@@ -1308,6 +1248,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10010003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10010003 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10010003.verify|verify} messages.
+         * @param message Sc_10010003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10010003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10010003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1318,32 +1266,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010003;
 
         /**
+         * Decodes a Sc_10010003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10010003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10010003;
+
+        /**
          * Verifies a Sc_10010003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10010003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10010003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10010003;
-
-        /**
-         * Creates a plain object from a Sc_10010003 message. Also converts values to other types if specified.
-         * @param message Sc_10010003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10010003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10010003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10010004. */
@@ -1381,6 +1317,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10010004, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10010004 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10010004.verify|verify} messages.
+         * @param message Sc_10010004 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10010004, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10010004 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1391,32 +1335,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010004;
 
         /**
+         * Decodes a Sc_10010004 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10010004
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10010004;
+
+        /**
          * Verifies a Sc_10010004 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10010004 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10010004
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10010004;
-
-        /**
-         * Creates a plain object from a Sc_10010004 message. Also converts values to other types if specified.
-         * @param message Sc_10010004
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10010004, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10010004 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10010005. */
@@ -1454,6 +1386,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10010005, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10010005 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10010005.verify|verify} messages.
+         * @param message Sc_10010005 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10010005, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10010005 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1464,32 +1404,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10010005;
 
         /**
+         * Decodes a Sc_10010005 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10010005
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10010005;
+
+        /**
          * Verifies a Sc_10010005 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10010005 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10010005
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10010005;
-
-        /**
-         * Creates a plain object from a Sc_10010005 message. Also converts values to other types if specified.
-         * @param message Sc_10010005
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10010005, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10010005 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_AttList. */
@@ -1533,6 +1461,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_AttList, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_AttList message, length delimited. Does not implicitly {@link doomsday_pt.Pt_AttList.verify|verify} messages.
+         * @param message Pt_AttList message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_AttList, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_AttList message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1543,32 +1479,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_AttList;
 
         /**
+         * Decodes a Pt_AttList message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_AttList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_AttList;
+
+        /**
          * Verifies a Pt_AttList message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_AttList message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_AttList
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_AttList;
-
-        /**
-         * Creates a plain object from a Pt_AttList message. Also converts values to other types if specified.
-         * @param message Pt_AttList
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_AttList, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_AttList to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_HeroPanel. */
@@ -1612,6 +1536,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_HeroPanel, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_HeroPanel message, length delimited. Does not implicitly {@link doomsday_pt.Pt_HeroPanel.verify|verify} messages.
+         * @param message Pt_HeroPanel message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_HeroPanel, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_HeroPanel message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1622,32 +1554,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_HeroPanel;
 
         /**
+         * Decodes a Pt_HeroPanel message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_HeroPanel
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_HeroPanel;
+
+        /**
          * Verifies a Pt_HeroPanel message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_HeroPanel message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_HeroPanel
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_HeroPanel;
-
-        /**
-         * Creates a plain object from a Pt_HeroPanel message. Also converts values to other types if specified.
-         * @param message Pt_HeroPanel
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_HeroPanel, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_HeroPanel to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_HeroInfo. */
@@ -1709,6 +1629,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_HeroInfo, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_HeroInfo message, length delimited. Does not implicitly {@link doomsday_pt.Pt_HeroInfo.verify|verify} messages.
+         * @param message Pt_HeroInfo message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_HeroInfo, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_HeroInfo message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1719,32 +1647,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_HeroInfo;
 
         /**
+         * Decodes a Pt_HeroInfo message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_HeroInfo
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_HeroInfo;
+
+        /**
          * Verifies a Pt_HeroInfo message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_HeroInfo message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_HeroInfo
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_HeroInfo;
-
-        /**
-         * Creates a plain object from a Pt_HeroInfo message. Also converts values to other types if specified.
-         * @param message Pt_HeroInfo
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_HeroInfo, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_HeroInfo to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10020001. */
@@ -1782,6 +1698,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10020001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10020001 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10020001.verify|verify} messages.
+         * @param message Cs_10020001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10020001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10020001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1792,32 +1716,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10020001;
 
         /**
+         * Decodes a Cs_10020001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10020001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10020001;
+
+        /**
          * Verifies a Cs_10020001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10020001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10020001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10020001;
-
-        /**
-         * Creates a plain object from a Cs_10020001 message. Also converts values to other types if specified.
-         * @param message Cs_10020001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10020001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10020001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10020001. */
@@ -1855,6 +1767,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10020001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10020001 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10020001.verify|verify} messages.
+         * @param message Sc_10020001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10020001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10020001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1865,32 +1785,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10020001;
 
         /**
+         * Decodes a Sc_10020001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10020001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10020001;
+
+        /**
          * Verifies a Sc_10020001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10020001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10020001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10020001;
-
-        /**
-         * Creates a plain object from a Sc_10020001 message. Also converts values to other types if specified.
-         * @param message Sc_10020001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10020001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10020001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10020002. */
@@ -1928,6 +1836,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10020002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10020002 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10020002.verify|verify} messages.
+         * @param message Cs_10020002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10020002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10020002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -1938,32 +1854,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10020002;
 
         /**
+         * Decodes a Cs_10020002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10020002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10020002;
+
+        /**
          * Verifies a Cs_10020002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10020002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10020002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10020002;
-
-        /**
-         * Creates a plain object from a Cs_10020002 message. Also converts values to other types if specified.
-         * @param message Cs_10020002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10020002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10020002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10020002. */
@@ -2007,6 +1911,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10020002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10020002 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10020002.verify|verify} messages.
+         * @param message Sc_10020002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10020002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10020002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2017,32 +1929,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10020002;
 
         /**
+         * Decodes a Sc_10020002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10020002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10020002;
+
+        /**
          * Verifies a Sc_10020002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10020002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10020002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10020002;
-
-        /**
-         * Creates a plain object from a Sc_10020002 message. Also converts values to other types if specified.
-         * @param message Sc_10020002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10020002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10020002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10020003. */
@@ -2080,6 +1980,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10020003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10020003 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10020003.verify|verify} messages.
+         * @param message Cs_10020003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10020003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10020003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2090,32 +1998,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10020003;
 
         /**
+         * Decodes a Cs_10020003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10020003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10020003;
+
+        /**
          * Verifies a Cs_10020003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10020003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10020003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10020003;
-
-        /**
-         * Creates a plain object from a Cs_10020003 message. Also converts values to other types if specified.
-         * @param message Cs_10020003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10020003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10020003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10020003. */
@@ -2159,6 +2055,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10020003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10020003 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10020003.verify|verify} messages.
+         * @param message Sc_10020003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10020003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10020003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2169,32 +2073,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10020003;
 
         /**
+         * Decodes a Sc_10020003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10020003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10020003;
+
+        /**
          * Verifies a Sc_10020003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10020003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10020003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10020003;
-
-        /**
-         * Creates a plain object from a Sc_10020003 message. Also converts values to other types if specified.
-         * @param message Sc_10020003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10020003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10020003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10020004. */
@@ -2232,6 +2124,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10020004, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10020004 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10020004.verify|verify} messages.
+         * @param message Cs_10020004 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10020004, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10020004 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2242,32 +2142,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10020004;
 
         /**
+         * Decodes a Cs_10020004 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10020004
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10020004;
+
+        /**
          * Verifies a Cs_10020004 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10020004 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10020004
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10020004;
-
-        /**
-         * Creates a plain object from a Cs_10020004 message. Also converts values to other types if specified.
-         * @param message Cs_10020004
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10020004, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10020004 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10020004. */
@@ -2311,6 +2199,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10020004, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10020004 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10020004.verify|verify} messages.
+         * @param message Sc_10020004 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10020004, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10020004 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2321,32 +2217,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10020004;
 
         /**
+         * Decodes a Sc_10020004 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10020004
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10020004;
+
+        /**
          * Verifies a Sc_10020004 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10020004 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10020004
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10020004;
-
-        /**
-         * Creates a plain object from a Sc_10020004 message. Also converts values to other types if specified.
-         * @param message Sc_10020004
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10020004, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10020004 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_GoodsMsg. */
@@ -2402,6 +2286,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_GoodsMsg, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_GoodsMsg message, length delimited. Does not implicitly {@link doomsday_pt.Pt_GoodsMsg.verify|verify} messages.
+         * @param message Pt_GoodsMsg message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_GoodsMsg, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_GoodsMsg message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2412,32 +2304,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_GoodsMsg;
 
         /**
+         * Decodes a Pt_GoodsMsg message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_GoodsMsg
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_GoodsMsg;
+
+        /**
          * Verifies a Pt_GoodsMsg message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_GoodsMsg message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_GoodsMsg
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_GoodsMsg;
-
-        /**
-         * Creates a plain object from a Pt_GoodsMsg message. Also converts values to other types if specified.
-         * @param message Pt_GoodsMsg
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_GoodsMsg, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_GoodsMsg to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10030001. */
@@ -2487,6 +2367,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10030001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10030001 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10030001.verify|verify} messages.
+         * @param message Sc_10030001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10030001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10030001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2497,32 +2385,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10030001;
 
         /**
+         * Decodes a Sc_10030001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10030001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10030001;
+
+        /**
          * Verifies a Sc_10030001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10030001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10030001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10030001;
-
-        /**
-         * Creates a plain object from a Sc_10030001 message. Also converts values to other types if specified.
-         * @param message Sc_10030001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10030001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10030001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10030002. */
@@ -2566,6 +2442,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10030002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10030002 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10030002.verify|verify} messages.
+         * @param message Sc_10030002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10030002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10030002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2576,32 +2460,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10030002;
 
         /**
+         * Decodes a Sc_10030002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10030002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10030002;
+
+        /**
          * Verifies a Sc_10030002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10030002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10030002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10030002;
-
-        /**
-         * Creates a plain object from a Sc_10030002 message. Also converts values to other types if specified.
-         * @param message Sc_10030002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10030002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10030002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10030003. */
@@ -2645,6 +2517,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10030003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10030003 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10030003.verify|verify} messages.
+         * @param message Cs_10030003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10030003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10030003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2655,32 +2535,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10030003;
 
         /**
+         * Decodes a Cs_10030003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10030003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10030003;
+
+        /**
          * Verifies a Cs_10030003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10030003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10030003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10030003;
-
-        /**
-         * Creates a plain object from a Cs_10030003 message. Also converts values to other types if specified.
-         * @param message Cs_10030003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10030003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10030003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10030003. */
@@ -2718,6 +2586,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10030003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10030003 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10030003.verify|verify} messages.
+         * @param message Sc_10030003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10030003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10030003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2728,32 +2604,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10030003;
 
         /**
+         * Decodes a Sc_10030003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10030003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10030003;
+
+        /**
          * Verifies a Sc_10030003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10030003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10030003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10030003;
-
-        /**
-         * Creates a plain object from a Sc_10030003 message. Also converts values to other types if specified.
-         * @param message Sc_10030003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10030003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10030003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10030004. */
@@ -2791,6 +2655,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10030004, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10030004 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10030004.verify|verify} messages.
+         * @param message Cs_10030004 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10030004, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10030004 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2801,32 +2673,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10030004;
 
         /**
+         * Decodes a Cs_10030004 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10030004
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10030004;
+
+        /**
          * Verifies a Cs_10030004 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10030004 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10030004
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10030004;
-
-        /**
-         * Creates a plain object from a Cs_10030004 message. Also converts values to other types if specified.
-         * @param message Cs_10030004
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10030004, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10030004 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10030004. */
@@ -2864,6 +2724,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10030004, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10030004 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10030004.verify|verify} messages.
+         * @param message Sc_10030004 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10030004, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10030004 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2874,32 +2742,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10030004;
 
         /**
+         * Decodes a Sc_10030004 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10030004
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10030004;
+
+        /**
          * Verifies a Sc_10030004 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10030004 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10030004
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10030004;
-
-        /**
-         * Creates a plain object from a Sc_10030004 message. Also converts values to other types if specified.
-         * @param message Sc_10030004
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10030004, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10030004 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10030005. */
@@ -2937,6 +2793,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10030005, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10030005 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10030005.verify|verify} messages.
+         * @param message Cs_10030005 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10030005, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10030005 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -2947,32 +2811,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10030005;
 
         /**
+         * Decodes a Cs_10030005 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10030005
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10030005;
+
+        /**
          * Verifies a Cs_10030005 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10030005 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10030005
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10030005;
-
-        /**
-         * Creates a plain object from a Cs_10030005 message. Also converts values to other types if specified.
-         * @param message Cs_10030005
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10030005, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10030005 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10030005. */
@@ -3010,6 +2862,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10030005, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10030005 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10030005.verify|verify} messages.
+         * @param message Sc_10030005 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10030005, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10030005 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3020,32 +2880,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10030005;
 
         /**
+         * Decodes a Sc_10030005 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10030005
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10030005;
+
+        /**
          * Verifies a Sc_10030005 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10030005 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10030005
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10030005;
-
-        /**
-         * Creates a plain object from a Sc_10030005 message. Also converts values to other types if specified.
-         * @param message Sc_10030005
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10030005, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10030005 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10030006. */
@@ -3083,6 +2931,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10030006, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10030006 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10030006.verify|verify} messages.
+         * @param message Cs_10030006 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10030006, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10030006 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3093,32 +2949,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10030006;
 
         /**
+         * Decodes a Cs_10030006 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10030006
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10030006;
+
+        /**
          * Verifies a Cs_10030006 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10030006 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10030006
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10030006;
-
-        /**
-         * Creates a plain object from a Cs_10030006 message. Also converts values to other types if specified.
-         * @param message Cs_10030006
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10030006, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10030006 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10030006. */
@@ -3156,6 +3000,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10030006, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10030006 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10030006.verify|verify} messages.
+         * @param message Sc_10030006 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10030006, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10030006 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3166,32 +3018,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10030006;
 
         /**
+         * Decodes a Sc_10030006 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10030006
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10030006;
+
+        /**
          * Verifies a Sc_10030006 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10030006 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10030006
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10030006;
-
-        /**
-         * Creates a plain object from a Sc_10030006 message. Also converts values to other types if specified.
-         * @param message Sc_10030006
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10030006, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10030006 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10030007. */
@@ -3241,6 +3081,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10030007, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10030007 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10030007.verify|verify} messages.
+         * @param message Cs_10030007 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10030007, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10030007 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3251,32 +3099,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10030007;
 
         /**
+         * Decodes a Cs_10030007 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10030007
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10030007;
+
+        /**
          * Verifies a Cs_10030007 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10030007 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10030007
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10030007;
-
-        /**
-         * Creates a plain object from a Cs_10030007 message. Also converts values to other types if specified.
-         * @param message Cs_10030007
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10030007, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10030007 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10030007. */
@@ -3314,6 +3150,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10030007, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10030007 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10030007.verify|verify} messages.
+         * @param message Sc_10030007 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10030007, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10030007 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3324,32 +3168,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10030007;
 
         /**
+         * Decodes a Sc_10030007 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10030007
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10030007;
+
+        /**
          * Verifies a Sc_10030007 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10030007 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10030007
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10030007;
-
-        /**
-         * Creates a plain object from a Sc_10030007 message. Also converts values to other types if specified.
-         * @param message Sc_10030007
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10030007, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10030007 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_Pos. */
@@ -3393,6 +3225,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_Pos, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_Pos message, length delimited. Does not implicitly {@link doomsday_pt.Pt_Pos.verify|verify} messages.
+         * @param message Pt_Pos message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_Pos, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_Pos message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3403,32 +3243,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_Pos;
 
         /**
+         * Decodes a Pt_Pos message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_Pos
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_Pos;
+
+        /**
          * Verifies a Pt_Pos message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_Pos message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_Pos
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_Pos;
-
-        /**
-         * Creates a plain object from a Pt_Pos message. Also converts values to other types if specified.
-         * @param message Pt_Pos
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_Pos, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_Pos to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10040001. */
@@ -3466,6 +3294,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10040001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10040001 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10040001.verify|verify} messages.
+         * @param message Cs_10040001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10040001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10040001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3476,32 +3312,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10040001;
 
         /**
+         * Decodes a Cs_10040001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10040001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10040001;
+
+        /**
          * Verifies a Cs_10040001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10040001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10040001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10040001;
-
-        /**
-         * Creates a plain object from a Cs_10040001 message. Also converts values to other types if specified.
-         * @param message Cs_10040001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10040001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10040001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10040001. */
@@ -3539,6 +3363,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10040001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10040001 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10040001.verify|verify} messages.
+         * @param message Sc_10040001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10040001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10040001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3549,32 +3381,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10040001;
 
         /**
+         * Decodes a Sc_10040001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10040001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10040001;
+
+        /**
          * Verifies a Sc_10040001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10040001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10040001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10040001;
-
-        /**
-         * Creates a plain object from a Sc_10040001 message. Also converts values to other types if specified.
-         * @param message Sc_10040001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10040001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10040001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10040002. */
@@ -3618,6 +3438,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10040002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10040002 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10040002.verify|verify} messages.
+         * @param message Cs_10040002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10040002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10040002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3628,32 +3456,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10040002;
 
         /**
+         * Decodes a Cs_10040002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10040002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10040002;
+
+        /**
          * Verifies a Cs_10040002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10040002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10040002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10040002;
-
-        /**
-         * Creates a plain object from a Cs_10040002 message. Also converts values to other types if specified.
-         * @param message Cs_10040002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10040002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10040002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10040002. */
@@ -3691,6 +3507,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10040002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10040002 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10040002.verify|verify} messages.
+         * @param message Sc_10040002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10040002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10040002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3701,32 +3525,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10040002;
 
         /**
+         * Decodes a Sc_10040002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10040002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10040002;
+
+        /**
          * Verifies a Sc_10040002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10040002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10040002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10040002;
-
-        /**
-         * Creates a plain object from a Sc_10040002 message. Also converts values to other types if specified.
-         * @param message Sc_10040002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10040002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10040002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_GoodsList. */
@@ -3770,6 +3582,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_GoodsList, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_GoodsList message, length delimited. Does not implicitly {@link doomsday_pt.Pt_GoodsList.verify|verify} messages.
+         * @param message Pt_GoodsList message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_GoodsList, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_GoodsList message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3780,32 +3600,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_GoodsList;
 
         /**
+         * Decodes a Pt_GoodsList message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_GoodsList
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_GoodsList;
+
+        /**
          * Verifies a Pt_GoodsList message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_GoodsList message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_GoodsList
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_GoodsList;
-
-        /**
-         * Creates a plain object from a Pt_GoodsList message. Also converts values to other types if specified.
-         * @param message Pt_GoodsList
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_GoodsList, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_GoodsList to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Pt_Goodsfresh. */
@@ -3849,6 +3657,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.IPt_Goodsfresh, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Pt_Goodsfresh message, length delimited. Does not implicitly {@link doomsday_pt.Pt_Goodsfresh.verify|verify} messages.
+         * @param message Pt_Goodsfresh message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.IPt_Goodsfresh, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Pt_Goodsfresh message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3859,32 +3675,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Pt_Goodsfresh;
 
         /**
+         * Decodes a Pt_Goodsfresh message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Pt_Goodsfresh
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Pt_Goodsfresh;
+
+        /**
          * Verifies a Pt_Goodsfresh message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Pt_Goodsfresh message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Pt_Goodsfresh
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Pt_Goodsfresh;
-
-        /**
-         * Creates a plain object from a Pt_Goodsfresh message. Also converts values to other types if specified.
-         * @param message Pt_Goodsfresh
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Pt_Goodsfresh, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Pt_Goodsfresh to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10050001. */
@@ -3928,6 +3732,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10050001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10050001 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10050001.verify|verify} messages.
+         * @param message Cs_10050001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10050001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10050001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -3938,32 +3750,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10050001;
 
         /**
+         * Decodes a Cs_10050001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10050001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10050001;
+
+        /**
          * Verifies a Cs_10050001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10050001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10050001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10050001;
-
-        /**
-         * Creates a plain object from a Cs_10050001 message. Also converts values to other types if specified.
-         * @param message Cs_10050001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10050001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10050001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10050001. */
@@ -4007,6 +3807,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10050001, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10050001 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10050001.verify|verify} messages.
+         * @param message Sc_10050001 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10050001, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10050001 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -4017,32 +3825,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10050001;
 
         /**
+         * Decodes a Sc_10050001 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10050001
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10050001;
+
+        /**
          * Verifies a Sc_10050001 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10050001 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10050001
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10050001;
-
-        /**
-         * Creates a plain object from a Sc_10050001 message. Also converts values to other types if specified.
-         * @param message Sc_10050001
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10050001, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10050001 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10050002. */
@@ -4092,6 +3888,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10050002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10050002 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10050002.verify|verify} messages.
+         * @param message Cs_10050002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10050002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10050002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -4102,32 +3906,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10050002;
 
         /**
+         * Decodes a Cs_10050002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10050002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10050002;
+
+        /**
          * Verifies a Cs_10050002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10050002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10050002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10050002;
-
-        /**
-         * Creates a plain object from a Cs_10050002 message. Also converts values to other types if specified.
-         * @param message Cs_10050002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10050002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10050002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10050002. */
@@ -4171,6 +3963,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10050002, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10050002 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10050002.verify|verify} messages.
+         * @param message Sc_10050002 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10050002, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10050002 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -4181,32 +3981,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10050002;
 
         /**
+         * Decodes a Sc_10050002 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10050002
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10050002;
+
+        /**
          * Verifies a Sc_10050002 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10050002 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10050002
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10050002;
-
-        /**
-         * Creates a plain object from a Sc_10050002 message. Also converts values to other types if specified.
-         * @param message Sc_10050002
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10050002, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10050002 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Cs_10050003. */
@@ -4256,6 +4044,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ICs_10050003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Cs_10050003 message, length delimited. Does not implicitly {@link doomsday_pt.Cs_10050003.verify|verify} messages.
+         * @param message Cs_10050003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ICs_10050003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Cs_10050003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -4266,32 +4062,20 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Cs_10050003;
 
         /**
+         * Decodes a Cs_10050003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Cs_10050003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Cs_10050003;
+
+        /**
          * Verifies a Cs_10050003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Cs_10050003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Cs_10050003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Cs_10050003;
-
-        /**
-         * Creates a plain object from a Cs_10050003 message. Also converts values to other types if specified.
-         * @param message Cs_10050003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Cs_10050003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Cs_10050003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 
     /** Properties of a Sc_10050003. */
@@ -4335,6 +4119,14 @@ declare namespace doomsday_pt {
         public static encode(message: doomsday_pt.ISc_10050003, writer?: protobuf.Writer): protobuf.Writer;
 
         /**
+         * Encodes the specified Sc_10050003 message, length delimited. Does not implicitly {@link doomsday_pt.Sc_10050003.verify|verify} messages.
+         * @param message Sc_10050003 message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: doomsday_pt.ISc_10050003, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
          * Decodes a Sc_10050003 message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
@@ -4345,31 +4137,19 @@ declare namespace doomsday_pt {
         public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): doomsday_pt.Sc_10050003;
 
         /**
+         * Decodes a Sc_10050003 message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns Sc_10050003
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: (protobuf.Reader|Uint8Array)): doomsday_pt.Sc_10050003;
+
+        /**
          * Verifies a Sc_10050003 message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates a Sc_10050003 message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns Sc_10050003
-         */
-        public static fromObject(object: { [k: string]: any }): doomsday_pt.Sc_10050003;
-
-        /**
-         * Creates a plain object from a Sc_10050003 message. Also converts values to other types if specified.
-         * @param message Sc_10050003
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: doomsday_pt.Sc_10050003, options?: protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this Sc_10050003 to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
     }
 }

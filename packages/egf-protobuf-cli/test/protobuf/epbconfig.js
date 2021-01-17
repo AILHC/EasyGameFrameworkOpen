@@ -43,7 +43,7 @@ module.exports = {
 	/**输出protojs文件类型  0 全部（js和.min.js）1(js) 2(.min.js)*/
 	outputFileType: 1,
 	/**.proto 文件夹路径  */
-	sourceRoot: "protobuf/protofiles",
+	sourceRoot: "protofile",
 	/**输出js文件名 */
 	outFileName: "proto_bundle",
 	/**生成js的输出路径 */
@@ -53,14 +53,14 @@ module.exports = {
 	/**是否使用压缩库，默认false */
 	isUseMinLib: false,
 	/**服务端输出配置 */
-	// serverOutputConfig: {
+	serverOutputConfig: {
 		/**protobufjs库输出目录 */
-	// 	pbjsLibDir: "server/libs",
-        /**生成的proto js文件输出 */
-	// 	pbjsOutDir: "server/protojs",
-        /**声明文件输出路径 */
-	// 	dtsOutDir: "server/libs"
+		pbjsLibDir: "server/libs",
+		/**生成的proto js文件输出 */
+		pbjsOutDir: "server/protojs",
+		/**声明文件输出路径 */
+		dtsOutDir: "server/libs"
 
-	// }
+	}
 
 } 

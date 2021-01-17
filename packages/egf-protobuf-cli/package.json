@@ -29,8 +29,12 @@
   },
   "scripts": {
     "watch": "tsc --watch",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "testPbInit":"node ./dist/cli.js init -p ./test",
+    "testGen":"node ./dist/cli.js g -p ./test"
+
   },
+
   "devDependencies": {
     "@types/fs-extra-promise": "^1.0.4",
     "@types/node": "^9.6.61",
@@ -41,7 +45,7 @@
     "commander": "^2.20.0",
     "fs-extra": "^5.0.0",
     "fs-extra-promise": "^1.0.1",
-    "protobufjs": "~6.8.4",
+    "protobufjs": "~6.8.8",
     "rimraf": "^2.6.3",
     "uglify-js": "^3.3.7"
   }
