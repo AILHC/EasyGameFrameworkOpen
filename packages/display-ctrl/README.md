@@ -331,27 +331,31 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.IResHan
   
   利用管理器的基础接口扩展出管理栈式UI的逻辑
 
-## 最后
+### 我在哪？
 
+**游戏开发之路有趣但不易,**
 
+**玩起来才能一直热情洋溢。**
 
-欢迎关注我的公众号，更多内容持续更新
+一起来玩转游戏开发吧~
 
+你的关注是我持续更新的动力~
 
+让我们在这游戏开发的道路上并肩前行
+
+在以下这些渠道可以找到我和我的创作:
 
 公众号搜索:玩转游戏开发
-
-
 
 或扫码:<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/abd0c14c9c954e56af20adb71fa00da9~tplv-k3u1fbpfcp-zoom-1.image" alt="img" style="zoom:50%;" />
 
 
 
-QQ 群: 1103157878
+一起讨论技术的 QQ 群: 1103157878
 
 
 
-博客主页: https://ailhc.github.io/
+博客主页: https://pgd.vercel.app/
 
 掘金: https://juejin.cn/user/3069492195769469
 
