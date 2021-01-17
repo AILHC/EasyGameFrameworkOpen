@@ -38,7 +38,7 @@
     "testc": "jest --coverage"
   },
   "devDependencies": {
-    "@ailhc/egf-cli": "1.0.2",
+    "@ailhc/egf-cli": "1.0.3",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1"
   }

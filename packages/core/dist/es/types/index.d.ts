@@ -9,9 +9,6 @@ declare module '@ailhc/egf-core/src/egf-app' {
 	    protected _moduleMap: {
 	        [key: string]: egf.IModule;
 	    };
-	    protected _proxyModuleMap: {
-	        [key: string]: egf.IModule;
-	    };
 	    get state(): number;
 	    get moduleMap(): ModuleMap;
 	    bootstrap(bootLoaders?: egf.IBootLoader[]): Promise<boolean>;
