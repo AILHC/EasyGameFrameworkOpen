@@ -381,6 +381,7 @@ declare module '@ailhc/enet-pbws/src/pb-proto-handler' {
 declare module '@ailhc/enet-pbws' {
 	export * from '@ailhc/enet-pbws/src/byte';
 	export * from '@ailhc/enet-pbws/src/pb-proto-handler';
+	export * from '@ailhc/enet-pbws/src/pkg-type';
 
 }
 declare module '@ailhc/enet-pbws/libs/protobuf-library' {
