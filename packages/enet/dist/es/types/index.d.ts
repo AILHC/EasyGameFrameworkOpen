@@ -1,154 +1,3 @@
-declare module '@ailhc/enet/src/socketStateType' {
-	export enum SocketState {
-	    /**连接中 */
-	    CONNECTING = 0,
-	    /**打开 */
-	    OPEN = 1,
-	    /**关闭中 */
-	    CLOSING = 2,
-	    /**关闭了 */
-	    CLOSED = 3
-	}
-
-}
-declare module '@ailhc/enet/src/wsocket' {
-	import { SocketState } from '@ailhc/enet/src/socketStateType';
-	export class WSocket implements enet.ISocket {
-	    private _sk;
-	    private _eventHandler;
-	    get state(): SocketState;
-	    get isConnected(): boolean;
-	    setEventHandler(handler: enet.ISocketEventHandler): void;
-	    connect(opt: enet.IConnectOptions): boolean;
-	    send(data: enet.NetData): void;
-	    close(): void;
-	}
-
-}
-declare module '@ailhc/enet/src/net-node' {
-	export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
-	    /**
-	     * 套接字实现
-	     */
-	    protected _socket: enet.ISocket;
-	    /**
-	     * 网络事件处理器
-	     */
-	    protected _netEventHandler: enet.INetEventHandler;
-	    /**
-	     * 协议处理器
-	     */
-	    protected _protoHandler: enet.IProtoHandler;
-	    /**
-	     * 当前重连次数
-	     */
-	    protected _curReconnectCount: number;
-	    /**
-	     * 重连配置
-	     */
-	    protected _reConnectCfg: enet.IReconnectConfig;
-	    /**
-	     * 是否初始化
-	     */
-	    protected _inited: boolean;
-	    /**
-	     * 连接参数对象
-	     */
-	    protected _connectOpt: enet.IConnectOptions;
-	    /**
-	     * 是否正在重连
-	     */
-	    protected _isReconnecting: boolean;
-	    /**
-	     * 计时器id
-	     */
-	    protected _reconnectTimerId: any;
-	    /**
-	     * 请求id
-	     * 会自增
-	     */
-	    protected _reqId: number;
-	    /**
-	     * 永久监听处理器字典
-	     * key为请求key  = protoKey
-	     * value为 回调处理器或回调函数
-	     */
-	    protected _pushHandlerMap: {
-	        [key: string]: enet.AnyCallback[];
-	    };
-	    /**
-	     * 一次监听推送处理器字典
-	     * key为请求key  = protoKey
-	     * value为 回调处理器或回调函数
-	     */
-	    protected _oncePushHandlerMap: {
-	        [key: string]: enet.AnyCallback[];
-	    };
-	    /**
-	     * 请求响应回调字典
-	     * key为请求key  = protoKey_reqId
-	     * value为 回调处理器或回调函数
-	     */
-	    protected _reqCfgMap: {
-	        [key: string]: enet.IRequestConfig;
-	    };
-	    /**socket事件处理器 */
-	    protected _socketEventHandler: enet.ISocketEventHandler;
-	    /**
-	     * 获取socket事件处理器
-	     */
-	    protected get socketEventHandler(): enet.ISocketEventHandler;
-	    init(config?: enet.INodeConfig): void;
-	    connect(option: enet.IConnectOptions): void;
-	    disConnect(): void;
-	    reConnect(): void;
-	    request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>, arg?: any): void;
-	    notify(protoKey: ProtoKeyType, data?: any): void;
-	    send(netData: enet.NetData): void;
-	    onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
-	    oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
-	    offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
-	    offPushAll(protoKey?: ProtoKeyType): void;
-	    /**
-	     * 初始化好，socket开启
-	     */
-	    protected _isSocketReady(): boolean;
-	    /**
-	     * 当socket连接成功
-	     * @param event
-	     */
-	    protected _onSocketConnected(event: any): void;
-	    /**
-	     * 当socket报错
-	     * @param event
-	     */
-	    protected _onSocketError(event: any): void;
-	    /**
-	     * 当socket有消息
-	     * @param event
-	     */
-	    protected _onSocketMsg(event: {
-	        data: enet.NetData;
-	    }): void;
-	    /**
-	     * 当socket关闭
-	     * @param event
-	     */
-	    protected _onSocketClosed(event: any): void;
-	    /**
-	     * 执行回调，会并接上透传数据
-	     * @param handler 回调
-	     * @param depackage 解析完成的数据包
-	     */
-	    protected _runHandler(handler: enet.AnyCallback, depackage: enet.IDecodePackage): void;
-	    /**
-	     * 停止重连
-	     * @param isOk 重连是否成功
-	     */
-	    protected _stopReconnect(isOk?: boolean): void;
-	}
-
-}
 declare module '@ailhc/enet/src/net-interfaces' {
 	 global {
 	    namespace enet {
@@ -203,9 +52,9 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             */
 	            onSocketConnected?: (event: any) => void;
 	        }
-	        interface IConnectOptions {
+	        interface IConnectOptions<T = any> {
 	            url?: string;
-	            /**协议头 ws 或者 wss */
+	            /**是否使用ssh,即 true wss,false ws */
 	            protocol?: boolean;
 	            host?: string;
 	            port?: string;
@@ -213,28 +62,44 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	            binaryType?: "arraybuffer" | "blob";
 	            /**连接结束 */
 	            connectEnd?: VoidFunction;
+	            /**握手数据 */
+	            handShakeReq?: T;
 	        }
 	        /**
-	         * 编码后的数据包
-	         */
-	        interface IEncodePackage {
-	            key: string;
-	            data: NetData;
-	        }
-	        /**
-	         * 解析后的数据包
+	         * 解码后的数据包
 	         */
 	        interface IDecodePackage<T = any> {
+	            /**
+	             * 数据包类型
+	             * 默认使用 PackageType 中的DATA  类型 4
+	             *
+	             * 数据包类型
+	             * 默认数据包类型
+	             * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
+	             * 2 HANDSHAKE_ACK 客户端回应服务端的握手包类型
+	             * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
+	             * 4 KICK 服务端发给客户端的下线数据包类型
+	             */
+	            type: number;
 	            /**协议字符串key */
-	            key: string;
+	            key?: string;
 	            /**数据 */
-	            data: T;
+	            data?: T;
 	            /**请求id */
 	            reqId?: number;
 	            /**错误码 */
 	            code?: number;
 	            /**错误信息 */
 	            errorMsg?: string;
+	        }
+	        /**默认握手返回 */
+	        interface IDefaultHandshakeRes extends IHeartBeatConfig {
+	        }
+	        interface IHeartBeatConfig {
+	            /**心跳间隔，毫秒 */
+	            heartbeatInterval: number;
+	            /**心跳超时时间，毫秒 */
+	            heartbeatTimeout: number;
 	        }
 	        interface IProtoHandler<ProtoKeyType = any> {
 	            /**
@@ -243,16 +108,26 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             */
 	            protoKey2Key(protoKey: ProtoKeyType): string;
 	            /**
-	             * 数据编码
-	             * @param data
-	             * @param reqId
+	             * 编码数据包
+	             * @param pkg
+	             * @param useCrypto 是否加密
 	             */
-	            encode<T>(protoKey: ProtoKeyType, msg: enet.IMessage<T>): IEncodePackage;
+	            encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): NetData;
+	            /**
+	             * 编码消息数据包
+	             * @param msg 消息包
+	             * @param useCrypto 是否加密
+	             */
+	            encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): NetData;
 	            /**
 	             * 解码网络数据包，
 	             * @param data
 	             */
-	            decode<T>(data: NetData): IDecodePackage<T>;
+	            decodePkg<T>(data: NetData): IDecodePackage<T>;
+	            /**
+	             * 心跳配置
+	             */
+	            heartbeatConfig: enet.IHeartBeatConfig;
 	        }
 	        type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
 	        type ValueCallback<T = any> = (data?: T, ...args: any[]) => void;
@@ -310,12 +185,12 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             * 网络出错
 	             * @param event
 	             */
-	            onError(event: any, connectOpt: IConnectOptions): void;
+	            onError?(event: any, connectOpt: IConnectOptions): void;
 	            /**
 	             * 连接断开
 	             * @param event
 	             */
-	            onClosed(event: any, connectOpt: IConnectOptions): void;
+	            onClosed?(event: any, connectOpt: IConnectOptions): void;
 	            /**
 	             * 开始重连
 	             * @param reConnectCfg 重连配置
@@ -345,12 +220,37 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             * 请求响应
 	             * @param decodePkg
 	             */
-	            onServerMsg?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
+	            onData?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
+	            /**
+	             * 被踢下线
+	             * @param decodePkg
+	             * @param connectOpt
+	             */
+	            onKick?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions): void;
+	            /**
+	             * 错误信息
+	             * @param data
+	             * @param connectOpt
+	             */
 	            onCustomError?(data: IDecodePackage<ResData>, connectOpt: IConnectOptions): void;
 	        }
-	        interface IMessage<T = any> {
+	        interface IMessage<T = any, ProtoKeyType = any> {
 	            reqId?: number;
+	            /**协议key */
+	            key: ProtoKeyType;
 	            data: T;
+	        }
+	        interface IPackage<T = any> {
+	            /**
+	             * 数据包类型
+	             * 默认的数据包类型:
+	             * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
+	             * 2 HANDSHAKE_ACK 客户端回应服务端的握手包类型
+	             * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
+	             * 4 KICK 服务端发给客户端的下线数据包类型
+	             */
+	            type: number;
+	            data?: T;
 	        }
 	        /**
 	         * 重连配置接口
@@ -383,11 +283,21 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             */
 	            protoHandler?: IProtoHandler;
 	            /**
-	             * 重连配置
+	             * 重连配置，有默认值
 	             */
 	            reConnectCfg?: IReconnectConfig;
+	            /**心跳间隔阈值 ,默认100*/
+	            heartbeatGapThreashold?: number;
+	            /**使用加密 */
+	            useCrypto?: boolean;
 	        }
 	        interface INode<ProtoKeyType = any> {
+	            /**网络事件处理器 */
+	            netEventHandler: enet.INetEventHandler;
+	            /**协议处理器 */
+	            protoHandler: enet.IProtoHandler;
+	            /**套接字实现 */
+	            socket: enet.ISocket;
 	            /**
 	             * 初始化网络节点，注入自定义处理
 	             * @param config 配置 重连次数，超时时间，网络事件处理，协议处理
@@ -395,9 +305,9 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	            init(config?: INodeConfig): void;
 	            /**
 	             * 连接
-	             * @param option 连接参数
+	             * @param option 连接参数:可以直接传url|options
 	             */
-	            connect(option: IConnectOptions): void;
+	            connect(option: string | enet.IConnectOptions): void;
 	            /**
 	             * 断开连接
 	             */
@@ -424,7 +334,7 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	             * @param protoKey 协议key
 	             * @param data 数据体
 	             */
-	            notify(protoKey: ProtoKeyType, data?: any): void;
+	            notify<T>(protoKey: ProtoKeyType, data?: T): void;
 	            /**
 	             * 监听推送
 	             * @param protoKey
@@ -456,9 +366,224 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	export {};
 
 }
+declare module '@ailhc/enet/src/pkg-type' {
+	export enum PackageType {
+	    /**握手 */
+	    HANDSHAKE = 1,
+	    /**握手回应 */
+	    HANDSHAKE_ACK = 2,
+	    /**心跳 */
+	    HEARTBEAT = 3,
+	    /**数据 */
+	    DATA = 4,
+	    /**踢下线 */
+	    KICK = 5
+	}
+
+}
+declare module '@ailhc/enet/src/socketStateType' {
+	export enum SocketState {
+	    /**连接中 */
+	    CONNECTING = 0,
+	    /**打开 */
+	    OPEN = 1,
+	    /**关闭中 */
+	    CLOSING = 2,
+	    /**关闭了 */
+	    CLOSED = 3
+	}
+
+}
+declare module '@ailhc/enet/src/wsocket' {
+	import { SocketState } from '@ailhc/enet/src/socketStateType';
+	export class WSocket implements enet.ISocket {
+	    private _sk;
+	    private _eventHandler;
+	    get state(): SocketState;
+	    get isConnected(): boolean;
+	    setEventHandler(handler: enet.ISocketEventHandler): void;
+	    connect(opt: enet.IConnectOptions): boolean;
+	    send(data: enet.NetData): void;
+	    close(): void;
+	}
+
+}
+declare module '@ailhc/enet/src/net-node' {
+	export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
+	    /**
+	     * 套接字实现
+	     */
+	    protected _socket: enet.ISocket;
+	    get socket(): enet.ISocket;
+	    /**
+	     * 网络事件处理器
+	     */
+	    protected _netEventHandler: enet.INetEventHandler;
+	    get netEventHandler(): enet.INetEventHandler<any>;
+	    /**
+	     * 协议处理器
+	     */
+	    protected _protoHandler: enet.IProtoHandler;
+	    get protoHandler(): enet.IProtoHandler<any>;
+	    /**
+	     * 当前重连次数
+	     */
+	    protected _curReconnectCount: number;
+	    /**
+	     * 重连配置
+	     */
+	    protected _reConnectCfg: enet.IReconnectConfig;
+	    /**
+	     * 是否初始化
+	     */
+	    protected _inited: boolean;
+	    /**
+	     * 连接参数对象
+	     */
+	    protected _connectOpt: enet.IConnectOptions;
+	    /**
+	     * 是否正在重连
+	     */
+	    protected _isReconnecting: boolean;
+	    /**
+	     * 计时器id
+	     */
+	    protected _reconnectTimerId: any;
+	    /**
+	     * 请求id
+	     * 会自增
+	     */
+	    protected _reqId: number;
+	    /**
+	     * 永久监听处理器字典
+	     * key为请求key  = protoKey
+	     * value为 回调处理器或回调函数
+	     */
+	    protected _pushHandlerMap: {
+	        [key: string]: enet.AnyCallback[];
+	    };
+	    /**
+	     * 一次监听推送处理器字典
+	     * key为请求key  = protoKey
+	     * value为 回调处理器或回调函数
+	     */
+	    protected _oncePushHandlerMap: {
+	        [key: string]: enet.AnyCallback[];
+	    };
+	    /**
+	     * 请求响应回调字典
+	     * key为请求key  = protoKey_reqId
+	     * value为 回调处理器或回调函数
+	     */
+	    protected _reqCfgMap: {
+	        [key: number]: enet.IRequestConfig;
+	    };
+	    /**socket事件处理器 */
+	    protected _socketEventHandler: enet.ISocketEventHandler;
+	    /**
+	     * 获取socket事件处理器
+	     */
+	    protected get socketEventHandler(): enet.ISocketEventHandler;
+	    /**数据包类型处理 */
+	    protected _pkgTypeHandlers: {
+	        [key: number]: (dpkg: enet.IDecodePackage) => void;
+	    };
+	    /**心跳配置 */
+	    protected _heartbeatConfig: enet.IHeartBeatConfig;
+	    /**心跳间隔阈值 默认100毫秒 */
+	    protected _gapThreashold: number;
+	    /**使用加密 */
+	    protected _useCrypto: boolean;
+	    init(config?: enet.INodeConfig): void;
+	    connect(option: string | enet.IConnectOptions, connectEnd?: VoidFunction): void;
+	    disConnect(): void;
+	    reConnect(): void;
+	    request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>, arg?: any): void;
+	    notify<T>(protoKey: ProtoKeyType, data?: T): void;
+	    send(netData: enet.NetData): void;
+	    onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+	    oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+	    offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+	    offPushAll(protoKey?: ProtoKeyType): void;
+	    /**
+	     * 握手包处理
+	     * @param dpkg
+	     */
+	    protected _onHandshake(dpkg: enet.IDecodePackage): void;
+	    /**
+	     * 握手初始化
+	     * @param dpkg
+	     */
+	    protected _handshakeInit(dpkg: enet.IDecodePackage): void;
+	    /**心跳超时定时器id */
+	    protected _heartbeatTimeoutId: number;
+	    /**心跳定时器id */
+	    protected _heartbeatTimeId: number;
+	    /**最新心跳超时时间 */
+	    protected _nextHeartbeatTimeoutTime: number;
+	    /**
+	     * 心跳包处理
+	     * @param dpkg
+	     */
+	    protected _heartbeat(dpkg: enet.IDecodePackage): void;
+	    /**
+	     * 心跳超时处理
+	     */
+	    protected _heartbeatTimeoutCb(): void;
+	    /**
+	     * 数据包处理
+	     * @param dpkg
+	     */
+	    protected _onData(dpkg: enet.IDecodePackage): void;
+	    /**
+	     * 踢下线数据包处理
+	     * @param dpkg
+	     */
+	    protected _onKick(dpkg: enet.IDecodePackage): void;
+	    /**
+	     * socket状态是否准备好
+	     */
+	    protected _isSocketReady(): boolean;
+	    /**
+	     * 当socket连接成功
+	     * @param event
+	     */
+	    protected _onSocketConnected(event: any): void;
+	    /**
+	     * 当socket报错
+	     * @param event
+	     */
+	    protected _onSocketError(event: any): void;
+	    /**
+	     * 当socket有消息
+	     * @param event
+	     */
+	    protected _onSocketMsg(event: {
+	        data: enet.NetData;
+	    }): void;
+	    /**
+	     * 当socket关闭
+	     * @param event
+	     */
+	    protected _onSocketClosed(event: any): void;
+	    /**
+	     * 执行回调，会并接上透传数据
+	     * @param handler 回调
+	     * @param depackage 解析完成的数据包
+	     */
+	    protected _runHandler(handler: enet.AnyCallback, depackage: enet.IDecodePackage): void;
+	    /**
+	     * 停止重连
+	     * @param isOk 重连是否成功
+	     */
+	    protected _stopReconnect(isOk?: boolean): void;
+	}
+
+}
 declare module '@ailhc/enet' {
 	export * from '@ailhc/enet/src/net-interfaces';
 	export * from '@ailhc/enet/src/net-node';
+	export * from '@ailhc/enet/src/pkg-type';
 	export * from '@ailhc/enet/src/socketStateType';
 	export * from '@ailhc/enet/src/wsocket';
 

@@ -12,7 +12,15 @@ beforeEach(async () => {
 afterEach(() => {
     server.close();
 });
-
+test("init NetNode with null config", function () {
+    const netNode = new NetNode<string>();
+    netNode.init();
+    expect(netNode["_protoHandler"]).toBeDefined();
+    expect(netNode["_pushHandlerMap"]).toBeDefined();
+    expect(netNode["_oncePushHandlerMap"]).toBeDefined();
+    expect(netNode.socket).toBeDefined();
+    expect(netNode.socket["_eventHandler"]).toBeDefined();
+})
 test("init NetNode", () => {
     const netNode = new NetNode<string>();
     const netEventHandler: enet.INetEventHandler = {
