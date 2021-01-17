@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/enet-pbws",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "General front-end Socket network management module, with high scalability, development does not need to care about the implementation of the underlying socket, communication protocols, developers can customize the implementation of different underlying sockets and communication protocols",
   "keywords": [],
   "author": "AILHC <505126057@qq.com>",
@@ -39,14 +39,11 @@
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
   "devDependencies": {
-    "egf-protobuf": "1.3.2",
-    "@ailhc/egf-cli": "1.0.3",
-    "@ailhc/enet": "0.0.1",
+    "@ailhc/egf-cli": "^1.0.3",
+    "@ailhc/enet": "^1.0.0",
+    "egf-protobuf": "^1.3.0",
     "jest": "^25.3.0",
     "mock-socket": "^9.0.3",
     "ts-jest": "^25.3.1"
-  },
-  "dependencies": {
-    
   }
 }

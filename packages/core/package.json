@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-core",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "This is the core of EasyGameFramework, which provides the ability to register modules, get module instances, and load subroutine scripts",
   "keywords": [],
   "author": "AILHC <505126057@qq.com>",
@@ -38,7 +38,7 @@
     "testc": "jest --coverage"
   },
   "devDependencies": {
-    "@ailhc/egf-cli": "1.0.3",
+    "@ailhc/egf-cli": "^1.0.3",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1"
   }
