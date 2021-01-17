@@ -40,6 +40,8 @@ npm install -D @ailhc/egf-cli
 
 
 # 更新日志
+### 1.0.3 (2021/1/17)
+1. 增加对import json的支持(有一些库会使用到 import json的操作，比如axios)
 ### 1.0.2 (2020/12/20)
 1. iife导出兼容nodejs环境的全局变量global
 ### 1.0.1 (2020/12/8)
