@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
   "devDependencies": {
-    "@ailhc/egf-cli": "1.0.2",
+    "@ailhc/egf-cli": "1.0.3",
     "jest": "^25.3.0",
     "jest-websocket-mock": "^2.2.0",
     "mock-socket": "^9.0.3",

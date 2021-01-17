@@ -117,7 +117,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
                 connectTimeout: 60000,
             };
         } else {
-            this._reConnectCfg = config.reConnectCfg;
+            this._reConnectCfg = reConnectCfg;
             if (isNaN(reConnectCfg.reconnectCount)) {
                 this._reConnectCfg.reconnectCount = 4;
             }
@@ -125,8 +125,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType>{
                 this._reConnectCfg.connectTimeout = 60000;
             }
         }
-        this._gapThreashold = isNaN(config.heartbeatGapThreashold) ? 100 : config.heartbeatGapThreashold;
-        this._useCrypto = config.useCrypto;
+        this._gapThreashold = config && !isNaN(config.heartbeatGapThreashold) ? config.heartbeatGapThreashold : 100;
+        this._useCrypto = config && config.useCrypto;
         this._inited = true;
 
         this._socket.setEventHandler(this.socketEventHandler);
@@ -554,42 +554,42 @@ class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyTy
 }
 class DefaultNetEventHandler implements enet.INetEventHandler {
     onStartConnenct?(connectOpt: enet.IConnectOptions): void {
-        console.log(`开始连接:${connectOpt.url}`)
+        console.log(`start connect:${connectOpt.url}`)
     }
     onConnectEnd?(connectOpt: enet.IConnectOptions): void {
-        console.log(`连接成功:${connectOpt.url}`);
+        console.log(`connect end:${connectOpt.url}`);
     }
     onError(event: any, connectOpt: enet.IConnectOptions): void {
-        console.error(`socket错误`);
+        console.error(`socket error`);
         console.error(event);
     }
     onClosed(event: any, connectOpt: enet.IConnectOptions): void {
-        console.error(`socket错误`);
+        console.error(`socket close`);
         console.error(event);
     }
     onStartReconnect?(reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions): void {
-        console.log(`开始重连:${connectOpt.url}`);
+        console.log(`start reconnect:${connectOpt.url}`);
     }
     onReconnecting?(curCount: number, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions): void {
-        console.log(`url:${connectOpt.url}重连${curCount}次,剩余次数:${reConnectCfg.reconnectCount}`);
+        console.log(`url:${connectOpt.url} reconnect count:${curCount},less count:${reConnectCfg.reconnectCount}`);
     }
     onReconnectEnd?(isOk: boolean, reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions): void {
-        console.log(`url:${connectOpt.url}重连 ${isOk ? "成功" : "失败"} `);
+        console.log(`url:${connectOpt.url}reconnect end ${isOk ? "ok" : "fail"} `);
     }
     onStartRequest?(reqCfg: enet.IRequestConfig, connectOpt: enet.IConnectOptions): void {
-        console.log(`开始请求:${reqCfg.protoKey},id:${reqCfg.reqId}`)
+        console.log(`start request:${reqCfg.protoKey},id:${reqCfg.reqId}`)
     }
     onData?(dpkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions): void {
-        console.log(`请求返回:${dpkg.key}`);
+        console.log(`data :${dpkg.key}`);
     }
     onRequestTimeout?(reqCfg: enet.IRequestConfig, connectOpt: enet.IConnectOptions): void {
-        console.warn(`请求超时:${reqCfg.protoKey}`)
+        console.warn(`request timeout:${reqCfg.protoKey}`)
     }
     onCustomError?(dpkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions): void {
-        console.error(`协议:${dpkg.key},请求id:${dpkg.reqId},错误码:${dpkg.code},错误信息:${dpkg.errorMsg}`)
+        console.error(`proto key:${dpkg.key},reqId:${dpkg.reqId},code:${dpkg.code},errorMsg:${dpkg.errorMsg}`)
     }
     onKick(dpkg: enet.IDecodePackage<any>, copt: enet.IConnectOptions) {
-        console.log(`被踢下线了`);
+        console.log(`be kick`);
     }
 
 

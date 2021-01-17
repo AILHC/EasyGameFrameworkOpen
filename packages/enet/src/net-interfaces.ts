@@ -195,12 +195,12 @@ declare global {
              * 网络出错
              * @param event 
              */
-            onError(event: any, connectOpt: IConnectOptions): void
+            onError?(event: any, connectOpt: IConnectOptions): void
             /**
              * 连接断开
              * @param event 
              */
-            onClosed(event: any, connectOpt: IConnectOptions): void;
+            onClosed?(event: any, connectOpt: IConnectOptions): void;
 
             /**
              * 开始重连
