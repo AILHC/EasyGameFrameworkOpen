@@ -51,7 +51,7 @@ const dpkg = this.protoHandler.decodePkg(message);
 
 **玩起来才能一直热情洋溢。**
 
-一起来玩转游戏开发吧~
+关注我, 一起玩转游戏开发！
 
 你的关注是我持续更新的动力~
 
