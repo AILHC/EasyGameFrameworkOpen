@@ -20,8 +20,6 @@
     "removeComments": false,
     "noEmitOnError": false,
     "outDir": "./bin",
-    "types": [
-      "https://cdn.jsdelivr.net/npm/@ailhc/enet@1.0.0/dist/es/types/index.d.ts"
-    ]
+    "allowJs": true
   }
 }
