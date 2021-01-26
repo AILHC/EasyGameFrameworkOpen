@@ -37,7 +37,7 @@
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
-  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet-pbws#readme",
   "devDependencies": {
     "@ailhc/egf-cli": "^1.0.3",
     "@ailhc/enet": "^1.0.0",
