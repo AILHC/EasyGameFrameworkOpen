@@ -1916,7 +1916,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 500,
+      "width": 960,
       "height": 640
     },
     "_anchorPoint": {
@@ -2042,7 +2042,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 80,
+      "width": 300,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -2095,9 +2095,9 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "树洞",
-    "_N$string": "树洞",
-    "_fontSize": 40,
+    "_string": "玩转游戏开发之聊天室",
+    "_N$string": "玩转游戏开发之聊天室",
+    "_fontSize": 30,
     "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": null,
@@ -2180,7 +2180,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 464,
+      "width": 924,
       "height": 40
     },
     "_anchorPoint": {
@@ -2245,7 +2245,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 464,
+      "width": 924,
       "height": 40
     },
     "_anchorPoint": {
@@ -2507,7 +2507,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -230,
+        -460,
         20,
         0,
         0,
@@ -3112,7 +3112,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 500,
+      "width": 960,
       "height": 464
     },
     "_anchorPoint": {
@@ -3196,7 +3196,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        250,
+        480,
         0,
         0,
         0,
@@ -3392,7 +3392,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 416,
+      "width": 876,
       "height": 90
     },
     "_anchorPoint": {
@@ -3461,7 +3461,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 486,
+      "width": 946,
       "height": 446
     },
     "_anchorPoint": {
@@ -3473,7 +3473,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -7.000000000000028,
+        -7,
         0,
         0,
         0,
@@ -3555,7 +3555,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 416,
+      "width": 876,
       "height": 90
     },
     "_resize": 1,

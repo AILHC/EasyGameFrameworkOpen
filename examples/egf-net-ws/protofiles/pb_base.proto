@@ -6,31 +6,39 @@ message HeartBeat {
 message Kick {
 
 }
+message User {
+    required uint32 uid = 1;
+    required string name = 2;
+}
+//登录请求
 message Cs_Login {
     required string name = 1;
 }
+//登录返回
 message Sc_Login {
     required uint32 uid = 1;
+    repeated User users = 2;
 }
 
+//用户进来推送
 message Sc_userEnter {
-    required string name = 1;
-    required uint32 uid = 2;
+    required User user = 1;
 
 }
-
+//用户离开推送
 message Sc_userLeave {
     required uint32 uid = 2;
-
 }
-
+//消息结构
 message ChatMsg {
     required uint32 uid = 1;
     required string msg = 2;
 }
+//客户端发送消息
 message Cs_SendMsg {
     required ChatMsg msg = 1;
 }
+//服务器推送消息
 message Sc_Msg {
     required ChatMsg msg =1;
 }

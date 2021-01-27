@@ -152,12 +152,17 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     }
 
     tsconfigOverride.compilerOptions.declarationDir = typesDir;
-    tsconfigOverride.compilerOptions.target = target ? target : "es5";
+    if(target){
+        tsconfigOverride.compilerOptions.target = target;
+    }
     tsconfigOverride.compilerOptions.declaration = customDts;
     const tsconfig = require(path.join(process.cwd(), `tsconfig.json`));
     let exclude = tsconfig.exclude ? tsconfig.exclude : [];
     exclude = exclude.concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
-    const externalTag = tsconfig.externalTag;
+    let externalTag = tsconfig.externalTag;
+    if (typeof externalTag === "object" && typeof externalTag.length === "number") {
+        externalTag = externalTag.length > 0 ? externalTag : undefined;
+    }
     // console.log(exclude)
     tsconfigOverride.exclude = exclude;
     /**

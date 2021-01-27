@@ -3,7 +3,7 @@
   "version": "1.3.0",
   "description": "This is the EasyGameFramework library template project",
   "author": "AILHC <505126057@qq.com>",
-  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/package-template#readme",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/egf-protobuf-cli#readme",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
