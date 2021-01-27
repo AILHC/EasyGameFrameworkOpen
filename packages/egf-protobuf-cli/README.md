@@ -102,6 +102,8 @@ declare type EgfProtobufConfig = {
 
 
 ## 更新日志
+### 1.3.1
+1. 更新epbconfig.js
 ### 1.3.0
 0. 更新protobufjs版本为6.8.8
 1. 优化项目初始化逻辑，更加稳
