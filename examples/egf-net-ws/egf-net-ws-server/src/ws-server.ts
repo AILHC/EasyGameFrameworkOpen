@@ -42,7 +42,15 @@ export class App {
         })
     }
     sendToClient(uid: number, data: enet.NetData) {
-
+        const client = this._clientMap.get(uid);
+        client.ws.send(data);
+    }
+    onUserLogin(user: pb_test.IUser, reqId: number) {
+        const users: pb_test.IUser[] = [];
+        const encodeData = this.protoHandler.encodeMsg<pb_test.Sc_Login>({ key: "Sc_Login", data: { uid: user.uid, users: users }, reqId: reqId });
+        this.sendToClient(user.uid, encodeData);
+        const enterEncodeData = this.protoHandler.encodeMsg<pb_test.Sc_userEnter>({ key: "Sc_userEnter", data: { user: user } })
+        this.sendToOhterClient(user.uid, enterEncodeData);
     }
 }
 
@@ -54,6 +62,9 @@ export class ClientAgent {
         ws.on("close", this.onClose.bind(this));
         ws.on("error", this.onError.bind(this));
 
+    }
+    public get user(): pb_test.IUser {
+        return { uid: this.uid, name: this.loginData.name };
     }
     private onMessage(message) {
         if (typeof message === "string") {
@@ -76,10 +87,7 @@ export class ClientAgent {
     }
     private Cs_Login(dpkg: enet.IDecodePackage<pb_test.Cs_Login>) {
         this.loginData = dpkg.data;
-        const encodeData = this.app.protoHandler.encodeMsg<pb_test.Sc_Login>({ key: "Sc_Login", data: { uid: this.uid }, reqId: dpkg.reqId });
-        this.ws.send(encodeData);
-        const enterEncodeData = this.app.protoHandler.encodeMsg<pb_test.Sc_userEnter>({ key: "Sc_userEnter", data: { name: this.loginData.name, uid: this.uid } })
-        this.app.sendToOhterClient(this.uid, enterEncodeData);
+        this.app.onUserLogin(this.user, dpkg.reqId);
     }
     private Cs_SendMsg(dpkg: enet.IDecodePackage<pb_test.Cs_SendMsg>) {
         const encodeData = this.app.protoHandler.encodeMsg<pb_test.Sc_Msg>({ key: "Sc_Msg", data: dpkg.data });

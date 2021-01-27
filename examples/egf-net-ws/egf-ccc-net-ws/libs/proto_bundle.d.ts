@@ -96,6 +96,64 @@ declare namespace pb_test {
         public static verify(message: { [k: string]: any }): (string|null);
     }
 
+    /** Properties of a User. */
+    interface IUser {
+
+        /** User uid */
+        uid: number;
+
+        /** User name */
+        name: string;
+    }
+
+    /** Represents a User. */
+    class User implements IUser {
+
+        /**
+         * Constructs a new User.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pb_test.IUser);
+
+        /** User uid. */
+        public uid: number;
+
+        /** User name. */
+        public name: string;
+
+        /**
+         * Creates a new User instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns User instance
+         */
+        public static create(properties?: pb_test.IUser): pb_test.User;
+
+        /**
+         * Encodes the specified User message. Does not implicitly {@link pb_test.User.verify|verify} messages.
+         * @param message User message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pb_test.IUser, writer?: protobuf.Writer): protobuf.Writer;
+
+        /**
+         * Decodes a User message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns User
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: (protobuf.Reader|Uint8Array), length?: number): pb_test.User;
+
+        /**
+         * Verifies a User message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+    }
+
     /** Properties of a Cs_Login. */
     interface ICs_Login {
 
@@ -153,6 +211,9 @@ declare namespace pb_test {
 
         /** Sc_Login uid */
         uid: number;
+
+        /** Sc_Login users */
+        users?: (pb_test.IUser[]|null);
     }
 
     /** Represents a Sc_Login. */
@@ -166,6 +227,9 @@ declare namespace pb_test {
 
         /** Sc_Login uid. */
         public uid: number;
+
+        /** Sc_Login users. */
+        public users: pb_test.IUser[];
 
         /**
          * Creates a new Sc_Login instance using the specified properties.
@@ -203,11 +267,8 @@ declare namespace pb_test {
     /** Properties of a Sc_userEnter. */
     interface ISc_userEnter {
 
-        /** Sc_userEnter name */
-        name: string;
-
-        /** Sc_userEnter uid */
-        uid: number;
+        /** Sc_userEnter user */
+        user: pb_test.IUser;
     }
 
     /** Represents a Sc_userEnter. */
@@ -219,11 +280,8 @@ declare namespace pb_test {
          */
         constructor(properties?: pb_test.ISc_userEnter);
 
-        /** Sc_userEnter name. */
-        public name: string;
-
-        /** Sc_userEnter uid. */
-        public uid: number;
+        /** Sc_userEnter user. */
+        public user: pb_test.IUser;
 
         /**
          * Creates a new Sc_userEnter instance using the specified properties.

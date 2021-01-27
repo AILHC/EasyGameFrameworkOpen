@@ -48,9 +48,7 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
     userMap: { [key: number]: string } = {};
     private _userName: string;
 
-
     onLoad() {
-
         const netMgr = new NetNode<string>();
         this._net = netMgr;
         const protoHandler = new PbProtoHandler(pb_test);
@@ -58,25 +56,67 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
             netEventHandler: this,
             protoHandler: protoHandler
         })
+        //监听消息推送
         netMgr.onPush<pb_test.ISc_Msg>("Sc_Msg", { method: this.onMsgPush, context: this });
+        //监听用户进来
         netMgr.onPush<pb_test.ISc_userEnter>("Sc_userEnter", { method: this.onUserEnter, context: this });
+        //监听用户离开
         netMgr.onPush<pb_test.ISc_userLeave>("Sc_userLeave", { method: this.onUserLeave, context: this });
 
     }
-    start() {
-
-    }
+    /**
+     * 连接服务器
+     */
     connectSvr() {
         this._net.connect("ws://localhost:8181");
     }
+    /**
+     * 登录服务器
+     */
+    loginSvr() {
+        let nameStr = this.nameInputEdit.string;
+        if (!nameStr || !nameStr.length) {
+            nameStr = "User";
+        }
+        this._net.request<pb_test.ICs_Login, pb_test.ISc_Login>("Cs_Login", { name: nameStr }, (dpkg) => {
+            if (!dpkg.errorMsg) {
+                this._userName = nameStr;
+                this._uid = dpkg.data.uid;
+                const users = dpkg.data.users;
+                if (users && users.length) {
+                    for (let i = 0; i < users.length; i++) {
+                        const user = users[i];
+                        this.userMap[user.uid] = user.name;
+                    }
+                }
+                this.hideLoginPanel();
+                this.showChatPanel();
+            }
+        })
+    }
+    /**
+     * 发送消息
+     */
+    sendMsg() {
+        const msg = this.msgInputEdit.string;
+        if (!msg) {
+            console.error(`请输入消息文本`)
+            return;
+        }
+        this.msgInputEdit.string = "";
+        this._net.notify<pb_test.ICs_SendMsg>("Cs_SendMsg", { msg: { uid: this._uid, msg: msg } })
+    }
+    //用户进来处理
     onUserEnter(dpkg: enet.IDecodePackage<pb_test.ISc_userEnter>) {
         if (!dpkg.errorMsg) {
-            this.userMap[dpkg.data.uid] = dpkg.data.name;
-            this.msgPanelComp.addMsg({ name: "系统", msg: `[${dpkg.data.name}]进了` });
+            const enterUser = dpkg.data.user;
+            this.userMap[enterUser.uid] = enterUser.name;
+            this.msgPanelComp.addMsg({ name: "系统", msg: `[${enterUser.name}]进来了` });
         } else {
             console.error(dpkg.errorMsg);
         }
     }
+    //用户离开处理
     onUserLeave(dpkg: enet.IDecodePackage<pb_test.ISc_userLeave>) {
         if (!dpkg.errorMsg) {
             if (this.userMap[dpkg.data.uid]) {
@@ -90,6 +130,7 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
             console.error(dpkg.errorMsg);
         }
     }
+    //消息下发处理
     onMsgPush(dpkg: enet.IDecodePackage<pb_test.ISc_Msg>) {
         if (!dpkg.errorMsg) {
             const svrMsg = dpkg.data.msg;
@@ -110,28 +151,8 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
             console.error(dpkg.errorMsg);
         }
     }
-    loginSvr() {
-        let nameStr = this.nameInputEdit.string;
-        if (!nameStr || !nameStr.length) {
-            nameStr = "User";
-        }
-        this._net.request<pb_test.ICs_Login, pb_test.ISc_Login>("Cs_Login", { name: nameStr }, (data) => {
-            if (!data.errorMsg) {
-                this._userName = nameStr;
-                this._uid = data.data.uid;
-                this.hideLoginPanel();
-                this.showChatPanel();
-            }
-        })
-    }
-    sendMsg() {
-        const msg = this.msgInputEdit.string;
-        if (!msg) {
-            console.error(`请输出消息文本`)
-            return;
-        }
-        this._net.notify<pb_test.ICs_SendMsg>("Cs_SendMsg", { msg: { uid: this._uid, msg: msg } })
-    }
+
+
     //#region 遮罩提示面板
     public showMaskPanel() {
         if (!this.maskPanel.active) this.maskPanel.active = true;

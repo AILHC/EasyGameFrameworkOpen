@@ -36,6 +36,15 @@ var App = /** @class */ (function () {
         });
     };
     App.prototype.sendToClient = function (uid, data) {
+        var client = this._clientMap.get(uid);
+        client.ws.send(data);
+    };
+    App.prototype.onUserLogin = function (user, reqId) {
+        var users = [];
+        var encodeData = this.protoHandler.encodeMsg({ key: "Sc_Login", data: { uid: user.uid, users: users }, reqId: reqId });
+        this.sendToClient(user.uid, encodeData);
+        var enterEncodeData = this.protoHandler.encodeMsg({ key: "Sc_userEnter", data: { user: user } });
+        this.sendToOhterClient(user.uid, enterEncodeData);
     };
     return App;
 }());
@@ -49,6 +58,13 @@ var ClientAgent = /** @class */ (function () {
         ws.on("close", this.onClose.bind(this));
         ws.on("error", this.onError.bind(this));
     }
+    Object.defineProperty(ClientAgent.prototype, "user", {
+        get: function () {
+            return { uid: this.uid, name: this.loginData.name };
+        },
+        enumerable: false,
+        configurable: true
+    });
     ClientAgent.prototype.onMessage = function (message) {
         if (typeof message === "string") {
             //TODO 字符串处理
@@ -67,10 +83,7 @@ var ClientAgent = /** @class */ (function () {
     };
     ClientAgent.prototype.Cs_Login = function (dpkg) {
         this.loginData = dpkg.data;
-        var encodeData = this.app.protoHandler.encodeMsg({ key: "Sc_Login", data: { uid: this.uid }, reqId: dpkg.reqId });
-        this.ws.send(encodeData);
-        var enterEncodeData = this.app.protoHandler.encodeMsg({ key: "Sc_userEnter", data: { name: this.loginData.name, uid: this.uid } });
-        this.app.sendToOhterClient(this.uid, enterEncodeData);
+        this.app.onUserLogin(this.user, dpkg.reqId);
     };
     ClientAgent.prototype.Cs_SendMsg = function (dpkg) {
         var encodeData = this.app.protoHandler.encodeMsg({ key: "Sc_Msg", data: dpkg.data });
