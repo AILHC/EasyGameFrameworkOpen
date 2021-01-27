@@ -40,6 +40,10 @@ npm install -D @ailhc/egf-cli
 
 
 # 更新日志
+### 1.0.4 (2021/1/27)
+
+1. 修复externalTag为空数组时，编译报错的bug
+2. 修复tsconfig中target编译字段失效的bug
 ### 1.0.3 (2021/1/17)
 1. 增加对import json的支持(有一些库会使用到 import json的操作，比如axios)
 ### 1.0.2 (2020/12/20)
