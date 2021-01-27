@@ -201,6 +201,133 @@ $root.pb_test = (function() {
         return Kick;
     })();
 
+    pb_test.User = (function() {
+
+        /**
+         * Properties of a User.
+         * @memberof pb_test
+         * @interface IUser
+         * @property {number} uid User uid
+         * @property {string} name User name
+         */
+
+        /**
+         * Constructs a new User.
+         * @memberof pb_test
+         * @classdesc Represents a User.
+         * @implements IUser
+         * @constructor
+         * @param {pb_test.IUser=} [properties] Properties to set
+         */
+        function User(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * User uid.
+         * @member {number} uid
+         * @memberof pb_test.User
+         * @instance
+         */
+        User.prototype.uid = 0;
+
+        /**
+         * User name.
+         * @member {string} name
+         * @memberof pb_test.User
+         * @instance
+         */
+        User.prototype.name = "";
+
+        /**
+         * Creates a new User instance using the specified properties.
+         * @function create
+         * @memberof pb_test.User
+         * @static
+         * @param {pb_test.IUser=} [properties] Properties to set
+         * @returns {pb_test.User} User instance
+         */
+        User.create = function create(properties) {
+            return new User(properties);
+        };
+
+        /**
+         * Encodes the specified User message. Does not implicitly {@link pb_test.User.verify|verify} messages.
+         * @function encode
+         * @memberof pb_test.User
+         * @static
+         * @param {pb_test.IUser} message User message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        User.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.uid);
+            writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
+            return writer;
+        };
+
+        /**
+         * Decodes a User message from the specified reader or buffer.
+         * @function decode
+         * @memberof pb_test.User
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {pb_test.User} User
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        User.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.pb_test.User();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.uid = reader.uint32();
+                    break;
+                case 2:
+                    message.name = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            if (!message.hasOwnProperty("uid"))
+                throw $util.ProtocolError("missing required 'uid'", { instance: message });
+            if (!message.hasOwnProperty("name"))
+                throw $util.ProtocolError("missing required 'name'", { instance: message });
+            return message;
+        };
+
+        /**
+         * Verifies a User message.
+         * @function verify
+         * @memberof pb_test.User
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        User.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (!$util.isInteger(message.uid))
+                return "uid: integer expected";
+            if (!$util.isString(message.name))
+                return "name: string expected";
+            return null;
+        };
+
+        return User;
+    })();
+
     pb_test.Cs_Login = (function() {
 
         /**
@@ -318,6 +445,7 @@ $root.pb_test = (function() {
          * @memberof pb_test
          * @interface ISc_Login
          * @property {number} uid Sc_Login uid
+         * @property {Array.<pb_test.IUser>|null} [users] Sc_Login users
          */
 
         /**
@@ -329,6 +457,7 @@ $root.pb_test = (function() {
          * @param {pb_test.ISc_Login=} [properties] Properties to set
          */
         function Sc_Login(properties) {
+            this.users = [];
             if (properties)
                 for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -342,6 +471,14 @@ $root.pb_test = (function() {
          * @instance
          */
         Sc_Login.prototype.uid = 0;
+
+        /**
+         * Sc_Login users.
+         * @member {Array.<pb_test.IUser>} users
+         * @memberof pb_test.Sc_Login
+         * @instance
+         */
+        Sc_Login.prototype.users = $util.emptyArray;
 
         /**
          * Creates a new Sc_Login instance using the specified properties.
@@ -368,6 +505,9 @@ $root.pb_test = (function() {
             if (!writer)
                 writer = $Writer.create();
             writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.uid);
+            if (message.users != null && message.users.length)
+                for (var i = 0; i < message.users.length; ++i)
+                    $root.pb_test.User.encode(message.users[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             return writer;
         };
 
@@ -392,6 +532,11 @@ $root.pb_test = (function() {
                 case 1:
                     message.uid = reader.uint32();
                     break;
+                case 2:
+                    if (!(message.users && message.users.length))
+                        message.users = [];
+                    message.users.push($root.pb_test.User.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -415,6 +560,15 @@ $root.pb_test = (function() {
                 return "object expected";
             if (!$util.isInteger(message.uid))
                 return "uid: integer expected";
+            if (message.users != null && message.hasOwnProperty("users")) {
+                if (!Array.isArray(message.users))
+                    return "users: array expected";
+                for (var i = 0; i < message.users.length; ++i) {
+                    var error = $root.pb_test.User.verify(message.users[i]);
+                    if (error)
+                        return "users." + error;
+                }
+            }
             return null;
         };
 
@@ -427,8 +581,7 @@ $root.pb_test = (function() {
          * Properties of a Sc_userEnter.
          * @memberof pb_test
          * @interface ISc_userEnter
-         * @property {string} name Sc_userEnter name
-         * @property {number} uid Sc_userEnter uid
+         * @property {pb_test.IUser} user Sc_userEnter user
          */
 
         /**
@@ -447,20 +600,12 @@ $root.pb_test = (function() {
         }
 
         /**
-         * Sc_userEnter name.
-         * @member {string} name
+         * Sc_userEnter user.
+         * @member {pb_test.IUser} user
          * @memberof pb_test.Sc_userEnter
          * @instance
          */
-        Sc_userEnter.prototype.name = "";
-
-        /**
-         * Sc_userEnter uid.
-         * @member {number} uid
-         * @memberof pb_test.Sc_userEnter
-         * @instance
-         */
-        Sc_userEnter.prototype.uid = 0;
+        Sc_userEnter.prototype.user = null;
 
         /**
          * Creates a new Sc_userEnter instance using the specified properties.
@@ -486,8 +631,7 @@ $root.pb_test = (function() {
         Sc_userEnter.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            writer.uint32(/* id 1, wireType 2 =*/10).string(message.name);
-            writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.uid);
+            $root.pb_test.User.encode(message.user, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
             return writer;
         };
 
@@ -510,20 +654,15 @@ $root.pb_test = (function() {
                 var tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1:
-                    message.name = reader.string();
-                    break;
-                case 2:
-                    message.uid = reader.uint32();
+                    message.user = $root.pb_test.User.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
                     break;
                 }
             }
-            if (!message.hasOwnProperty("name"))
-                throw $util.ProtocolError("missing required 'name'", { instance: message });
-            if (!message.hasOwnProperty("uid"))
-                throw $util.ProtocolError("missing required 'uid'", { instance: message });
+            if (!message.hasOwnProperty("user"))
+                throw $util.ProtocolError("missing required 'user'", { instance: message });
             return message;
         };
 
@@ -538,10 +677,11 @@ $root.pb_test = (function() {
         Sc_userEnter.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (!$util.isString(message.name))
-                return "name: string expected";
-            if (!$util.isInteger(message.uid))
-                return "uid: integer expected";
+            {
+                var error = $root.pb_test.User.verify(message.user);
+                if (error)
+                    return "user." + error;
+            }
             return null;
         };
 
