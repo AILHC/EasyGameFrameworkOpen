@@ -47,6 +47,12 @@ export class App {
     }
     onUserLogin(user: pb_test.IUser, reqId: number) {
         const users: pb_test.IUser[] = [];
+        this._clientMap.forEach((value) => {
+            if (value.uid !== user.uid) {
+                users.push(value.user)
+            }
+
+        })
         const encodeData = this.protoHandler.encodeMsg<pb_test.Sc_Login>({ key: "Sc_Login", data: { uid: user.uid, users: users }, reqId: reqId });
         this.sendToClient(user.uid, encodeData);
         const enterEncodeData = this.protoHandler.encodeMsg<pb_test.Sc_userEnter>({ key: "Sc_userEnter", data: { user: user } })
