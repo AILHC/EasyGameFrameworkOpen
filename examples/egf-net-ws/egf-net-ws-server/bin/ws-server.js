@@ -41,6 +41,11 @@ var App = /** @class */ (function () {
     };
     App.prototype.onUserLogin = function (user, reqId) {
         var users = [];
+        this._clientMap.forEach(function (value) {
+            if (value.uid !== user.uid) {
+                users.push(value.user);
+            }
+        });
         var encodeData = this.protoHandler.encodeMsg({ key: "Sc_Login", data: { uid: user.uid, users: users }, reqId: reqId });
         this.sendToClient(user.uid, encodeData);
         var enterEncodeData = this.protoHandler.encodeMsg({ key: "Sc_userEnter", data: { user: user } });
