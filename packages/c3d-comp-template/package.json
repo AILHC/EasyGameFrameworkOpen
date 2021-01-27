@@ -1,9 +1,9 @@
 {
-  "name": "@ailhc/package-template",
+  "name": "c3d-comp-template",
   "version": "1.0.0",
-  "description": "This is the EasyGameFramework library template project",
+  "description": "c3d-comp-template",
   "author": "AILHC <505126057@qq.com>",
-  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/package-template#readme",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/c3d-comp-template#readme",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -12,8 +12,8 @@
     "dist": "dist",
     "test": "__tests__"
   },
-  "main": "dist/cjs/lib/index.js",
-  "module": "dist/es/lib/index.js",
+  "main": "dist/esm/lib/index.mjs",
+  "module": "dist/esm/lib/index.mjs",
   "typings": "dist/cjs/types",
   "files": [
     "libs",
@@ -31,6 +31,7 @@
     "watch:cjs": "egf build -w true -f cjs",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
+    "build:esm": "egf build -f esm -o dist/esm/lib/index.mjs",
     "build:umd": "egf build -f umd:packageTemplate",
     "build:iife": "egf build -f iife:packageTemplate",
     "build:system": "egf build -f system:@ailhc/package-template",
