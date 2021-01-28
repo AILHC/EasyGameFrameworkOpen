@@ -135,8 +135,10 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
         if (!dpkg.errorMsg) {
             const svrMsg = dpkg.data.msg;
             let userName: string;
+            let isSelf: boolean;
             if (this._uid === svrMsg.uid) {
                 userName = "我";
+                isSelf = true;
             } else if (this.userMap[svrMsg.uid]) {
                 userName = this.userMap[svrMsg.uid];
             } else {
@@ -145,6 +147,8 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
             }
             if (userName) {
                 const msgData = { name: userName, msg: svrMsg.msg }
+                //判断是否放烟花
+                this.checkAndFire(svrMsg.msg, isSelf);
                 this.msgPanelComp.addMsg(msgData);
             }
         } else {
@@ -209,6 +213,11 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
 
 
     }
+    checkAndFire(msg: string, left: boolean) {
+        if (msg.includes("烟花") || msg.includes("🎇")) {
+            window.fire(window.innerWidth * 1 / 2 + (left ? -100 : 100), window.innerHeight / 2);
+        }
+    }
     onError(event: any, connectOpt: enet.IConnectOptions<any>): void {
         this.maskTips.string = "连接出错";
     }
@@ -236,3 +245,4 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
 
     // update (dt) {}
 }
+
