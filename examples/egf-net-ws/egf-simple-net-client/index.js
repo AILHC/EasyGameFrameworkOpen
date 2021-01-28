@@ -33,8 +33,8 @@ netNode.onPush("msg", function (dpkg) {
     checkAndFire(dpkg.data);
 })
 
-function checkAndFire(msg) {
-    if (msg.includes("烟花") | msg.includes("🎇")) {
-        fire(window.innerWidth * 2 / 3, window.innerHeight / 2);
+function checkAndFire(msg, left) {
+    if (msg.includes("烟花") || msg.includes("🎇")) {
+        fire(window.innerWidth * (left ? 1 / 3 : 2 / 3), window.innerHeight / 2);
     }
 }
