@@ -213,6 +213,7 @@ export default class ProtobufNetTest extends cc.Component implements enet.INetEv
 
 
     }
+    //判断并放烟花
     checkAndFire(msg: string, left: boolean) {
         if (msg.includes("烟花") || msg.includes("🎇")) {
             window.fire(window.innerWidth * 1 / 2 + (left ? -100 : 100), window.innerHeight / 2);
