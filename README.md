@@ -47,7 +47,7 @@ A progressive universal game front-end development framework based on Typescript
 
 框架的核心模块是一个极简强大的模块管理器，可以轻松接入任何TS/JS项目
 
-「传送门」:[egf-core](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/core#readme)
+「传送门」:[egf-core](./packages/core/README.md)
 
 📦**构建工具**
 
@@ -55,7 +55,7 @@ A progressive universal game front-end development framework based on Typescript
 
 同时支持监视开发模式哦
 
-「传送门」:[egf-cli](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/cli#readme)
+「传送门」:[egf-cli](./packages/cli/README.md)
 
 ### 🌈UIFramework 
 
@@ -78,7 +78,7 @@ A progressive universal game front-end development framework based on Typescript
 - 支持不可思议的粘性广播
 - 基于TypeScript并提供极度舒适的类型提示
 
-「传送门」:[broadcast](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/broadcast)
+「传送门」:[broadcast](./packages/broadcast/README.md)
 
 
 
@@ -95,7 +95,7 @@ A progressive universal game front-end development framework based on Typescript
 5. 功能强大:提供完整的基本实现:握手、心跳、重连
 6. 可靠:完善的单元测试
 
-「传送门」:[enet](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme)
+「传送门」:[enet](./packages/enet/README.md)
 
 ### 🕳️ ObjectPoolManager
 
@@ -107,13 +107,13 @@ A progressive universal game front-end development framework based on Typescript
 3. 简洁可扩展的API
 4. 智能类型提示
    
-「传送门」:[obj-pool](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/obj-pool#readme)
+「传送门」:[obj-pool](./packages/obj-pool/README.md)
 
 ### 🥪LayerManager
 
     通用层级管理模块，简单易用，对业务层透明。
 
-「传送门」:[layer](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/layer#readme)
+「传送门」:[layer](./packages/layer/README.md)
 
 
 ## Demos(示例)
