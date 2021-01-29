@@ -1,6 +1,7 @@
 # `@ailhc/egf-cli`
 ## 简介
 基于rollup的EasyGameFramework的扩展库构建打包工具，也可以用于构建其他库
+
 The Extension library build package based on Rollup's EasyGameFramework can also be used to build other libraries
 ## 特性
 1. 支持typescript开发
