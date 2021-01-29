@@ -1,88 +1,202 @@
 # EasyGameFramework
+
 基于Typescript的渐进式通用游戏前端开发框架
+
 A progressive universal game front-end development framework based on Typescript
-## 快速使用
-
-### 复制模板项目
-/packages/cli/package-template
-### 手动初始化模板项目（改文件夹名，项目名）
-安装项目开发所需npm包
-npm i
 
 
-## 开发环境配置
-0. git环境
-   1. 对于二进制文件版本管理，我使用git 的大文件管理插件的lfs ，安装: git lfs install 
-   2. 大小写敏感设置 git config core.ignorecase false
-1. 需要先安装开发环境
-    1. 设置淘宝源
-    ```
-        npm config set registry http://registry.npm.taobao.org/
-    ```
-    1. 安装yarn 
-    ```
-        npm i yarn -g
-    ```
-    1. 安装lerna
-    ```
-        npm i lerna -g
-    ```
+## 名词解释
 
-2. 需要yarn config set ignore-engines true 设置一下
-3. 然后执行进行环境安装
-   ``` 
-    yarn install
-   ```
-# 开发(monorepo模式)
-### 参考资料
+**Easy**
+
+我想用这个框架开发会是很容易很轻松很舒服的。
+
+**Evolutionary(渐进式)**
+
+我想这个框架可以让我循序渐进的开发，而不是一上来就给我整一大套东西。我有需要时就模块库取或者自己开发。
+
+**General(通用)**
+
+国内的游戏引擎有3个：
+* [CocosCreator](https://www.cocos.com/products#CocosCreator)
+* [Laya](https://www.layabox.com/)
+* [Egret](https://egret.com/products)
+
+其他不太常用的有很多
+* PIXI.js
+* Phaser
+* ...
+
+
+各有优势，看项目和团队进行技术选型。
+
+我想这个框架可以不受限于引擎，适用于各种项目，不必因为换引擎而重复造轮子。
+
+
+关于框架这个话题我写了几篇文章(感兴趣可以看一下)
+
+* [为什么写框架](https://pgd.vercel.app/2020/11/17/The-Birth-of-Frames-Zero%EF%BC%9AWhy-write-framework/)
+* [我想要的框架](https://pgd.vercel.app/2020/11/29/The-Birth-of-a-Framework-One-The-Framework-I-Want/)
+* [定位](https://pgd.vercel.app/2020/12/02/The-birth-of-the-framework-two-positioning/)
+
+## Modules(模块)
+
+### Core
+
+💗**模块管理器**
+
+框架的核心模块是一个极简强大的模块管理器，可以轻松接入任何TS/JS项目
+
+「传送门」:[egf-core](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/core#readme)
+
+📦**构建工具**
+
+框架的核心工具是一个基于rollup的开箱即用的模块构建工具，可以构建出各种模块规范的js+单.d.ts
+
+同时支持监视开发模式哦
+
+「传送门」:[egf-cli](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/cli#readme)
+
+### 🌈UIFramework 
+
+    一个基于TypeScript的零依赖、跨引擎、高效、灵活、高可扩展的显示控制库(UI框架库)
+
+「传送门」:[display-ctrl](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl)
+
+在仓库中同时提供了基于CocosCreator2.4.2和CocosCreator3D实现的库(包含layer层级管理库的实现)
+1. [dpctrl-ccc](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-ccc)
+2. [dpctrl-c3d](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-c3d)
+
+### 🤙🤳🏾 Broadcast
+    一个基于TypeScript的一套高效灵活的广播系统，可以帮助开发者轻松、有序的构建具有极具复杂性的关联交互和状态变化的游戏和应用。
+**特性**
+- 基础事件机制的支持
+- 消息支持携带任意类型的数据(并有类型提示)
+- 支持函数this绑定或任意类型作为环境，一行代码就可以移除环境内所有的接收者
+- 易于构建局部/全局的状态管理
+- 支持双向通信
+- 支持不可思议的粘性广播
+- 基于TypeScript并提供极度舒适的类型提示
+
+「传送门」:[broadcast](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/broadcast)
+
+
+
+### 🌐NetworkFramework
+
+    一个基于TypeScript的零依赖、跨平台、灵活、高可扩展的网络库
+
+**特性**
+
+1. 跨平台:适用于任意ts/js项目
+2. 灵活、高可扩展:可以根据项目需要进行多层次定制
+3. 零依赖
+4. 强类型:基于TypeScript
+5. 功能强大:提供完整的基本实现:握手、心跳、重连
+6. 可靠:完善的单元测试
+
+「传送门」:[enet](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme)
+
+### 🕳️ ObjectPoolManager
+
+    一个通用的对象池管理模块，简单易用。
+
+**特性**
+1. 全局管理多个对象池
+2. 对象无需实现对象池对象接口也可进行获取和回收处理
+3. 简洁可扩展的API
+4. 智能类型提示
+   
+「传送门」:[obj-pool](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/obj-pool#readme)
+
+### 🥪LayerManager
+
+    通用层级管理模块，简单易用，对业务层透明。
+
+「传送门」:[layer](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/layer#readme)
+
+
+## Demos(示例)
+
+框架提供大部分模块的Demo示例供参考
+「传送门」:[examples](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/examples)
+## Development Env(开发环境)
+
+这是一个monorepo式的项目仓库，使用这种方式可以很好的管理多模块项目
+
+### Use Tools
+
+* [Lerna](https://lerna.js.org/) 
+    >Lerna是一种工具，可以优化使用git和npm管理多包存储库的工作流程。
+
+* Yarn
+  
+### Reference(参考资料)
 1. [lerna+yarn workspace+monorepo项目的最佳实践](https://blog.csdn.net/i10630226/article/details/99702447)
 2. [基于lerna和yarn workspace的monorepo工作流](https://zhuanlan.zhihu.com/p/71385053)
 3. [Monorepo 项目管理Lerna](https://www.cnblogs.com/sanbao/p/11834137.html)
 4. [Lerna 中文教程详解](https://segmentfault.com/a/1190000019350611?utm_source=tag-newest)
 5. [lerna管理前端模块最佳实践](https://juejin.cn/post/6844903568751722509)
-### 创建包
-#### 快速模式
+
+### Basic Commands
+
+**创建包**
+1. 快速模式
+    ```bash
     lerna create @xxx/xxx -y
-#### 配置模式
+    ```
+2. 配置模式
+   ```bash
     lerna create @xxx/xxx
-### 给包添加依赖
-#### 给指定包添加内部包依赖(需要加上版本号)
+   ```
+**给包添加依赖**
+
+* 给指定包添加内部包依赖(需要加上版本号)
+    ```bash
     yarn workspace @xxx/a add @xxx/b@0.0.1
-
-#### 给指定包添加开发时内部包依赖(需要加上版本号)
-    
+    ```
+* 给指定包添加开发时内部包依赖(需要加上版本号)
+    ```bash
     yarn workspace @xxx/a add -D @xxx/b@0.0.1
-
-#### 给指定包添加外部包依赖
+    ```
+* 给指定包添加外部包依赖
+    ```bash
     yarn workspace @xxx/xxx add @xxx/xxxx
-#### 给指定包添加开发时外部包依赖
+    ```
+* 给指定包添加开发时外部包依赖(如果是添加内部包，需要加版本号@0.0.x)
+    ```bash
     yarn workspace @xxx/xxx add -D @xxx/xxxx
-
-#### 给所有包添加依赖(如果是添加内部包，需要加版本号@0.0.x)
+    ```
+* 给所有包添加依赖(如果是添加内部包，需要加版本号@0.0.x)
+    ```bash
     yarn workspaces add lodash
-    如果是开发时依赖: 则 add -D
-### 移除依赖
-1. 移除指定包对某包的依赖
-    
-        yarn workspace packageB remove packageA
-
-2. 移除所有包对指定包的依赖
-    
-        yarn workspaces remove lodash
-
-3. 移除根目录下对某包的依赖
-    
-        yarn remove -W -D typescript 
-
-4. 添加所有依赖
-    
-        yarn install 或者 lerna bootstrap
-
-5. 清除所有依赖
-
-        lerna clean
-
-### git发布版本
+    ```
+* 给所有包添加开发时依赖(如果是添加内部包，需要加版本号@0.0.x)
+    ```bash
+    yarn workspaces add -D lodash
+    ```
+**移除依赖**
+* 移除指定包对某包的依赖
+    ```bash
+    yarn workspace packageB remove packageA
+    ```
+* 移除所有包对指定包的依赖
+    ```bash
+    yarn workspaces remove lodash
+    ```
+* 移除根目录下对某包的依赖
+    ```bash
+    yarn remove -W -D typescript 
+    ```
+* 安装所有依赖
+    ```bash
+    yarn install 或者 lerna bootstrap
+    ```
+* 清除所有依赖
+    ```bash
+    lerna clean
+    ```
+### Version(版本发布)
     lerna version
     会遍历所有包，检查修改，然后更新包的版本号，以及自动修改引用的包的引用版本号
     
@@ -92,50 +206,35 @@ npm i
     
     然后引用了packageA的packageB、C的版本号也要递增，以及引用的packageA的版本号也要从1.0.0变成1.0.1
 
-## 其他开发项目使用
-1. 使用npm link 将指定包链接到全局
-比如
-    ```
+### Used by other projects(仓库外的开发项目使用模块)
+1. 使用npm link 或 yarn link将指定包链接到全局
+
+    ```bash
     cd packages/core
     yarn link
     ```
+
 2. 到项目里创建链接(这个@egf/core是包名)
-    ```
+    
+    ```bash
     cd cocos-example
     yarn link @egf/core
     ```
 
-
-### 构建
-1. 安装egf-cli到全局目录
-
-    npm install @ailhc/egf-cli -g
-
-    使用 build命令
-    egf build -f cjs
-2. 在项目package.json的scripts中增加命令
-
-```json
-    "scripts": {
-        "build:cjs": "egf build -f cjs"
-    }
-```
-然后在目录下 npm run build:cjs
-
-
-### 我在哪？
+## Who am I?
 
 **游戏开发之路有趣但不易,**
 
 **玩起来才能一直热情洋溢。**
 
+
 关注我, 一起玩转游戏开发！
+
+在这游戏开发的道路上并肩前行
 
 你的关注是我持续更新的动力~
 
-让我们在这游戏开发的道路上并肩前行
-
-在以下这些渠道可以找到我和我的创作:
+在以下这些渠道可以找到我和我的分享和创作:
 
 公众号搜索:玩转游戏开发
 
@@ -145,10 +244,18 @@ npm i
 
 一起讨论技术的 QQ 群: 1103157878
 
-
-
 博客主页: https://pgd.vercel.app/
 
 掘金: https://juejin.cn/user/3069492195769469
 
 github: https://github.com/AILHC
+
+
+
+
+
+
+
+
+
+

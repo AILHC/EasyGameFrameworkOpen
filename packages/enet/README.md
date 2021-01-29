@@ -6,10 +6,15 @@ enet 是一个基于TypeScript的零依赖、跨平台、灵活、高可扩展�
 
 可以根据项目需要进行多层次定制(socket层,协议层,网络通信反馈层)
 
-框架提供了基于protobuf的协议处理库 [@ailhc/enet-pbws](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet-pbws#readme)
-需配合 [egf-protobuf](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/egf-protobuf-cli#readme) 库使用(一个proto文件编译生成静态js文件的工具库)
+### 🧰有用工具和库
 
-还有一个使用这个网络框架的基于CocosCreator2.4.2的聊天室demo(含服务端实现):[egf-net-ws](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/examples/egf-net-ws)
+* protobuf协议处理库[@ailhc/enet-pbws](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet-pbws#readme)
+
+* proto文件编译生成静态js文件的工具[egf-protobuf](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/egf-protobuf-cli#readme) 
+
+
+### 😆Demo
+基于CocosCreator2.4.2的聊天室demo(含服务端实现):[egf-net-ws](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/examples/egf-net-ws)
 
 ## 灵感来源
 1. [pinus:一个基于Node.js的分布式水平扩展游戏服务器轻量级强大框架](http://pinus.io/)
