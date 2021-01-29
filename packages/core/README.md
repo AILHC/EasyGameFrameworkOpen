@@ -10,7 +10,7 @@
 ## 特性
 1. 模块注册、初始化管理机制
 2. 智能提示
-3. 加载分包程序
+
 ## Demo
 1. CocosCreator2.4.3 demo  https://github.com/AILHC/egf-ccc-empty
 2. CocosCreator3D demo https://github.com/AILHC/egf-ccc3d-empty
