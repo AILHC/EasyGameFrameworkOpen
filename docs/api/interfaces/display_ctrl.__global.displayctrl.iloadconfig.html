@@ -1,0 +1,339 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ILoadConfig | EasyGameFramework</title>
+	<meta name="description" content="Documentation for EasyGameFramework">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header class="tsd-header">
+	<div class="tsd-page-toolbar">
+		<div class="container header-container">
+			<div class="header-logo">
+				<a href="../globals.html" class="title">
+					<span class="egf-logo"></span>
+				</a>
+				</select>
+			</div>
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Packages</a>
+				</li>
+				<li>
+					<a href="../modules/display_ctrl.html">display-ctrl</a>
+				</li>
+				<li>
+					<a href="../modules/display_ctrl.__global.html">__global</a>
+				</li>
+				<li>
+					<a href="../modules/display_ctrl.__global.displayctrl.html">displayCtrl</a>
+				</li>
+				<li>
+					<a href="display_ctrl.__global.displayctrl.iloadconfig.html">ILoadConfig</a>
+				</li>
+			</ul>
+			<span class="tsd-breadcrumb-current">Interface ILoadConfig</span>
+			<div id="tsd-filter">
+				<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+				<div class="tsd-filter-group">
+					<input type="checkbox" id="tsd-filter-inherited" checked />
+					<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+				</div>
+			</div>
+			<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">ILoadConfig</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="display_ctrl.__global.displayctrl.iloadhandler.html" class="tsd-signature-type">ILoadHandler</a>
+							</li>
+							<li>
+								<a href="display_ctrl.__global.displayctrl.icreateconfig.html" class="tsd-signature-type">ICreateConfig</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="display_ctrl.__global.displayctrl.iloadconfig.html#forceload" class="tsd-kind-icon">force<wbr>Load</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="display_ctrl.__global.displayctrl.iloadconfig.html#loadcb" class="tsd-kind-icon">load<wbr>Cb</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="display_ctrl.__global.displayctrl.iloadconfig.html#onloaddata" class="tsd-kind-icon">on<wbr>Load<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="display_ctrl.__global.displayctrl.iloadconfig.html#typekey" class="tsd-kind-icon">type<wbr>Key</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="forceload" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> force<wbr>Load</h3>
+					<div class="tsd-signature tsd-kind-icon">force<wbr>Load<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in display-ctrl/src/dp-ctrl-interfaces.ts:45</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>强制重新加载</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="loadcb" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> load<wbr>Cb</h3>
+					<div class="tsd-signature tsd-kind-icon">load<wbr>Cb<span class="tsd-signature-symbol">:</span> <a href="../modules/display_ctrl.__global.displayctrl.html#ctrlinscb" class="tsd-signature-type">CtrlInsCb</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in display-ctrl/src/dp-ctrl-interfaces.ts:49</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>加载完成回调,返回实例为空则加载失败，返回实例则成功</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="onloaddata" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Load<wbr>Data</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Load<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in display-ctrl/src/dp-ctrl-interfaces.ts:47</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>加载后onLoad参数</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="typekey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> type<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">type<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in display-ctrl/src/dp-ctrl-interfaces.ts:43</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>页面类型key</p>
+						</div>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Packages</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/broadcast.html">broadcast</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/c3d_comp_template.html">c3d-<wbr>comp-<wbr>template</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/c3daxios.html">c3daxios</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/cli.html">cli</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/core.html">core</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/display_ctrl.html">display-<wbr>ctrl</a>
+						<ul>
+							<li class="current tsd-kind-namespace tsd-parent-kind-module tsd-is-not-exported">
+								<a href="../modules/display_ctrl.__global.html">__global</a>
+								<ul>
+									<li class="current tsd-kind-namespace tsd-parent-kind-namespace">
+										<a href="../modules/display_ctrl.__global.displayctrl.html">display<wbr>Ctrl</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/dpctrl_c3d.html">dpctrl-<wbr>c3d</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/dpctrl_ccc.html">dpctrl-<wbr>ccc</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/egf_protobuf_cli.html">egf-<wbr>protobuf-<wbr>cli</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/emitter3.html">emitter3</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/enet.html">enet</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/enet_pbws.html">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/layer.html">layer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/obj_pool.html">obj-<wbr>pool</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/xstate2c3d.html">xstate2c3d</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-namespace tsd-parent-kind-namespace">
+						<a href="../modules/display_ctrl.__global.displayctrl.html" class="tsd-kind-icon">display<wbr>Ctrl</a>
+						<ul>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="display_ctrl.__global.displayctrl.icreateconfig.html" class="tsd-kind-icon">ICreate<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="display_ctrl.__global.displayctrl.ictrl.html" class="tsd-kind-icon">ICtrl</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="display_ctrl.__global.displayctrl.iinitconfig.html" class="tsd-kind-icon">IInit<wbr>Config</a>
+							</li>
+							<li class="current tsd-kind-interface tsd-parent-kind-namespace">
+								<a href="display_ctrl.__global.displayctrl.iloadconfig.html" class="tsd-kind-icon">ILoad<wbr>Config</a>
+								<ul>
+									<li class=" tsd-kind-property tsd-parent-kind-interface">
+										<a href="display_ctrl.__global.displayctrl.iloadconfig.html#forceload" class="tsd-kind-icon">force<wbr>Load</a>
+									</li>
+									<li class=" tsd-kind-property tsd-parent-kind-interface">
+										<a href="display_ctrl.__global.displayctrl.iloadconfig.html#loadcb" class="tsd-kind-icon">load<wbr>Cb</a>
+									</li>
+									<li class=" tsd-kind-property tsd-parent-kind-interface">
+										<a href="display_ctrl.__global.displayctrl.iloadconfig.html#onloaddata" class="tsd-kind-icon">on<wbr>Load<wbr>Data</a>
+									</li>
+									<li class=" tsd-kind-property tsd-parent-kind-interface">
+										<a href="display_ctrl.__global.displayctrl.iloadconfig.html#typekey" class="tsd-kind-icon">type<wbr>Key</a>
+									</li>
+								</ul>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+								<a href="display_ctrl.__global.displayctrl.iloadhandler.html" class="tsd-kind-icon">ILoad<wbr>Handler</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="display_ctrl.__global.displayctrl.imgr.html" class="tsd-kind-icon">IMgr</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+								<a href="display_ctrl.__global.displayctrl.ireshandler.html" class="tsd-kind-icon">IRes<wbr>Handler</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+								<a href="display_ctrl.__global.displayctrl.iresloadconfig.html" class="tsd-kind-icon">IRes<wbr>Load<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="display_ctrl.__global.displayctrl.ishowconfig.html" class="tsd-kind-icon">IShow<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#ctrlclassmap" class="tsd-kind-icon">Ctrl<wbr>Class<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#ctrlclasstype" class="tsd-kind-icon">Ctrl<wbr>Class<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#ctrlinscb" class="tsd-kind-icon">Ctrl<wbr>Ins<wbr>Cb</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#ctrlinsmap" class="tsd-kind-icon">Ctrl<wbr>Ins<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#ctrlloadedcb" class="tsd-kind-icon">Ctrl<wbr>Loaded<wbr>Cb</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#ctrlshowcfgs" class="tsd-kind-icon">Ctrl<wbr>Show<wbr>Cfgs</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#returnctrltype" class="tsd-kind-icon">Return<wbr>Ctrl<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="../modules/display_ctrl.__global.displayctrl.html#toanyindexkey" class="tsd-kind-icon">To<wbr>Any<wbr>Index<wbr>Key</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
