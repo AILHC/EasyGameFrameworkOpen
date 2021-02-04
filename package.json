@@ -1,26 +1,9 @@
 {
   "name": "easygameclientframework",
-  "version": "0.0.1",
   "description": "base typescript a EasyGameClientFramework ",
-  "main": "index.js",
   "repository": "https://github.com/AILHC/EasyGameFrameworkOpen.git",
   "author": "Tide Li <505126057@qq.com>",
   "license": "MIT",
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.10.0",
-    "@typescript-eslint/parser": "^2.10.0",
-    "eslint": "^6.7.2",
-    "follow-redirects": "^1.10.0",
-    "typescript": "^3.7.3"
-  },
-  "devDependencies": {
-    "@types/jest": "^24.0.23",
-    "jest": "^24.9.0",
-    "ts-jest": "^24.2.0"
-  },
-  "scripts": {
-    "test": "jest"
-  },
   "private": true,
   "workspaces": [
     "packages/*",
@@ -29,5 +12,51 @@
   "packages": [
     "packages/*",
     "examples/*"
-  ]
+  ],
+  "scripts": {
+    "vcnp": "lerna version --conventional-commits --no-push",
+    "bootstrap": "lerna bootstrap",
+    "clean_nm": "lerna clean",
+    "cm": "git-cz",
+    "preinstall": "node ./scripts/checkYarn.js",
+    "postinstall": "yarn bootstrap",
+    "gcl": "npx lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
+    "doc": "typedoc --options tools/typedoc/typedoc.js"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-lerna-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^3.7.3",
+    "@types/jest": "^24.0.23",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.2.0",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@oasis-engine/typedoc-theme": "^0.0.2",
+    "@strictsoftware/typedoc-plugin-monorepo": "^0.3.1",
+    "commitizen": "^4.2.3",
+    "conventional-changelog-cli": "^2.1.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "cz-lerna-changelog": "^2.0.3",
+    "husky": "^4.3.8",
+    "lerna": "^3.22.1",
+    "lint-staged": "^10.5.3",
+    "prettier": "^2.2.1",
+    "typedoc": "0.19.2",
+    "typedoc-plugin-remove-references": "^0.0.5"
+  }
 }

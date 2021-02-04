@@ -27,12 +27,6 @@
     }
 ```
 2. 详细使用文档:[display-ctrl/README.md](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl#readme)
-## 发布日志
- 
-*********
-### 1.0.1 (2020-12-22)
-getRess返回值类型改为 any[]|string[]
-### 1.0.0 (2020-12-20)
-@ailhc/display-ctrl的CocosCreator3d实现
+
 
 

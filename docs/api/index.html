@@ -1,0 +1,417 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>EasyGameFramework</title>
+	<meta name="description" content="Documentation for EasyGameFramework">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header class="tsd-header">
+	<div class="tsd-page-toolbar">
+		<div class="container header-container">
+			<div class="header-logo">
+				<a href="globals.html" class="title">
+					<span class="egf-logo"></span>
+				</a>
+				</select>
+			</div>
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Packages</a>
+				</li>
+			</ul>
+			<span class="tsd-breadcrumb-current">EasyGameFramework</span>
+			<div id="tsd-filter">
+				<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+				<div class="tsd-filter-group">
+					<input type="checkbox" id="tsd-filter-inherited" checked />
+					<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+				</div>
+			</div>
+			<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#easygameframework" id="easygameframework" style="color: inherit; text-decoration: none;">
+					<h1>EasyGameFramework</h1>
+				</a>
+				<p>基于Typescript的渐进式通用游戏前端开发框架</p>
+				<p>A progressive universal game front-end development framework based on Typescript</p>
+				<a href="#名词解释" id="名词解释" style="color: inherit; text-decoration: none;">
+					<h2>名词解释</h2>
+				</a>
+				<p><strong>Easy</strong></p>
+				<p>我想用这个框架开发会是很容易很轻松很舒服的。</p>
+				<p><strong>Evolutionary(渐进式)</strong></p>
+				<p>我想这个框架可以让我循序渐进的开发，而不是一上来就给我整一大套东西。我有需要时就模块库取或者自己开发。</p>
+				<p><strong>General(通用)</strong></p>
+				<p>国内的游戏引擎有3个：</p>
+				<ul>
+					<li><a href="https://www.cocos.com/products#CocosCreator">CocosCreator</a></li>
+					<li><a href="https://www.layabox.com/">Laya</a></li>
+					<li><a href="https://egret.com/products">Egret</a></li>
+				</ul>
+				<p>其他不太常用的有很多</p>
+				<ul>
+					<li>PIXI.js</li>
+					<li>Phaser</li>
+					<li>...</li>
+				</ul>
+				<p>各有优势，看项目和团队进行技术选型。</p>
+				<p>我想这个框架可以不受限于引擎，适用于各种项目，不必因为换引擎而重复造轮子。</p>
+				<p>关于框架这个话题我写了几篇文章(感兴趣可以看一下)</p>
+				<ul>
+					<li><a href="https://pgd.vercel.app/2020/11/17/The-Birth-of-Frames-Zero%EF%BC%9AWhy-write-framework/">为什么写框架</a></li>
+					<li><a href="https://pgd.vercel.app/2020/11/29/The-Birth-of-a-Framework-One-The-Framework-I-Want/">我想要的框架</a></li>
+					<li><a href="https://pgd.vercel.app/2020/12/02/The-birth-of-the-framework-two-positioning/">定位</a></li>
+				</ul>
+				<a href="#modules模块" id="modules模块" style="color: inherit; text-decoration: none;">
+					<h2>Modules(模块)</h2>
+				</a>
+				<a href="#core" id="core" style="color: inherit; text-decoration: none;">
+					<h3>Core</h3>
+				</a>
+				<p>💗<strong>模块管理器</strong></p>
+				<p>框架的核心模块是一个极简强大的模块管理器，可以轻松接入任何TS/JS项目</p>
+				<p>「传送门」:<a href="./packages/core/README.md">egf-core</a></p>
+				<p>📦<strong>构建工具</strong></p>
+				<p>框架的核心工具是一个基于rollup的开箱即用的模块构建工具，可以构建出各种模块规范的js+单.d.ts</p>
+				<p>同时支持监视开发模式哦</p>
+				<p>「传送门」:<a href="./packages/cli/README.md">egf-cli</a></p>
+				<a href="#🌈uiframework" id="🌈uiframework" style="color: inherit; text-decoration: none;">
+					<h3>🌈UIFramework</h3>
+				</a>
+				<pre><code>一个基于TypeScript的零依赖、跨引擎、高效、灵活、高可扩展的显示控制库<span class="hljs-comment">(UI框架库)</span>
+</code></pre>
+				<p>「传送门」:<a href="https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl">display-ctrl</a></p>
+				<p>在仓库中同时提供了基于CocosCreator2.4.2和CocosCreator3D实现的库(包含layer层级管理库的实现)</p>
+				<ol>
+					<li><a href="https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-ccc">dpctrl-ccc</a></li>
+					<li><a href="https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-c3d">dpctrl-c3d</a></li>
+				</ol>
+				<a href="#🤙🤳🏾-broadcast" id="🤙🤳🏾-broadcast" style="color: inherit; text-decoration: none;">
+					<h3>🤙🤳🏾 Broadcast</h3>
+				</a>
+				<pre><code>一个基于TypeScript的一套高效灵活的广播系统，可以帮助开发者轻松、有序的构建具有极具复杂性的关联交互和状态变化的游戏和应用。
+</code></pre>
+				<p><strong>特性</strong></p>
+				<ul>
+					<li>基础事件机制的支持</li>
+					<li>消息支持携带任意类型的数据(并有类型提示)</li>
+					<li>支持函数this绑定或任意类型作为环境，一行代码就可以移除环境内所有的接收者</li>
+					<li>易于构建局部/全局的状态管理</li>
+					<li>支持双向通信</li>
+					<li>支持不可思议的粘性广播</li>
+					<li>基于TypeScript并提供极度舒适的类型提示</li>
+				</ul>
+				<p>「传送门」:<a href="./packages/broadcast/README.md">broadcast</a></p>
+				<a href="#🌐networkframework" id="🌐networkframework" style="color: inherit; text-decoration: none;">
+					<h3>🌐NetworkFramework</h3>
+				</a>
+				<pre><code>一个基于TypeScript的零依赖、跨平台、灵活、高可扩展的网络库
+</code></pre>
+				<p><strong>特性</strong></p>
+				<ol>
+					<li>跨平台:适用于任意ts/js项目</li>
+					<li>灵活、高可扩展:可以根据项目需要进行多层次定制</li>
+					<li>零依赖</li>
+					<li>强类型:基于TypeScript</li>
+					<li>功能强大:提供完整的基本实现:握手、心跳、重连</li>
+					<li>可靠:完善的单元测试</li>
+				</ol>
+				<p>「传送门」:<a href="./packages/enet/README.md">enet</a></p>
+				<a href="#🕳️-objectpoolmanager" id="🕳️-objectpoolmanager" style="color: inherit; text-decoration: none;">
+					<h3>🕳️ ObjectPoolManager</h3>
+				</a>
+				<pre><code>一个通用的对象池管理模块，简单易用。
+</code></pre>
+				<p><strong>特性</strong></p>
+				<ol>
+					<li><p>全局管理多个对象池</p>
+					</li>
+					<li><p>对象无需实现对象池对象接口也可进行获取和回收处理</p>
+					</li>
+					<li><p>简洁可扩展的API</p>
+					</li>
+					<li><p>智能类型提示</p>
+						<p>「传送门」:<a href="./packages/obj-pool/README.md">obj-pool</a></p>
+					</li>
+				</ol>
+				<a href="#🥪layermanager" id="🥪layermanager" style="color: inherit; text-decoration: none;">
+					<h3>🥪LayerManager</h3>
+				</a>
+				<pre><code>通用层级管理模块，简单易用，对业务层透明。
+</code></pre>
+				<p>「传送门」:<a href="./packages/layer/README.md">layer</a></p>
+				<a href="#demos示例" id="demos示例" style="color: inherit; text-decoration: none;">
+					<h2>Demos(示例)</h2>
+				</a>
+				<p>框架提供大部分模块的Demo示例供参考
+				「传送门」:<a href="https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/examples">examples</a></p>
+				<a href="#development-env开发环境" id="development-env开发环境" style="color: inherit; text-decoration: none;">
+					<h2>Development Env(开发环境)</h2>
+				</a>
+				<p>这是一个monorepo式的项目仓库，使用这种方式可以很好的管理多模块项目</p>
+				<a href="#use-tools" id="use-tools" style="color: inherit; text-decoration: none;">
+					<h3>Use Tools</h3>
+				</a>
+				<ul>
+					<li><p><a href="https://lerna.js.org/">Lerna</a> </p>
+						<blockquote>
+							<p>Lerna是一种工具，可以优化使用git和npm管理多包存储库的工作流程。</p>
+						</blockquote>
+					</li>
+					<li><p>Yarn</p>
+						<a href="#reference参考资料" id="reference参考资料" style="color: inherit; text-decoration: none;">
+							<h3>Reference(参考资料)</h3>
+						</a>
+					</li>
+				</ul>
+				<ol>
+					<li><a href="https://blog.csdn.net/i10630226/article/details/99702447">lerna+yarn workspace+monorepo项目的最佳实践</a></li>
+					<li><a href="https://zhuanlan.zhihu.com/p/71385053">基于lerna和yarn workspace的monorepo工作流</a></li>
+					<li><a href="https://www.cnblogs.com/sanbao/p/11834137.html">Monorepo 项目管理Lerna</a></li>
+					<li><a href="https://segmentfault.com/a/1190000019350611?utm_source=tag-newest">Lerna 中文教程详解</a></li>
+					<li><a href="https://juejin.cn/post/6844903568751722509">lerna管理前端模块最佳实践</a></li>
+				</ol>
+				<a href="#basic-commands" id="basic-commands" style="color: inherit; text-decoration: none;">
+					<h3>Basic Commands</h3>
+				</a>
+				<p><strong>创建包</strong></p>
+				<ol>
+					<li>快速模式<pre><code class="language-bash">lerna create @xxx/xxx -y
+</code></pre>
+					</li>
+					<li>配置模式<pre><code class="language-bash"> lerna create @xxx/xxx
+</code></pre>
+					</li>
+				</ol>
+				<p><strong>给包添加依赖</strong></p>
+				<ul>
+					<li>给指定包添加内部包依赖(需要加上版本号)<pre><code class="language-bash">yarn workspace @xxx/a add @xxx/b@0.0.1
+</code></pre>
+					</li>
+					<li>给指定包添加开发时内部包依赖(需要加上版本号)<pre><code class="language-bash">yarn workspace @xxx/a add -D @xxx/b@0.0.1
+</code></pre>
+					</li>
+					<li>给指定包添加外部包依赖<pre><code class="language-bash">yarn workspace @xxx/xxx add @xxx/xxxx
+</code></pre>
+					</li>
+					<li>给指定包添加开发时外部包依赖(如果是添加内部包，需要加版本号@0.0.x)<pre><code class="language-bash">yarn workspace @xxx/xxx add -D @xxx/xxxx
+</code></pre>
+					</li>
+					<li>给所有包添加依赖(如果是添加内部包，需要加版本号@0.0.x)<pre><code class="language-bash">yarn workspaces add lodash
+</code></pre>
+					</li>
+					<li>给所有包添加开发时依赖(如果是添加内部包，需要加版本号@0.0.x)<pre><code class="language-bash">yarn workspaces add -D lodash
+</code></pre>
+					</li>
+					<li>*移除依赖**</li>
+					<li>移除指定包对某包的依赖<pre><code class="language-bash">yarn workspace packageB remove packageA
+</code></pre>
+					</li>
+					<li>移除所有包对指定包的依赖<pre><code class="language-bash">yarn workspaces remove lodash
+</code></pre>
+					</li>
+					<li>移除根目录下对某包的依赖<pre><code class="language-bash">yarn remove -W -D typescript
+</code></pre>
+					</li>
+					<li>安装所有依赖<pre><code class="language-bash">yarn install 或者 lerna bootstrap
+</code></pre>
+					</li>
+					<li>清除所有依赖<pre><code class="language-bash">lerna clean
+</code></pre>
+						<a href="#version版本发布" id="version版本发布" style="color: inherit; text-decoration: none;">
+							<h3>Version(版本发布)</h3>
+						</a>
+						lerna version
+					会遍历所有包，检查修改，然后更新包的版本号，以及自动修改引用的包的引用版本号  生成一个提交，一个tag，以及推送到远程仓库  比如 packageA 修改了，版本号从1.0.0变成了1.0.1  然后引用了packageA的packageB、C的版本号也要递增，以及引用的packageA的版本号也要从1.0.0变成1.0.1</li>
+				</ul>
+				<a href="#used-by-other-projects仓库外的开发项目使用模块" id="used-by-other-projects仓库外的开发项目使用模块" style="color: inherit; text-decoration: none;">
+					<h3>Used by other projects(仓库外的开发项目使用模块)</h3>
+				</a>
+				<ol>
+					<li><p>使用npm link 或 yarn link将指定包链接到全局</p>
+						<pre><code class="language-bash"><span class="hljs-built_in">cd</span> packages/core
+yarn link
+</code></pre>
+					</li>
+					<li><p>到项目里创建链接(这个@egf/core是包名)</p>
+						<pre><code class="language-bash"><span class="hljs-built_in">cd</span> cocos-example
+yarn link @egf/core
+</code></pre>
+					</li>
+				</ol>
+				<a href="#who-am-i" id="who-am-i" style="color: inherit; text-decoration: none;">
+					<h2>Who am I?</h2>
+				</a>
+				<p><strong>游戏开发之路有趣但不易,</strong></p>
+				<p><strong>玩起来才能一直热情洋溢。</strong></p>
+				<p>关注我, 一起玩转游戏开发！</p>
+				<p>在这游戏开发的道路上并肩前行</p>
+				<p>你的关注是我持续更新的动力~</p>
+				<p>在以下这些渠道可以找到我和我的分享和创作:</p>
+				<p>公众号搜索:玩转游戏开发</p>
+				<p>或扫码:<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/abd0c14c9c954e56af20adb71fa00da9~tplv-k3u1fbpfcp-zoom-1.image" alt="img" style="zoom:50%;" /></p>
+				<p>一起讨论技术的 QQ 群: 1103157878</p>
+				<p>博客主页: <a href="https://pgd.vercel.app/">https://pgd.vercel.app/</a></p>
+				<p>掘金: <a href="https://juejin.cn/user/3069492195769469">https://juejin.cn/user/3069492195769469</a></p>
+				<p>github: <a href="https://github.com/AILHC">https://github.com/AILHC</a></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Packages</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/broadcast.html">broadcast</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/c3d_comp_template.html">c3d-<wbr>comp-<wbr>template</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/c3daxios.html">c3daxios</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/cli.html">cli</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/core.html">core</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/display_ctrl.html">display-<wbr>ctrl</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/dpctrl_c3d.html">dpctrl-<wbr>c3d</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/dpctrl_ccc.html">dpctrl-<wbr>ccc</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/egf_protobuf_cli.html">egf-<wbr>protobuf-<wbr>cli</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/emitter3.html">emitter3</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/enet.html">enet</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/enet_pbws.html">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/layer.html">layer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/obj_pool.html">obj-<wbr>pool</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/xstate2c3d.html">xstate2c3d</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-module">
+						<a href="modules/broadcast.html" class="tsd-kind-icon">broadcast</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/c3d_comp_template.html" class="tsd-kind-icon">c3d-<wbr>comp-<wbr>template</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/c3daxios.html" class="tsd-kind-icon">c3daxios</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/cli.html" class="tsd-kind-icon">cli</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/core.html" class="tsd-kind-icon">core</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/display_ctrl.html" class="tsd-kind-icon">display-<wbr>ctrl</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/dpctrl_c3d.html" class="tsd-kind-icon">dpctrl-<wbr>c3d</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/dpctrl_ccc.html" class="tsd-kind-icon">dpctrl-<wbr>ccc</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/egf_protobuf_cli.html" class="tsd-kind-icon">egf-<wbr>protobuf-<wbr>cli</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/emitter3.html" class="tsd-kind-icon">emitter3</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/enet.html" class="tsd-kind-icon">enet</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/enet_pbws.html" class="tsd-kind-icon">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/layer.html" class="tsd-kind-icon">layer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/obj_pool.html" class="tsd-kind-icon">obj-<wbr>pool</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/xstate2c3d.html" class="tsd-kind-icon">xstate2c3d</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
