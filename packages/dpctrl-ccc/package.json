@@ -34,8 +34,7 @@
     "build:umd": "egf build -f umd:dpctrlCCC",
     "build:system": "egf build -f system:@ailhc/dpctrl-ccc",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:system",
-    "test": "jest",
-    "testc": "jest --coverage"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "devDependencies": {
     "@ailhc/egf-cli": "1.0.0",

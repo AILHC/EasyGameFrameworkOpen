@@ -1,5 +1,6 @@
 {
   "name": "@ailhc/broadcast",
+  "globalName":"broadcast",
   "version": "1.0.0",
   "description": "",
   "author": "AILHC <505126057@qq.com>",
@@ -32,14 +33,13 @@
     "build:es": "egf build -f es",
     "build:umd": "egf build -f umd:broadcast",
     "build:iife": "egf build -f iife:broadcast",
-    "build:system": "egf build -f system:@ailhc/broadcast",
+    "build:system": "cross-var egf build -f system:$npm_package_name",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
-    "test": "jest",
-    "testc": "jest --coverage"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js",
+    "build-cjs": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- egf build -f cjs",
+    "build:iifetest": "egf build -f iife"
   },
   "devDependencies": {
-    "@ailhc/egf-cli": "1.0.0",
-    "jest": "^25.3.0",
-    "ts-jest": "^25.3.1"
+    "@ailhc/egf-cli": "^1.0.4"
   }
 }

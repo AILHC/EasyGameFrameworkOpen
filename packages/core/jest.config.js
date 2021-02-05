@@ -19,7 +19,7 @@ module.exports = {
         // './tests/init.ts'
     ],
     //覆盖率报告输出文件夹
-    coverageDirectory: './__tests__/report/',
+    coverageDirectory: './docs/testReport/',
     //设置全局变量
     // globals: {
     //   CC_DEV: true,

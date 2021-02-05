@@ -20,8 +20,9 @@
     "cm": "git-cz",
     "preinstall": "node ./scripts/checkYarn.js",
     "postinstall": "yarn bootstrap",
-    "gcl": "npx lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
-    "doc": "typedoc --options tools/typedoc/typedoc.js"
+    "gcl": "lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
+    "doc": "typedoc --options tools/typedoc/typedoc.js",
+    "tc": "jest --coverage"
   },
   "config": {
     "commitizen": {
@@ -40,6 +41,10 @@
     ]
   },
   "devDependencies": {
+    "cpr": "^3.0.1",
+    "cross-var": "^1.1.0",
+    "make-dir-cli": "^2.0.0",
+    "rimraf": "^3.0.2",
     "typescript": "^3.7.3",
     "@types/jest": "^24.0.23",
     "jest": "^24.9.0",

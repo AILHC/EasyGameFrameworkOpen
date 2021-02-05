@@ -30,16 +30,13 @@
     "build:iife": "egf build -f iife:layer",
     "build:system": "egf build -f system:@ailhc/layer",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&yarn run build:system",
-    "test": "jest",
-    "testc": "jest --coverage"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFramework/issues"
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/layer#readme",
   "devDependencies": {
-    "@ailhc/egf-cli": "1.0.0",
-    "jest": "^25.3.0",
-    "ts-jest": "^25.3.1"
+    "@ailhc/egf-cli": "1.0.0"
   }
 }
