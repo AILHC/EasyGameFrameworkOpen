@@ -11,5 +11,5 @@
 
 [GitHub](https://github.com/AILHC/EasyGameFrameworkOpen.git)
 [API](api/index.html)
-[Get Started](#Introduction)
+[Get Started](README.md)
 
