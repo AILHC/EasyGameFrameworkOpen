@@ -41,8 +41,8 @@
     window.$docsify = {
       name: 'EasyGameFramework',
       logo: "./light-icon.svg",
-      relativePath: true,
-      nameLink: '/',
+      // relativePath: true,
+      // nameLink: '/',
       repo: 'https://github.com/AILHC/EasyGameFrameworkOpen',
       // 封面支持，默认加载的是项目根目录下的_coverpage.md文件
       coverpage: true,
@@ -90,10 +90,11 @@
       },
       markdown: function (marked, renderer) {
         const oldLink = renderer.link;
+        marked.defaults.renderer = renderer;
         renderer.link = function (href, title, text) {
           console.log(href);
 
-          if (href.indexOf("api") > -1) {
+          if (href.indexOf("api") > -1 || href.indexOf("testReport") > -1) {
             return `<a href="${href}">${text}</a>`
           } else {
             return oldLink(href, title, text);

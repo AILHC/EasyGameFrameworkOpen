@@ -2,18 +2,18 @@
 
 基于Typescript的渐进式通用游戏前端开发框架
 
-A progressive universal game front-end development framework based on Typescript
+A progressive universal game front-end development framework based on [Typescript](https://www.tslang.cn/)
 
 
 ## 名词解释
 
 **Easy**
 
-我想用这个框架开发会是很容易很轻松很舒服的。
+用这个框架开发会是很容易很轻松很舒服的。
 
 **Evolutionary(渐进式)**
 
-我想这个框架可以让我循序渐进的开发，而不是一上来就给我整一大套东西。我有需要时就模块库取或者自己开发。
+用这个框架可以让我循序渐进的开发，而不是一上来就给我整一大套东西。在我有需要时就模块库取或者自己开发。
 
 **General(通用)**
 
@@ -23,8 +23,8 @@ A progressive universal game front-end development framework based on Typescript
 * [Egret](https://egret.com/products)
 
 其他不太常用的有很多
-* PIXI.js
-* Phaser
+* [PIXI.js](https://www.pixijs.com/)
+* [Phaser](http://phaser.io/)
 * ...
 
 

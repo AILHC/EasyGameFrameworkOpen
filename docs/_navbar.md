@@ -1,5 +1,5 @@
 <!-- _navbar.md -->
-* [TestCoverage](testReport/lcov-report/index.html)
+* [测试覆盖率](testReport/lcov-report/index.html)
 
 
 <!-- * 入门
