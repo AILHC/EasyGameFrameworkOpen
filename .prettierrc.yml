@@ -4,7 +4,6 @@
 ---
 printWidth: 120
 proseWrap: never
-singleQuote: false
 trailingComma: none
 tabWidth: 4
 useTabs: false
