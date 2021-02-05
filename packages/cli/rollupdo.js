@@ -123,6 +123,9 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         const strs = format.split(":");
         format = strs[0];
         moduleName = strs[1];
+        if (!moduleName || moduleName.trim() === "") {
+            moduleName = process.env.npm_package_name.split("/")[1];
+        }
         customDts = true;
         useFooter = true;
     }
@@ -132,8 +135,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         moduleName = strs[1];
     }
     if (!moduleName) {
-        const package = require(path.join(process.cwd(), `package.json`));
-        moduleName = package.name;
+        moduleName = process.env.npm_package_name;
     }
     if (!format) {
         format = "cjs"
@@ -152,7 +154,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     }
 
     tsconfigOverride.compilerOptions.declarationDir = typesDir;
-    if(target){
+    if (target) {
         tsconfigOverride.compilerOptions.target = target;
     }
     tsconfigOverride.compilerOptions.declaration = customDts;
