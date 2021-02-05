@@ -29,8 +29,7 @@
     "build:iife": "egf build -f iife:enet",
     "build:system": "egf build -f system:@ailhc/enet",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
-    "test": "jest",
-    "testc": "jest --coverage"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
@@ -38,9 +37,7 @@
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet#readme",
   "devDependencies": {
     "@ailhc/egf-cli": "^1.0.4",
-    "jest": "^25.3.0",
     "jest-websocket-mock": "^2.2.0",
-    "mock-socket": "^9.0.3",
-    "ts-jest": "^25.3.1"
+    "mock-socket": "^9.0.3"
   }
 }
