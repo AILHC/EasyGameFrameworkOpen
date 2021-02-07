@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.1.0...@ailhc/egf-cli@1.2.0) (2021-02-07)
+
+
+### Features
+
+* 支持输出让nodejs版本>12识别的es模块 ([0eb1d57](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/0eb1d57dc1563f4c43314d0c29e9502ccfc5b3c9))
+
+
+
+
+
 # [1.1.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.0.4...@ailhc/egf-cli@1.1.0) (2021-02-07)
 
 
