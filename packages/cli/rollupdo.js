@@ -156,9 +156,13 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     if (!entry) {
         entry = "src/index.ts";
     }
+    if (!output && (format === "es" || format === "esm")) {
+        output = `dist/es/lib/index.mjs`
+    }
     if (!output) {
         output = `dist/${format}/lib/index.js`
     }
+
     if (!typesDir) {
         typesDir = `dist/${format}/types`;
     }

@@ -13,7 +13,7 @@
     "test": "__tests__"
   },
   "main": "dist/cjs/lib/index.js",
-  "module": "dist/es/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "files": [
     "libs",
@@ -27,6 +27,7 @@
     "type": "git",
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
+  "exports": "./dist/es/lib/index.mjs",
   "scripts": {
     "watch:cjs": "egf build -w true -f cjs",
     "build:cjs": "egf build -f cjs",
