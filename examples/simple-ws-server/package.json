@@ -1,6 +1,6 @@
 {
   "name": "simple-ws-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "simple-ws-server",
   "main": "index.js",
   "repository": "https://github.com/AILHC/EasyGameFrameworkOpen.git",

@@ -1,11 +1,10 @@
 {
   "name": "@ailhc/dpctrl-ccc",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Cocoscreator2.x implements display management module",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-ccc#readme",
   "license": "MIT",
-  
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
@@ -45,7 +44,7 @@
     "ts-jest": "^25.3.1"
   },
   "dependencies": {
-    "@ailhc/display-ctrl": "^1.0.1",
-    "@ailhc/layer": "^0.0.3"
+    "@ailhc/display-ctrl": "^1.1.0",
+    "@ailhc/layer": "^0.1.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-core",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "This is the core of EasyGameFramework, which provides the ability to register modules, get module instances, and load subroutine scripts",
   "keywords": [],
   "author": "AILHC <505126057@qq.com>",
@@ -9,7 +9,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
