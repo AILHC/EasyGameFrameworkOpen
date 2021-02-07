@@ -3,6 +3,7 @@
   "version": "1.0.5",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
   "dependencies": {
     "@ailhc/broadcast": "^1.0.1",
     "@ailhc/dpctrl-ccc": "^1.0.3",

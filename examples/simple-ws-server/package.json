@@ -10,6 +10,7 @@
     "@types/ws": "^7.4.0",
     "ws": "^7.4.2"
   },
+  "private": true,
   "scripts": {
     "start": "node ./bin/ws-server.js"
   }
