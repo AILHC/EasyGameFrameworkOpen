@@ -12,8 +12,13 @@
 2. 智能提示
 
 ## Demo
-1. CocosCreator2.4.3 demo  https://github.com/AILHC/egf-ccc-empty
-2. CocosCreator3D demo https://github.com/AILHC/egf-ccc3d-empty
+
+1. [CocosCreator2.4.2 模板](https://github.com/AILHC/egf-ccc-empty)
+2. [CocosCreator3D 1.2 模板](https://github.com/AILHC/egf-ccc3d-empty) (ps:使用systemjs+插件模式使用)
+3. [CocosCreator3.0 preview 模板](https://github.com/AILHC/egf-ccc3-empty) (ps:使用systemjs+插件模式使用)
+4. [Egret 5.3 支持npm的模板](https://github.com/AILHC/egf-egret-empty)
+5. [Laya 2.7.1 支持npm的模板](https://github.com/AILHC/egf-laya-empty)
+
 ## 使用
 0. 
     
@@ -76,15 +81,17 @@ export function setModuleMap(moduleMap: IModuleMap) {
 //AppMain.ts
 import { setModuleMap, m } from "./ModuleMap";
 
-...
+
 setModuleMap(app.moduleMap); 
-...
+
 //在别的逻辑里可以通过
 import { m } from "./ModuleMap";
 //调用模块逻辑
 m.moduleA.doSometing()
 ```
-### 我在哪？
+## [CHANGELOG](./CHANGELOG.md);
+
+## 我在哪？
 
 **游戏开发之路有趣但不易,**
 

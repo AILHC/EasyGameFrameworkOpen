@@ -13,7 +13,7 @@ npm install -D @ailhc/egf-cli
 ## 使用
     1. 对于不需要全局变量名的
     egf build -f cjs 
-    2. 需要全局变量名的，冒号: 后跟变量名
+    2. 需要全局变量名的，冒号: 后跟变量名(如果不写，自动从package.json中解析)
     egf build -f iife:xxx 
 
 更多使用可以参考 模板项目
@@ -39,5 +39,5 @@ npm install -D @ailhc/egf-cli
    "externalTag":["@ailhc"]
    ```
 
-
+## [CHANGELOG](./CHANGELOG.md)
 
