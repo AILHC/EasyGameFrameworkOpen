@@ -44,5 +44,4 @@ netMgr.init({
 this.protoHandler = new PbProtoHandler(global.pb_test)
 const dpkg = this.protoHandler.decodePkg(message);
 ```
-## [CHANGELOG](./CHANGELOG.md);
 

@@ -330,5 +330,4 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.IResHan
   通过IShowConfig定制更多可能性，比如页面显示动画播放完回调
   
   利用管理器的基础接口扩展出管理栈式UI的逻辑
-## [CHANGELOG](./CHANGELOG.md);
 

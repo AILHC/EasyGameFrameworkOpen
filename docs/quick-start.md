@@ -124,3 +124,34 @@ export class HelloWorld implements egf.IModule {
 5. [Laya 2.7.1 支持npm的模板](https://github.com/AILHC/egf-laya-empty)
 
 ## 自定义模块构建
+
+如果你也想将自己的代码打包成npm包的形式并输出各种模块规范。
+
+或者想将其他npm封装一下打包成自己项目可用的模块规范js。
+
+可以使用框架提供的模块构建工具 [egf-cli] ()
+
+
+### 三步使用
+
+**安装工具**
+
+```bash
+npm i @ailhc/egf-cli -D
+```
+
+**创建模块项目并编写逻辑**
+
+在node_modules中找到 @ailhc/cli/package-template 文件夹 复制这个项目模板粘贴到你的路径。
+
+修改一下package.json中的包名，然后编写逻辑。
+
+**构建项目**
+
+在项目路径下执行对应模块规范的构建命令，或者构建全部的命令
+
+```bash
+npm run build:cjs
+或者
+npm run build:all
+```

@@ -12,8 +12,13 @@
 2. 智能提示
 
 ## Demo
-1. CocosCreator2.4.3 demo  https://github.com/AILHC/egf-ccc-empty
-2. CocosCreator3D demo https://github.com/AILHC/egf-ccc3d-empty
+
+1. [CocosCreator2.4.2 模板](https://github.com/AILHC/egf-ccc-empty)
+2. [CocosCreator3D 1.2 模板](https://github.com/AILHC/egf-ccc3d-empty) (ps:使用systemjs+插件模式使用)
+3. [CocosCreator3.0 preview 模板](https://github.com/AILHC/egf-ccc3-empty) (ps:使用systemjs+插件模式使用)
+4. [Egret 5.3 支持npm的模板](https://github.com/AILHC/egf-egret-empty)
+5. [Laya 2.7.1 支持npm的模板](https://github.com/AILHC/egf-laya-empty)
+
 ## 使用
 0. 
     
@@ -66,6 +71,7 @@ const app = new App<IModuleMap>();
 app.loadModule(moduleIns,"moduleName");
 ```
 3. 全局模块调用
+
 ```ts
 // 可以将模块实例的字典赋值给全局的对象，比如
 //setModuleMap.ts
@@ -76,40 +82,11 @@ export function setModuleMap(moduleMap: IModuleMap) {
 //AppMain.ts
 import { setModuleMap, m } from "./ModuleMap";
 
-...
+
 setModuleMap(app.moduleMap); 
-...
+
 //在别的逻辑里可以通过
 import { m } from "./ModuleMap";
 //调用模块逻辑
 m.moduleA.doSometing()
 ```
-### 我在哪？
-
-**游戏开发之路有趣但不易,**
-
-**玩起来才能一直热情洋溢。**
-
-关注我, 一起玩转游戏开发！
-
-你的关注是我持续更新的动力~
-
-让我们在这游戏开发的道路上并肩前行
-
-在以下这些渠道可以找到我和我的创作:
-
-公众号搜索:玩转游戏开发
-
-或扫码:<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/abd0c14c9c954e56af20adb71fa00da9~tplv-k3u1fbpfcp-zoom-1.image" alt="img" style="zoom:50%;" />
-
-
-
-一起讨论技术的 QQ 群: 1103157878
-
-
-
-博客主页: https://pgd.vercel.app/
-
-掘金: https://juejin.cn/user/3069492195769469
-
-github: https://github.com/AILHC
