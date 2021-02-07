@@ -32,7 +32,8 @@
     "build:umd": "egf build -f umd:pinusSk",
     "build:system": "egf build -f system:@ailhc/pinus-sk",
     "build:iife": "egf build -f iife:pinusSk",
-    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
+    "clean-dist": "rimraf dist",
+    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
     "testc": "jest --coverage"
   },
