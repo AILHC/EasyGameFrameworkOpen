@@ -3,7 +3,7 @@ node_modules
 **/__tests__/report
 **/*/js/bundle.js
 **/.cache
-**/js
+**/bin/js
 **/.rpt2_cache
 yarn-error.log
 yarn.lock
