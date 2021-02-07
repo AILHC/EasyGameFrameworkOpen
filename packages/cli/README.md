@@ -13,7 +13,7 @@ npm install -D @ailhc/egf-cli
 ## 使用
     1. 对于不需要全局变量名的
     egf build -f cjs 
-    2. 需要全局变量名的，冒号: 后跟变量名
+    2. 需要全局变量名的，冒号: 后跟变量名(如果不写，自动从package.json中解析)
     egf build -f iife:xxx 
 
 更多使用可以参考 模板项目
@@ -38,25 +38,16 @@ npm install -D @ailhc/egf-cli
    或
    "externalTag":["@ailhc"]
    ```
+### 构建命令行参数
+1. '-w, --watch [watch]', '是否监视 默认false'
+2. '-e, --entry [entry]', '入口文件 默认src/index.ts'
+3. '-o, --output [output]', '输出文件 默认dist/index.js'
+4. '-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名'
+5. '-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/types'
+6. '-s, --source-dirs [sourceDirs]', '源码目录数组，默认[src],写 src,src2'
+7. '-u, --unRemoveComments [unRemoveComments]', '是否移除注释'
+8. '-t, --target [target]', '编译目标es标准，默认es5'
+9. '-m, --minify [minify]', '是否压缩，如果是将会输出.min.js'
 
-
-# 更新日志
-### 1.0.4 (2021/1/27)
-
-1. 修复externalTag为空数组时，编译报错的bug
-2. 修复tsconfig中target编译字段失效的bug
-### 1.0.3 (2021/1/17)
-1. 增加对import json的支持(有一些库会使用到 import json的操作，比如axios)
-### 1.0.2 (2020/12/20)
-1. iife导出兼容nodejs环境的全局变量global
-### 1.0.1 (2020/12/8)
-1. 解决发布后的库，sourcemap加载不到的问题，使用inlinesourcemap的方式
-### 1.0.0 (2020/12/2)
-1. 修复引用外部声明文件时，把声明也合进来了，没必要
-2. 增加一个tsconfig字段externalTag配置控制是否编译引用模块（避免编译进来又不能用的问题）
-3. 将模块模板转移到cli工程里，方便发布出去
-### 0.0.5 (2020/11/30)
-更新构建工具，修复引用第三方npm包时声明文件导出出错的问题
-### 0.0.4 (2020/11/30)
-更新构建工具，支持sourcemap导出(方便调试)
+## [CHANGELOG](./CHANGELOG.md)
 

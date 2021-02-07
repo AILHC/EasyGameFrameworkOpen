@@ -6,10 +6,11 @@
     "allowBranch": "main"
   },
   "ignoreChanges": [
-    "**/__tests__/**",
     "**/*.md"
   ],
   "version": "independent",
   "npmClient": "yarn",
-  "useWorkspaces": true
+  "commond": {},
+  "useWorkspaces": true,
+  "message": "chore: publish"
 }

@@ -16,18 +16,13 @@
 
 1. 基础使用
 ```ts
-    import { NodeCtrl } from "@ailhc/dpctrl-c3d"
+    import { NodeCtrl } from "@ailhc/dpctrl-ccc"
     export class AView extends NodeCtrl {
         
     }
 ```
 2. 详细使用文档:[display-ctrl/README.md](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl#readme)
-## 发布日志
- 
-*********
-### 1.0.1 (2020-12-22)
-getRess返回值类型改为 any[]|string[]
-### 1.0.0 (2020-12-20)
-@ailhc/display-ctrl的CocosCreator2.4.x实现
 
+
+## [CHANGELOG](./CHANGELOG.md);
 

@@ -35,8 +35,7 @@
     "build:iife": "egf build -f iife:dpctrlC3d",
     "build:system": "egf build -f system:@ailhc/dpctrl-c3d",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
-    "test": "jest",
-    "testc": "jest --coverage"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "devDependencies": {
     "@ailhc/egf-cli": "1.0.0",

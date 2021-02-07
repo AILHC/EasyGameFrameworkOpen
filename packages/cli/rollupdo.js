@@ -5,10 +5,10 @@ const nodeResolve = require("rollup-plugin-node-resolve");
 const path = require("path");
 const matched = require("matched")
 const fs = require("fs");
-const npmDts = require("npm-dts");
+// const npmDts = require("npm-dts");
 const dtsGenerator = require('dts-generator');
 const jsonPlugin = require("@rollup/plugin-json");
-
+const terser = require("rollup-plugin-terser");
 var curPackFiles = null;  //当前包的所有的文件
 var mentry = 'multientry:entry-point';
 function myMultiInput() {
@@ -114,8 +114,9 @@ const tsconfigOverride = {
  * @param {string} sourceDir 源码目录数组，默认[src]
  * @param {string} unRemoveComments 不移除注释
  * @param {string} target 目标es标准
+ * @param {boolean} minify 是否压缩
  */
-async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, unRemoveComments, target) {
+async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, unRemoveComments, target, minify) {
     let moduleName;
     let customDts = false;
     let useFooter;
@@ -123,6 +124,9 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         const strs = format.split(":");
         format = strs[0];
         moduleName = strs[1];
+        if (!moduleName || moduleName.trim() === "") {
+            moduleName = process.env.npm_package_name.split("/")[1];
+        }
         customDts = true;
         useFooter = true;
     }
@@ -132,8 +136,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         moduleName = strs[1];
     }
     if (!moduleName) {
-        const package = require(path.join(process.cwd(), `package.json`));
-        moduleName = package.name;
+        moduleName = process.env.npm_package_name;
     }
     if (!format) {
         format = "cjs"
@@ -152,7 +155,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     }
 
     tsconfigOverride.compilerOptions.declarationDir = typesDir;
-    if(target){
+    if (target) {
         tsconfigOverride.compilerOptions.target = target;
     }
     tsconfigOverride.compilerOptions.declaration = customDts;
@@ -174,6 +177,8 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         tsconfigOverride: tsconfigOverride,
         useTsconfigDeclarationDir: true,
     }
+
+
     /**
      * @type {import('rollup').InputOptions}
      */
@@ -220,7 +225,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
                 customResolveOptions: {
                     moduleDirectory: "node_modules"
                 }
-            }),
+            })
             // rdts()
         ]
     }
@@ -237,6 +242,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         //     Laya: "Laya"
         // },
         footer: moduleName && useFooter ? `const globalTarget =window?window:global; globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : ''
+
     }
 
     if (isWatch) {
@@ -271,7 +277,26 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
         await rollupBuild.write(outputOption);
+        if (minify) {
+            /**
+                * @type {import("rollup-plugin-terser").Options}
+                */
+            const terserOption = {
+                output: {
+                    ascii_only: true // 仅输出ascii字符,
 
+                },
+                compress: {
+                    // pure_funcs: ['console.log'] // 去掉console.log函数
+                }
+            }
+            const terserPlugin = terser.terser(terserOption);
+            outputOption.sourcemap = false;
+            outputOption.plugins = [terserPlugin];
+            outputOption.file = outputOption.file.replace(".", ".min.");
+            await rollupBuild.write(outputOption);
+
+        }
         // //npm-dts
         // const typesDirPath = path.join(process.cwd(), typesDir);
         // const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
