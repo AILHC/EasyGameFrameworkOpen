@@ -25,7 +25,7 @@
     "preinstall": "node ./scripts/checkYarn.js",
     "postinstall": "yarn bootstrap",
     "gcl": "lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
-    "doc": "typedoc --options tools/typedoc/typedoc.js",
+    "doc": "rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
     "tc": "jest --coverage"
   },
   "config": {
