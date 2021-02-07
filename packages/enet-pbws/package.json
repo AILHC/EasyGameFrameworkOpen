@@ -29,8 +29,7 @@
     "build:iife": "egf build -f iife:enetPbws",
     "build:system": "egf build -f system:@ailhc/enet-pbws",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
-    "test": "jest",
-    "testc": "jest --coverage",
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js",
     "initPb": "egf-pb init",
     "genProtoJs": "egf-pb generate"
   },
@@ -42,8 +41,6 @@
     "@ailhc/egf-cli": "^1.0.4",
     "@ailhc/enet": "^1.0.1",
     "egf-protobuf": "^1.3.1",
-    "jest": "^25.3.0",
-    "mock-socket": "^9.0.3",
-    "ts-jest": "^25.3.1"
+    "mock-socket": "^9.0.3"
   }
 }

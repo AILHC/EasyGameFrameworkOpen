@@ -12,8 +12,13 @@
 2. 智能提示
 
 ## Demo
-1. CocosCreator2.4.3 demo  https://github.com/AILHC/egf-ccc-empty
-2. CocosCreator3D demo https://github.com/AILHC/egf-ccc3d-empty
+
+1. [CocosCreator2.4.2 模板](https://github.com/AILHC/egf-ccc-empty)
+2. [CocosCreator3D 1.2 模板](https://github.com/AILHC/egf-ccc3d-empty) (ps:使用systemjs+插件模式使用)
+3. [CocosCreator3.0 preview 模板](https://github.com/AILHC/egf-ccc3-empty) (ps:使用systemjs+插件模式使用)
+4. [Egret 5.3 支持npm的模板](https://github.com/AILHC/egf-egret-empty)
+5. [Laya 2.7.1 支持npm的模板](https://github.com/AILHC/egf-laya-empty)
+
 ## 使用
 0. 
     
@@ -76,35 +81,17 @@ export function setModuleMap(moduleMap: IModuleMap) {
 //AppMain.ts
 import { setModuleMap, m } from "./ModuleMap";
 
-...
+
 setModuleMap(app.moduleMap); 
-...
+
 //在别的逻辑里可以通过
 import { m } from "./ModuleMap";
 //调用模块逻辑
 m.moduleA.doSometing()
 ```
-## 更新日志
-### 1.0.0 (2021/1/27)
-1. 去掉proxy
-### 0.1.6 (2020/12/02)
-1. 修改类型声明使getModule也能有更好的类型提示
-### 0.1.5 (2020/11/25)
-更新iife的声明文件
-删除多余的声明文件
-### 0.1.4 (2020/11/25)
-重新发布，更新github地址
-### 0.1.3 (2020/11/25)
-重新发布，更新声明文件
-### 0.1.2 (2020/10/07)
-移除加载子程序的逻辑，整理声明文件
-### 0.0.1 (2020/10/07)
-完善iife格式的声明文件
-### 0.0.1 (2020/10/07)
-第一次发布
+## [CHANGELOG](./CHANGELOG.md);
 
-
-### 我在哪？
+## 我在哪？
 
 **游戏开发之路有趣但不易,**
 

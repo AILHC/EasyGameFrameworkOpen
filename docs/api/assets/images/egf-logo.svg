@@ -1,0 +1,16 @@
+<svg width="150" height="150" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="152" width="152" y="-1" x="-1"/>
+  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <text font-style="italic" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Courier New', Courier, monospace" font-size="10" id="svg_1" y="80.5" x="39.148438" stroke-width="0" stroke="#000" fill="#000000">EasyGameFramework</text>
+  <path stroke="#000" transform="rotate(-179.9592742919922 24.140514373779297,80.19499206542969) " id="svg_3" d="m14.766568,87.485837l9.373945,-14.581692l9.373945,14.581692l-18.747889,0z" stroke-width="1.5" fill="#fff"/>
+  <text stroke="#000" transform="rotate(-44.90980911254883 23.433183670043935,78.78672790527342) matrix(1.8442237830374784,0,0,0.9051109987434074,-17.125332007436185,6.957686200212226) " xml:space="preserve" text-anchor="start" font-family="Arvo, sans-serif" font-size="10" id="svg_2" y="83.376327" x="19.238637" stroke-width="0" fill="#000000">E</text>
+ </g>
+</svg>
