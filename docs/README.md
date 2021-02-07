@@ -1,5 +1,8 @@
 # EasyGameFramework
 
+![LICENSE](https://img.shields.io/github/license/JoeyBling/hexo-theme-yilia-plus "LICENSE")
+![Author](https://img.shields.io/badge/Author-AILHC-red.svg "Author")
+
 基于Typescript的渐进式通用游戏前端开发框架
 
 A progressive universal game front-end development framework based on [Typescript](https://www.tslang.cn/)
