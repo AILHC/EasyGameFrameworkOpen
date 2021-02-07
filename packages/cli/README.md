@@ -38,6 +38,16 @@ npm install -D @ailhc/egf-cli
    或
    "externalTag":["@ailhc"]
    ```
+### 构建命令行参数
+1. '-w, --watch [watch]', '是否监视 默认false'
+2. '-e, --entry [entry]', '入口文件 默认src/index.ts'
+3. '-o, --output [output]', '输出文件 默认dist/index.js'
+4. '-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名'
+5. '-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/types'
+6. '-s, --source-dirs [sourceDirs]', '源码目录数组，默认[src],写 src,src2'
+7. '-u, --unRemoveComments [unRemoveComments]', '是否移除注释'
+8. '-t, --target [target]', '编译目标es标准，默认es5'
+9. '-m, --minify [minify]', '是否压缩，如果是将会输出.min.js'
 
 ## [CHANGELOG](./CHANGELOG.md)
 
