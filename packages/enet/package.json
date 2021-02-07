@@ -5,6 +5,7 @@
   "keywords": [],
   "author": "AILHC <505126057@qq.com>",
   "license": "MIT",
+  "exports": "./dist/es/lib/index.mjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
@@ -13,7 +14,7 @@
     "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
   "main": "dist/cjs/lib/index.js",
-  "module": "dist/es/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "directories": {
     "dist": "dist"

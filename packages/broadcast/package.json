@@ -11,12 +11,13 @@
     "test": "__tests__"
   },
   "main": "dist/cjs/lib/index.js",
-  "module": "dist/es/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "files": [
     "dist",
     "__test__"
   ],
+  "exports": "./dist/es/lib/index.mjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
