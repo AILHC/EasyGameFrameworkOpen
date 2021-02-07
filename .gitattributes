@@ -1,0 +1,9 @@
+
+# 项目语言设置
+*.js linguist-language=typescript
+
+*.css linguist-language=typescript
+
+*.html linguist-language=typescript
+
+*.hbs linguist-language=typescript
