@@ -28,7 +28,8 @@
     "build:umd": "egf build -f umd:enetPinus",
     "build:iife": "egf build -f iife:enetPinus",
     "build:system": "egf build -f system:@ailhc/enet-pinus",
-    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
+    "clean-dist": "rimraf dist",
+    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "jest",
     "testc": "jest --coverage"
   },

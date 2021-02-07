@@ -30,10 +30,9 @@
   "scripts": {
     "watch:cjs": "egf build -w true -f cjs",
     "build:system": "egf build -f system:c3daxios",
+    "clean-dist": "rimraf dist",
+    "build:all":"npm run clean-dist && npm run build:system",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
-  },
-  "devDependencies": {
-    "@ailhc/egf-cli": "1.0.2"
   },
   "dependencies": {
     "axios": "^0.21.1"

@@ -26,18 +26,18 @@
   },
   "scripts": {
     "watch:cjs": "egf build -w true -f cjs",
-    "build:cjs": "egf build -f cjs",
-    "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd:displayCtrl",
-    "build:iife": "egf build -f iife:displayCtrl",
-    "build:system": "egf build -f system:@ailhc/display-ctrl",
-    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
+    "build:cjs": "egf build -f cjs -m true",
+    "build:es": "egf build -f es -m true",
+    "build:umd": "egf build -f umd:displayCtrl -m true",
+    "build:iife": "egf build -f iife:displayCtrl -m true",
+    "build:system": "egf build -f system:@ailhc/display-ctrl -m true",
+    "clean-dist": "rimraf dist",
+    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
   "devDependencies": {
-    "@ailhc/egf-cli": "1.0.0"
   }
 }

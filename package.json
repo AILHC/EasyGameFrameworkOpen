@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "vcnp": "lerna version --conventional-commits --no-push",
+    "ba":"lerna exec --concurrency  1 --no-bail --stream -- yarn build:all",
     "bootstrap": "lerna bootstrap",
     "clean_nm": "lerna clean",
     "cm": "git-cz",
@@ -64,6 +65,7 @@
     "lint-staged": "^10.5.3",
     "prettier": "^2.2.1",
     "typedoc": "0.19.2",
-    "typedoc-plugin-remove-references": "^0.0.5"
+    "typedoc-plugin-remove-references": "^0.0.5",
+    "@ailhc/egf-cli":"^1.0.4"
   }
 }

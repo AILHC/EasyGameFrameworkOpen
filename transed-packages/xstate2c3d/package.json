@@ -30,10 +30,9 @@
   "scripts": {
     "watch:cjs": "egf build -w true -f system:@ailhc/xstate2c3d",
     "build:system": "egf build -f system:@ailhc/xstate2c3d",
+    "clean-dist": "rimraf dist",
+    "build:all":"npm run clean-dist && npm run build:system",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
-  },
-  "devDependencies": {
-    "@ailhc/egf-cli": "1.0.0"
   },
   "dependencies": {
     "xstate": "^4.14.1"

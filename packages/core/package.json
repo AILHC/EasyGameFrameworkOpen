@@ -28,15 +28,15 @@
   ],
   "scripts": {
     "watch:cjs": "egf build -w true -f cjs",
-    "build:cjs": "egf build -f cjs",
-    "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd:egf",
-    "build:iife": "egf build -f iife:egf",
-    "build:system": "egf build -f system:@ailhc/egf-core",
-    "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
+    "build:cjs": "egf build -f cjs -m true",
+    "build:es": "egf build -f es -m true",
+    "build:umd": "egf build -f umd:egf -m true",
+    "build:iife": "egf build -f iife:egf -m true",
+    "build:system": "egf build -f system:@ailhc/egf-core -m true",
+    "clean-dist": "rimraf dist",
+    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "devDependencies": {
-    "@ailhc/egf-cli": "^1.0.4"
   }
 }
