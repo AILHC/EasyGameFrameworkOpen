@@ -5,6 +5,7 @@
   "main": "index.js",
   "author": "AILHC",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "genPb": "egf-pb g",
     "pbInit": "egf-pb i",
