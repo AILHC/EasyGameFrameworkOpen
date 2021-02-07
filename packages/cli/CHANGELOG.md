@@ -1,3 +1,25 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [1.1.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.0.4...@ailhc/egf-cli@1.1.0) (2021-02-07)
+
+
+### Bug Fixes
+
+* 构建iife和umd格式时自动获取包名作为全局变量名,通过全局变量方式获取包名 ([cb11dc8](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/cb11dc877eab5c2d66019d9f95cb504eff983e9f))
+
+
+### Features
+
+* 增加新功能 ([f3141dd](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/f3141dd15f15557791459e794244a4fc333a20e1))
+* 将xxx-xxx转换成驼峰命名 ([cb26e40](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/cb26e40e20b9cb35618faf88dcafa04e2881afbe))
+
+
+
+
+
 # 1.0.4 (2021/1/27)
 
 1. 修复externalTag为空数组时，编译报错的bug
