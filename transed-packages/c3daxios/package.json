@@ -1,6 +1,6 @@
 {
   "name": "c3daxios",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "这是给CocosCreator3D或3.0用的axios库 This is the Axios library for CocosCreator3D or 3.0",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/c3daxios#readme",
@@ -31,7 +31,7 @@
     "watch:cjs": "egf build -w true -f cjs",
     "build:system": "egf build -f system:c3daxios",
     "clean-dist": "rimraf dist",
-    "build:all":"npm run clean-dist && npm run build:system",
+    "build:all": "npm run clean-dist && npm run build:system",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "dependencies": {

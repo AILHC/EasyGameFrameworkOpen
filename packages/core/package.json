@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is the core of EasyGameFramework, which provides the ability to register modules, get module instances, and load subroutine scripts",
   "keywords": [],
   "author": "AILHC <505126057@qq.com>",
@@ -36,7 +36,5 @@
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
-  },
-  "devDependencies": {
   }
 }

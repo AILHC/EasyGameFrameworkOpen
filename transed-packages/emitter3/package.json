@@ -1,6 +1,6 @@
 {
   "name": "c3demitter3",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is the EasyGameFramework library template project",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/xstate2c3d#readme",
@@ -31,7 +31,7 @@
     "watch:cjs": "egf build -w true -f cjs",
     "build:system": "egf build -f system:@ailhc/emitter3",
     "clean-dist": "rimraf dist",
-    "build:all":"npm run clean-dist && npm run build:system",
+    "build:all": "npm run clean-dist && npm run build:system",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "dependencies": {

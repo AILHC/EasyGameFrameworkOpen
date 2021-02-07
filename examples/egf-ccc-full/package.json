@@ -1,12 +1,12 @@
 {
   "name": "egf-ccc-full",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@ailhc/broadcast": "^1.0.0",
-    "@ailhc/dpctrl-ccc": "^1.0.2",
-    "@ailhc/egf-core": "^1.0.0",
-    "@ailhc/obj-pool": "^1.0.1"
+    "@ailhc/broadcast": "^1.0.1",
+    "@ailhc/dpctrl-ccc": "^1.0.3",
+    "@ailhc/egf-core": "^1.0.1",
+    "@ailhc/obj-pool": "^1.0.2"
   }
 }
