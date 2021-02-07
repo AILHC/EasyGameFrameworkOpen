@@ -125,7 +125,17 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         format = strs[0];
         moduleName = strs[1];
         if (!moduleName || moduleName.trim() === "") {
-            moduleName = process.env.npm_package_name.split("/")[1];
+            const pkgName = process.env.npm_package_name;
+            if (pkgName.includes("/")) {
+                moduleName = pkgName.split("/")[1];
+            } else {
+                moduleName = pkgName;
+            }
+
+            function camelize(str) {
+                return str.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '')
+            }
+            moduleName = camelize(moduleName);
         }
         customDts = true;
         useFooter = true;
@@ -137,7 +147,9 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     }
     if (!moduleName) {
         moduleName = process.env.npm_package_name;
+
     }
+
     if (!format) {
         format = "cjs"
     }
