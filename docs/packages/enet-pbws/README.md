@@ -40,17 +40,16 @@
         ```
     b. 直接复制packages/enet-pbws/src下的ts源码到项目文件夹下使用(排除index.ts)
 ## 使用
-
-```ts
-//注入NetNode，具体使用可见examples/egf-net-ws/egf-ccc-net-ws/assets/testcases/protobuf-test
-const netMgr = new NetNode<string>();
-const protoHandler = new PbProtoHandler(pb_test);
-netMgr.init({
-    protoHandler: protoHandler
-})
-//也可单独使用,具体使用可见examples/egf-net-ws/egf-net-ws-server/src/ws-server.ts
-this.protoHandler = new PbProtoHandler(global.pb_test)
-const dpkg = this.protoHandler.decodePkg(message);
-```
+    ```ts
+    //注入NetNode，具体使用可见examples/egf-net-ws/egf-ccc-net-ws/assets/testcases/protobuf-test
+    const netMgr = new NetNode<string>();
+    const protoHandler = new PbProtoHandler(pb_test);
+    netMgr.init({
+        protoHandler: protoHandler
+    })
+    //也可单独使用,具体使用可见examples/egf-net-ws/egf-net-ws-server/src/ws-server.ts
+    this.protoHandler = new PbProtoHandler(global.pb_test)
+    const dpkg = this.protoHandler.decodePkg(message);
+    ```
 ## [CHANGELOG](packages/enet-pbws/CHANGELOG.md)
 

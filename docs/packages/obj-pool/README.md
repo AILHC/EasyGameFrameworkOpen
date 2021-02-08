@@ -70,4 +70,4 @@ objPool.setObjHandler({
 
 })
 ```
-## [CHANGELOG](./CHANGELOG.md);
+## [CHANGELOG](packages/obj-pool/CHANGELOG.md)

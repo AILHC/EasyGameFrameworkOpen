@@ -24,5 +24,5 @@
 2. 详细使用文档:[display-ctrl/README.md](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl#readme)
 
 
-## [CHANGELOG](./CHANGELOG.md);
+## [CHANGELOG](packages/dpctrl-ccc/CHANGELOG.md)
 

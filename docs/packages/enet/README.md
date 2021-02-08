@@ -278,3 +278,4 @@ net.notify<string>("Msg", msg);
         useCrypto?: boolean;
     }
     ```
+## [CHANGELOG](packages/enet/CHANGELOG.md)

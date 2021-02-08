@@ -3,23 +3,25 @@
  * [关于](README.md)
  * [快速开始](quick-start.md)
 
-* [模块管理](package-docs/core/README.md)
+* [模块管理](packages/core/README.md)
+
+* [自定义模块构建](packages/cli/README.md)
 
 * 显示管理
-  * [核心实现](package-docs/display/display-ctrl.md)
-  * [层级管理](package-docs/display/layer.md)
+  * [核心实现](packages/display-ctrl/README.md)
+  * [层级管理](packages/layer/README.md)
   * CocosCreator 实现
-    * [2.4.x](package-docs/display/dpctrl-ccc.md)
-    * [c3d](package-docs/display/dpctrl-c3d.md)
-  
+    * [2.4.x](packages/dpctrl-ccc/README.md)
+    * [c3d](packages/dpctrl-c3d/README.md)
+
   <!-- * Laya实现 -->
   <!-- * Egret实现 -->
 
 * 网络通信
-  * [核心实现](package-docs/enet/enet.md)
-  * [protobuf协议处理](package-docs/enet/enet-pb.md)
+  * [核心实现](packages/enet/README.md)
+  * [protobuf协议处理](packages/enet-pbws/README.md)
 
-* [通用对象池](package-docs/obj-pool/obj-pool.md)
+* [通用对象池](packages/obj-pool/README.md)
   
-* [protobuf工具](package-docs/protobuf-cli/pb-cli.md)
-* [消息通讯:broadcast](package-docs/broadcast/README.md)
+* [protobuf工具](packages/egf-protobuf-cli/README.md)
+* [消息通讯:broadcast](packages/broadcast/README.md)
