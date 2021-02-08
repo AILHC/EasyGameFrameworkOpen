@@ -101,7 +101,7 @@ declare type EgfProtobufConfig = {
     egf-pb g
 
 
-## [CHANGELOG](./CHANGELOG.md);
+## [CHANGELOG](packages/egf-protobuf-cli/CHANGELOG.md)
 
 
 ## 已知问题
