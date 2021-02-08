@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "vcnp": "lerna version --conventional-commits --no-push",
-    "ba":"lerna exec --concurrency 2 --no-private --ignore egf-{cli,protobuf} --include-dependencies --no-bail --stream -- yarn build:all",
+    "ba":"lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
     "pa":"lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish",
     "bootstrap": "lerna bootstrap",
     "clean_nm": "lerna clean",
