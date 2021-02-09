@@ -7,7 +7,6 @@
 
 A progressive universal game front-end development framework based on [Typescript](https://www.tslang.cn/)
 
-
 ## 名词解释
 
 **Easy**
@@ -41,6 +40,11 @@ A progressive universal game front-end development framework based on [Typescrip
 * [为什么写框架](https://pgd.vercel.app/2020/11/17/The-Birth-of-Frames-Zero%EF%BC%9AWhy-write-framework/)
 * [我想要的框架](https://pgd.vercel.app/2020/11/29/The-Birth-of-a-Framework-One-The-Framework-I-Want/)
 * [定位](https://pgd.vercel.app/2020/12/02/The-birth-of-the-framework-two-positioning/)
+
+## 文档网址
+    
+* [Github上](https://ailhc.github.io/EasyGameFrameworkOpen/#/)
+* [Gitee上](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/#/)
 
 ## Modules(模块)
 
@@ -123,7 +127,106 @@ A progressive universal game front-end development framework based on [Typescrip
 
 框架提供大部分模块的Demo示例供参考
 「传送门」:[examples](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/examples)
+## Development Env(开发环境)
 
+这是一个monorepo式的项目仓库，使用这种方式可以很好的管理多模块项目
+
+### Use Tools
+
+* [Lerna](https://lerna.js.org/) 
+    >Lerna是一种工具，可以优化使用git和npm管理多包存储库的工作流程。
+
+* Yarn
+  
+### Reference(参考资料)
+1. [lerna+yarn workspace+monorepo项目的最佳实践](https://blog.csdn.net/i10630226/article/details/99702447)
+2. [基于lerna和yarn workspace的monorepo工作流](https://zhuanlan.zhihu.com/p/71385053)
+3. [Monorepo 项目管理Lerna](https://www.cnblogs.com/sanbao/p/11834137.html)
+4. [Lerna 中文教程详解](https://segmentfault.com/a/1190000019350611?utm_source=tag-newest)
+5. [lerna管理前端模块最佳实践](https://juejin.cn/post/6844903568751722509)
+
+### Basic Commands
+
+**创建包**
+1. 快速模式
+    ```bash
+    lerna create @xxx/xxx -y
+    ```
+2. 配置模式
+   ```bash
+    lerna create @xxx/xxx
+   ```
+**给包添加依赖**
+
+* 给指定包添加内部包依赖(需要加上版本号)
+    ```bash
+    yarn workspace @xxx/a add @xxx/b@0.0.1
+    ```
+* 给指定包添加开发时内部包依赖(需要加上版本号)
+    ```bash
+    yarn workspace @xxx/a add -D @xxx/b@0.0.1
+    ```
+* 给指定包添加外部包依赖
+    ```bash
+    yarn workspace @xxx/xxx add @xxx/xxxx
+    ```
+* 给指定包添加开发时外部包依赖(如果是添加内部包，需要加版本号@0.0.x)
+    ```bash
+    yarn workspace @xxx/xxx add -D @xxx/xxxx
+    ```
+* 给所有包添加依赖(如果是添加内部包，需要加版本号@0.0.x)
+    ```bash
+    yarn workspaces add lodash
+    ```
+* 给所有包添加开发时依赖(如果是添加内部包，需要加版本号@0.0.x)
+    ```bash
+    yarn workspaces add -D lodash
+    ```
+**移除依赖**
+* 移除指定包对某包的依赖
+    ```bash
+    yarn workspace packageB remove packageA
+    ```
+* 移除所有包对指定包的依赖
+    ```bash
+    yarn workspaces remove lodash
+    ```
+* 移除根目录下对某包的依赖
+    ```bash
+    yarn remove -W -D typescript 
+    ```
+* 安装所有依赖
+    ```bash
+    yarn install 或者 lerna bootstrap
+    ```
+* 清除所有依赖
+    ```bash
+    lerna clean
+    ```
+### Version(版本发布)
+    lerna version
+    会遍历所有包，检查修改，然后更新包的版本号，以及自动修改引用的包的引用版本号
+    
+    生成一个提交，一个tag，以及推送到远程仓库
+    
+    比如 packageA 修改了，版本号从1.0.0变成了1.0.1
+    
+    然后引用了packageA的packageB、C的版本号也要递增，以及引用的packageA的版本号也要从1.0.0变成1.0.1
+
+### Used by other projects(仓库外的开发项目使用模块)
+1. 使用npm link 或 yarn link将指定包链接到全局
+
+    ```bash
+    cd packages/core
+    yarn link
+    ```
+
+2. 到项目里创建链接(这个@egf/core是包名)
+    
+    ```bash
+    cd cocos-example
+    yarn link @egf/core
+    ```
 
 ## Who am I?
 
