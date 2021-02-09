@@ -7,7 +7,6 @@
 
 A progressive universal game front-end development framework based on [Typescript](https://www.tslang.cn/)
 
-
 ## 名词解释
 
 **Easy**
@@ -41,6 +40,11 @@ A progressive universal game front-end development framework based on [Typescrip
 * [为什么写框架](https://pgd.vercel.app/2020/11/17/The-Birth-of-Frames-Zero%EF%BC%9AWhy-write-framework/)
 * [我想要的框架](https://pgd.vercel.app/2020/11/29/The-Birth-of-a-Framework-One-The-Framework-I-Want/)
 * [定位](https://pgd.vercel.app/2020/12/02/The-birth-of-the-framework-two-positioning/)
+
+## 文档网址
+    
+* [Github上](https://ailhc.github.io/EasyGameFrameworkOpen/#/)
+* [Gitee上](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/#/)
 
 ## Modules(模块)
 
