@@ -3,7 +3,7 @@
  * [关于](README.md)
  * [快速开始](quick-start.md)
 * 框架工具
-  * [自定义模块构建]((packages/cli/README.md))
+  * [自定义模块构建](packages/cli/README.md)
   * [protobuf一键导出](packages/egf-protobuf-cli/README.md)
 * 框架模块使用
   * [模块管理](packages/core/README.md)
