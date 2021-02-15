@@ -25,7 +25,6 @@
     "clean_nm": "# 清理node_modules \n lerna clean",
     "cm": "git-cz",
     "preinstall": "#检查是否安装yarn \n node ./scripts/checkYarn.js",
-    "postinstall": "yarn bootstrap",
     "gcl": "#生成changelog \n lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
     "gapi": "#生成api文档 \n rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
     "cpdoc":"#复制文档 \n node ./scripts/copyDocs.js",
