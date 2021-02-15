@@ -124,5 +124,8 @@
       "enable": false
     }
   },
-  "preview-port": 7456
+  "preview-port": 7456,
+  "migrate-history": [
+    "cloud-function"
+  ]
 }
