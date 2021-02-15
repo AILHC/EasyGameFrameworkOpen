@@ -6,7 +6,8 @@
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/c3d-comp-template#readme",
   "license": "MIT",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access":"public"
   },
   "directories": {
     "dist": "dist",

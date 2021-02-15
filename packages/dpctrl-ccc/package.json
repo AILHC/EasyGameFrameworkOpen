@@ -6,19 +6,17 @@
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-ccc#readme",
   "license": "MIT",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access":"public"
   },
   "directories": {
-    "dist": "dist",
-    "test": "__tests__"
+    "dist": "dist"
   },
   "exports": "./dist/es/lib/index.mjs",
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "files": [
-    "libs",
-    "src",
     "dist"
   ],
   "bugs": {
@@ -38,10 +36,6 @@
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
-  },
-  "devDependencies": {
-    "jest": "^25.3.0",
-    "ts-jest": "^25.3.1"
   },
   "dependencies": {
     "@ailhc/display-ctrl": "^1.1.0",

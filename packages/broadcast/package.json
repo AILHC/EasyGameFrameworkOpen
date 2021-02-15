@@ -2,24 +2,24 @@
   "name": "@ailhc/broadcast",
   "globalName": "broadcast",
   "version": "1.1.0",
-  "description": "",
+  "description": "一个基于TypeScript的一套**高效灵活**的广播系统，可以帮助开发者**轻松**、**有序**的构建具有**极具复杂性的关联交互**和**状态变化**的游戏和应用。",
+  "keywords": ["broadcast","game","event","message"],
   "author": "AILHC <505126057@qq.com>",
-  "homepage": "",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/core#readme",
   "license": "MIT",
   "directories": {
-    "dist": "dist",
-    "test": "__tests__"
+    "dist": "dist"
   },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "files": [
-    "dist",
-    "__test__"
+    "dist"
   ],
   "exports": "./dist/es/lib/index.mjs",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access":"public"
   },
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen.git/issues"

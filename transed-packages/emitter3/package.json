@@ -2,23 +2,22 @@
   "name": "c3demitter3",
   "version": "1.1.0",
   "description": "This is the EasyGameFramework library template project",
+  "keywords": ["game","cocoscreator","3.0","3d","emitter","event"],
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/xstate2c3d#readme",
   "license": "MIT",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access":"public"
   },
   "directories": {
-    "dist": "dist",
-    "test": "__tests__"
+    "dist": "dist"
   },
   "exports": "./dist/es/lib/index.mjs",
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "files": [
-    "libs",
-    "src",
     "dist"
   ],
   "bugs": {
