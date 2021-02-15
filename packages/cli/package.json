@@ -14,7 +14,8 @@
     "url": "https://github.com/AILHC/EasyGameClientFramework/issues"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access":"public"
   },
   "author": "AILHC <505126057@qq.com>",
   "license": "MIT",

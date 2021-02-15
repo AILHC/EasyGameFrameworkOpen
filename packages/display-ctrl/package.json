@@ -9,17 +9,15 @@
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "directories": {
-    "dist": "dist",
-    "test": "__tests__"
+    "dist": "dist"
   },
   "files": [
-    "__tests__",
-    "dist",
-    "src"
+    "dist"
   ],
   "exports": "./dist/es/lib/index.mjs",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access":"public"
   },
   "repository": {
     "type": "git",

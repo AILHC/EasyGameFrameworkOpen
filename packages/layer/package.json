@@ -2,19 +2,15 @@
   "name": "@ailhc/layer",
   "version": "0.1.0",
   "description": "Common hierarchical management modules",
-  "keywords": [],
+  "keywords": ["game","layer","manager"],
   "author": "AILHC <505126057@qq.com>",
   "license": "MIT",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "publishConfig": {
-    "registry": "https://registry.npm.org"
+    "registry": "https://registry.npmjs.org",
+    "access":"public"
   },
   "repository": {
     "type": "git",
@@ -36,7 +32,7 @@
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "bugs": {
-    "url": "https://github.com/AILHC/EasyGameFramework/issues"
+    "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/layer#readme"
 }
