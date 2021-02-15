@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.1.1...@ailhc/egf-core@1.1.2) (2021-02-15)
+
+
+### Bug Fixes
+
+* 修复状态切换bug setState 增加切换状态判断 ([52cd947](https://github.com/AILHC/EasyGameFrameworkOpen/commit/52cd947c6532cb811ec6fc9ac8cbd449b079e580))
+
+
+
+
+
 ## [1.1.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.1.0...@ailhc/egf-core@1.1.1) (2021-02-15)
 
 **Note:** Version bump only for package @ailhc/egf-core
