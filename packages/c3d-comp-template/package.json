@@ -1,13 +1,13 @@
 {
   "name": "c3d-comp-template",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "c3d-comp-template",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/c3d-comp-template#readme",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access":"public"
+    "access": "public"
   },
   "directories": {
     "dist": "dist",

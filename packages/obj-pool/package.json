@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/obj-pool",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "General purpose object pool module, provides a concise and complete interface for managing object pools for object generation and collection, as well as object pool manager.",
   "keywords": [
     "object",
@@ -22,7 +22,7 @@
   "exports": "./dist/es/lib/index.mjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access":"public"
+    "access": "public"
   },
   "repository": {
     "type": "git",

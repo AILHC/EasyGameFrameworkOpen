@@ -1,13 +1,13 @@
 {
   "name": "@ailhc/dpctrl-ccc",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Cocoscreator2.x implements display management module",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-ccc#readme",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access":"public"
+    "access": "public"
   },
   "directories": {
     "dist": "dist"
@@ -38,7 +38,7 @@
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
   },
   "dependencies": {
-    "@ailhc/display-ctrl": "^1.1.0",
-    "@ailhc/layer": "^0.1.0"
+    "@ailhc/display-ctrl": "^1.1.1",
+    "@ailhc/layer": "^0.1.1"
   }
 }
