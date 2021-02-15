@@ -19,25 +19,26 @@ export class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
             return true;
         }
         if (bootLoaders && bootLoaders.length > 0) {
-            const bootPromises: Promise<boolean>[] = [];
+            const bootPromises: Promise<void>[] = [];
             for (let i = 0; i < bootLoaders.length; i++) {
                 const bootLoader: egf.IBootLoader = bootLoaders[i];
-                bootPromises.push(new Promise((res, rej) => {
-                    bootLoader.onBoot(this as any, (isOk) => {
-                        if (isOk) {
-                            res();
-                        } else {
-                            rej();
-                        }
-                    });
-                }));
+                bootPromises.push(
+                    new Promise((res, rej) => {
+                        bootLoader.onBoot(this as any, (isOk) => {
+                            if (isOk) {
+                                res();
+                            } else {
+                                rej();
+                            }
+                        });
+                    })
+                );
             }
             try {
                 await Promise.all(bootPromises);
                 this.setState(App.BOOTEND);
                 return true;
-            }
-            catch (e) {
+            } catch (e) {
                 console.error(e);
                 this.setState(App.BOOTEND);
                 return false;
@@ -102,12 +103,15 @@ export class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
     }
 
     protected setState(state: number) {
+        if (!isNaN(this._state)) {
+            if (this._state >= state) return;
+        }
         this._state = state;
     }
     /**
      * 输出
      * @param level 1 warn 2 error
-     * @param msg 
+     * @param msg
      */
     protected _log(msg: string, level?: number): void {
         switch (level) {
@@ -121,6 +125,5 @@ export class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
                 console.warn(`【主程序】${msg}`);
                 break;
         }
-    };
-
+    }
 }
