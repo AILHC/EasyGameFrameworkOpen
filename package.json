@@ -16,17 +16,20 @@
     "transed-packages/*"
   ],
   "scripts": {
-    "vcnp": "lerna version --conventional-commits --no-push --git-remote github --force-git-tag",
-    "ba":"lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
-    "pa":"lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish",
+    "vcnp": "#梳理版本不推送 \n lerna version --conventional-commits --no-push --git-remote github --force-git-tag",
+    "vc":"#梳理版本推送 \n lerna version --conventional-commits --git-remote github --force-git-tag",
+
+    "ba":"#构建 \n lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
+    "pa":"#发布npm包 \n lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish",
     "bootstrap": "lerna bootstrap",
-    "clean_nm": "lerna clean",
+    "clean_nm": "# 清理node_modules \n lerna clean",
     "cm": "git-cz",
-    "preinstall": "node ./scripts/checkYarn.js",
+    "preinstall": "#检查是否安装yarn \n node ./scripts/checkYarn.js",
     "postinstall": "yarn bootstrap",
-    "gcl": "lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
-    "doc": "rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
-    "tc": "jest --coverage"
+    "gcl": "#生成changelog \n lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
+    "gapi": "#生成api文档 \n rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
+    "cpdoc":"#复制文档 \n node ./scripts/copyDocs.js",
+    "tc": "#测试并生成测试覆盖率 \n jest --coverage"
   },
   "config": {
     "commitizen": {
