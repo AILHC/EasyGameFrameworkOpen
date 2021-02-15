@@ -40,6 +40,7 @@ npm install -S egf-protobuf
 + 将 protofile 文件放在 projectRoot/protobuf/protofile 文件夹中
 + 配置protobuf/epbconfig.js文件
 配置类型
+
 ```ts 
 declare type EgfProtobufConfig = {
     /**protobufjs 编译选项 */
@@ -94,6 +95,7 @@ declare type EgfProtobufConfig = {
     }
 }
 ```
+
 + 使用生成命令
 
     egf-pb generate

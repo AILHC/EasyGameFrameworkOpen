@@ -33,6 +33,7 @@
     b. 直接复制packages/layer/src下的ts源码到项目文件夹下使用(排除index.ts)
 ## 使用
 1. 基础使用
+
 ```ts
 //使用全局管理器
 const mgr = new ObjPoolMgr();
@@ -50,7 +51,6 @@ class ClassA implements objPool.IObj{
 }
 mgr.createByClass(ClassA, "test1");
 const ins1 = mgr.get("test1");
-
 //注入通用对象处理函数
 //这样对于没有实现IObj接口的对象也可以
 const objPool = new BaseObjPool();
@@ -70,4 +70,5 @@ objPool.setObjHandler({
 
 })
 ```
+
 ## [CHANGELOG](packages/obj-pool/CHANGELOG.md)
