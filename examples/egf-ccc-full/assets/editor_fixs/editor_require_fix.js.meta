@@ -3,7 +3,7 @@
   "uuid": "77f68121-bc20-4f3f-8f08-79bfdd79dc56",
   "isPlugin": true,
   "loadPluginInWeb": true,
-  "loadPluginInNative": false,
+  "loadPluginInNative": true,
   "loadPluginInEditor": true,
   "subMetas": {}
 }
