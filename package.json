@@ -16,7 +16,7 @@
     "transed-packages/*"
   ],
   "scripts": {
-    "vcnp": "lerna version --conventional-commits --no-push",
+    "vcnp": "lerna version --conventional-commits --no-push --git-remote github --force-git-tag",
     "ba":"lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
     "pa":"lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish",
     "bootstrap": "lerna bootstrap",
