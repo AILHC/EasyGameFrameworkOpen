@@ -1,6 +1,6 @@
 {
   "name": "egf-net-ws",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "a egf  client and server project",
   "main": "index.js",
   "author": "AILHC",
@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "@ailhc/enet": "^1.1.1",
-    "@ailhc/enet-pbws": "^1.1.1",
+    "@ailhc/enet-pbws": "^1.1.2",
     "@types/ws": "^7.4.0",
-    "egf-protobuf": "^1.3.3",
+    "egf-protobuf": "^1.3.4",
     "ts-node": "^9.1.1",
     "ws": "^7.4.2"
   },
