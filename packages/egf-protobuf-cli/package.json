@@ -24,7 +24,8 @@
   },
   "files": [
     "pblib",
-    "dist"
+    "dist",
+    "config-template"
   ],
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"

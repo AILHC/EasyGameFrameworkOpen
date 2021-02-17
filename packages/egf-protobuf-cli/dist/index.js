@@ -100,7 +100,7 @@ function generate(projRootDir) {
                     return [4 /*yield*/, fs.existsAsync(pbconfigPath)];
                 case 2:
                     if (!(_a.sent())) {
-                        throw '请首先执行 pb-egf init 命令';
+                        throw '没有epbconfig.js 请首先执行 egf-pb init 命令';
                     }
                     _a.label = 3;
                 case 3:
