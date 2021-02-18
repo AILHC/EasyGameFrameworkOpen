@@ -1,7 +1,7 @@
 declare global {
     namespace enet {
         /**网络数据格式 */
-        type NetData = (string | ArrayBufferLike | Blob | ArrayBufferView | Uint8Array);
+        type NetData = string | ArrayBufferLike | Blob | ArrayBufferView | Uint8Array;
         /**
          * socket 接口
          */
@@ -12,24 +12,25 @@ declare global {
             isConnected: boolean;
             /**
              * 设置事件处理器
-             * @param handler 
+             * @param handler
              */
             setEventHandler(handler: ISocketEventHandler): void;
             /**
              * 连接
-             * @param opt 
-             * @returns 
+             * @param opt
+             * @returns
              */
             connect(opt: IConnectOptions): boolean;
             /**
              * 发送数据
-             * @param data 
+             * @param data
              */
             send(data: NetData): void;
             /**
              * 关闭socket
+             * @param disconnect 主动断开连接
              */
-            close(): void;
+            close(disconnect?: boolean): void;
         }
         interface ISocketEventHandler {
             /**
@@ -42,6 +43,7 @@ declare global {
             onSocketError?: (event: any) => void;
             /**
              * socket 关闭回调
+             * 默认事件参数event的值是 是否主动断开连接
              */
             onSocketClosed?: (event: any) => void;
             /**
@@ -50,17 +52,20 @@ declare global {
             onSocketConnected?: (event: any) => void;
         }
         interface IConnectOptions<T = any> {
-            url?: string; //与 protocol + host+port 二选一
+            /**protocol + host+port 二选一 */
+            url?: string; //与
             /**是否使用ssh,即 true wss,false ws */
             protocol?: boolean;
+            /**主机地址 */
             host?: string;
+            /**端口 */
             port?: string;
             /**数据传输类型，arraybuffer,blob ,默认arraybuffer*/
             binaryType?: "arraybuffer" | "blob";
             /**连接结束 */
-            connectEnd?: VoidFunction
-            /**握手数据 */
-            handShakeReq?: T
+            connectEnd?: VoidFunction;
+            /**握手数据，如果为空则不进行握手通信 */
+            handShakeReq?: T;
         }
         /**
          * 解码后的数据包
@@ -69,7 +74,7 @@ declare global {
             /**
              * 数据包类型
              * 默认使用 PackageType 中的DATA  类型 4
-             * 
+             *
              * 数据包类型
              * 默认数据包类型
              * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
@@ -77,58 +82,57 @@ declare global {
              * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
              * 4 KICK 服务端发给客户端的下线数据包类型
              */
-            type: number
+            type: number;
             /**协议字符串key */
-            key?: string,
+            key?: string;
             /**数据 */
-            data?: T
+            data?: T;
             /**请求id */
-            reqId?: number,
+            reqId?: number;
             /**错误码 */
-            code?: number
+            code?: number;
             /**错误信息 */
-            errorMsg?: string
+            errorMsg?: string;
         }
         /**默认握手返回 */
-        interface IDefaultHandshakeRes extends IHeartBeatConfig {
-
-        }
+        interface IDefaultHandshakeRes extends IHeartBeatConfig {}
         interface IHeartBeatConfig {
             /**心跳间隔，毫秒 */
-            heartbeatInterval: number,
+            heartbeatInterval: number;
             /**心跳超时时间，毫秒 */
-            heartbeatTimeout: number
+            heartbeatTimeout: number;
         }
         interface IProtoHandler<ProtoKeyType = any> {
             /**
+             * 心跳配置,如果为空则和后端没有心跳交互
+             */
+            heartbeatConfig: enet.IHeartBeatConfig;
+            /**
              * 协议key转字符串key
-             * @param protoKey 
+             * @param protoKey
              */
             protoKey2Key(protoKey: ProtoKeyType): string;
             /**
              * 编码数据包
-             * @param pkg 
+             * @param pkg
              * @param useCrypto 是否加密
              */
-            encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): NetData
+            encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): NetData;
             /**
              * 编码消息数据包
              * @param msg 消息包
              * @param useCrypto 是否加密
              */
-            encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): NetData
+            encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): NetData;
             /**
              * 解码网络数据包，
-             * @param data 
+             * @param data
              */
-            decodePkg<T>(data: NetData): IDecodePackage<T>
-            /**
-             * 心跳配置
-             */
-            heartbeatConfig: enet.IHeartBeatConfig;
-
+            decodePkg<T>(data: NetData): IDecodePackage<T>;
         }
-        type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
+        type AnyCallback<ResData = any> =
+            | enet.ICallbackHandler<enet.IDecodePackage<ResData>>
+            | enet.ValueCallback<enet.IDecodePackage<ResData>>;
 
         type ValueCallback<T = any> = (data?: T, ...args) => void;
         /**
@@ -136,11 +140,11 @@ declare global {
          */
         interface ICallbackHandler<T> {
             /**回调 */
-            method: ValueCallback<T>
+            method: ValueCallback<T>;
             /**上下文，this */
-            context?: any,
+            context?: any;
             /**透传数据，传参给method时，会拼接在数据对象参数后面 */
-            args?: any[]
+            args?: any[];
         }
         // interface INetEventHandler extends ICallbackHandler<any> {
         //     key: string,
@@ -159,23 +163,23 @@ declare global {
             /**
              * 请求id
              */
-            reqId: number
+            reqId: number;
             /**
              * 协议key
              */
-            protoKey: string,
+            protoKey: string;
             /**
              * 请求回调
              */
-            resHandler: enet.AnyCallback,
+            resHandler: enet.AnyCallback;
             /**
              * 请求原始数据
              */
-            data: any,
+            data: any;
             /**
              * 请求返回数据
              */
-            decodePkg?: enet.IDecodePackage
+            decodePkg?: enet.IDecodePackage;
         }
         /**
          * 异常处理器
@@ -190,15 +194,15 @@ declare global {
              * 连接结束
              * @param connectOpt 连接配置
              */
-            onConnectEnd?(connectOpt: IConnectOptions): void
+            onConnectEnd?(connectOpt: IConnectOptions): void;
             /**
              * 网络出错
-             * @param event 
+             * @param event
              */
-            onError?(event: any, connectOpt: IConnectOptions): void
+            onError?(event: any, connectOpt: IConnectOptions): void;
             /**
              * 连接断开
-             * @param event 
+             * @param event
              */
             onClosed?(event: any, connectOpt: IConnectOptions): void;
 
@@ -210,14 +214,14 @@ declare global {
             onStartReconnect?(reConnectCfg: IReconnectConfig, connectOpt: IConnectOptions): void;
             /**
              * 再次尝试重连
-             * @param curCount 
+             * @param curCount
              * @param reConnectCfg 重连配置
              * @param connectOpt 连接配置
              */
             onReconnecting?(curCount: number, reConnectCfg: IReconnectConfig, connectOpt: IConnectOptions): void;
             /**
              * 重连结束
-             * @param isOk 
+             * @param isOk
              * @param reConnectCfg 重连配置
              * @param connectOpt 连接配置
              */
@@ -230,27 +234,31 @@ declare global {
             onStartRequest?(reqCfg: enet.IRequestConfig, connectOpt: IConnectOptions): void;
             /**
              * 请求响应
-             * @param decodePkg 
+             * @param decodePkg
              */
-            onData?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
+            onData?(
+                decodePkg: IDecodePackage<ResData>,
+                connectOpt: IConnectOptions,
+                reqCfg?: enet.IRequestConfig
+            ): void;
             /**
              * 被踢下线
-             * @param decodePkg 
-             * @param connectOpt 
+             * @param decodePkg
+             * @param connectOpt
              */
-            onKick?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions): void
+            onKick?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions): void;
             /**
              * 错误信息
-             * @param data 
-             * @param connectOpt 
+             * @param data
+             * @param connectOpt
              */
-            onCustomError?(data: IDecodePackage<ResData>, connectOpt: IConnectOptions): void
+            onCustomError?(data: IDecodePackage<ResData>, connectOpt: IConnectOptions): void;
         }
         interface IMessage<T = any, ProtoKeyType = any> {
-            reqId?: number,
+            reqId?: number;
             /**协议key */
-            key: ProtoKeyType,
-            data: T
+            key: ProtoKeyType;
+            data: T;
         }
         interface IPackage<T = any> {
             /**
@@ -261,8 +269,8 @@ declare global {
              * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
              * 4 KICK 服务端发给客户端的下线数据包类型
              */
-            type: number,
-            data?: T
+            type: number;
+            data?: T;
         }
         /**
          * 重连配置接口
@@ -277,37 +285,37 @@ declare global {
              * 连接超时时间，单位毫秒
              * 默认: 120000 2分钟
              */
-            connectTimeout?: number
+            connectTimeout?: number;
         }
         interface INodeConfig {
             /**
              * 底层socket实现
              */
-            socket?: ISocket
+            socket?: ISocket;
             /**
              * 网络事件处理器
              * 默认：使用log输出方式
              */
-            netEventHandler?: INetEventHandler,
+            netEventHandler?: INetEventHandler;
             /**
              * 协议编码，解码处理器
              * 默认: 使用字符串协议处理器
              */
-            protoHandler?: IProtoHandler
+            protoHandler?: IProtoHandler;
             /**
              * 重连配置，有默认值
              */
-            reConnectCfg?: IReconnectConfig
+            reConnectCfg?: IReconnectConfig;
             /**心跳间隔阈值 ,默认100*/
-            heartbeatGapThreashold?: number
+            heartbeatGapThreashold?: number;
             /**使用加密 */
-            useCrypto?: boolean
+            useCrypto?: boolean;
         }
         interface INode<ProtoKeyType = any> {
             /**网络事件处理器 */
-            netEventHandler: enet.INetEventHandler,
+            netEventHandler: enet.INetEventHandler;
             /**协议处理器 */
-            protoHandler: enet.IProtoHandler
+            protoHandler: enet.IProtoHandler;
             /**套接字实现 */
             socket: enet.ISocket;
             /**
@@ -330,16 +338,18 @@ declare global {
             reConnect(): void;
             /**
              * 请求协议接口，处理返回
-             * @param protoKey 协议key 
+             * @param protoKey 协议key
              * @param data 请求数据体
              * @param resHandler 返回处理
              */
             request<ReqData = any, ResData = any>(
-                protoKey: ProtoKeyType, data: ReqData,
-                resHandler: ICallbackHandler<IDecodePackage<ResData>> | ValueCallback<IDecodePackage<ResData>>): void;
+                protoKey: ProtoKeyType,
+                data: ReqData,
+                resHandler: ICallbackHandler<IDecodePackage<ResData>> | ValueCallback<IDecodePackage<ResData>>
+            ): void;
             /**
              * 发送网络数据
-             * @param netData 
+             * @param netData
              */
             send(netData: NetData): void;
             /**
@@ -348,19 +358,17 @@ declare global {
              * @param protoKey 协议key
              * @param data 数据体
              */
-            notify<T>(protoKey: ProtoKeyType, data?: T): void
+            notify<T>(protoKey: ProtoKeyType, data?: T): void;
             /**
              * 监听推送
-             * @param protoKey 
-             * @param handler 
+             * @param protoKey
+             * @param handler
              */
-            onPush<ResData = any>(
-                protoKey: ProtoKeyType,
-                handler: enet.AnyCallback<ResData>): void;
+            onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
             /**
              * 监听一次推送
-             * @param protoKey 
-             * @param handler 
+             * @param protoKey
+             * @param handler
              */
             oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
             /**
@@ -370,7 +378,7 @@ declare global {
              * @param context 指定上下文的监听
              * @param onceOnly 是否只取消 监听一次 的推送监听
              */
-            offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void
+            offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
             /**
              * 取消所有监听
              * @param protoKey 指定协议的推送，如果为空，则取消所有协议的所有监听
@@ -379,4 +387,4 @@ declare global {
         }
     }
 }
-export { }
+export {};

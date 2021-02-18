@@ -1,7 +1,6 @@
 import { SocketState } from "./socketStateType";
 
 export class WSocket implements enet.ISocket {
-
     private _sk: WebSocket;
     private _eventHandler: enet.ISocketEventHandler;
     public get state(): SocketState {
@@ -22,22 +21,21 @@ export class WSocket implements enet.ISocket {
                 return false;
             }
         }
+        opt.url = url;
         if (this._sk) {
-            this.close();
+            this.close(true);
         }
         if (!this._sk) {
-
             this._sk = new WebSocket(url);
             if (!opt.binaryType) {
                 opt.binaryType = "arraybuffer";
             }
             this._sk.binaryType = opt.binaryType;
-            this._sk.onclose = this._eventHandler?.onSocketClosed && this._eventHandler?.onSocketClosed
+            this._sk.onclose = this._eventHandler?.onSocketClosed && this._eventHandler?.onSocketClosed;
             this._sk.onerror = this._eventHandler?.onSocketError && this._eventHandler?.onSocketError;
             this._sk.onmessage = this._eventHandler?.onSocketMsg && this._eventHandler?.onSocketMsg;
             this._sk.onopen = this._eventHandler?.onSocketConnected && this._eventHandler?.onSocketConnected;
         }
-
     }
     send(data: enet.NetData): void {
         if (this._sk) {
@@ -47,7 +45,7 @@ export class WSocket implements enet.ISocket {
         }
     }
 
-    close(): void {
+    close(disconnect?: boolean): void {
         if (this._sk) {
             const isConnected = this.isConnected;
             this._sk.close();
@@ -57,10 +55,8 @@ export class WSocket implements enet.ISocket {
             this._sk.onopen = null;
             this._sk = null;
             if (isConnected) {
-                this._eventHandler?.onSocketClosed && this._eventHandler?.onSocketClosed(null);
+                this._eventHandler?.onSocketClosed && this._eventHandler?.onSocketClosed(disconnect);
             }
-
         }
     }
-
 }
