@@ -18,6 +18,7 @@
   * 网络通信
     * [核心实现](packages/enet/README.md)
     * [protobuf协议处理](packages/enet-pbws/README.md)
+    * [使用于pinus/pomelo的协议处理](packages/enet-pinus-pb/README.md)
 
   * [通用对象池](packages/obj-pool/README.md)
   

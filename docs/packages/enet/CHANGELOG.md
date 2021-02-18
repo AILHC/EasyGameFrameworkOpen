@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet@1.1.2...@ailhc/enet@1.1.3) (2021-02-18)
+
+
+### Bug Fixes
+
+* 主要修复连接回调没执行bug ([a12cf99](https://github.com/AILHC/EasyGameFrameworkOpen/commit/a12cf995a3b2eac8d75626bf1493841851f37be4))
+
+
+
+
+
+## [1.1.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet@1.1.1...@ailhc/enet@1.1.2) (2021-02-17)
+
+
+### Bug Fixes
+
+* 导出DefaultNetEventHandler ([8dd77d0](https://github.com/AILHC/EasyGameFrameworkOpen/commit/8dd77d0a67ef56a5ad5ff681548f1ac3705fb8ac))
+
+
+
+
+
 ## [1.1.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet@1.1.0...@ailhc/enet@1.1.1) (2021-02-15)
 
 **Note:** Version bump only for package @ailhc/enet

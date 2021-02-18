@@ -37,8 +37,8 @@
     "build:umd": "egf build -f umd",
     "build:iife": "egf build -f iife",
     "build:system": "egf build -f system:@ailhc/enet-pinus-pb",
-    "clean-dist": "npx rimraf dist",
-    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system"
+    "clean-dist": "rimraf dist",
+    "build:all": "yarn run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system"
   },
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
