@@ -62,8 +62,8 @@ declare global {
             port?: string;
             /**数据传输类型，arraybuffer,blob ,默认arraybuffer*/
             binaryType?: "arraybuffer" | "blob";
-            /**连接结束 */
-            connectEnd?: VoidFunction;
+            /**连接结束 ,如果有握手则会有握手数据返回*/
+            connectEnd?: (handShakeRes?: any) => void;
             /**握手数据，如果为空则不进行握手通信 */
             handShakeReq?: T;
         }
@@ -107,6 +107,8 @@ declare global {
              * 心跳配置,如果为空则和后端没有心跳交互
              */
             heartbeatConfig: enet.IHeartBeatConfig;
+            /**握手数据 */
+            handShakeRes: any;
             /**
              * 协议key转字符串key
              * @param protoKey
@@ -193,8 +195,9 @@ declare global {
             /**
              * 连接结束
              * @param connectOpt 连接配置
+             * @param handshakeRes 握手返回数据
              */
-            onConnectEnd?(connectOpt: IConnectOptions): void;
+            onConnectEnd?(connectOpt: IConnectOptions, handshakeRes?: any): void;
             /**
              * 网络出错
              * @param event

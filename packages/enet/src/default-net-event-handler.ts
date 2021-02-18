@@ -2,8 +2,9 @@ export class DefaultNetEventHandler implements enet.INetEventHandler {
     onStartConnenct?(connectOpt: enet.IConnectOptions): void {
         console.log(`start connect:${connectOpt.url},opt:`, connectOpt);
     }
-    onConnectEnd?(connectOpt: enet.IConnectOptions): void {
+    onConnectEnd?(connectOpt: enet.IConnectOptions, handshakeRes?: any): void {
         console.log(`connect ok:${connectOpt.url},opt:`, connectOpt);
+        console.log(`handshakeRes:`, handshakeRes);
     }
     onError(event: any, connectOpt: enet.IConnectOptions): void {
         console.error(`socket error,opt:`, connectOpt);

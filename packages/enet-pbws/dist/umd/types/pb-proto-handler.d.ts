@@ -51,7 +51,7 @@ export declare class PbProtoHandler implements enet.IProtoHandler {
     protected _byteUtil: Byte;
     /**数据包类型协议 {PackageType: 对应的协议key} */
     protected _pkgTypeProtoKeyMap: IPackageTypeProtoKeyMap;
-    protected _handshakeRes: any;
+    protected _handShakeRes: any;
     /**
      *
      * @param pbProtoJs 协议导出js对象
@@ -60,7 +60,8 @@ export declare class PbProtoHandler implements enet.IProtoHandler {
     constructor(pbProtoJs: any, pkgTypeProtoKeys?: IPackageTypeProtoKey[]);
     private _heartbeatCfg;
     get heartbeatConfig(): enet.IHeartBeatConfig;
-    setHandshakeRes<T>(handshakeRes: T): void;
+    get handShakeRes(): any;
+    setHandshakeRes<T>(handShakeRes: T): void;
     protoKey2Key(protoKey: string): string;
     protected _protoEncode<T>(protoKey: string, data: T): Uint8Array;
     encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): enet.NetData;
