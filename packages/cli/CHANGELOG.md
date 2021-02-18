@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.2.2...@ailhc/egf-cli@1.2.3) (2021-02-18)
+
+
+### Bug Fixes
+
+* 修复iife导出的footer ([ad73bfe](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/ad73bfee3210479c2f26b52751f0ad2914207073))
+
+
+
+
+
 ## [1.2.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.2.1...@ailhc/egf-cli@1.2.2) (2021-02-18)
 
 **Note:** Version bump only for package @ailhc/egf-cli

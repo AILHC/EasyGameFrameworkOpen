@@ -1,12 +1,12 @@
 {
   "name": "pinus-enet-chat",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "index.js",
   "author": "AILHC",
   "license": "MIT",
   "private": true,
   "dependencies": {
     "@ailhc/enet": "^1.2.0",
-    "@ailhc/enet-pinus-pb": "^0.2.0"
+    "@ailhc/enet-pinus-pb": "^0.2.2"
   }
 }
