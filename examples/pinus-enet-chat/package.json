@@ -4,5 +4,9 @@
   "main": "index.js",
   "author": "AILHC",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@ailhc/enet": "^1.2.0",
+    "@ailhc/enet-pinus-pb": "^0.2.0"
+  }
 }
