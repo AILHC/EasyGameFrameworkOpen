@@ -20,7 +20,7 @@
     "vc":"#梳理版本推送 \n lerna version --conventional-commits --git-remote github --force-git-tag",
 
     "ba":"#构建 \n lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
-    "pa":"#发布npm包 \n lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish",
+    "pa":"#发布npm包 \n lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish --registry https://registry.npmjs.org",
     "bootstrap": "lerna bootstrap",
     "clean_nm": "# 清理node_modules \n lerna clean",
     "cm": "git-cz",
