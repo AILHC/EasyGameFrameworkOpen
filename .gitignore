@@ -8,4 +8,6 @@ node_modules
 yarn-error.log
 yarn.lock
 /lerna-debug.log
+examples/pinus-enet-chat/game-server/dist
 
+**/*.log
