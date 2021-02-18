@@ -23,7 +23,7 @@
   "exclude": [
     "dist"
   ],
-
+  "externalTag":"@ailhc",
   "dtsGenExclude": [
     "__tests__/**/*"
   ]

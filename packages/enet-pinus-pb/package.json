@@ -31,12 +31,12 @@
     "dist"
   ],
   "scripts": {
-    "watch:cjs": "egf build -w true -f cjs",
-    "build:cjs": "egf build -f cjs",
-    "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd",
-    "build:iife": "egf build -f iife",
-    "build:system": "egf build -f system:@ailhc/enet-pinus-pb",
+    "watch:cjs": "egf build -w true -f cjs -m",
+    "build:cjs": "egf build -f cjs -m",
+    "build:es": "egf build -f es -m",
+    "build:umd": "egf build -f umd -m",
+    "build:iife": "egf build -f iife -m",
+    "build:system": "egf build -f system -m",
     "clean-dist": "rimraf dist",
     "build:all": "yarn run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system"
   },
