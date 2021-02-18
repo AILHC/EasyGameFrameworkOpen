@@ -6,7 +6,9 @@
     "allowBranch": "main"
   },
   "ignoreChanges": [
-    "**/*.md"
+    "**/*.md",
+    "**/dist/**/*"
+
   ],
   "version": "independent",
   "npmClient": "yarn",
