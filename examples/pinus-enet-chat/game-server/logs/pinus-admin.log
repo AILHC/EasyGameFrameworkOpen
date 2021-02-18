@@ -1,0 +1,20 @@
+[2021-02-17T22:49:46.052] [INFO] pinus-admin - [master-server-1 mqttServer.js] [MqttServer] listen on 3005
+[2021-02-17T22:49:46.093] [INFO] pinus-admin - [master-server-1 consoleService.js] try to connect master: "master", "127.0.0.1", 3005
+[2021-02-17T22:49:55.524] [INFO] pinus-admin - [chat-server-1 consoleService.js] try to connect master: "chat", "127.0.0.1", 3005
+[2021-02-17T22:49:56.209] [INFO] pinus-admin - [gate-server-1 consoleService.js] try to connect master: "gate", "127.0.0.1", 3005
+[2021-02-17T22:49:57.175] [INFO] pinus-admin - [connector-server-1 consoleService.js] try to connect master: "connector", "127.0.0.1", 3005
+[2021-02-17T23:21:50.799] [INFO] pinus-admin - [master-server-1 mqttServer.js] [MqttServer] listen on 3005
+[2021-02-17T23:21:50.833] [INFO] pinus-admin - [master-server-1 consoleService.js] try to connect master: "master", "127.0.0.1", 3005
+[2021-02-17T23:21:59.862] [INFO] pinus-admin - [chat-server-1 consoleService.js] try to connect master: "chat", "127.0.0.1", 3005
+[2021-02-17T23:22:00.442] [INFO] pinus-admin - [gate-server-1 consoleService.js] try to connect master: "gate", "127.0.0.1", 3005
+[2021-02-17T23:22:01.907] [INFO] pinus-admin - [connector-server-1 consoleService.js] try to connect master: "connector", "127.0.0.1", 3005
+[2021-02-17T23:48:56.877] [INFO] pinus-admin - [master-server-1 mqttServer.js] [MqttServer] listen on 3005
+[2021-02-17T23:48:56.916] [INFO] pinus-admin - [master-server-1 consoleService.js] try to connect master: "master", "127.0.0.1", 3005
+[2021-02-17T23:49:05.226] [INFO] pinus-admin - [chat-server-1 consoleService.js] try to connect master: "chat", "127.0.0.1", 3005
+[2021-02-17T23:49:05.667] [INFO] pinus-admin - [gate-server-1 consoleService.js] try to connect master: "gate", "127.0.0.1", 3005
+[2021-02-17T23:49:07.234] [INFO] pinus-admin - [connector-server-1 consoleService.js] try to connect master: "connector", "127.0.0.1", 3005
+[2021-02-18T11:18:08.859] [INFO] pinus-admin - [master-server-1 mqttServer.js] [MqttServer] listen on 3005
+[2021-02-18T11:18:08.900] [INFO] pinus-admin - [master-server-1 consoleService.js] try to connect master: "master", "127.0.0.1", 3005
+[2021-02-18T11:18:20.913] [INFO] pinus-admin - [chat-server-1 consoleService.js] try to connect master: "chat", "127.0.0.1", 3005
+[2021-02-18T11:18:22.223] [INFO] pinus-admin - [gate-server-1 consoleService.js] try to connect master: "gate", "127.0.0.1", 3005
+[2021-02-18T11:18:23.936] [INFO] pinus-admin - [connector-server-1 consoleService.js] try to connect master: "connector", "127.0.0.1", 3005
