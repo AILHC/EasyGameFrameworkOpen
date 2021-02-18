@@ -45,7 +45,6 @@
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet-pinus-pb#readme",
   "devDependencies": {
-    "@ailhc/egf-cli": "^1.2.0",
     "@ailhc/enet": "^1.2.0"
   }
 }
