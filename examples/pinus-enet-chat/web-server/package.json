@@ -2,6 +2,9 @@
 	"name": "pinus-sample-websocket-chat-web-server-ts-run",
 	"version": "1.4.10",
 	"private": false,
+	"scripts": {
+		"dev":"node app.js"
+	},
 	"dependencies": {
 		"@ailhc/enet": "^1.1.0",
 		"@ailhc/enet-pinus-pb": "^0.0.2",
