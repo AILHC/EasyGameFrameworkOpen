@@ -148,7 +148,11 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
                     connectEnd: connectEnd
                 };
             }
+            if (connectEnd) {
+                option.connectEnd = connectEnd;
+            }
             this._connectOpt = option;
+
             this._socket.connect(option);
             const netEventHandler = this._netEventHandler;
             netEventHandler.onStartConnenct && netEventHandler.onStartConnenct(option);
@@ -157,7 +161,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
         }
     }
     public disConnect(): void {
-        this._socket.close();
+        this._socket.close(true);
 
         //清理心跳定时器
         if (this._heartbeatTimeId) {
@@ -178,12 +182,13 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
             this._stopReconnect(false);
             return;
         }
-        this._isReconnecting = true;
-        this.connect(this._connectOpt);
         if (!this._isReconnecting) {
             const netEventHandler = this._netEventHandler;
             netEventHandler.onStartReconnect && netEventHandler.onStartReconnect(this._reConnectCfg, this._connectOpt);
         }
+        this._isReconnecting = true;
+        this.connect(this._connectOpt);
+
         this._curReconnectCount++;
         const netEventHandler = this._netEventHandler;
         netEventHandler.onReconnecting &&
@@ -488,7 +493,6 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
      */
     protected _onSocketClosed(event: any): void {
         const netEventHandler = this._netEventHandler;
-        this._socket.close();
         if (this._isReconnecting) {
             clearTimeout(this._reconnectTimerId);
             this.reConnect();
