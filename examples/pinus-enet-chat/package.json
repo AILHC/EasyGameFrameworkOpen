@@ -5,8 +5,30 @@
   "author": "AILHC",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "build": "tsc -p ./game-server",
+    "startSvr": "yarn run build && cd game-server/dist &&  node app",
+    "devSvr": "node ./game-server/tsrun.js",
+
+    "stopSvr": "pinus stop",
+    "killSvr": "pinus kill",
+
+    "devClient":"node ./web-server/app.js"
+  },
   "dependencies": {
     "@ailhc/enet": "^1.2.0",
-    "@ailhc/enet-pinus-pb": "^0.2.2"
+    "@ailhc/enet-pinus-pb": "^0.2.2",
+    "@types/bluebird": "^3.5.19",
+    "@types/crc": "^3.4.0",
+    "@types/node": "8.10.54",
+    "bluebird": "^3.5.1",
+    "crc": "^3.5.0",
+    "express": "3.4.0",
+    "pinus": "^1.4.10",
+    "pinus-robot": "^1.4.10",
+    "pinus-robot-plugin": "^1.4.10",
+    "reflect-metadata": "^0.1.10",
+    "source-map-support": "^0.5.0",
+    "ts-node": "^8.2.0"
   }
 }

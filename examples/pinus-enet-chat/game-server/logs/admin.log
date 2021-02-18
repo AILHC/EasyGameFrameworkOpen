@@ -1,0 +1,1 @@
+[2021-02-18T20:42:57.262] [INFO] admin-log - [master-server-1 master.js] {"action":"execute","moduleId":"__console__","method":"clientHandler","msg":{"signal":"stop","ids":[],"clientId":"pinus_terminal_1613652176928","username":"admin"}}
