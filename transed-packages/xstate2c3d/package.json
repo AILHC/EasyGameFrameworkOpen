@@ -39,7 +39,7 @@
     "build:system": "egf build -f system:@ailhc/xstate2c3d",
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:system & npm run build:es",
-    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
   },
   "dependencies": {
     "xstate": "^4.14.1"
