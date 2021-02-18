@@ -1,10 +1,11 @@
-import { PackageType } from "@ailhc/enet";
 import { ByteArray } from "./ByteArray";
 import { Message } from "./message";
 import { Package } from "./package";
+import { PackageType } from "./pkg-type";
 import { Protobuf } from "./protobuf";
 import { Protocol } from "./protocol";
 import { Routedic } from "./route-dic";
+import {} from "@ailhc/enet";
 declare global {
     interface IPinusProtos {
         /**默认为0 */
