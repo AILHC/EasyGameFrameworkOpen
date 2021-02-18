@@ -1,0 +1,8 @@
+{
+  "name": "pinus-enet-chat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "AILHC",
+  "license": "MIT",
+  "private": true
+}

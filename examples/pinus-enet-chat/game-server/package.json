@@ -1,0 +1,32 @@
+{
+    "name": "pinus-sample-websocket-chat-game-server-ts-run",
+    "version": "1.4.10",
+    "private": false,
+    "main": "./dist/app",
+    "scripts": {
+        "build": "tsc",
+        "start": "yarn run build && cd dist &&  node app",
+        "dev": "node tsrun.js",
+        "test": "yarn run build",
+        "cov": "nyc mocha",
+        "ci": "yarn run test",
+        "gen-api-ref": "node ../../../node_modules/typedoc/bin/typedoc --mode file --hideGenerator --excludeExternals --ignoreCompilerErrors --out ../../../run/site/public/api-reference/pinus-loader lib/"
+    },
+    "dependencies": {
+        "@types/bluebird": "^3.5.19",
+        "@types/crc": "^3.4.0",
+        "@types/node": "8.10.54",
+        "bluebird": "^3.5.1",
+        "crc": "^3.5.0",
+        "pinus": "^1.4.10",
+        "pinus-robot": "^1.4.10",
+        "pinus-robot-plugin": "^1.4.10",
+        "reflect-metadata": "^0.1.10",
+        "source-map-support": "^0.5.0",
+        "ts-node": "^8.2.0"
+    },
+    "devDependencies": {
+        "tslint": "^5.9.1",
+        "typescript": "3.7.3"
+    }
+}

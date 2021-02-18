@@ -1,0 +1,372 @@
+[2021-02-17T22:49:55.282] [INFO] pinus - [connector-server-1 application.js] application inited: "connector-server-1"
+[2021-02-17T22:49:55.461] [DEBUG] pinus - [connector-server-1 protobuf.js] ProtobufComponent options: { encoderCacheSize: 5242880, decodeCheckMsg: true }
+[2021-02-17T22:49:55.995] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter before start...
+[2021-02-17T22:49:55.996] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter start...
+[2021-02-17T22:49:55.997] [INFO] logger - [connector-server-1 console] TestComponent  start connector-server-1
+[2021-02-17T22:49:57.029] [WARN] logger - [connector-server-1 console] after start all server, use route dictionary :
+ chat.chatHandler.send
+connector.entryHandler.enter
+connector.entryHandler.onUserLeave
+gate.gateHandler.queryEntry
+[2021-02-17T22:49:57.525] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter after start...
+[2021-02-17T22:49:57.527] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" finish start
+[2021-02-17T22:49:57.528] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" startup in 2239 ms
+[2021-02-17T23:21:59.730] [INFO] pinus - [connector-server-1 application.js] application inited: "connector-server-1"
+[2021-02-17T23:21:59.904] [DEBUG] pinus - [connector-server-1 protobuf.js] ProtobufComponent options: { encoderCacheSize: 5242880, decodeCheckMsg: true }
+[2021-02-17T23:22:00.461] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter before start...
+[2021-02-17T23:22:00.462] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter start...
+[2021-02-17T23:22:00.462] [INFO] logger - [connector-server-1 console] TestComponent  start connector-server-1
+[2021-02-17T23:22:01.749] [WARN] logger - [connector-server-1 console] after start all server, use route dictionary :
+ chat.chatHandler.send
+connector.entryHandler.enter
+connector.entryHandler.onUserLeave
+gate.gateHandler.queryEntry
+[2021-02-17T23:22:02.286] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter after start...
+[2021-02-17T23:22:02.290] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" finish start
+[2021-02-17T23:22:02.290] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" startup in 2553 ms
+[2021-02-17T23:38:18.884] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 1
+[2021-02-17T23:39:28.457] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 50757
+[2021-02-17T23:39:28.461] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 1,uid:null,reason:1001
+[2021-02-17T23:39:50.958] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 2
+[2021-02-17T23:40:07.030] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 51149
+[2021-02-17T23:40:07.031] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 2,uid:null,reason:1001
+[2021-02-17T23:40:14.940] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 3
+[2021-02-17T23:40:27.177] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 51255
+[2021-02-17T23:40:27.178] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 3,uid:null,reason:1001
+[2021-02-17T23:40:35.098] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 4
+[2021-02-17T23:45:18.525] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 51343
+[2021-02-17T23:45:18.526] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 4,uid:null,reason:1001
+[2021-02-17T23:46:16.907] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 5
+[2021-02-17T23:49:05.054] [INFO] pinus - [connector-server-1 application.js] application inited: "connector-server-1"
+[2021-02-17T23:49:05.247] [DEBUG] pinus - [connector-server-1 protobuf.js] ProtobufComponent options: { encoderCacheSize: 5242880, decodeCheckMsg: true }
+[2021-02-17T23:49:05.922] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter before start...
+[2021-02-17T23:49:05.923] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter start...
+[2021-02-17T23:49:05.923] [INFO] logger - [connector-server-1 console] TestComponent  start connector-server-1
+[2021-02-17T23:49:06.778] [WARN] logger - [connector-server-1 console] after start all server, use route dictionary :
+ chat.chatHandler.send
+connector.entryHandler.enter
+connector.entryHandler.onUserLeave
+gate.gateHandler.queryEntry
+[2021-02-17T23:49:07.638] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter after start...
+[2021-02-17T23:49:07.641] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" finish start
+[2021-02-17T23:49:07.641] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" startup in 2583 ms
+[2021-02-17T23:59:38.307] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 1
+[2021-02-18T00:00:22.320] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 49540
+[2021-02-18T00:00:22.325] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 1,uid:null,reason:1001
+[2021-02-18T00:01:40.163] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 2
+[2021-02-18T00:02:04.142] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 53066
+[2021-02-18T00:02:04.144] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 2,uid:null,reason:1001
+[2021-02-18T00:03:29.044] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 3
+[2021-02-18T00:03:58.010] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 56213
+[2021-02-18T00:03:58.013] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 3,uid:null,reason:1001
+[2021-02-18T00:04:39.183] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 4
+[2021-02-18T00:05:44.308] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 58234
+[2021-02-18T00:05:44.310] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 4,uid:null,reason:1001
+[2021-02-18T00:06:35.270] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 5
+[2021-02-18T00:14:11.794] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 61600
+[2021-02-18T00:14:11.800] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 5,uid:null,reason:1001
+[2021-02-18T00:14:39.495] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 6
+[2021-02-18T00:15:32.175] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 59222
+[2021-02-18T00:15:32.180] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 6,uid:null,reason:1001
+[2021-02-18T00:15:53.162] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 7
+[2021-02-18T00:20:44.751] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 61352
+[2021-02-18T00:20:44.754] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 7,uid:null,reason:1001
+[2021-02-18T00:21:24.290] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 8
+[2021-02-18T00:24:55.269] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 54519
+[2021-02-18T00:24:55.276] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 8,uid:null,reason:1001
+[2021-02-18T00:25:13.343] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 9
+[2021-02-18T00:25:58.018] [INFO] logger - [connector-server-1 console] 111
+[2021-02-18T00:25:58.023] [DEBUG] pinus - [connector-server-1 connector.js] session on [connector-server-1] bind with uid: ailhc*1
+[2021-02-18T00:25:58.060] [ERROR] pinus - [connector-server-1 /Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/dist/lib/filters/handler/timeout.js] request "connector.entryHandler.enter" timeout.Error: 
+    at Logger.pLogger.<computed> [as error] (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus-logger/lib/logger.ts:70:34)
+    at Timeout._onTimeout (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/filters/handler/timeout.ts:34:20)
+    at listOnTimeout (node:internal/timers:556:17)
+    at processTimers (node:internal/timers:499:7)
+[2021-02-18T00:25:58.100] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 2, route: connector.entryHandler.enter, msg: {"users":["ailhc"]}, receivers: [9], opts: {"type":"response"}
+[2021-02-18T00:25:58.119] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'connector.entryHandler.enter',
+  serverType: 'connector',
+  handler: 'entryHandler',
+  method: 'enter'
+} {
+  id: 2,
+  type: 0,
+  compressRoute: 1,
+  route: 'connector.entryHandler.enter',
+  body: { username: 'ailhc', rid: '1' },
+  compressGzip: 0
+}
+[2021-02-18T00:26:38.530] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 3, route: chat.chatHandler.send, msg: {}, receivers: [9], opts: {"type":"response"}
+[2021-02-18T00:26:38.535] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 3,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: { rid: '1', content: 'fdafa', from: 'ailhc', target: '*' },
+  compressGzip: 0
+}
+[2021-02-18T00:26:38.542] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1"], msg: {"msg":"fdafa","from":"ailhc","target":"*"}, sids: [9]
+[2021-02-18T00:26:38.545] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onChat, msg: {"msg":"fdafa","from":"ailhc","target":"*"}, receivers: [9], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:18:20.675] [INFO] pinus - [connector-server-1 application.js] application inited: "connector-server-1"
+[2021-02-18T11:18:20.991] [DEBUG] pinus - [connector-server-1 protobuf.js] ProtobufComponent options: { encoderCacheSize: 5242880, decodeCheckMsg: true }
+[2021-02-18T11:18:22.517] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter before start...
+[2021-02-18T11:18:22.519] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter start...
+[2021-02-18T11:18:22.519] [INFO] logger - [connector-server-1 console] TestComponent  start connector-server-1
+[2021-02-18T11:18:23.658] [WARN] logger - [connector-server-1 console] after start all server, use route dictionary :
+ chat.chatHandler.send
+connector.entryHandler.enter
+connector.entryHandler.onUserLeave
+gate.gateHandler.queryEntry
+[2021-02-18T11:18:24.519] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" enter after start...
+[2021-02-18T11:18:24.524] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" finish start
+[2021-02-18T11:18:24.525] [INFO] pinus - [connector-server-1 application.js] "connector-server-1" startup in 3830 ms
+[2021-02-18T11:18:57.526] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 1
+[2021-02-18T11:18:57.536] [INFO] logger - [connector-server-1 console] 111
+[2021-02-18T11:18:57.538] [DEBUG] pinus - [connector-server-1 connector.js] session on [connector-server-1] bind with uid: ailhc*1
+[2021-02-18T11:18:57.555] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 2, route: connector.entryHandler.enter, msg: {"users":["ailhc"]}, receivers: [1], opts: {"type":"response"}
+[2021-02-18T11:18:57.557] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'connector.entryHandler.enter',
+  serverType: 'connector',
+  handler: 'entryHandler',
+  method: 'enter'
+} {
+  id: 2,
+  type: 0,
+  compressRoute: 1,
+  route: 'connector.entryHandler.enter',
+  body: { username: 'ailhc', rid: '1' },
+  compressGzip: 0
+}
+[2021-02-18T11:19:07.834] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 3, route: chat.chatHandler.send, msg: {}, receivers: [1], opts: {"type":"response"}
+[2021-02-18T11:19:07.835] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 3,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: { rid: '1', content: 'ailhc', from: 'ailhc', target: '*' },
+  compressGzip: 0
+}
+[2021-02-18T11:19:07.840] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1"], msg: {"msg":"ailhc","from":"ailhc","target":"*"}, sids: [1]
+[2021-02-18T11:19:07.840] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onChat, msg: {"msg":"ailhc","from":"ailhc","target":"*"}, receivers: [1], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:19:30.796] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1"], msg: {"msg":"af","from":"ailhc","target":"*"}, sids: [1]
+[2021-02-18T11:19:30.796] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onChat, msg: {"msg":"af","from":"ailhc","target":"*"}, receivers: [1], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:19:30.798] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 4, route: chat.chatHandler.send, msg: {}, receivers: [1], opts: {"type":"response"}
+[2021-02-18T11:19:30.799] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 4,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: { rid: '1', content: 'af', from: 'ailhc', target: '*' },
+  compressGzip: 0
+}
+[2021-02-18T11:20:57.538] [INFO] pinus - [connector-server-1 heartbeat.js] client 1 heartbeat timeout.
+[2021-02-18T11:20:57.539] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 1,uid:ailhc*1,reason:undefined
+[2021-02-18T11:21:34.252] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 2
+[2021-02-18T11:21:34.257] [INFO] logger - [connector-server-1 console] 111
+[2021-02-18T11:21:34.258] [DEBUG] pinus - [connector-server-1 connector.js] session on [connector-server-1] bind with uid: ailhc*1
+[2021-02-18T11:21:34.260] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 2, route: connector.entryHandler.enter, msg: {"users":["ailhc"]}, receivers: [2], opts: {"type":"response"}
+[2021-02-18T11:21:34.260] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'connector.entryHandler.enter',
+  serverType: 'connector',
+  handler: 'entryHandler',
+  method: 'enter'
+} {
+  id: 2,
+  type: 0,
+  compressRoute: 1,
+  route: 'connector.entryHandler.enter',
+  body: { username: 'ailhc', rid: '1' },
+  compressGzip: 0
+}
+[2021-02-18T11:21:36.995] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1"], msg: {"msg":"ailhc","from":"ailhc","target":"*"}, sids: [2]
+[2021-02-18T11:21:36.995] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onChat, msg: {"msg":"ailhc","from":"ailhc","target":"*"}, receivers: [2], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:21:36.997] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 3, route: chat.chatHandler.send, msg: {}, receivers: [2], opts: {"type":"response"}
+[2021-02-18T11:21:36.998] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 3,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: { rid: '1', content: 'ailhc', from: 'ailhc', target: '*' },
+  compressGzip: 0
+}
+[2021-02-18T11:21:59.961] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 3
+[2021-02-18T11:21:59.965] [INFO] logger - [connector-server-1 console] 111
+[2021-02-18T11:21:59.965] [DEBUG] pinus - [connector-server-1 connector.js] session on [connector-server-1] bind with uid: hahaha*1
+[2021-02-18T11:21:59.966] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1"], msg: {"user":"hahaha"}, sids: [2]
+[2021-02-18T11:21:59.967] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onAdd, msg: {"user":"hahaha"}, receivers: [2], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:21:59.968] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 2, route: connector.entryHandler.enter, msg: {"users":["ailhc","hahaha"]}, receivers: [3], opts: {"type":"response"}
+[2021-02-18T11:21:59.969] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'connector.entryHandler.enter',
+  serverType: 'connector',
+  handler: 'entryHandler',
+  method: 'enter'
+} {
+  id: 2,
+  type: 0,
+  compressRoute: 1,
+  route: 'connector.entryHandler.enter',
+  body: { username: 'hahaha', rid: '1' },
+  compressGzip: 0
+}
+[2021-02-18T11:22:01.754] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1","hahaha*1"], msg: {"msg":"fff","from":"hahaha","target":"*"}, sids: [2,3]
+[2021-02-18T11:22:01.755] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onChat, msg: {"msg":"fff","from":"hahaha","target":"*"}, receivers: [2,3], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:22:01.756] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 3, route: chat.chatHandler.send, msg: {}, receivers: [3], opts: {"type":"response"}
+[2021-02-18T11:22:01.757] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 3,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: { rid: '1', content: 'fff', from: 'hahaha', target: '*' },
+  compressGzip: 0
+}
+[2021-02-18T11:22:07.692] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1","hahaha*1"], msg: {"msg":"ffdsafa","from":"ailhc","target":"*"}, sids: [2,3]
+[2021-02-18T11:22:07.692] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onChat, msg: {"msg":"ffdsafa","from":"ailhc","target":"*"}, receivers: [2,3], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:22:07.694] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 4, route: chat.chatHandler.send, msg: {}, receivers: [2], opts: {"type":"response"}
+[2021-02-18T11:22:07.695] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 4,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: { rid: '1', content: 'ffdsafa', from: 'ailhc', target: '*' },
+  compressGzip: 0
+}
+[2021-02-18T11:22:13.243] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["hahaha*1"], msg: {"msg":"111","from":"ailhc","target":"hahaha"}, sids: [3]
+[2021-02-18T11:22:13.244] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onChat, msg: {"msg":"111","from":"ailhc","target":"hahaha"}, receivers: [3], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:22:13.245] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 5, route: chat.chatHandler.send, msg: {}, receivers: [2], opts: {"type":"response"}
+[2021-02-18T11:22:13.246] [INFO] logger - [connector-server-1 console] global after  null {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 5,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: { rid: '1', content: '111', from: 'ailhc', target: 'hahaha' },
+  compressGzip: 0
+}
+[2021-02-18T11:22:19.115] [WARN] logger - [connector-server-1 console] no property exist for required! name: "target", proto: {"option":"required","type":"string","tag":2}, msg: {"content":"","rid":"1"}
+[2021-02-18T11:22:19.143] [ERROR] logger - [connector-server-1 console] decode check msg failed:Error: 
+    at Logger.pLogger.<computed> [as error] (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus-logger/lib/logger.ts:70:34)
+    at Decoder.decode (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus-protobuf/lib/decoder.ts:35:25)
+    at Protobuf.decode (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus-protobuf/lib/protobuf.ts:53:29)
+    at ProtobufComponent.decode (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/protobuf.ts:97:30)
+    at HybridConnector.decode (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/coder.ts:38:34)
+    at HybridSocket.<anonymous> (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/connector.ts:305:39)
+    at HybridSocket.emit (node:events:378:20)
+    at handleData (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:45:12)
+    at Object.default_1 [as default] (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:56:9)
+    at WebSocket.<anonymous> (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/hybridsocket.ts:55:24)
+    at WebSocket.emit (node:events:378:20)
+    at Receiver.receiverOnMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/websocket.js:825:20)
+    at Receiver.emit (node:events:378:20)
+    at Receiver.dataMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/receiver.js:428:14)
+    at Receiver.getData (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/receiver.js:367:17)
+    at Receiver.startLoop (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/receiver.js:143:22) chat.chatHandler.send 5 <Buffer 0a 00 1a 01 31>
+[2021-02-18T11:22:19.155] [ERROR] logger - [connector-server-1 console] connector-server-1 globalErrorHandler msg[{"id":4,"type":0,"compressRoute":1,"route":"chat.chatHandler.send","body":null,"compressGzip":0}] ,resp[{"code":499}] ,
+    to resolve unknown exception: sessionId:{"id":3,"frontendId":"connector-server-1","uid":"hahaha*1","settings":{"rid":"1"}} ,
+     error stack: Error: msg body ===null maybe protobuf check error uid:hahaha*1 {"id":4,"type":0,"compressRoute":1,"route":"chat.chatHandler.send","body":null,"compressGzip":0}
+    at /Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/app.ts:120:16
+    at next (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/common/service/filterService.ts:73:17)
+    at FilterService.beforeFilter (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/common/service/filterService.ts:82:9)
+    at beforeFilter (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:340:12)
+    at Server.globalHandle (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:156:9)
+    at ServerComponent.globalHandle (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/server.ts:69:21)
+    at ConnectorComponent.handleMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/connector.ts:439:21)
+    at HybridSocket.<anonymous> (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/connector.ts:327:18)
+    at HybridSocket.emit (node:events:378:20)
+    at handleData (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:45:12)
+    at Object.default_1 [as default] (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:56:9)
+    at WebSocket.<anonymous> (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/hybridsocket.ts:55:24)
+    at WebSocket.emit (node:events:378:20)
+    at Receiver.receiverOnMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/websocket.js:825:20)
+    at Receiver.emit (node:events:378:20)
+    at Receiver.dataMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/receiver.js:428:14)Error: 
+    at Logger.pLogger.<computed> [as error] (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus-logger/lib/logger.ts:70:34)
+    at globalErrorHandler (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/app.ts:99:13)
+    at handleError (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:384:13)
+    at dispatch (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:140:17)
+    at next (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/common/service/filterService.ts:67:17)
+    at /Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/app.ts:120:13
+    at next (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/common/service/filterService.ts:73:17)
+    at FilterService.beforeFilter (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/common/service/filterService.ts:82:9)
+    at beforeFilter (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:340:12)
+    at Server.globalHandle (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:156:9)
+    at ServerComponent.globalHandle (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/server.ts:69:21)
+    at ConnectorComponent.handleMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/connector.ts:439:21)
+    at HybridSocket.<anonymous> (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/connector.ts:327:18)
+    at HybridSocket.emit (node:events:378:20)
+    at handleData (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:45:12)
+    at Object.default_1 [as default] (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:56:9)
+[2021-02-18T11:22:19.155] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: 4, route: chat.chatHandler.send, msg: {"code":499}, receivers: [3], opts: {"type":"response"}
+[2021-02-18T11:22:19.155] [INFO] logger - [connector-server-1 console] global after  Error: msg body ===null maybe protobuf check error uid:hahaha*1 {"id":4,"type":0,"compressRoute":1,"route":"chat.chatHandler.send","body":null,"compressGzip":0}
+    at /Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/app.ts:120:16
+    at next (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/common/service/filterService.ts:73:17)
+    at FilterService.beforeFilter (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/common/service/filterService.ts:82:9)
+    at beforeFilter (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:340:12)
+    at Server.globalHandle (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/server/server.ts:156:9)
+    at ServerComponent.globalHandle (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/server.ts:69:21)
+    at ConnectorComponent.handleMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/connector.ts:439:21)
+    at HybridSocket.<anonymous> (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/components/connector.ts:327:18)
+    at HybridSocket.emit (node:events:378:20)
+    at handleData (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:45:12)
+    at Object.default_1 [as default] (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/common/handler.ts:56:9)
+    at WebSocket.<anonymous> (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/pinus/lib/connectors/hybridsocket.ts:55:24)
+    at WebSocket.emit (node:events:378:20)
+    at Receiver.receiverOnMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/websocket.js:825:20)
+    at Receiver.emit (node:events:378:20)
+    at Receiver.dataMessage (/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/node_modules/ws/lib/receiver.js:428:14) {
+  route: 'chat.chatHandler.send',
+  serverType: 'chat',
+  handler: 'chatHandler',
+  method: 'send'
+} {
+  id: 4,
+  type: 0,
+  compressRoute: 1,
+  route: 'chat.chatHandler.send',
+  body: null,
+  compressGzip: 0
+}
+[2021-02-18T11:24:19.438] [DEBUG] pinus - [connector-server-1 switcher.js] connection error:read ECONNRESET, the remote ip is ::ffff:127.0.0.1 && port is 50383
+[2021-02-18T11:24:19.440] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 3,uid:hahaha*1,reason:1001
+[2021-02-18T11:24:19.442] [DEBUG] pinus - [connector-server-1 channelRemote.js] [connector-server-1] pushMessage uids: ["ailhc*1"], msg: {"user":"hahaha"}, sids: [2]
+[2021-02-18T11:24:19.443] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] send message reqId: null, route: onLeave, msg: {"user":"hahaha"}, receivers: [2], opts: {"type":"push","userOptions":{},"isPush":true}
+[2021-02-18T11:24:34.702] [INFO] pinus - [connector-server-1 heartbeat.js] client 2 heartbeat timeout.
+[2021-02-18T11:24:34.702] [DEBUG] pinus - [connector-server-1 sessionService.js] session on [connector-server-1] is closed with session id: 2,uid:ailhc*1,reason:undefined
+[2021-02-18T11:24:59.104] [DEBUG] pinus - [connector-server-1 connector.js] [connector-server-1] getSession session is created with session id: 4
+[2021-02-18T11:35:51.869] [INFO] pinus - [connector-server-1 protobuf.js] change proto file , type : "client", path : "/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/config/clientProtos.ts", version : "z1COKCrXL3hCx6C95RXY3Q=="
+[2021-02-18T11:35:52.422] [INFO] pinus - [connector-server-1 protobuf.js] change proto file , type : "server", path : "/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/config/serverProtos.ts", version : "z1COKCrXL3hCx6C95RXY3Q=="
+[2021-02-18T11:36:00.070] [INFO] pinus - [connector-server-1 protobuf.js] change proto file , type : "client", path : "/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/config/clientProtos.ts", version : "z1COKCrXL3hCx6C95RXY3Q=="
+[2021-02-18T11:36:00.083] [INFO] pinus - [connector-server-1 protobuf.js] change proto file , type : "server", path : "/Users/mac/Documents/FrameworkSpace/EasyGameFrameworkOpen/examples/pinus-enet-chat/game-server/config/serverProtos.ts", version : "z1COKCrXL3hCx6C95RXY3Q=="
