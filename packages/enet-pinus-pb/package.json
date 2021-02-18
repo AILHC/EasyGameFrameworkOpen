@@ -1,8 +1,16 @@
 {
   "name": "@ailhc/enet-pinus-pb",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "基于enet.IProtoHandler的适用于Pinus或pomelo的前端协议处理器",
-  "keywords": ["pinus","pomelo","enet","socket","protobuf","protocol","network"],
+  "keywords": [
+    "pinus",
+    "pomelo",
+    "enet",
+    "socket",
+    "protobuf",
+    "protocol",
+    "network"
+  ],
   "author": "AILHC <505126057@qq.com>",
   "license": "MIT",
   "publishConfig": {
@@ -12,7 +20,7 @@
     "type": "git",
     "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
-  "exports":"./dist/es/index.mjs",
+  "exports": "./dist/es/index.mjs",
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
@@ -38,6 +46,6 @@
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet-pinus-pb#readme",
   "devDependencies": {
     "@ailhc/egf-cli": "^1.2.0",
-    "@ailhc/enet": "^1.1.0"
+    "@ailhc/enet": "^1.1.3"
   }
 }
