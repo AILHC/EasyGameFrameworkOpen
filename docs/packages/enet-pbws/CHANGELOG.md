@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pbws@1.1.4...@ailhc/enet-pbws@1.2.0) (2021-02-18)
+
+
+### Features
+
+* 在connectEnd返回握手数据handShakeRes ([1eb48f0](https://github.com/AILHC/EasyGameFrameworkOpen/commit/1eb48f05b3c34f8a2f5826f265254cf4d16b25c2))
+
+
+
+
+
 ## [1.1.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pbws@1.1.3...@ailhc/enet-pbws@1.1.4) (2021-02-18)
 
 **Note:** Version bump only for package @ailhc/enet-pbws
