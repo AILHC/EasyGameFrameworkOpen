@@ -1,6 +1,6 @@
 export declare class DefaultNetEventHandler implements enet.INetEventHandler {
     onStartConnenct?(connectOpt: enet.IConnectOptions): void;
-    onConnectEnd?(connectOpt: enet.IConnectOptions): void;
+    onConnectEnd?(connectOpt: enet.IConnectOptions, handshakeRes?: any): void;
     onError(event: any, connectOpt: enet.IConnectOptions): void;
     onClosed(event: any, connectOpt: enet.IConnectOptions): void;
     onStartReconnect?(reConnectCfg: enet.IReconnectConfig, connectOpt: enet.IConnectOptions): void;

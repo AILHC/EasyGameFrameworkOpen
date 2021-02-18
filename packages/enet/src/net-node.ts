@@ -316,8 +316,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
         const ackPkg = this._protoHandler.encodePkg({ type: PackageType.HANDSHAKE_ACK });
         this.send(ackPkg);
         const connectOpt = this._connectOpt;
-        connectOpt.connectEnd && connectOpt.connectEnd();
-        this._netEventHandler.onConnectEnd && this._netEventHandler.onConnectEnd(connectOpt);
+        const handshakeRes = this._protoHandler.handShakeRes;
+        connectOpt.connectEnd && connectOpt.connectEnd(handshakeRes);
+        this._netEventHandler.onConnectEnd && this._netEventHandler.onConnectEnd(connectOpt, handshakeRes);
     }
     /**
      * 握手初始化
@@ -530,6 +531,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
 }
 class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyType> {
     private _heartbeatCfg: enet.IHeartBeatConfig;
+    public get handShakeRes(): any {
+        return undefined;
+    }
     public get heartbeatConfig(): enet.IHeartBeatConfig {
         return this._heartbeatCfg;
     }

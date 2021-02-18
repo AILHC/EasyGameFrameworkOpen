@@ -1,4 +1,4 @@
-import { } from "@ailhc/enet";
+import {} from "@ailhc/enet";
 import { PackageType } from "./pkg-type";
 import { Byte } from "./byte";
 
@@ -6,15 +6,15 @@ declare global {
     interface IHandShakeReq {
         sys?: {
             /**客户端类型 */
-            type?: number | string
+            type?: number | string;
             /**客户端版本 */
-            version?: number | string,
+            version?: number | string;
             /**协议版本 */
-            protoVersion?: number | string
+            protoVersion?: number | string;
             /**rsa 校验 */
-            rsa?: any
-        }
-        user?: any
+            rsa?: any;
+        };
+        user?: any;
     }
     /**
      * 默认数据包协议key，有就做数据协议编码，没有就不做数据协议编码
@@ -34,42 +34,41 @@ declare global {
     //     kickPushProtoKey?: string
     // }
     interface IPackageTypeProtoKeyMap {
-        [key: number]: IPackageTypeProtoKey
+        [key: number]: IPackageTypeProtoKey;
     }
     interface IPackageTypeProtoKey {
-        type: PackageType
-        encode?: string,
-        decode?: string
+        type: PackageType;
+        encode?: string;
+        decode?: string;
     }
     interface IPbProtoIns {
         /**
          * 编码
-         * @param data 
+         * @param data
          */
         encode(data: any): protobuf.Writer;
         /**
          * 解码
-         * @param data 
+         * @param data
          */
         decode(data: Uint8Array): any;
         /**
          * 验证
-         * @param data 
+         * @param data
          * @returns 如果验证出数据有问题，则会返回错误信息，没问题，返回为空
          */
         verify(data: any): any;
     }
 }
 
-
 export class PbProtoHandler implements enet.IProtoHandler {
     protected _protoMap: { [key: string]: IPbProtoIns };
     protected _byteUtil: Byte = new Byte();
     /**数据包类型协议 {PackageType: 对应的协议key} */
     protected _pkgTypeProtoKeyMap: IPackageTypeProtoKeyMap;
-    protected _handshakeRes: any;
+    protected _handShakeRes: any;
     /**
-     * 
+     *
      * @param pbProtoJs 协议导出js对象
      * @param pkgTypeProtoKeys 数据包类型协议 {PackageType} 对应的协议key
      */
@@ -81,21 +80,22 @@ export class PbProtoHandler implements enet.IProtoHandler {
         this._protoMap = pbProtoJs;
         const pkgTypeProtoKeyMap = {} as any;
         if (pkgTypeProtoKeys) {
-
             for (let i = 0; i < pkgTypeProtoKeys.length; i++) {
                 pkgTypeProtoKeyMap[pkgTypeProtoKeys[i].type] = pkgTypeProtoKeys[i];
             }
         }
         this._pkgTypeProtoKeyMap = pkgTypeProtoKeyMap;
-
     }
     private _heartbeatCfg: enet.IHeartBeatConfig;
     public get heartbeatConfig(): enet.IHeartBeatConfig {
         return this._heartbeatCfg;
-    };
-    public setHandshakeRes<T>(handshakeRes:T){
-        this._handshakeRes = handshakeRes;
-        this._heartbeatCfg = handshakeRes as any;
+    }
+    public get handShakeRes(): any {
+        return this._handShakeRes;
+    }
+    public setHandshakeRes<T>(handShakeRes: T) {
+        this._handShakeRes = handShakeRes;
+        this._heartbeatCfg = handShakeRes as any;
     }
     protoKey2Key(protoKey: string): string {
         return protoKey;
@@ -116,7 +116,6 @@ export class PbProtoHandler implements enet.IProtoHandler {
         return buf;
     }
 
-
     encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): enet.NetData {
         const pkgType = pkg.type;
         const byteUtil = this._byteUtil;
@@ -136,7 +135,6 @@ export class PbProtoHandler implements enet.IProtoHandler {
             const protoKeyMap = this._pkgTypeProtoKeyMap;
             protoKey = protoKeyMap[pkgType] && protoKeyMap[pkgType].encode;
             data = pkg.data;
-
         }
         if (protoKey && data) {
             const dataUint8Array: Uint8Array = this._protoEncode(protoKey, data);
@@ -145,7 +143,6 @@ export class PbProtoHandler implements enet.IProtoHandler {
             } else {
                 byteUtil.writeUint8Array(dataUint8Array);
             }
-
         }
         const netData = byteUtil.buffer.byteLength ? byteUtil.buffer : undefined;
         byteUtil.clear();
@@ -159,7 +156,7 @@ export class PbProtoHandler implements enet.IProtoHandler {
         byteUtil.clear();
         byteUtil.endian = Byte.LITTLE_ENDIAN;
         if (data instanceof ArrayBuffer) {
-            byteUtil.writeArrayBuffer(data)
+            byteUtil.writeArrayBuffer(data);
         } else if (data instanceof Uint8Array) {
             byteUtil.writeUint8Array(data as Uint8Array);
         }
@@ -178,13 +175,11 @@ export class PbProtoHandler implements enet.IProtoHandler {
             if (!proto) {
                 decodePkg.errorMsg = `no this proto:${protoKey}`;
             } else {
-
                 const decodeData = proto.decode(dataBytes);
                 const err = proto.verify(decodeData);
                 decodePkg.data = decodeData;
                 decodePkg.errorMsg = err;
                 decodePkg.type = pkgType;
-
             }
         } else {
             const protoKeyMap = this._pkgTypeProtoKeyMap;
@@ -196,13 +191,11 @@ export class PbProtoHandler implements enet.IProtoHandler {
                 if (!proto) {
                     decodePkg.errorMsg = `no this proto:${protoKey}`;
                 } else {
-
                     const decodeData = proto.decode(dataBytes);
                     const err = proto.verify(decodeData);
                     decodePkg.data = decodeData;
                     decodePkg.errorMsg = err;
                     decodePkg.type = pkgType;
-
                 }
             }
             if (pkgType === PackageType.HANDSHAKE) {
@@ -212,6 +205,4 @@ export class PbProtoHandler implements enet.IProtoHandler {
 
         return decodePkg;
     }
-
-
 }
