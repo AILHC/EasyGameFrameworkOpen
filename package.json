@@ -16,19 +16,31 @@
     "transed-packages/*"
   ],
   "scripts": {
-    "vcnp": "#梳理版本不推送 \n lerna version --conventional-commits --no-push --git-remote github --force-git-tag",
-    "vc":"#梳理版本推送 \n lerna version --conventional-commits --git-remote github --force-git-tag",
-
-    "ba":"#构建 \n lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
-    "pa":"#发布npm包 \n lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish --registry https://registry.npmjs.org",
-    "bootstrap": "lerna bootstrap",
-    "clean_nm": "# 清理node_modules \n lerna clean",
+    "//梳理版本不推送":"",
+    "vcnp": "lerna version --conventional-commits --no-push --git-remote github --force-git-tag",
+    "//梳理版本推送":"",
+    "vc":"lerna version --conventional-commits --git-remote github --force-git-tag",
+    "//构建所有包":"",
+    "ba":"lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
+    "//发布所有包到npmjs":"",
+    "pa":"lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish --registry https://registry.npmjs.org",
+    
+    "//清理":"",
+    "clean_nm": "lerna clean",
+    "//提交":"",
     "cm": "git-cz",
-    "preinstall": "#检查是否安装yarn \n node ./scripts/checkYarn.js",
-    "gcl": "#生成changelog \n lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
-    "gapi": "#生成api文档 \n rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
-    "cpdoc":"#复制文档 \n node ./scripts/copyDocs.js",
-    "tc": "#测试并生成测试覆盖率 \n jest --coverage"
+    "//install钩子":"",
+    "preinstall": "node ./scripts/checkYarn.js",
+    "//生成changelog":"",
+    "gcl": "lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
+    "//生成api文档":"",
+    "gapi": "rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
+
+    "//复制文档":"",
+    "cpdoc":"node ./scripts/copyDocs.js",
+
+    "//测试覆盖率":"",
+    "tc": "jest --coverage"
   },
   "config": {
     "commitizen": {
