@@ -19,4 +19,6 @@ export declare class Protobuf {
     static decodeUInt32(buffer: ByteArray): number;
     static encodeSInt32(n: number): ByteArray;
     static decodeSInt32(buffer: ByteArray): number;
+    static byteLength(str: any): number;
+    static codeLength(code: any): 1 | 2 | 3;
 }
