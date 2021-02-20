@@ -114,7 +114,10 @@ export class Protobuf {
                 buffer.writeBytes(doubles);
                 break;
             case "string":
-                buffer.writeBytes(this.encodeUInt32(value.length));
+                //Encode length
+                const valueByteLen = this.byteLength(value);
+                //Write String
+                buffer.writeBytes(this.encodeUInt32(valueByteLen));
                 buffer.writeUTFBytes(value);
                 break;
             default:
@@ -249,5 +252,28 @@ export class Protobuf {
         n = (((n % 2) + n) / 2) * flag;
 
         return n;
+    }
+    static byteLength(str) {
+        if (typeof str !== "string") {
+            return -1;
+        }
+
+        var length = 0;
+
+        for (var i = 0; i < str.length; i++) {
+            var code = str.charCodeAt(i);
+            length += this.codeLength(code);
+        }
+
+        return length;
+    }
+    static codeLength(code) {
+        if (code <= 0x7f) {
+            return 1;
+        } else if (code <= 0x7ff) {
+            return 2;
+        } else {
+            return 3;
+        }
     }
 }

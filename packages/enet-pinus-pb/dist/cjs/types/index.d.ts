@@ -650,6 +650,22 @@ declare module "@ailhc/enet-pinus-pb/src/ByteArray" {
         private stringToCodePoints;
     }
 }
+declare module "@ailhc/enet-pinus-pb/src/codec" {
+    /**
+     * [encode an uInt32, return a array of bytes]
+     * @param  {[integer]} num
+     * @return {[array]}
+     */
+    export function encodeUInt32(num: any): any[];
+    /**
+     * [encode a sInt32, return a byte array]
+     * @param  {[sInt32]} num  The sInt32 need to encode
+     * @return {[array]} A byte array represent the integer
+     */
+    export function encodeSInt32(num: any): any[];
+    export function decodeUInt32(bytes: Array<any>): number;
+    export function decodeSInt32(bytes: Array<number>): number;
+}
 declare module "@ailhc/enet-pinus-pb/src/protobuf" {
     import { ByteArray } from "@ailhc/enet-pinus-pb/src/ByteArray";
     export class Protobuf {
@@ -672,6 +688,8 @@ declare module "@ailhc/enet-pinus-pb/src/protobuf" {
         static decodeUInt32(buffer: ByteArray): number;
         static encodeSInt32(n: number): ByteArray;
         static decodeSInt32(buffer: ByteArray): number;
+        static byteLength(str: any): number;
+        static codeLength(code: any): 1 | 2 | 3;
     }
 }
 declare module "@ailhc/enet-pinus-pb/src/protocol" {
