@@ -1,6 +1,6 @@
 {
   "name": "pinus-enet-chat",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "index.js",
   "author": "AILHC",
   "license": "MIT",
@@ -9,15 +9,13 @@
     "build": "tsc -p ./game-server",
     "startSvr": "yarn run build && cd game-server/dist &&  node app",
     "devSvr": "node ./game-server/tsrun.js",
-
     "stopSvr": "pinus stop",
     "killSvr": "pinus kill",
-
-    "devClient":"node ./web-server/app.js"
+    "devClient": "node ./web-server/app.js"
   },
   "dependencies": {
-    "@ailhc/enet": "^1.2.0",
-    "@ailhc/enet-pinus-pb": "^0.2.2",
+    "@ailhc/enet": "^1.2.1",
+    "@ailhc/enet-pinus-pb": "^0.2.3",
     "@types/bluebird": "^3.5.19",
     "@types/crc": "^3.4.0",
     "@types/node": "8.10.54",

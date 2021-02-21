@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/pinus-enet-chat@1.1.1...pinus-enet-chat@1.1.2) (2021-02-21)
+
+
+### Bug Fixes
+
+* 更新pinus协议处理库，修复了发中文bug ([ae13c9f](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/commits/ae13c9f347f6a2f6c7f855e3b4d3093b6623c1d6))
+
+
+
+
+
 ## [1.1.1](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/pinus-enet-chat@1.1.0...pinus-enet-chat@1.1.1) (2021-02-18)
 
 
