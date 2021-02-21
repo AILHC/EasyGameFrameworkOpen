@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pinus-pb@0.2.2...@ailhc/enet-pinus-pb@0.2.3) (2021-02-21)
+
+
+### Bug Fixes
+
+* 修复protobuf解析utf8中文字符串bug ([6f46c31](https://github.com/AILHC/EasyGameFrameworkOpen/commit/6f46c315fa7a8389279657520dee1c2bc0153d67))
+* 修复构建出iife规范的bug ([dc435c8](https://github.com/AILHC/EasyGameFrameworkOpen/commit/dc435c8ed264447b8a80263e7d157b1576c414b3))
+
+
+
+
+
 ## [0.2.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pinus-pb@0.2.1...@ailhc/enet-pinus-pb@0.2.2) (2021-02-18)
 
 
