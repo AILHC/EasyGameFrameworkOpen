@@ -10,9 +10,7 @@ export declare class Package implements IPackage {
     static TYPE_DATA: number;
     static TYPE_KICK: number;
     encode(type: number, body?: ByteArray): ByteArray;
-    decode(
-        buffer: ByteArray
-    ): {
+    decode(buffer: ByteArray): {
         type: number;
         body: ByteArray;
         length: number;

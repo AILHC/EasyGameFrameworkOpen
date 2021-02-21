@@ -36,7 +36,9 @@ declare global {
             /**
              * socket 消息接收回调
              */
-            onSocketMsg?: (event: { data: NetData }) => void;
+            onSocketMsg?: (event: {
+                data: NetData;
+            }) => void;
             /**
              * socket 出错回调
              */
@@ -95,7 +97,8 @@ declare global {
             errorMsg?: string;
         }
         /**默认握手返回 */
-        interface IDefaultHandshakeRes extends IHeartBeatConfig {}
+        interface IDefaultHandshakeRes extends IHeartBeatConfig {
+        }
         interface IHeartBeatConfig {
             /**心跳间隔，毫秒 */
             heartbeatInterval: number;
@@ -132,9 +135,7 @@ declare global {
              */
             decodePkg<T>(data: NetData): IDecodePackage<T>;
         }
-        type AnyCallback<ResData = any> =
-            | enet.ICallbackHandler<enet.IDecodePackage<ResData>>
-            | enet.ValueCallback<enet.IDecodePackage<ResData>>;
+        type AnyCallback<ResData = any> = enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>;
         type ValueCallback<T = any> = (data?: T, ...args: any[]) => void;
         /**
          * 回调对象
@@ -226,11 +227,7 @@ declare global {
              * 请求响应
              * @param decodePkg
              */
-            onData?(
-                decodePkg: IDecodePackage<ResData>,
-                connectOpt: IConnectOptions,
-                reqCfg?: enet.IRequestConfig
-            ): void;
+            onData?(decodePkg: IDecodePackage<ResData>, connectOpt: IConnectOptions, reqCfg?: enet.IRequestConfig): void;
             /**
              * 被踢下线
              * @param decodePkg
@@ -332,11 +329,7 @@ declare global {
              * @param data 请求数据体
              * @param resHandler 返回处理
              */
-            request<ReqData = any, ResData = any>(
-                protoKey: ProtoKeyType,
-                data: ReqData,
-                resHandler: ICallbackHandler<IDecodePackage<ResData>> | ValueCallback<IDecodePackage<ResData>>
-            ): void;
+            request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: ICallbackHandler<IDecodePackage<ResData>> | ValueCallback<IDecodePackage<ResData>>): void;
             /**
              * 发送网络数据
              * @param netData
