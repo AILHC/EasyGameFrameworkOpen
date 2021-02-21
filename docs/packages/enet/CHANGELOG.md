@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet@1.2.0...@ailhc/enet@1.2.1) (2021-02-21)
+
+
+### Bug Fixes
+
+* 修复构建出iife规范的bug ([dc435c8](https://github.com/AILHC/EasyGameFrameworkOpen/commit/dc435c8ed264447b8a80263e7d157b1576c414b3))
+
+
+
+
+
 # [1.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet@1.1.3...@ailhc/enet@1.2.0) (2021-02-18)
 
 
