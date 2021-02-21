@@ -1,8 +1,8 @@
-System.register('c3daxios', ['../../../node_modules/axios/lib/adapters/http'], function (exports) {
+System.register('c3daxios', ['../../../node_modules/axios/lib/adapters/http', '../../../node_modules/axios/lib/adapters/http.js'], function (exports) {
   'use strict';
   var http;
   return {
-    setters: [function (module) {
+    setters: [function () {}, function (module) {
       http = module.default;
     }],
     execute: function () {

@@ -87,24 +87,11 @@ export declare class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
     connect(option: string | enet.IConnectOptions, connectEnd?: VoidFunction): void;
     disConnect(): void;
     reConnect(): void;
-    request<ReqData = any, ResData = any>(
-        protoKey: ProtoKeyType,
-        data: ReqData,
-        resHandler:
-            | enet.ICallbackHandler<enet.IDecodePackage<ResData>>
-            | enet.ValueCallback<enet.IDecodePackage<ResData>>,
-        arg?: any
-    ): void;
+    request<ReqData = any, ResData = any>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>, arg?: any): void;
     notify<T>(protoKey: ProtoKeyType, data?: T): void;
     send(netData: enet.NetData): void;
-    onPush<ResData = any>(
-        protoKey: ProtoKeyType,
-        handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>
-    ): void;
-    oncePush<ResData = any>(
-        protoKey: ProtoKeyType,
-        handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>
-    ): void;
+    onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+    oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
     offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
     offPushAll(protoKey?: ProtoKeyType): void;
     /**
@@ -160,7 +147,9 @@ export declare class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
      * 当socket有消息
      * @param event
      */
-    protected _onSocketMsg(event: { data: enet.NetData }): void;
+    protected _onSocketMsg(event: {
+        data: enet.NetData;
+    }): void;
     /**
      * 当socket关闭
      * @param event

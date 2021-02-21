@@ -8,15 +8,8 @@ export declare class ObjPoolMgr<SignType = any, GetDataType = any> implements ob
     clearPool(sign: keyof SignType): void;
     destroyPool(sign: keyof SignType): void;
     preCreate(sign: keyof SignType, preCreateCount: number): void;
-    get<T = any, keyType extends keyof SignType = any>(
-        sign: keyType,
-        onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>]
-    ): T;
-    getMore<T, keyType extends keyof SignType = any>(
-        sign: keyType,
-        onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>],
-        num?: number
-    ): T extends objPool.IObj ? T[] : objPool.IObj[];
+    get<T = any, keyType extends keyof SignType = any>(sign: keyType, onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>]): T;
+    getMore<T, keyType extends keyof SignType = any>(sign: keyType, onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>], num?: number): T extends objPool.IObj ? T[] : objPool.IObj[];
     getPoolObjsBySign<T extends objPool.IObj>(sign: keyof SignType): T extends objPool.IObj ? T[] : objPool.IObj[];
     free(obj: objPool.IObj): void;
     freeAll(sign: keyof SignType): void;

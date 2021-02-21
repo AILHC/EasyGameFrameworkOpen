@@ -1,5 +1,4 @@
-export declare class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any>
-    implements objPool.IPool<T, onGetDataType> {
+export declare class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> implements objPool.IPool<T, onGetDataType> {
     private _poolObjs;
     private _usedObjMap;
     get poolObjs(): objPool.IObj[];
