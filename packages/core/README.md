@@ -13,7 +13,7 @@ EasyGameFramework core module for progressive modular development of H5 games/ap
 
 1. [CocosCreator2.4.2 模板](https://github.com/AILHC/egf-ccc-empty)
 2. [CocosCreator3D 1.2 模板](https://github.com/AILHC/egf-ccc3d-empty) (ps:使用systemjs+插件模式使用)
-3. [CocosCreator3.0 preview 模板](https://github.com/AILHC/egf-ccc3-empty) (ps:使用systemjs+插件模式使用)
+3. [CocosCreator3.0 模板](https://github.com/AILHC/egf-ccc3-empty) (ps:使用npm方式使用)
 4. [Egret 5.3 支持npm的模板](https://github.com/AILHC/egf-egret-empty)
 5. [Laya 2.7.1 支持npm的模板](https://github.com/AILHC/egf-laya-empty)
 
