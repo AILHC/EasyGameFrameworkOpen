@@ -190,7 +190,7 @@ A progressive universal game front-end development framework based on [Typescrip
     yarn workspaces add -D lodash
     ```
 **移除依赖**
-* 移除指定包对某包的依赖
+* 移除指定包对xxx包的依赖
     ```bash
     yarn workspace packageB remove packageA
     ```
@@ -198,7 +198,7 @@ A progressive universal game front-end development framework based on [Typescrip
     ```bash
     yarn workspaces remove lodash
     ```
-* 移除根目录下对某包的依赖
+* 移除根目录下对xxx包的依赖
     ```bash
     yarn remove -W -D typescript 
     ```
