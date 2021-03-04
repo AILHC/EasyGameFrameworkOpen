@@ -274,13 +274,13 @@ export declare class Byte {
      */
     writeArrayBuffer(arraybuffer: any, offset?: number, length?: number): void;
     /**
-     *<p>将指定 Uint8Array 对象中的以 offset 为起始偏移量， length 为长度的字节序列写入字节流。</p>
-     *<p>如果省略 length 参数，则使用默认长度 0，该方法将从 offset 开始写入整个缓冲区；如果还省略了 offset 参数，则写入整个缓冲区。</p>
-     *<p>如果 offset 或 length 小于0，本函数将抛出异常。</p>
-     *@param uint8Array 需要写入的 Uint8Array 对象。
-     *@param offset Uint8Array 对象的索引的偏移量（以字节为单位）
-     *@param length 从 Uint8Array 对象写入到 Byte 对象的长度（以字节为单位）
-     */
+    *<p>将指定 Uint8Array 对象中的以 offset 为起始偏移量， length 为长度的字节序列写入字节流。</p>
+    *<p>如果省略 length 参数，则使用默认长度 0，该方法将从 offset 开始写入整个缓冲区；如果还省略了 offset 参数，则写入整个缓冲区。</p>
+    *<p>如果 offset 或 length 小于0，本函数将抛出异常。</p>
+    *@param uint8Array 需要写入的 Uint8Array 对象。
+    *@param offset Uint8Array 对象的索引的偏移量（以字节为单位）
+    *@param length 从 Uint8Array 对象写入到 Byte 对象的长度（以字节为单位）
+    */
     writeUint8Array(uint8Array: Uint8Array, offset?: number, length?: number): void;
     /**
      * 读取ArrayBuffer数据
