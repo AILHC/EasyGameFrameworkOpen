@@ -176,32 +176,25 @@ declare global {
              * @param sign 对象池标志（对象类型）
              * @param onGetData 当对象出池子时的参数，默认没有
              */
-            get<T, keyType extends keyof SignType = any>(
-                sign: keyType,
-                onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>]
-            ): T;
+            get<T, keyType extends keyof SignType = any>(sign: keyType, onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>]): T;
             /**
              * 批量获取指定对象池对象
              * @param sign 对象池标志（对象类型）
              * @param onGetData onGet参数
              * @param num 数量，默认1
              */
-            getMore<T, keyType extends keyof SignType = any>(
-                sign: keyType,
-                onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>],
-                num?: number
-            ): T extends objPool.IObj ? T[] : objPool.IObj[];
+            getMore<T, keyType extends keyof SignType = any>(sign: keyType, onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>], num?: number): T extends objPool.IObj ? T[] : objPool.IObj[];
             /**
-             * 根据对象类型标识字符，获取对象池。
-             * @param sign 对象类型标识字符。
-             * @return 对象池。
-             */
+            * 根据对象类型标识字符，获取对象池。
+            * @param sign 对象类型标识字符。
+            * @return 对象池。
+            */
             getPoolObjsBySign<T extends objPool.IObj>(sign: keyof SignType): T extends IObj ? T[] : IObj[];
             /**
-             * 回收对象到对象池
-             * @param obj 对象
-             * @returns 返回是否回收成功
-             */
+            * 回收对象到对象池
+            * @param obj 对象
+            * @returns 返回是否回收成功
+            */
             free(obj: IObj): void;
             /**
              * 回收所有正在使用的对象
@@ -209,10 +202,10 @@ declare global {
              */
             freeAll(sign: keyof SignType): void;
             /**
-             * 销毁对象
-             * @param obj 对象
-             * @returns 返回是否回收成功
-             */
+            * 销毁对象
+            * @param obj 对象
+            * @returns 返回是否回收成功
+            */
             kill(obj: IObj): void;
         }
     }
