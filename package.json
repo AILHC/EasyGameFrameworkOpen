@@ -8,12 +8,14 @@
   "workspaces": [
     "packages/*",
     "examples/*",
-    "transed-packages/*"
+    "transed-packages/*",
+    "tool-packages/*"
   ],
   "packages": [
     "packages/*",
     "examples/*",
-    "transed-packages/*"
+    "transed-packages/*",
+    "tool-packages/*"
   ],
   "scripts": {
     "//梳理版本不推送":"",

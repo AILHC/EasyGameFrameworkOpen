@@ -1,0 +1,41 @@
+{
+  "name": "@ailhc/excel2all",
+  "version": "0.0.1",
+  "description": "将excel转换成任意文件格式工具",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -w --outDir ./lib",
+    "debug": "node ./lib/index.js ../../../../afk_number incremental",
+    "testGen": "ts-node --transpile-only __test__/test.ts",
+    "testGen2": "node ./dist/__test__/test.js",
+    "testWorker": "ts-node --transpile-only __test__/worker_test.ts",
+    "//构建命令": "",
+    "build:cjs": "egf build -f cjs -m true",
+    "build:es": "egf build -f es -m true",
+    "build:iife": "egf build -f iife -m true",
+    "clean-dist": "rimraf dist"
+  },
+  "author": "AILHC",
+  "license": "MIT",
+  "dependencies": {
+    "@types/fs-extra": "^9.0.2",
+    "@types/micromatch": "^4.0.1",
+    "@types/node": "^14.0.13",
+    "fs-extra": "^9.0.1",
+    "js-base64": "^3.6.0",
+    "micromatch": "^4.0.2",
+    "xlsx": "^0.16.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
+  },
+  "devDependencies": {
+    "@ailhc/egf-cli": "1.2.3",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.5"
+  }
+}
