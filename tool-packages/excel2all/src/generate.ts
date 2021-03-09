@@ -5,6 +5,7 @@ import { forEachFile, getCacheData, getFileMd5Sync, writeCacheData, writeOrDelet
 import { Worker } from "worker_threads";
 import { doParse } from "./do-parse";
 import { DefaultParseHandler } from "./default-parse-handler";
+import { Logger } from "./loger";
 /**
  * 解析配置表生成指定文件
  * @param parseConfig 解析配置
@@ -13,11 +14,11 @@ import { DefaultParseHandler } from "./default-parse-handler";
 export async function generate(parseConfig: ITableParseConfig, trans2FileHandler: ITransResult2AnyFileHandler) {
     const tableFileDir = parseConfig.tableFileDir;
     if (!tableFileDir) {
-        console.error(`配置表目录：tableFileDir为空`);
+        Logger.log(`配置表目录：tableFileDir为空`, "error");
         return;
     }
     if (!fs.existsSync(tableFileDir)) {
-        console.error(`配置表文件夹不存在：${tableFileDir}`);
+        Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
         return;
     }
     const defaultPattern = ["**/*.{xlsx,csv}", "!**/~$*.*", "!**/~.*.*"];
@@ -33,7 +34,7 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
     if (parseConfig.useMultiThread && isNaN(parseConfig.threadParseFileMaxNum)) {
         parseConfig.threadParseFileMaxNum = 5;
     }
-
+    Logger.init(parseConfig);
     let fileInfos: IFileInfo[] = [];
     let deleteFileInfos: IFileInfo[] = [];
     const getFileInfo = (filePath: string) => {
@@ -109,33 +110,42 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
         }
     }
     if (fileInfos.length > parseConfig.threadParseFileMaxNum && parseConfig.useMultiThread) {
+        let logStr: string = "";
         const count = Math.floor(fileInfos.length / parseConfig.threadParseFileMaxNum) + 1;
         let worker: Worker;
         let subFileInfos: IFileInfo[];
         let workerMap: { [key: number]: Worker } = {};
         let completeCount: number = 0;
         const t1 = new Date().getTime();
-        const onWorkerParseEnd = (data: { threadId: number; parseResultMap: TableParseResultMap }) => {
-            console.log(`线程结束:${data.threadId}`);
+        const onWorkerParseEnd = (data: IWorkDoResult) => {
+            Logger.log(`----------------线程结束:${data.threadId}-----------------`);
             parseResultMap = Object.assign(parseResultMap, data.parseResultMap);
             completeCount++;
+            logStr += data.logStr + Logger.logStr;
             if (completeCount >= count) {
+                const t2 = new Date().getTime();
+                Logger.log(`[多线程导表时间]:${t2 - t1}`);
                 writeFiles(
                     parseConfig,
                     parseResultMapCacheFilePath,
                     trans2FileHandler,
                     fileInfos,
                     deleteFileInfos,
-                    parseResultMap
+                    parseResultMap,
+                    logStr
                 );
-                const t2 = new Date().getTime();
-                console.log(`[多线程导表时间]:${t2 - t1}`);
             }
         };
         for (let i = 0; i < count; i++) {
             subFileInfos = fileInfos.splice(0, parseConfig.threadParseFileMaxNum);
-            worker = new Worker(path.join(path.dirname(__filename), "./worker.js"), {
-                workerData: { threadId: i, fileInfos: subFileInfos, parseResultMap: parseResultMap } as IWorkerShareData
+            Logger.log(`----------------线程开始:${i}-----------------`);
+            worker = new Worker(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
+                workerData: {
+                    threadId: i,
+                    fileInfos: subFileInfos,
+                    parseResultMap: parseResultMap,
+                    parseConfig: parseConfig
+                } as IWorkerShareData
             });
             workerMap[i] = worker;
             worker.on("message", onWorkerParseEnd);
@@ -153,16 +163,17 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
             parseHandler = new DefaultParseHandler();
         }
         doParse(fileInfos, parseResultMap, parseHandler);
+        const t2 = new Date().getTime();
+        Logger.log(`[单线程导表时间]:${t2 - t1}`);
         writeFiles(
             parseConfig,
             parseResultMapCacheFilePath,
             trans2FileHandler,
             fileInfos,
             deleteFileInfos,
-            parseResultMap
+            parseResultMap,
+            Logger.logStr
         );
-        const t2 = new Date().getTime();
-        console.log(`[单线程导表时间]:${t2 - t1}`);
     }
 }
 function writeFiles(
@@ -171,7 +182,8 @@ function writeFiles(
     trans2FileHandler: ITransResult2AnyFileHandler,
     fileInfos: IFileInfo[],
     deleteFileInfos: IFileInfo[],
-    parseResultMap: TableParseResultMap
+    parseResultMap: TableParseResultMap,
+    logStr?: string
 ) {
     //写入解析缓存
     if (parseConfig.useCache) {
@@ -181,16 +193,26 @@ function writeFiles(
     //解析结束，做导出处理
     let outputFileMap: OutPutFileMap = trans2FileHandler.trans2Files(fileInfos, deleteFileInfos, parseResultMap);
     const outputFiles = Object.values(outputFileMap);
+
     //写入和删除文件处理
-    console.log(`开始写入文件:0/${outputFiles.length}`);
+    Logger.log(`开始写入文件:0/${outputFiles.length}`);
 
     writeOrDeleteOutPutFiles(
         outputFiles,
         (filePath, total, now, isOk) => {
-            console.log(`[写入文件] 进度:(${now}/${total}) 路径:${filePath}`);
+            Logger.log(`[写入文件] 进度:(${now}/${total}) 路径:${filePath}`);
         },
         () => {
-            console.log(`写入结束~`);
+            Logger.log(`写入结束~`);
+            //日志文件
+            if (!logStr) {
+                logStr = Logger.logStr;
+            }
+            const outputLogFileInfo: IOutPutFileInfo = {
+                filePath: path.join(process.cwd(), "excel2all.log"),
+                data: logStr
+            };
+            writeOrDeleteOutPutFiles([outputLogFileInfo]);
         }
     );
 }

@@ -1,13 +1,8 @@
-import * as os from "os";
 import * as path from "path";
 import { TableType } from "./default-parse-handler";
 import { Base64 } from "js-base64";
-const platform = os.platform();
-let enterChar = "\n";
-if (platform === "win32") {
-    enterChar = "\r\n";
-}
 import { deflateSync } from "zlib";
+import { osEol } from "./get-os-eol";
 declare global {
     /**
      * 输出配置
@@ -69,7 +64,7 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
             if (!parseResult.tableDefine) continue;
             tableName = parseResult.tableDefine.tableName;
             if (parseResult.tableDefine.tableType === TableType.horizontal) {
-                tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + enterChar;
+                tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
             } else {
                 tableTypeMapDtsStr += this._getOneTableTypeStr(tableName);
             }
@@ -100,10 +95,9 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
         }
         if (outputConfig.isGenDts) {
             //输出声明文件
-            let itBaseStr = "interface ITBase<T> { [key:string]:T}" + enterChar;
+            let itBaseStr = "interface ITBase<T> { [key:string]:T}" + osEol;
 
-            tableTypeMapDtsStr =
-                itBaseStr + "interface IT_TableMap {" + enterChar + tableTypeMapDtsStr + "}" + enterChar;
+            tableTypeMapDtsStr = itBaseStr + "interface IT_TableMap {" + osEol + tableTypeMapDtsStr + "}" + osEol;
 
             if (outputConfig.isBundleDts) {
                 //合成一个文件
@@ -194,7 +188,7 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
         const tableName = parseResult.tableDefine.tableName;
 
         const colKeyTableFieldMap: ColKeyTableFieldMap = parseResult.filedMap;
-        let itemInterface = "interface IT_" + tableName + " {" + enterChar;
+        let itemInterface = "interface IT_" + tableName + " {" + osEol;
         let tableField: ITableField;
         let typeStr: string;
         let objTypeStrMap: { [key: string]: string } = {};
@@ -204,7 +198,7 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
             if (!tableField) continue;
             if (!tableField.isMutiColObj) {
                 //注释行
-                itemInterface += "\t/** " + tableField.text + " */" + enterChar;
+                itemInterface += "\t/** " + tableField.text + " */" + osEol;
                 //字段类型声明行
                 itemInterface +=
                     "\treadonly " +
@@ -212,7 +206,7 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
                     "?: " +
                     (typeStrMap[tableField.type] ? typeStrMap[tableField.type] : tableField.type) +
                     ";" +
-                    enterChar;
+                    osEol;
             } else {
                 const objFieldKey = tableField.fieldName;
                 if (!objTypeStrMap[objFieldKey]) {
@@ -220,7 +214,7 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
                 }
 
                 //注释行
-                objTypeStrMap[objFieldKey] += "\t\t/** " + tableField.text + " */" + enterChar;
+                objTypeStrMap[objFieldKey] += "\t\t/** " + tableField.text + " */" + osEol;
 
                 //字段类型声明行
                 objTypeStrMap[objFieldKey] +=
@@ -229,16 +223,16 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
                     "?: " +
                     (typeStrMap[tableField.subType] ? typeStrMap[tableField.subType] : tableField.subType) +
                     ";" +
-                    enterChar;
+                    osEol;
             }
         }
         //第二层对象
         for (let objFieldKey in objTypeStrMap) {
             //字段类型声明行
-            itemInterface += "\treadonly " + objFieldKey + "?: {" + enterChar + objTypeStrMap[objFieldKey];
-            itemInterface += "\t}" + enterChar;
+            itemInterface += "\treadonly " + objFieldKey + "?: {" + osEol + objTypeStrMap[objFieldKey];
+            itemInterface += "\t}" + osEol;
         }
-        itemInterface += "}" + enterChar;
+        itemInterface += "}" + osEol;
 
         return itemInterface;
     }
@@ -271,6 +265,6 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
         }
     }
     private _getOneTableTypeStr(tableName: string): string {
-        return "\treadonly " + tableName + "?: " + "ITBase<" + "IT_" + tableName + ">;" + enterChar;
+        return "\treadonly " + tableName + "?: " + "ITBase<" + "IT_" + tableName + ">;" + osEol;
     }
 }

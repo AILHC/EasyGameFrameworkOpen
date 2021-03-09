@@ -1,5 +1,6 @@
 import * as xlsx from "xlsx";
 import { valueTransFuncMap } from ".";
+import { Logger } from "./loger";
 import { horizontalForEachSheet, isEmptyCell, readTableFile, verticalForEachSheet } from "./table-utils";
 
 declare global {
@@ -159,7 +160,7 @@ export class DefaultParseHandler implements ITableParseHandler {
             }
         }
         if (!firstCellValue || firstCellValue.tableNameInSheet !== tableName) {
-            console.error(`表格不规范,跳过解析,路径:${fileInfo.filePath}`);
+            Logger.log(`表格不规范,跳过解析,路径:${fileInfo.filePath}`, "error");
             return null;
         }
         tableDefine.tableType = firstCellValue.tableType;
@@ -294,9 +295,11 @@ export class DefaultParseHandler implements ITableParseHandler {
 
         const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
-            console.error(
-                `表格:${tableParseResult.filePath},分表:${tableParseResult.curSheetName},行:${rowIndex},列：${colKey}解析出错`
+            Logger.log(
+                `表格:${tableParseResult.filePath},分表:${tableParseResult.curSheetName},行:${rowIndex},列：${colKey}解析出错`,
+                "error"
             );
+            Logger.log(transResult.error, "error");
         }
         const transedValue = transResult.value;
         let mainKeyFieldName: string = tableParseResult.mainKeyFieldName;
@@ -345,7 +348,15 @@ export class DefaultParseHandler implements ITableParseHandler {
         if (isEmptyCell(cell)) {
             return;
         }
-        const transedValue = this.transValue(tableParseResult, fieldInfo, cell.v);
+        const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
+        if (transResult.error) {
+            Logger.log(
+                `表格:${tableParseResult.filePath},分表:${tableParseResult.curSheetName},行:${rowIndex},列：${colKey}解析出错`,
+                "error"
+            );
+            Logger.log(transResult.error, "error");
+        }
+        const transedValue = transResult.value;
         if (!tableParseResult.tableObj) {
             tableParseResult.tableObj = {};
         }
@@ -571,7 +582,7 @@ export class DefaultParseHandler implements ITableParseHandler {
                 continue;
             }
             parseResult.curSheetName = sheetName;
-            console.log(`解析:${fileInfo.filePath}=> sheet:${sheetName} ....`);
+            Logger.log(`解析:${fileInfo.filePath}=> sheet:${sheetName} ....`);
             if (tableDefine.tableType === TableType.vertical) {
                 let lastRowIndex: number;
 

@@ -2,12 +2,16 @@
   "name": "@ailhc/excel2all",
   "version": "0.0.1",
   "description": "将excel转换成任意文件格式工具",
-  "main": "index.js",
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
+  "typings": "dist/cjs/types",
+  "directories": {
+    "dist": "dist"
+  },
   "scripts": {
-    "dev": "tsc -w --outDir ./lib",
+    "watch:cjs": "egf build -w true -f cjs",
     "debug": "node ./lib/index.js ../../../../afk_number incremental",
-    "testGen": "ts-node --transpile-only __test__/test.ts",
-    "testGen2": "node ./dist/__test__/test.js",
+    "testGen2": "node ./__test__/test.js",
     "testWorker": "ts-node --transpile-only __test__/worker_test.ts",
     "//构建命令": "",
     "build:cjs": "egf build -f cjs -m true",

@@ -1,6 +1,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as crypto from "crypto";
+import { Logger } from "./loger";
 declare global {
     interface IOutPutFileInfo {
         filePath: string;
@@ -45,7 +46,7 @@ export function writeOrDeleteOutPutFiles(
         let now = 0;
         const onWriteEnd = (err) => {
             if (err) {
-                console.error(err);
+                Logger.log(err, "error");
             }
             now++;
             onProgress && onProgress(outputFileInfos[now - 1].filePath, total, now, !err);
@@ -114,7 +115,7 @@ export function forEachChangedFile(
  */
 export function writeCacheData(cacheFilePath: string, cacheData: any) {
     if (!cacheFilePath) {
-        console.error(`cacheFilePath is null`);
+        Logger.log(`cacheFilePath is null`, "error");
         return;
     }
     fs.writeFileSync(cacheFilePath, JSON.stringify(cacheData), { encoding: "utf-8" });
@@ -125,7 +126,7 @@ export function writeCacheData(cacheFilePath: string, cacheData: any) {
  */
 export function getCacheData(cacheFilePath: string): any {
     if (!cacheFilePath) {
-        console.error(`cacheFilePath is null`);
+        Logger.log(`cacheFilePath is null`, "error");
         return;
     }
     if (!fs.existsSync(cacheFilePath)) {

@@ -14,6 +14,14 @@ declare global {
         parseResultMap: TableParseResultMap;
     }
     /**
+     * 多线程执行结果
+     */
+    interface IWorkDoResult {
+        threadId: number;
+        parseResultMap: TableParseResultMap;
+        logStr: string;
+    }
+    /**
      * 文件信息对象
      */
     interface IFileInfo {
@@ -79,7 +87,12 @@ declare global {
          * 自定义导出处理器，require(customTrans2FileHandlerPath) 需要返回一个 实现了ITransResult2AnyFileHandler的类
          */
         customTrans2FileHandlerPath?: string;
+        /**日志等级 */
+        logLevel?: LogLevel;
+        /**默认输出日志文件 */
+        outputLogFile?: boolean;
     }
+    type LogLevel = "no" | "info" | "warn" | "error";
     /**
      * 输出文件字典
      * key为路径
