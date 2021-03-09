@@ -1,3 +1,5 @@
+import { Logger } from "./loger";
+
 export const valueTransFuncMap: {
     [key: string]: ValueTransFunc;
 } = {};
@@ -17,7 +19,6 @@ function strToIntArr(fieldItem: ITableField, cellValue: string): ITransValueResu
             result.value = intArr;
         } catch (error) {
             result.error = error;
-            // console.error(error);
         }
     }
 
@@ -34,7 +35,6 @@ function strToStrArr(fieldItem: ITableField, cellValue: string): ITransValueResu
             result.value = arr;
         } catch (error) {
             result.error = error;
-            console.error(error);
         }
     }
     return result;
@@ -59,7 +59,6 @@ function strToJsonObj(fieldItem: ITableField, cellValue: string): ITransValueRes
         } catch (err) {
             error = err;
             obj = cellValue;
-            console.error(err);
         }
     }
     return { error: error, value: obj };

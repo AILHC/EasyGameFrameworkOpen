@@ -6,4 +6,4 @@ export * from "./file-utils";
 export * from "./generate";
 export * from "./interfaces";
 export * from "./table-utils";
-export * from "./worker";
+export * from "./loger";
