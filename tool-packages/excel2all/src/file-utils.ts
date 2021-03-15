@@ -2,6 +2,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import * as crypto from "crypto";
 import { Logger } from "./loger";
+
 declare global {
     interface IOutPutFileInfo {
         filePath: string;

@@ -12,6 +12,9 @@ import { Logger } from "./loger";
  * @param trans2FileHandler 转换解析结果为输出文件
  */
 export async function generate(parseConfig: ITableParseConfig, trans2FileHandler: ITransResult2AnyFileHandler) {
+    if (!parseConfig.projRoot) {
+        parseConfig.projRoot = process.cwd();
+    }
     const tableFileDir = parseConfig.tableFileDir;
     if (!tableFileDir) {
         Logger.log(`配置表目录：tableFileDir为空`, "error");
@@ -72,7 +75,7 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
     } else {
         if (!cacheFileDirPath) cacheFileDirPath = ".cache";
         if (!path.isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = path.join(tableFileDir, cacheFileDirPath);
+            cacheFileDirPath = path.join(parseConfig.projRoot, cacheFileDirPath);
             parseResultMapCacheFilePath = path.join(cacheFileDirPath, ".egfprmc");
         }
         parseResultMap = getCacheData(parseResultMapCacheFilePath);
@@ -119,7 +122,12 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
         const t1 = new Date().getTime();
         const onWorkerParseEnd = (data: IWorkDoResult) => {
             Logger.log(`----------------线程结束:${data.threadId}-----------------`);
-            parseResultMap = Object.assign(parseResultMap, data.parseResultMap);
+            const parsedMap = data.parseResultMap;
+            for (let key in parsedMap) {
+                if (!parseResultMap[key].tableDefine) {
+                    parseResultMap[key] = parsedMap[key];
+                }
+            }
             completeCount++;
             logStr += data.logStr + Logger.logStr;
             if (completeCount >= count) {
@@ -155,14 +163,17 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
         let parseHandler: ITableParseHandler;
         if (parseConfig.customParseHandlerPath) {
             if (!path.isAbsolute(parseConfig.customParseHandlerPath)) {
-                parseConfig.customParseHandlerPath = path.resolve(__dirname, parseConfig.customParseHandlerPath);
+                parseConfig.customParseHandlerPath = path.resolve(
+                    parseConfig.projRoot,
+                    parseConfig.customParseHandlerPath
+                );
             }
-            parseHandler = await import(parseConfig.customParseHandlerPath);
+            parseHandler = require(parseConfig.customParseHandlerPath);
         }
         if (!parseHandler) {
             parseHandler = new DefaultParseHandler();
         }
-        doParse(fileInfos, parseResultMap, parseHandler);
+        doParse(parseConfig, fileInfos, parseResultMap, parseHandler);
         const t2 = new Date().getTime();
         Logger.log(`[单线程导表时间]:${t2 - t1}`);
         writeFiles(
@@ -191,7 +202,12 @@ function writeFiles(
     }
 
     //解析结束，做导出处理
-    let outputFileMap: OutPutFileMap = trans2FileHandler.trans2Files(fileInfos, deleteFileInfos, parseResultMap);
+    let outputFileMap: OutPutFileMap = trans2FileHandler.trans2Files(
+        parseConfig,
+        fileInfos,
+        deleteFileInfos,
+        parseResultMap
+    );
     const outputFiles = Object.values(outputFileMap);
 
     //写入和删除文件处理
