@@ -260,7 +260,51 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         footer: moduleName && useFooter ? `var globalTarget =window?window:global; globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : ''
 
     }
+    //生成声明文件
+    const generateDts = () => {
+        console.log(`生成声明文件`);
+        /**
+         * @type {dtsGenerator}
+         */
+        const dtsGen = require("dts-generator").default;
 
+        const typesDirPath = path.join(process.cwd(), typesDir);
+        const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
+        const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+        // console.log(dtsGenExclude);
+        dtsGen({
+            baseDir: path.resolve(process.cwd()),
+            exclude: dtsGenExclude,
+            out: path.resolve(typesDirPath, `index.d.ts`),
+            // prefix: moduleName,
+            resolveModuleId: function (params) {
+                // console.log(params.currentModuleId)
+                if (params.currentModuleId === entry.split(".")[0]) {
+                    return moduleName;
+                }
+                return `${moduleName}/${params.currentModuleId}`
+            },
+            resolveModuleImport: function (params) {
+                // console.log(params)
+                // {
+                //     importedModuleId: './interfaces',
+                //     currentModuleId: 'src/index',
+                //     isDeclaredExternalModule: false
+                //   }
+                if (!params.isDeclaredExternalModule) {
+                    let importedModuleId = params.importedModuleId;
+                    if (params.importedModuleId.includes(".")) {
+                        //包内模块
+                        importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+                    }
+                    return importedModuleId;
+                }
+                return params.importedModuleId
+            }
+        }).then(() => {
+            console.log(`声明文件生成完毕`)
+        })
+    }
     if (isWatch) {
         /**@type {import('rollup').RollupWatchOptions} */
         const watchConfig = buildConfig;
@@ -277,6 +321,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
                 console.log(event.output);
             } else if (event.code === "BUNDLE_END") {
                 console.log("构建结束");
+                generateDts();
             }
             else if (event.code === "END") {
                 console.log(`结束`)
@@ -327,47 +372,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         //     tsc: '--project tsconfigDts.json --extendedDiagnostics',
         // }).generate()
         if (!customDts) {
-            /**
-         * @type {dtsGenerator}
-         */
-            const dtsGen = require("dts-generator").default;
-
-            const typesDirPath = path.join(process.cwd(), typesDir);
-            const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
-            const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
-            // console.log(dtsGenExclude);
-            dtsGen({
-                baseDir: path.resolve(process.cwd()),
-                exclude: dtsGenExclude,
-                out: path.resolve(typesDirPath, `index.d.ts`),
-                // prefix: moduleName,
-                resolveModuleId: function (params) {
-                    // console.log(params.currentModuleId)
-                    if (params.currentModuleId === entry.split(".")[0]) {
-                        return moduleName;
-                    }
-                    return `${moduleName}/${params.currentModuleId}`
-                },
-                resolveModuleImport: function (params) {
-                    // console.log(params)
-                    // {
-                    //     importedModuleId: './interfaces',
-                    //     currentModuleId: 'src/index',
-                    //     isDeclaredExternalModule: false
-                    //   }
-                    if (!params.isDeclaredExternalModule) {
-                        let importedModuleId = params.importedModuleId;
-                        if (params.importedModuleId.includes(".")) {
-                            //包内模块
-                            importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
-                        }
-                        return importedModuleId;
-                    }
-                    return params.importedModuleId
-                }
-            }).then(() => {
-
-            })
+            generateDts();
 
         } else {
             const modules = rollupBuild.cache.modules;
@@ -427,6 +432,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     }
 
 }
+
 module.exports = {
     build: rollupBuild,
 }
