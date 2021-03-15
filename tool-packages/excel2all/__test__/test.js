@@ -10,9 +10,10 @@ const tableFileDir = path.join(process.cwd(), "test-excel-files");
 const parseConfig = {
     tableFileDir: tableFileDir,
     useCache: false,
-    useMultiThread: true,
-    threadParseFileMaxNum: 10, //多线程比单线程快一点
-    cacheFileDirPath: "../test-export/.cache"
+    useMultiThread: false,
+    threadParseFileMaxNum: 2, //多线程比单线程快一点
+    cacheFileDirPath: "./test-export/.cache",
+    customParseHandlerPath: "./__test__/testCustomParseHandler.js"
 };
 /**
  * @type {IOutputConfig}
@@ -28,6 +29,6 @@ const outputConfig = {
     sufBase64UglyString: "jfdjaf12jfd34jdfa8383+/*fdsaf12389*&^$#$#)(__+_)dfasfjlsdfalfafdfadf"
     // isZip: true
 };
+parseConfig.outputConfig = outputConfig;
 const trans2fileHandler = new excel2all.Trans2JsonAndDtsHandler();
-trans2fileHandler.init(outputConfig);
 excel2all.generate(parseConfig, trans2fileHandler);

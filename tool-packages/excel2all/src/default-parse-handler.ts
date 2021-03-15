@@ -552,10 +552,15 @@ export class DefaultParseHandler implements ITableParseHandler {
 
     /**
      * 解析配置表文件
-     * @param fileInfo
+     * @param parseConfig 解析配置
+     * @param fileInfo 文件信息
      * @param parseResult 解析结果
      */
-    public parseTableFile(fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult {
+    public parseTableFile(
+        parseConfig: ITableParseConfig,
+        fileInfo: IFileInfo,
+        parseResult: ITableParseResult
+    ): ITableParseResult {
         const workbook = readTableFile(fileInfo);
         if (!workbook.SheetNames.length) return;
 

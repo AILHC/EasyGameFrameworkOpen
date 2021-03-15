@@ -35,24 +35,21 @@ declare global {
 /**类型字符串映射字典 */
 const typeStrMap = { int: "number", json: "any", "[int]": "number[]", "[string]": "string[]" };
 export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
-    private _outputConfig: IOutputConfig;
-    constructor() {}
-    init(option?: any): void {
-        if (!option) {
-            this._outputConfig = {
-                clientSingleTableJsonDir: path.join(process.cwd(), "./excelJsonOut")
-            };
-        }
-        this._outputConfig = option;
-    }
     trans2Files(
+        parseConfig: ITableParseConfig,
         changedFileInfos: IFileInfo[],
         deleteFileInfos: IFileInfo[],
         parseResultMap: TableParseResultMap
     ): OutPutFileMap {
+        let outputConfig: IOutputConfig = parseConfig.outputConfig;
+        if (!outputConfig) {
+            outputConfig = {
+                clientSingleTableJsonDir: path.join(process.cwd(), "./excelJsonOut")
+            };
+        }
+
         let tableObjMap: { [key: string]: any } = {};
         let outputFileMap: OutPutFileMap = {};
-        const outputConfig = this._outputConfig;
         let tableTypeMapDtsStr = "";
         let tableTypeDtsStrs = "";
         let parseResult: ITableParseResult;

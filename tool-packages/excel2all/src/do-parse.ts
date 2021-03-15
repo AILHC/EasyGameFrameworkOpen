@@ -1,4 +1,9 @@
-export function doParse(fileInfos: IFileInfo[], parseResultMap: TableParseResultMap, parseHandler: ITableParseHandler) {
+export function doParse(
+    parseConfig: ITableParseConfig,
+    fileInfos: IFileInfo[],
+    parseResultMap: TableParseResultMap,
+    parseHandler: ITableParseHandler
+) {
     let parseResult;
     for (let i = fileInfos.length - 1; i >= 0; i--) {
         parseResult = parseResultMap[fileInfos[i].filePath];
@@ -6,7 +11,7 @@ export function doParse(fileInfos: IFileInfo[], parseResultMap: TableParseResult
             parseResult = { filePath: fileInfos[i].filePath };
         }
         if (!parseResult.tableObj) {
-            parseResult = parseHandler.parseTableFile(fileInfos[i], parseResult);
+            parseResult = parseHandler.parseTableFile(parseConfig, fileInfos[i], parseResult);
         }
         if (parseResult) {
             parseResultMap[fileInfos[i].filePath] = parseResult;
