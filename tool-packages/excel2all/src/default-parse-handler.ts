@@ -557,7 +557,7 @@ export class DefaultParseHandler implements ITableParseHandler {
      * @param parseResult 解析结果
      */
     public parseTableFile(
-        parseConfig: ITableParseConfig,
+        parseConfig: ITableConvertConfig,
         fileInfo: IFileInfo,
         parseResult: ITableParseResult
     ): ITableParseResult {

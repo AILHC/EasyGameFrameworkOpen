@@ -1,5 +1,5 @@
 export function doParse(
-    parseConfig: ITableParseConfig,
+    parseConfig: ITableConvertConfig,
     fileInfos: IFileInfo[],
     parseResultMap: TableParseResultMap,
     parseHandler: ITableParseHandler

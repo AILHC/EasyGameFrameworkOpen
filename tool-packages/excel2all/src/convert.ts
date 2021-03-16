@@ -6,16 +6,26 @@ import { Worker } from "worker_threads";
 import { doParse } from "./do-parse";
 import { DefaultParseHandler } from "./default-parse-handler";
 import { Logger } from "./loger";
+import { Trans2JsonAndDtsHandler } from "./default-trans2file-handler";
 /**
- * 解析配置表生成指定文件
- * @param parseConfig 解析配置
- * @param trans2FileHandler 转换解析结果为输出文件
+ * 转换
+ * @param converConfig 解析配置
  */
-export async function generate(parseConfig: ITableParseConfig, trans2FileHandler: ITransResult2AnyFileHandler) {
-    if (!parseConfig.projRoot) {
-        parseConfig.projRoot = process.cwd();
+export async function convert(converConfig: ITableConvertConfig) {
+    if (!converConfig.projRoot) {
+        converConfig.projRoot = process.cwd();
     }
-    const tableFileDir = parseConfig.tableFileDir;
+    let trans2FileHandler: ITransResult2AnyFileHandler;
+    if (converConfig.customTrans2FileHandlerPath) {
+        trans2FileHandler = require(converConfig.customTrans2FileHandlerPath);
+        if (!trans2FileHandler || typeof trans2FileHandler.trans2Files !== "function") {
+            console.error(`自定义转换实现错误:${converConfig.customTrans2FileHandlerPath}`);
+            return;
+        }
+    } else {
+        trans2FileHandler = new Trans2JsonAndDtsHandler();
+    }
+    const tableFileDir = converConfig.tableFileDir;
     if (!tableFileDir) {
         Logger.log(`配置表目录：tableFileDir为空`, "error");
         return;
@@ -25,19 +35,19 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
         return;
     }
     const defaultPattern = ["**/*.{xlsx,csv}", "!**/~$*.*", "!**/~.*.*"];
-    if (!parseConfig.pattern) {
-        parseConfig.pattern = defaultPattern;
-    } else if (parseConfig.pattern && typeof parseConfig.pattern === "object") {
+    if (!converConfig.pattern) {
+        converConfig.pattern = defaultPattern;
+    } else if (converConfig.pattern && typeof converConfig.pattern === "object") {
         for (let i = 0; i < defaultPattern.length; i++) {
-            if (!parseConfig.pattern.includes(defaultPattern[i])) {
-                parseConfig.pattern.push(defaultPattern[i]);
+            if (!converConfig.pattern.includes(defaultPattern[i])) {
+                converConfig.pattern.push(defaultPattern[i]);
             }
         }
     }
-    if (parseConfig.useMultiThread && isNaN(parseConfig.threadParseFileMaxNum)) {
-        parseConfig.threadParseFileMaxNum = 5;
+    if (converConfig.useMultiThread && isNaN(converConfig.threadParseFileMaxNum)) {
+        converConfig.threadParseFileMaxNum = 5;
     }
-    Logger.init(parseConfig);
+    Logger.init(converConfig);
     let fileInfos: IFileInfo[] = [];
     let deleteFileInfos: IFileInfo[] = [];
     const getFileInfo = (filePath: string) => {
@@ -50,7 +60,7 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
         };
         return fileInfo;
     };
-    const matchPattern = parseConfig.pattern;
+    const matchPattern = converConfig.pattern;
     const eachFileCallback = (filePath: string, isDelete?: boolean) => {
         const fileInfo = getFileInfo(filePath);
         let canRead: boolean;
@@ -67,17 +77,17 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
     let parseResultMap: TableParseResultMap = {};
 
     //缓存处理
-    let cacheFileDirPath: string = parseConfig.cacheFileDirPath;
+    let cacheFileDirPath: string = converConfig.cacheFileDirPath;
     let parseResultMapCacheFilePath: string;
 
-    if (!parseConfig.useCache) {
+    if (!converConfig.useCache) {
         forEachFile(tableFileDir, eachFileCallback);
     } else {
         if (!cacheFileDirPath) cacheFileDirPath = ".cache";
         if (!path.isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = path.join(parseConfig.projRoot, cacheFileDirPath);
-            parseResultMapCacheFilePath = path.join(cacheFileDirPath, ".egfprmc");
+            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
         }
+        parseResultMapCacheFilePath = path.join(cacheFileDirPath, ".egfprmc");
         parseResultMap = getCacheData(parseResultMapCacheFilePath);
         if (!parseResultMap) {
             parseResultMap = {};
@@ -112,9 +122,19 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
             eachFileCallback(oldFilePaths[i], true);
         }
     }
-    if (fileInfos.length > parseConfig.threadParseFileMaxNum && parseConfig.useMultiThread) {
+    let parseHandler: ITableParseHandler;
+    if (converConfig.customParseHandlerPath) {
+        parseHandler = require(converConfig.customParseHandlerPath);
+        if (!parseHandler || typeof parseHandler.parseTableFile !== "function") {
+            console.error(`自定义解析实现错误:${converConfig.customParseHandlerPath}`);
+            return;
+        }
+    } else {
+        parseHandler = new DefaultParseHandler();
+    }
+    if (fileInfos.length > converConfig.threadParseFileMaxNum && converConfig.useMultiThread) {
         let logStr: string = "";
-        const count = Math.floor(fileInfos.length / parseConfig.threadParseFileMaxNum) + 1;
+        const count = Math.floor(fileInfos.length / converConfig.threadParseFileMaxNum) + 1;
         let worker: Worker;
         let subFileInfos: IFileInfo[];
         let workerMap: { [key: number]: Worker } = {};
@@ -134,7 +154,7 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
                 const t2 = new Date().getTime();
                 Logger.log(`[多线程导表时间]:${t2 - t1}`);
                 writeFiles(
-                    parseConfig,
+                    converConfig,
                     parseResultMapCacheFilePath,
                     trans2FileHandler,
                     fileInfos,
@@ -145,14 +165,14 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
             }
         };
         for (let i = 0; i < count; i++) {
-            subFileInfos = fileInfos.splice(0, parseConfig.threadParseFileMaxNum);
+            subFileInfos = fileInfos.splice(0, converConfig.threadParseFileMaxNum);
             Logger.log(`----------------线程开始:${i}-----------------`);
             worker = new Worker(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
                 workerData: {
                     threadId: i,
                     fileInfos: subFileInfos,
                     parseResultMap: parseResultMap,
-                    parseConfig: parseConfig
+                    parseConfig: converConfig
                 } as IWorkerShareData
             });
             workerMap[i] = worker;
@@ -160,24 +180,12 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
         }
     } else {
         const t1 = new Date().getTime();
-        let parseHandler: ITableParseHandler;
-        if (parseConfig.customParseHandlerPath) {
-            if (!path.isAbsolute(parseConfig.customParseHandlerPath)) {
-                parseConfig.customParseHandlerPath = path.resolve(
-                    parseConfig.projRoot,
-                    parseConfig.customParseHandlerPath
-                );
-            }
-            parseHandler = require(parseConfig.customParseHandlerPath);
-        }
-        if (!parseHandler) {
-            parseHandler = new DefaultParseHandler();
-        }
-        doParse(parseConfig, fileInfos, parseResultMap, parseHandler);
+
+        doParse(converConfig, fileInfos, parseResultMap, parseHandler);
         const t2 = new Date().getTime();
         Logger.log(`[单线程导表时间]:${t2 - t1}`);
         writeFiles(
-            parseConfig,
+            converConfig,
             parseResultMapCacheFilePath,
             trans2FileHandler,
             fileInfos,
@@ -188,7 +196,7 @@ export async function generate(parseConfig: ITableParseConfig, trans2FileHandler
     }
 }
 function writeFiles(
-    parseConfig: ITableParseConfig,
+    parseConfig: ITableConvertConfig,
     parseResultMapCacheFilePath: string,
     trans2FileHandler: ITransResult2AnyFileHandler,
     fileInfos: IFileInfo[],

@@ -31,4 +31,4 @@ const outputConfig = {
 };
 parseConfig.outputConfig = outputConfig;
 const trans2fileHandler = new excel2all.Trans2JsonAndDtsHandler();
-excel2all.generate(parseConfig, trans2fileHandler);
+excel2all.convert(parseConfig, trans2fileHandler);
