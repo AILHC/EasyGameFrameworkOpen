@@ -10,7 +10,7 @@ export class Logger {
     private static _enableOutPutLogFile: boolean;
     private static _logLevel: LogLevelEnum;
     private static _logStr: string = "";
-    public static init(parseConfig: ITableParseConfig) {
+    public static init(parseConfig: ITableConvertConfig) {
         const level: LogLevel = parseConfig.logLevel ? parseConfig.logLevel : "info";
         this._logLevel = LogLevelEnum[level];
         this._enableOutPutLogFile = parseConfig.outputLogFile === undefined ? true : parseConfig.outputLogFile;

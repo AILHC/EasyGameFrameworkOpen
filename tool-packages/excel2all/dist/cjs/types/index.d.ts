@@ -2,65 +2,12 @@ declare module "@ailhc/excel2all/src/get-os-eol" {
     /**当前系统行尾  platform === "win32" ? "\n" : "\r\n";*/
     export const osEol: string;
 }
-declare module "@ailhc/excel2all/src/default-trans2file-handler" {
-    global {
-        /**
-         * 输出配置
-         */
-        interface IOutputConfig {
-            /**配置表输出目录路径，默认输出到当前执行目录下的./excelJsonOut */
-            clientSingleTableJsonDir: string;
-            /**所有配置表打包输出目录，如果不配置则不合并json */
-            clientBundleJsonOutPath?: string;
-            /**是否格式化合并后的json，默认不 */
-            isFormatBundleJson?: boolean;
-            /**是否生成声明文件，默认不输出 */
-            isGenDts?: boolean;
-            /**声明文件输出目录 */
-            clientDtsOutDir?: string;
-            /**是否合并所有声明为一个文件,默认true */
-            isBundleDts?: boolean;
-            /**是否将json格式压缩,默认否,减少json字段名字符,效果较小 */
-            isCompress?: boolean;
-            /**是否Zip压缩,使用zlib */
-            isZip?: boolean;
-            /**是否将输出的合并json转为base64，默认否*/
-            bundleJsonIsEncode2Base64?: boolean;
-            /**加密混淆字符串前缀 */
-            preBase64UglyString?: string;
-            /**加密混淆字符串后缀 */
-            sufBase64UglyString?: string;
-        }
-    }
-    export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
-        trans2Files(
-            parseConfig: ITableParseConfig,
-            changedFileInfos: IFileInfo[],
-            deleteFileInfos: IFileInfo[],
-            parseResultMap: TableParseResultMap
-        ): OutPutFileMap;
-        private _addSingleTableDtsOutputFile;
-        /**
-         * 解析出单个配置表类型数据
-         * @param parseResult
-         */
-        private _getSingleTableDts;
-        /**
-         * 添加单独导出配置表json文件
-         * @param config
-         * @param parseResult
-         * @param outputFileMap
-         */
-        private _addSingleTableJsonOutputFile;
-        private _getOneTableTypeStr;
-    }
-}
 declare module "@ailhc/excel2all/src/loger" {
     export class Logger {
         private static _enableOutPutLogFile;
         private static _logLevel;
         private static _logStr;
-        static init(parseConfig: ITableParseConfig): void;
+        static init(parseConfig: ITableConvertConfig): void;
         /**
          * 输出日志
          * @param message
@@ -72,19 +19,6 @@ declare module "@ailhc/excel2all/src/loger" {
          */
         static get logStr(): string;
     }
-}
-declare module "@ailhc/excel2all/src/default-value-func-map" {
-    export const valueTransFuncMap: {
-        [key: string]: ValueTransFunc;
-    };
-}
-declare module "@ailhc/excel2all/src/do-parse" {
-    export function doParse(
-        parseConfig: ITableParseConfig,
-        fileInfos: IFileInfo[],
-        parseResultMap: TableParseResultMap,
-        parseHandler: ITableParseHandler
-    ): void;
 }
 declare module "@ailhc/excel2all/src/file-utils" {
     global {
@@ -148,16 +82,73 @@ declare module "@ailhc/excel2all/src/file-utils" {
      */
     export function getFileMd5(filePath: string): Promise<string>;
 }
-declare module "@ailhc/excel2all/src/generate" {
-    /**
-     * 解析配置表生成指定文件
-     * @param parseConfig 解析配置
-     * @param trans2FileHandler 转换解析结果为输出文件
-     */
-    export function generate(
-        parseConfig: ITableParseConfig,
-        trans2FileHandler: ITransResult2AnyFileHandler
-    ): Promise<void>;
+declare module "@ailhc/excel2all/src/do-parse" {
+    export function doParse(
+        parseConfig: ITableConvertConfig,
+        fileInfos: IFileInfo[],
+        parseResultMap: TableParseResultMap,
+        parseHandler: ITableParseHandler
+    ): void;
+}
+declare module "@ailhc/excel2all/src/default-trans2file-handler" {
+    global {
+        /**
+         * 输出配置
+         */
+        interface IOutputConfig {
+            /**单个配置表json输出目录路径，默认输出到当前执行目录下的./excelJsonOut */
+            clientSingleTableJsonDir: string;
+            /**合并配置表json输出路径(包含文件名)，如果不配置则不合并json */
+            clientBundleJsonOutPath?: string;
+            /**是否格式化合并后的json，默认不 */
+            isFormatBundleJson?: boolean;
+            /**是否生成声明文件，默认不输出 */
+            isGenDts?: boolean;
+            /**声明文件输出目录(每个配置表一个声明)，默认不输出 */
+            clientDtsOutDir?: string;
+            /**是否合并所有声明为一个文件,默认true */
+            isBundleDts?: boolean;
+            /**合并后的声明文件名 */
+            bundleDtsFileName?: string;
+            /**是否将json格式压缩,默认否,减少json字段名字符,效果较小 */
+            isCompress?: boolean;
+            /**是否Zip压缩,使用zlib */
+            isZip?: boolean;
+            /**是否将输出的合并json转为base64，默认否*/
+            bundleJsonIsEncode2Base64?: boolean;
+            /**加密混淆字符串前缀 */
+            preBase64UglyString?: string;
+            /**加密混淆字符串后缀 */
+            sufBase64UglyString?: string;
+        }
+    }
+    export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
+        trans2Files(
+            parseConfig: ITableConvertConfig,
+            changedFileInfos: IFileInfo[],
+            deleteFileInfos: IFileInfo[],
+            parseResultMap: TableParseResultMap
+        ): OutPutFileMap;
+        private _addSingleTableDtsOutputFile;
+        /**
+         * 解析出单个配置表类型数据
+         * @param parseResult
+         */
+        private _getSingleTableDts;
+        /**
+         * 添加单独导出配置表json文件
+         * @param config
+         * @param parseResult
+         * @param outputFileMap
+         */
+        private _addSingleTableJsonOutputFile;
+        private _getOneTableTypeStr;
+    }
+}
+declare module "@ailhc/excel2all/src/default-value-func-map" {
+    export const valueTransFuncMap: {
+        [key: string]: ValueTransFunc;
+    };
 }
 declare module "@ailhc/excel2all/src/interfaces" {
     global {
@@ -168,7 +159,7 @@ declare module "@ailhc/excel2all/src/interfaces" {
             /**线程id */
             threadId: number;
             /**解析配置 */
-            parseConfig: ITableParseConfig;
+            parseConfig: ITableConvertConfig;
             /**需要解析的文件数组 */
             fileInfos: IFileInfo[];
             /**解析结果 */
@@ -205,7 +196,7 @@ declare module "@ailhc/excel2all/src/interfaces" {
         type TableParseResultMap = {
             [key: string]: ITableParseResult;
         };
-        interface ITableParseConfig {
+        interface ITableConvertConfig {
             /**
              * 项目根目录，是其他相对路径的根据
              * 如果没有，则读取命令行执行的目录路径
@@ -227,7 +218,7 @@ declare module "@ailhc/excel2all/src/interfaces" {
              */
             useMultiThread?: boolean;
             /**
-             * 线程最大处理文件数，默认5
+             * 单个线程解析文件的最大数量,默认5
              */
             threadParseFileMaxNum?: number;
             /**
@@ -246,37 +237,27 @@ declare module "@ailhc/excel2all/src/interfaces" {
              * 自定义解析处理器，require(customParseHandlerPath)
              *
              * 需要返回一个
-             * @type {ITableParseHandler} 实现了ITableParseHandler的类
+             * @type {ITableParseHandler} 实现了ITableParseHandler的对象
              *
              * @example
              *
-             * export class CustomParseHandler  implements ITableParseHandler {
+             * class CustomParseHandler  implements ITableParseHandler {
              *      parseTableFile(parseConfig: ITableParseConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult {
              *          //doSomething
              *      }
              * }
+             * module.exports = new CustomParseHandler();
              *
-             * 或者返回一个
-             * @type {ParseTableFileFunc} 实现了ParseTableFileFunc的方法
-             * @example
-             * module.exports = function(
-             * parseConfig: ITableParseConfig,
-             * fileInfo: IFileInfo,
-             *  parseResult: ITableParseResult)
-             * {
-             *    //dosomething
-             *     return OutPutFileMap
-             * }
              */
             customParseHandlerPath?: string;
             /**
              * 自定义导出处理器，require(customTrans2FileHandlerPath)
              *
              * 需要返回一个
-             * @type {ITransResult2AnyFileHandler} 实现了ITransResult2AnyFileHandler的类
+             * @type {ITransResult2AnyFileHandler} 实现了ITransResult2AnyFileHandler的对象
              *
              * @example
-             * export class CustomParseHandler  implements ITransResult2AnyFileHandler {
+             * class CustomTrans2FileHandler  implements ITransResult2AnyFileHandler {
              *  trans2Files(
              *      parseConfig: ITableParseConfig,
              *      changedFileInfos: IFileInfo[],
@@ -286,21 +267,7 @@ declare module "@ailhc/excel2all/src/interfaces" {
              *
              *  }
              * }
-             *
-             * 或者返回一个
-             * @type {Trans2FilesFunc} 实现了Trans2FilesFunc的方法
-             *
-             * @example
-             *
-             * module.exports = function(
-             *  parseConfig: ITableParseConfig,
-             *  changedFileInfos: IFileInfo[],
-             *  deleteFileInfos: IFileInfo[],
-             *  parseResultMap: TableParseResultMap)
-             * {
-             *    //dosomething
-             *     return OutPutFileMap
-             * }
+             * module.exports = new CustomTrans2FileHandler();
              */
             customTrans2FileHandlerPath?: string;
             /**日志等级 */
@@ -335,7 +302,7 @@ declare module "@ailhc/excel2all/src/interfaces" {
              * @param parseResultMap 解析结果字典
              */
             trans2Files(
-                parseConfig: ITableParseConfig,
+                parseConfig: ITableConvertConfig,
                 changedFileInfos: IFileInfo[],
                 deleteFileInfos: IFileInfo[],
                 parseResultMap: TableParseResultMap
@@ -348,7 +315,7 @@ declare module "@ailhc/excel2all/src/interfaces" {
              * @param parseResult 解析结果
              */
             parseTableFile(
-                parseConfig: ITableParseConfig,
+                parseConfig: ITableConvertConfig,
                 fileInfo: IFileInfo,
                 parseResult: ITableParseResult
             ): ITableParseResult;
@@ -450,7 +417,7 @@ declare module "@ailhc/excel2all" {
     export * from "@ailhc/excel2all/src/default-value-func-map";
     export * from "@ailhc/excel2all/src/do-parse";
     export * from "@ailhc/excel2all/src/file-utils";
-    export * from "@ailhc/excel2all/src/generate";
+    export * from "@ailhc/excel2all/src/convert";
     export * from "@ailhc/excel2all/src/interfaces";
     export * from "@ailhc/excel2all/src/table-utils";
     export * from "@ailhc/excel2all/src/loger";
@@ -690,9 +657,16 @@ declare module "@ailhc/excel2all/src/default-parse-handler" {
          * @param parseResult 解析结果
          */
         parseTableFile(
-            parseConfig: ITableParseConfig,
+            parseConfig: ITableConvertConfig,
             fileInfo: IFileInfo,
             parseResult: ITableParseResult
         ): ITableParseResult;
     }
+}
+declare module "@ailhc/excel2all/src/convert" {
+    /**
+     * 转换
+     * @param converConfig 解析配置
+     */
+    export function convert(converConfig: ITableConvertConfig): Promise<void>;
 }

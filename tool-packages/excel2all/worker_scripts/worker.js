@@ -17,12 +17,8 @@ Logger.init(parseConfig);
  */
 let parseHandler;
 if (parseConfig.customParseHandlerPath) {
-    if (!path.isAbsolute(parseConfig.customParseHandlerPath)) {
-        parseConfig.customParseHandlerPath = path.resolve(parseConfig.projRoot, parseConfig.customParseHandlerPath);
-    }
     parseHandler = require(parseConfig.customParseHandlerPath);
-}
-if (!parseHandler) {
+} else {
     parseHandler = new DefaultParseHandler();
 }
 //解析 start
