@@ -45,9 +45,8 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
     ): OutPutFileMap {
         let outputConfig: IOutputConfig = parseConfig.outputConfig;
         if (!outputConfig) {
-            outputConfig = {
-                clientSingleTableJsonDir: path.join(process.cwd(), "./excelJsonOut")
-            };
+            console.error(`parseConfig.outputConfig is undefind`);
+            return;
         }
 
         let tableObjMap: { [key: string]: any } = {};
@@ -61,12 +60,8 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
         for (let filePath in parseResultMap) {
             parseResult = parseResultMap[filePath];
             if (!parseResult.tableDefine) continue;
+
             tableName = parseResult.tableDefine.tableName;
-            if (parseResult.tableDefine.tableType === TableType.horizontal) {
-                tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
-            } else {
-                tableTypeMapDtsStr += this._getOneTableTypeStr(tableName);
-            }
 
             //合并多个同名表
             tableObj = tableObjMap[tableName];
@@ -76,8 +71,14 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
                 tableObj = parseResult.tableObj;
             }
             tableObjMap[tableName] = tableObj;
-            objTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.horizontal;
-            if (outputConfig.isGenDts) {
+
+            if (outputConfig.isGenDts && objTypeTableMap[tableName] === undefined) {
+                objTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.horizontal;
+                if (parseResult.tableDefine.tableType === TableType.horizontal) {
+                    tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
+                } else {
+                    tableTypeMapDtsStr += this._getOneTableTypeStr(tableName);
+                }
                 //输出单个文件
                 if (outputConfig.isBundleDts === undefined) outputConfig.isBundleDts = true;
                 if (!outputConfig.isBundleDts) {

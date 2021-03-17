@@ -57,13 +57,18 @@ export function writeOrDeleteOutPutFiles(
         };
         for (let i = outputFileInfos.length - 1; i >= 0; i--) {
             fileInfo = outputFileInfos[i];
+
             if (fileInfo.isDelete && fs.existsSync(fileInfo.filePath)) {
                 fs.unlinkSync(fileInfo.filePath);
             } else {
+                if (fs.existsSync(fileInfo.filePath) && fs.statSync(fileInfo.filePath).isDirectory()) {
+                    Logger.log(`路径为文件夹:${fileInfo.filePath}`, "error");
+                    continue;
+                }
+
                 if (!fileInfo.encoding && typeof fileInfo.data === "string") {
                     fileInfo.encoding = "utf8";
                 }
-
                 fs.ensureFileSync(fileInfo.filePath);
                 fs.writeFile(
                     fileInfo.filePath,
