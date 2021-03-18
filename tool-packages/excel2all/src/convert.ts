@@ -37,12 +37,6 @@ export async function convert(converConfig: ITableConvertConfig) {
     const defaultPattern = ["**/*.{xlsx,csv}", "!**/~$*.*", "!**/~.*.*"];
     if (!converConfig.pattern) {
         converConfig.pattern = defaultPattern;
-    } else if (converConfig.pattern && typeof converConfig.pattern === "object") {
-        for (let i = 0; i < defaultPattern.length; i++) {
-            if (!converConfig.pattern.includes(defaultPattern[i])) {
-                converConfig.pattern.push(defaultPattern[i]);
-            }
-        }
     }
     if (converConfig.useMultiThread && isNaN(converConfig.threadParseFileMaxNum)) {
         converConfig.threadParseFileMaxNum = 5;
@@ -153,7 +147,7 @@ export async function convert(converConfig: ITableConvertConfig) {
             if (completeCount >= count) {
                 const t2 = new Date().getTime();
                 Logger.log(`[多线程导表时间]:${t2 - t1}`);
-                writeFiles(
+                onParseEnd(
                     converConfig,
                     parseResultMapCacheFilePath,
                     trans2FileHandler,
@@ -184,7 +178,7 @@ export async function convert(converConfig: ITableConvertConfig) {
         doParse(converConfig, fileInfos, parseResultMap, parseHandler);
         const t2 = new Date().getTime();
         Logger.log(`[单线程导表时间]:${t2 - t1}`);
-        writeFiles(
+        onParseEnd(
             converConfig,
             parseResultMapCacheFilePath,
             trans2FileHandler,
@@ -195,7 +189,17 @@ export async function convert(converConfig: ITableConvertConfig) {
         );
     }
 }
-function writeFiles(
+/**
+ * 解析结束
+ * @param parseConfig
+ * @param parseResultMapCacheFilePath
+ * @param trans2FileHandler
+ * @param fileInfos
+ * @param deleteFileInfos
+ * @param parseResultMap
+ * @param logStr
+ */
+function onParseEnd(
     parseConfig: ITableConvertConfig,
     parseResultMapCacheFilePath: string,
     trans2FileHandler: ITransResult2AnyFileHandler,
