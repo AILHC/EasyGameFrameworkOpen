@@ -1,6 +1,5 @@
 import * as path from "path";
 import { TableType } from "./default-parse-handler";
-import { Base64 } from "js-base64";
 import { deflateSync } from "zlib";
 import { osEol } from "./get-os-eol";
 declare global {
@@ -8,9 +7,9 @@ declare global {
      * 输出配置
      */
     interface IOutputConfig {
-        /**单个配置表json输出目录路径，默认输出到当前执行目录下的./excelJsonOut */
-        clientSingleTableJsonDir: string;
-        /**合并配置表json输出路径(包含文件名)，如果不配置则不合并json */
+        /**单个配置表json输出目录路径 */
+        clientSingleTableJsonDir?: string;
+        /**合并配置表json文件路径(包含文件名,比如 ./out/bundle.json) */
         clientBundleJsonOutPath?: string;
         /**是否格式化合并后的json，默认不 */
         isFormatBundleJson?: boolean;
@@ -20,18 +19,12 @@ declare global {
         clientDtsOutDir?: string;
         /**是否合并所有声明为一个文件,默认true */
         isBundleDts?: boolean;
-        /**合并后的声明文件名 */
+        /**合并后的声明文件名,如果没有则默认为tableMap */
         bundleDtsFileName?: string;
         /**是否将json格式压缩,默认否,减少json字段名字符,效果较小 */
         isCompress?: boolean;
         /**是否Zip压缩,使用zlib */
         isZip?: boolean;
-        /**是否将输出的合并json转为base64，默认否*/
-        bundleJsonIsEncode2Base64?: boolean;
-        /**加密混淆字符串前缀 */
-        preBase64UglyString?: string;
-        /**加密混淆字符串后缀 */
-        sufBase64UglyString?: string;
     }
 }
 /**类型字符串映射字典 */
@@ -122,6 +115,7 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
             let jsonBundleFilePath = outputConfig.clientBundleJsonOutPath;
             let outputData: any;
             if (outputConfig.isCompress) {
+                //进行格式压缩
                 const newTableObjMap = {};
                 let tableObj: any;
                 let newTableObj: any;
@@ -144,16 +138,18 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
             } else {
                 outputData = JSON.stringify(tableObjMap);
             }
-            if (outputConfig.bundleJsonIsEncode2Base64) {
-                outputData = Base64.encode(outputData);
-                if (outputConfig.preBase64UglyString) {
-                    outputData = outputConfig.preBase64UglyString + outputData;
-                }
-                if (outputConfig.sufBase64UglyString) {
-                    outputData += outputConfig.sufBase64UglyString;
-                }
-            }
+            //进行base64处理
+            // if (outputConfig.bundleJsonIsEncode2Base64) {
+            //     outputData = Base64.encode(outputData);
+            //     if (outputConfig.preBase64UglyString) {
+            //         outputData = outputConfig.preBase64UglyString + outputData;
+            //     }
+            //     if (outputConfig.sufBase64UglyString) {
+            //         outputData += outputConfig.sufBase64UglyString;
+            //     }
+            // }
             if (outputConfig.isZip) {
+                //使用zilb压缩
                 outputData = deflateSync(outputData);
             }
             outputFileMap[jsonBundleFilePath] = {
