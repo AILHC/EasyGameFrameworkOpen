@@ -48,7 +48,9 @@ function getParseConfig(option) {
         for (let key in outputConfig) {
             delete config[key];
         }
-        outputConfig.clientSingleTableJsonDir = getAbsolutePath(outputConfig.clientSingleTableJsonDir, config.projRoot, "./excelJsonOut");
+        if (outputConfig.clientSingleTableJsonDir) {
+            outputConfig.clientSingleTableJsonDir = getAbsolutePath(outputConfig.clientSingleTableJsonDir, config.projRoot);
+        }
         if (outputConfig.isGenDts) {
             outputConfig.clientDtsOutDir = getAbsolutePath(outputConfig.clientDtsOutDir, config.projRoot);
             if (!outputConfig.bundleDtsFileName) {
