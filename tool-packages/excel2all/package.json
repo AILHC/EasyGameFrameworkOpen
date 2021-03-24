@@ -12,6 +12,7 @@
     "watch:cjs": "egf build -w true -f cjs",
     "debug": "node ./lib/index.js ../../../../afk_number incremental",
     "testGen2": "node ./__test__/test.js",
+    "testFileMatch": "node ./__test__/test-test-file-match.js",
     "testWorker": "ts-node --transpile-only __test__/worker_test.ts",
     "//构建命令": "",
     "build:cjs": "egf build -f cjs -m true",
