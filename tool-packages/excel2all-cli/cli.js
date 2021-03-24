@@ -24,7 +24,7 @@ program
     .option('-mt, --useMultiThread', '是否使用多线程，默认不')
     .option('-tn, --threadParseFileMaxNum [threadParseFileMaxNum]', '单个线程解析文件的最大数量\n-------------------------')
 
-    .option('-l --logLevel [logLevel]', '日志等级,"no" | "info" | "warn" | "error"\n-------------------------')
+    .option('-l --logLevel [logLevel]', '日志等级,只是限制了控制台输出，但不限制日志记录,"no" | "info" | "warn" | "error"\n-------------------------')
     .option('-olf --outputLogFile', '是否输出日志文件，默认输出\n-------------------------')
 
     .option('-cphp --customParseHandlerPath [customParseHandlerPath]', '自定义解析处理器实现路径，\n需要返回一个实现了ITableParseHandler的对象,\n可以直接调用parseTableFile方法\n-------------------------')
@@ -47,4 +47,18 @@ program
         if (config) {
             excel2all.convert(config)
         }
-    }).parse();
+    })
+    .command("tfm")
+    .option('-p, --projRoot [projRoot]', '项目根目录，默认执行命令处\n-------------------------')
+    .option('-c, --config [config]', '导表配置文件路径，如果没有则使用默认的\n-------------------------')
+    .option('-t, --tableFileDir [tableFileDir]', "excel文件夹路径,如果没有则使用项目根目录\n-------------------------")
+    .option('-pt, --pattern [pattern...]', 'excel文件名匹配规则,多个以空格隔开 以 -- 结束,\n如: -pt "\\**\\*.{xlsx,csv}" "!~$*.*" -- \n默认匹配规则["\\**\\*.{xlsx,csv}", "!~$*.*"]\n匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除\n参考：https://github.com/micromatch/micromatch\n--------')
+    .option('-uc, --useCache', '是否使用缓存，默认不\n-------------------------')
+    .option('-cf, --cacheFileDirPath [cacheFileDirPath]', '缓存文件文件夹，\n-------------------------')
+    .action(function (option) {
+        const config = getParseConfig(option);
+        if (config) {
+            excel2all.testFileMatch(config)
+        }
+    })
+    .parse();
