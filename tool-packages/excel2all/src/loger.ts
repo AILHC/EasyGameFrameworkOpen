@@ -16,25 +16,36 @@ export class Logger {
         this._enableOutPutLogFile = parseConfig.outputLogFile === undefined ? true : parseConfig.outputLogFile;
     }
     /**
-     * 输出日志
+     * 输出日志,日志等级只是限制了控制台输出，但不限制日志记录
      * @param message
      * @param level
      */
     public static log(message: string, level: LogLevel = "info") {
-        if (level === "no") return;
-        if (this._logLevel <= LogLevelEnum[level]) {
-            switch (level) {
-                case "error":
-                    console.error(message);
-                    break;
-                case "info":
-                    console.log(message);
-                    break;
-                case "warn":
-                    console.warn(message);
-                    break;
+        if (level !== "no") {
+            if (this._logLevel <= LogLevelEnum[level]) {
+                switch (level) {
+                    case "error":
+                        console.error(message);
+                        break;
+                    case "info":
+                        console.log(message);
+                        break;
+                    case "warn":
+                        console.warn(message);
+                        break;
+                }
             }
         }
+
+        if (!this._enableOutPutLogFile) return;
+        this._logStr += message + osEol;
+    }
+    /**
+     * 系统日志输出
+     * @param args
+     */
+    public static systemLog(message: string) {
+        console.log(message);
         if (!this._enableOutPutLogFile) return;
         this._logStr += message + osEol;
     }

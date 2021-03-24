@@ -104,7 +104,7 @@ declare global {
          * 自定义导出处理器，require(customTrans2FileHandlerPath)
          *
          * 需要返回一个
-         * @type {ITransResult2AnyFileHandler} 实现了ITransResult2AnyFileHandler的对象
+         * @type {IConvertHook} 实现了ITransResult2AnyFileHandler的对象
          *
          * @example
          * class CustomTrans2FileHandler  implements ITransResult2AnyFileHandler {
@@ -119,8 +119,8 @@ declare global {
          * }
          * module.exports = new CustomTrans2FileHandler();
          */
-        customTrans2FileHandlerPath?: string;
-        /**日志等级 */
+        customConvertHookPath?: string;
+        /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
         logLevel?: LogLevel;
         /**默认输出日志文件 */
         outputLogFile?: boolean;
@@ -143,19 +143,40 @@ declare global {
          */
         transCellValue(filed: ITableField, cellValue: string): any;
     }
-    interface ITransResult2AnyFileHandler {
+    interface IConvertContext {
+        convertConfig: ITableConvertConfig;
         /**
-         * 转换解析结果为多个任意文件
-         * @param changedFileInfos 变动的文件信息数组
-         * @param deleteFileInfos 删除了的文件信息数组
-         * @param parseResultMap 解析结果字典
+         * 变动的文件信息数组
          */
-        trans2Files(
-            parseConfig: ITableConvertConfig,
-            changedFileInfos: IFileInfo[],
-            deleteFileInfos: IFileInfo[],
-            parseResultMap: TableParseResultMap
-        ): OutPutFileMap;
+        changedFileInfos: IFileInfo[];
+        /**
+         * 删除了的文件信息数组
+         */
+        deleteFileInfos: IFileInfo[];
+        /**
+         * 解析结果字典
+         */
+        parseResultMap: TableParseResultMap;
+        outPutFileMap: OutPutFileMap;
+    }
+    interface IConvertHook {
+        onStart?(context: IConvertContext): void;
+        /**
+         * 遍历文件之后，解析之前
+         * @param context
+         */
+        onParseBefore?(context: IConvertContext): void;
+        /**
+         * 解析结束
+         * 可以转换解析结果为多个任意文件
+         * @param context
+         */
+        onParseAfter?(context: IConvertContext): void;
+        /**
+         * 写入文件结束
+         * @param context
+         */
+        onWriteFileEnd(context: IConvertContext): void;
     }
     interface ITableParseHandler {
         /**
@@ -169,8 +190,6 @@ declare global {
             parseResult: ITableParseResult
         ): ITableParseResult;
     }
-    /**配表解析函数 */
-    type Trans2FilesFunc = ITransResult2AnyFileHandler["trans2Files"];
     /**文件导出函数 */
     type ParseTableFileFunc = ITableParseHandler["parseTableFile"];
 }

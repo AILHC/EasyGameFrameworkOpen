@@ -9,7 +9,7 @@ const tableFileDir = path.join(process.cwd(), "test-excel-files");
  */
 const convertConfig = {
     tableFileDir: tableFileDir,
-    useCache: false,
+    useCache: true,
     useMultiThread: false,
     threadParseFileMaxNum: 2, //多线程比单线程快一点
     cacheFileDirPath: "./test-export/.cache",
@@ -31,4 +31,4 @@ const outputConfig = {
 };
 convertConfig.outputConfig = outputConfig;
 
-excel2all.convert(convertConfig);
+excel2all.testFileMatch(convertConfig);

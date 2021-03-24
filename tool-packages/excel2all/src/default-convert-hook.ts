@@ -2,6 +2,7 @@ import * as path from "path";
 import { TableType } from "./default-parse-handler";
 import { deflateSync } from "zlib";
 import { osEol } from "./get-os-eol";
+import { Logger } from "./loger";
 declare global {
     /**
      * 输出配置
@@ -29,14 +30,17 @@ declare global {
 }
 /**类型字符串映射字典 */
 const typeStrMap = { int: "number", json: "any", "[int]": "number[]", "[string]": "string[]" };
-export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
-    trans2Files(
-        parseConfig: ITableConvertConfig,
-        changedFileInfos: IFileInfo[],
-        deleteFileInfos: IFileInfo[],
-        parseResultMap: TableParseResultMap
-    ): OutPutFileMap {
-        let outputConfig: IOutputConfig = parseConfig.outputConfig;
+export class DefaultConvertHook implements IConvertHook {
+    onStart?(context: IConvertContext): void {
+        Logger.systemLog(`convert-hook onStart`);
+    }
+    onParseBefore?(context: IConvertContext): void {
+        Logger.systemLog(`convert-hook onParseBefore`);
+    }
+    onParseAfter?(context: IConvertContext): void {
+        const convertConfig = context.convertConfig;
+        const parseResultMap = context.parseResultMap;
+        let outputConfig: IOutputConfig = convertConfig.outputConfig;
         if (!outputConfig) {
             console.error(`parseConfig.outputConfig is undefind`);
             return;
@@ -158,7 +162,16 @@ export class Trans2JsonAndDtsHandler implements ITransResult2AnyFileHandler {
                 data: outputData
             };
         }
-        return outputFileMap;
+        if (context.outPutFileMap) {
+            for (let key in outputFileMap) {
+                context.outPutFileMap[key] = outputFileMap[key];
+            }
+        } else {
+            context.outPutFileMap = outputFileMap;
+        }
+    }
+    onWriteFileEnd(context: IConvertContext): void {
+        Logger.systemLog(`convert-hook onWriteFileEnd 写入结束`);
     }
     private _addSingleTableDtsOutputFile(
         config: IOutputConfig,
