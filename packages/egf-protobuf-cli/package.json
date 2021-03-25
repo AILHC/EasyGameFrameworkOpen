@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "commander": "^2.20.0",
-    "fs-extra": "^5.0.0",
     "fs-extra-promise": "^1.0.1",
     "protobufjs": "~6.8.8",
     "rimraf": "^2.6.3",
