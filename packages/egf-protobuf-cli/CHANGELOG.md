@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.5](https://github.com/AILHC/EasyGameFrameworkOpen/compare/egf-protobuf@1.3.4...egf-protobuf@1.3.5) (2021-03-25)
+
+
+### Bug Fixes
+
+* 1. 修复Cannot find module 'fs-extra-promise'的bug,2. 移除protobuf-cli中对fs-extra的依赖 ([df82a19](https://github.com/AILHC/EasyGameFrameworkOpen/commit/df82a1984df6155678ec9f95416469a3ad1a27af))
+
+
+
+
+
 ## [1.3.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/egf-protobuf@1.3.3...egf-protobuf@1.3.4) (2021-02-17)
 
 
