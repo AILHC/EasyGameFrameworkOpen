@@ -14,10 +14,7 @@ program
 
 program
     .command("create")
-    .description(`创建/初始化模板项目
-    .option('-n, --name [name]', '项目名，没有则默认')
-    .option('-p, --path [path]', "创建路径")`)
-
+    .description(`创建/初始化模板项目`)
     .option('-n, --name [name]', '项目名，没有则默认')
     .option('-p, --path [path]', "创建路径")
     .action(async function (option) {
@@ -48,32 +45,20 @@ program
 program
     .command("build")
     .option('-w, --watch [watch]', '是否监视 默认false')
-    .option('-e, --entry [entry]', '入口文件 默认src/index.ts')
+    .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组')
     .option('-o, --output [output]', '输出文件 默认dist/index.js')
+    .option('-od, --output-dir [outputDir]', '输出文件夹')
     .option('-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名')
-    .option('-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/types')
-    .option('-s, --source-dirs [sourceDirs]', '源码目录数组，默认[src],写 src,src2')
+    .option('-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/${format}/types')
     .option('-u, --unRemoveComments [unRemoveComments]', '是否移除注释')
     .option('-t, --target [target]', '编译目标es标准，默认es5')
     .option('-m, --minify [minify]', '是否压缩')
-    .description(`构建
-    .option('-w, --watch [watch]', '是否监视 默认false')
-    .option('-e, --entry [entry]', '入口文件 默认src/index.ts')
-    .option('-o, --output [output]', '输出文件 默认dist/index.js')
-    .option('-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名')
-    .option('-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/types')
-    .option('-s, --source-dirs [sourceDirs]', '源码目录数组，默认[src],写 src,src2')
-    .option('-u, --unRemoveComments [unRemoveComments]', '是否移除注释')
-    .option('-t, --target [target]', '编译目标es标准，默认es5')
-    .option('-m, --minify [minify]', '是否压缩')`)
+    .description(`构建`)
     .action(function (option) {
-        if (option.sourceDirs) {
-            option.sourceDirs = option.sourceDirs.split(",");
-        }
         rollupDo.build(
             option.watch,
-            option.entry, option.output, option.format,
-            option.typesDir, option.sourceDirs,
+            option.entry, option.outputDir, option.output, option.format,
+            option.typesDir,
             option.unRemoveComments,
             option.target,
             option.minify);
