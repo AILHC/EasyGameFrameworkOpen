@@ -106,20 +106,22 @@ const tsconfigOverride = {
 /**
  * 构建
  * @param {boolean} isWatch 是否监视
- * @param {string} entry 入口文件 默认src/index.ts
- * @param {string} output 输出文件 默认dist/${format}/lib/index.js
+ * @param {string[]} entrys 入口文件 默认src/index.ts，可以是数组,如果是多入口，则必须有outputDir参数
+ * @param {string} outputDir 多输出文件夹
+ * @param {string[]} output 输出文件 默认dist/${format}/lib/index.js
  * @param {string} format 输出格式 默认cjs,可选iife,umd,es  
  *  如果是iife和umd 需要加:<globalName> 冒号+全局变量名
- * @param {string} typesDir 声明文件输出目录 默认 dist/types
+ * @param {string} typesDir 声明文件输出目录,默认输出到dist/${format}/types
  * @param {string} sourceDir 源码目录数组，默认[src]
  * @param {string} unRemoveComments 不移除注释
  * @param {string} target 目标es标准
  * @param {boolean} minify 是否压缩
  */
-async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, unRemoveComments, target, minify) {
+async function rollupBuild(isWatch, entrys, outputDir, output, format, typesDir, unRemoveComments, target, minify) {
     let moduleName;
     let customDts = false;
     let useFooter;
+
     if (format.includes("iife") || format.includes("umd")) {
         const strs = format.split(":");
         format = strs[0];
@@ -141,6 +143,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         useFooter = true;
     }
     if (format.includes("system")) {
+
         const strs = format.split(":");
         format = strs[0];
         moduleName = strs[1];
@@ -153,16 +156,22 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
     if (!format) {
         format = "cjs"
     }
-    if (!entry) {
-        entry = "src/index.ts";
+    if (!entrys) {
+        entrys = ["src/index.ts"];
     }
-    if (!output && (format === "es" || format === "esm")) {
-        output = `dist/es/lib/index.mjs`
+    if (entrys.length > 1) {
+        if (!outputDir) {
+            outputDir = `dist/${format}`;
+        }
+        output = undefined;
+    } else {
+        if (!output && (format === "es" || format === "esm")) {
+            output = `dist/es/lib/index.mjs`
+        }
+        if (!output) {
+            output = `dist/${format}/lib/index.js`;
+        }
     }
-    if (!output) {
-        output = `dist/${format}/lib/index.js`
-    }
-
     if (!typesDir) {
         typesDir = `dist/${format}/types`;
     }
@@ -231,7 +240,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
             return isExternal;
 
         },
-        input: entry,
+        input: entrys,
         plugins: [
             // myMultiInput(),
             jsonPlugin(),
@@ -245,11 +254,27 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
             // rdts()
         ]
     }
+    // /**
+    //  * @type { import('rollup').OutputOptions[] }
+    //  */
+    // const outputOpts = [];
+    // for (let i = 0; i < outputs.length; i++) {
+
+    //     outputOpts.push(outputOption);
+    // }
     /**
      * @type { import('rollup').OutputOptions }
      */
     let outputOption = {
         file: output,
+        entryFileNames: (chunkInfo) => {
+            if (format === "es" || format === "esm") {
+                return `[name].mjs`
+            } else {
+                return `[name].js`
+            }
+        },
+        dir: outputDir,
         format: format,
         name: moduleName,
         sourcemap: tsconfig.compilerOptions.sourceMap ? "inline" : false,
@@ -260,6 +285,7 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
         footer: moduleName && useFooter ? `var globalTarget =window?window:global; globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : ''
 
     }
+
 
     if (isWatch) {
         /**@type {import('rollup').RollupWatchOptions} */
@@ -287,12 +313,13 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
 
         })
     } else {
+        // await build(buildConfig, outputOpts[i], typesDir[i], moduleName, customDts, minify);
         /**
          * @type { import('rollup').RollupBuild }
          */
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
-        await rollupBuild.write(outputOption);
+        const writeResult = await rollupBuild.write(outputOption);
         if (minify) {
             /**
                 * @type {import("rollup-plugin-terser").Options}
@@ -313,68 +340,64 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
             await rollupBuild.write(outputOption);
 
         }
-        // //npm-dts
-        // const typesDirPath = path.join(process.cwd(), typesDir);
-        // const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
-        // if (!fs.existsSync(typesDirPath)) {
-        //     fs.mkdirSync(typesDirPath);
-        // }
-        // new npmDts.Generator({
-        //     entry: path.resolve(process.cwd(), entry),
-        //     root: path.resolve(process.cwd()),
-        //     tmp: path.resolve(process.cwd(), 'cache/tmp'),
-        //     output: path.resolve(typesDirPath, `${dtsFileName}.d.ts`),
-        //     tsc: '--project tsconfigDts.json --extendedDiagnostics',
-        // }).generate()
         if (!customDts) {
             /**
-         * @type {dtsGenerator}
-         */
+             * @type {dtsGenerator}
+             */
             const dtsGen = require("dts-generator").default;
-
+            const tsconfig = require(path.join(process.cwd(), `tsconfig.json`));
             const typesDirPath = path.join(process.cwd(), typesDir);
             const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
             const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
             // console.log(dtsGenExclude);
-            dtsGen({
-                baseDir: path.resolve(process.cwd()),
-                exclude: dtsGenExclude,
-                out: path.resolve(typesDirPath, `index.d.ts`),
-                // prefix: moduleName,
-                resolveModuleId: function (params) {
-                    // console.log(params.currentModuleId)
-                    if (params.currentModuleId === entry.split(".")[0]) {
-                        return moduleName;
-                    }
-                    return `${moduleName}/${params.currentModuleId}`
-                },
-                resolveModuleImport: function (params) {
-                    // console.log(params)
-                    // {
-                    //     importedModuleId: './interfaces',
-                    //     currentModuleId: 'src/index',
-                    //     isDeclaredExternalModule: false
-                    //   }
-                    if (!params.isDeclaredExternalModule) {
-                        let importedModuleId = params.importedModuleId;
-                        if (params.importedModuleId.includes(".")) {
-                            //包内模块
-                            importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+            let entry;
+            if (outputDir) {
+                //多入口 暂时不做声明输出 TODO
+                
+            } else {
+                entry = entrys[0];
+                dtsGen({
+                    baseDir: path.resolve(process.cwd()),
+                    exclude: dtsGenExclude,
+                    out: path.resolve(typesDirPath, `index.d.ts`),
+                    // prefix: moduleName,
+                    resolveModuleId: function (params) {
+                        // console.log(params.currentModuleId)
+                        if (params.currentModuleId === entry.split(".")[0]) {
+                            return moduleName;
                         }
-                        return importedModuleId;
+                        return `${moduleName}/${params.currentModuleId}`
+                    },
+                    resolveModuleImport: function (params) {
+                        // console.log(params)
+                        // {
+                        //     importedModuleId: './interfaces',
+                        //     currentModuleId: 'src/index',
+                        //     isDeclaredExternalModule: false
+                        //   }
+                        if (!params.isDeclaredExternalModule) {
+                            let importedModuleId = params.importedModuleId;
+                            if (params.importedModuleId.includes(".")) {
+                                //包内模块
+                                importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+                            }
+                            return importedModuleId;
+                        }
+                        return params.importedModuleId
                     }
-                    return params.importedModuleId
-                }
-            }).then(() => {
+                }).then(() => {
 
-            })
+                })
+            }
+
+
 
         } else {
             const modules = rollupBuild.cache.modules;
             let fileName;
             let dtsFilePath;
             let dtsStr = "";
-            const sigleDtsFilePath = path.join(process.cwd(), `dist/${format}`, `${moduleName}.d.ts`);
+            const sigleDtsFilePath = path.join(process.cwd(), `dist/${outputOption.format}`, `${moduleName}.d.ts`);
             if (fs.existsSync(sigleDtsFilePath)) {
                 fs.unlinkSync(sigleDtsFilePath);
             }
@@ -425,6 +448,18 @@ async function rollupBuild(isWatch, entry, output, format, typesDir, sourceDir, 
             // }
         }
     }
+
+}
+/**
+ * 输出js和dts声明文件
+ * @param {import('rollup').InputOptions} buildConfig 构建配置
+ * @param {import('rollup').OutputOptions} outputOption 输出配置
+ * @param {string} typesDir 声明文件输出目录
+ * @param {string} moduleName 模块名
+ * @param {boolean} customDts iife和umd规范用
+ * @param {boolean} minify 是否压缩
+ */
+async function build(buildConfig, entry, outputOption, typesDir, moduleName, customDts, minify) {
 
 }
 module.exports = {

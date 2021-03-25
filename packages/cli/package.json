@@ -54,6 +54,8 @@
     "egf": "./cli.js"
   },
   "scripts": {
-    "watch": "egf watch"
+    "test:watch:cjs": "egf build -w -f cjs  -od ./__test__/dist -e ./__test__/src/index.ts ./__test__/src2/index.ts",
+    "test:build:es": "egf build -f es -e ./__test__/src/index.ts ./__test__/src2/index.ts",
+    "single:test:build:cjs": "egf build -f es -e ./__test__/src/index.ts"
   }
 }
