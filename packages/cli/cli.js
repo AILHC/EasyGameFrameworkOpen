@@ -3,7 +3,7 @@ const program = require('commander');
 const package = require("./package.json");
 const rollupDo = require("./rollupdo");
 const path = require("path");
-const fs = require("fs-extra-promise");
+const fs = require("fs-extra");
 
 
 
