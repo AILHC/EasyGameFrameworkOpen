@@ -44,6 +44,7 @@ program
     })
 program
     .command("build")
+    .option('-p, --proj [proj]', '项目根路径，默认为执行命令处process.cwd()')
     .option('-w, --watch [watch]', '是否监视 默认false')
     .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组')
     .option('-o, --output [output]', '输出文件 默认dist/index.js')
@@ -53,15 +54,21 @@ program
     .option('-u, --unRemoveComments [unRemoveComments]', '是否移除注释')
     .option('-t, --target [target]', '编译目标es标准，默认es5')
     .option('-m, --minify [minify]', '是否压缩')
+    .option('-gd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
     .description(`构建`)
     .action(function (option) {
         rollupDo.build(
+            option.proj,
             option.watch,
-            option.entry, option.outputDir, option.output, option.format,
+            option.entry,
+            option.outputDir,
+            option.output,
+            option.format,
             option.typesDir,
             option.unRemoveComments,
             option.target,
-            option.minify);
+            option.minify,
+            option.genDts);
     })
 
 program.parse(process.argv);
