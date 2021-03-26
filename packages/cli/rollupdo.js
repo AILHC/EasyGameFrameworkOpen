@@ -105,6 +105,7 @@ const tsconfigOverride = {
 }
 /**
  * 构建
+ * @param {string} projRoot 项目根目录，默认为执行命令的当前路径
  * @param {boolean} isWatch 是否监视
  * @param {string[]} entrys 入口文件 默认src/index.ts，可以是数组,如果是多入口，则必须有outputDir参数
  * @param {string} outputDir 多输出文件夹
@@ -116,12 +117,21 @@ const tsconfigOverride = {
  * @param {string} unRemoveComments 不移除注释
  * @param {string} target 目标es标准
  * @param {boolean} minify 是否压缩
+ * @param {boolean} isGenDts 是否生成dts
  */
-async function rollupBuild(isWatch, entrys, outputDir, output, format, typesDir, unRemoveComments, target, minify) {
+async function rollupBuild(
+    projRoot, isWatch, entrys, outputDir, output,
+    format, typesDir, unRemoveComments, target, minify, isGenDts) {
+
     let moduleName;
     let customDts = false;
     let useFooter;
-
+    if (!projRoot) {
+        projRoot = process.cwd();
+    }
+    if (!path.isAbsolute(projRoot)) {
+        projRoot = path.resolve(process.cwd(), projRoot);
+    }
     if (format.includes("iife") || format.includes("umd")) {
         const strs = format.split(":");
         format = strs[0];
@@ -262,6 +272,12 @@ async function rollupBuild(isWatch, entrys, outputDir, output, format, typesDir,
 
     //     outputOpts.push(outputOption);
     // }
+    if (output && !path.isAbsolute(output)) {
+        output = path.resolve(projRoot, output);
+    }
+    if (outputDir && !path.isAbsolute(outputDir)) {
+        outputDir = path.resolve(projRoot, outputDir);
+    }
     /**
      * @type { import('rollup').OutputOptions }
      */
@@ -300,9 +316,11 @@ async function rollupBuild(isWatch, entrys, outputDir, output, format, typesDir,
 
             } else if (event.code === "BUNDLE_START") {
                 console.log("开始构建");
+                isGenDts && !customDts && genDts(projRoot, format, typesDir, moduleName, customDts);
                 console.log(event.output);
             } else if (event.code === "BUNDLE_END") {
                 console.log("构建结束");
+                isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName);
             }
             else if (event.code === "END") {
                 console.log(`结束`)
@@ -319,7 +337,11 @@ async function rollupBuild(isWatch, entrys, outputDir, output, format, typesDir,
          */
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
+
+        isGenDts && !customDts && genDts(projRoot, format, typesDir, moduleName, customDts);
+
         const writeResult = await rollupBuild.write(outputOption);
+        isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName, customDts);
         if (minify) {
             /**
                 * @type {import("rollup-plugin-terser").Options}
@@ -337,118 +359,128 @@ async function rollupBuild(isWatch, entrys, outputDir, output, format, typesDir,
             outputOption.sourcemap = false;
             outputOption.plugins = [terserPlugin];
             outputOption.file = outputOption.file.replace(".", ".min.");
+
             await rollupBuild.write(outputOption);
-
         }
-        if (!customDts) {
-            /**
-             * @type {dtsGenerator}
-             */
-            const dtsGen = require("dts-generator").default;
-            const tsconfig = require(path.join(process.cwd(), `tsconfig.json`));
-            const typesDirPath = path.join(process.cwd(), typesDir);
-            const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
-            const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
-            // console.log(dtsGenExclude);
-            let entry;
-            if (outputDir) {
-                //多入口 暂时不做声明输出 TODO
-                
-            } else {
-                entry = entrys[0];
-                dtsGen({
-                    baseDir: path.resolve(process.cwd()),
-                    exclude: dtsGenExclude,
-                    out: path.resolve(typesDirPath, `index.d.ts`),
-                    // prefix: moduleName,
-                    resolveModuleId: function (params) {
-                        // console.log(params.currentModuleId)
-                        if (params.currentModuleId === entry.split(".")[0]) {
-                            return moduleName;
-                        }
-                        return `${moduleName}/${params.currentModuleId}`
-                    },
-                    resolveModuleImport: function (params) {
-                        // console.log(params)
-                        // {
-                        //     importedModuleId: './interfaces',
-                        //     currentModuleId: 'src/index',
-                        //     isDeclaredExternalModule: false
-                        //   }
-                        if (!params.isDeclaredExternalModule) {
-                            let importedModuleId = params.importedModuleId;
-                            if (params.importedModuleId.includes(".")) {
-                                //包内模块
-                                importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
-                            }
-                            return importedModuleId;
-                        }
-                        return params.importedModuleId
-                    }
-                }).then(() => {
 
-                })
-            }
-
-
-
-        } else {
-            const modules = rollupBuild.cache.modules;
-            let fileName;
-            let dtsFilePath;
-            let dtsStr = "";
-            const sigleDtsFilePath = path.join(process.cwd(), `dist/${outputOption.format}`, `${moduleName}.d.ts`);
-            if (fs.existsSync(sigleDtsFilePath)) {
-                fs.unlinkSync(sigleDtsFilePath);
-            }
-
-            // fs.readdirSync(path.join(process.cwd(), typesDir))
-            const typesDirPath = path.join(process.cwd(), typesDir);
-            const declareGlobalRegex = /(declare global \{{1})([\s\S]*\}{1})([\s]*\}{1})/g;
-            const importRegex = /import\s?{\s?[\w\d]*?\s?}\s?from\s?"[\w\W]*?";?/g
-            fs.readdir(typesDirPath, function (err, files) {
-                let str;
-                let regexMatch;
-                for (let i = 0; i < files.length; i++) {
-                    if (files[i] === "index.d.ts") continue;
-                    // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
-                    const typeFilePath = path.join(typesDirPath, files[i]);
-                    // console.log(typeFilePath);
-                    str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
-                    regexMatch = importRegex.exec(str);
-                    if (regexMatch) {
-                        regexMatch.forEach(function (match) {
-                            str = str.replace(match, "")
-                        })
-                    }
-                    regexMatch = declareGlobalRegex.exec(str)
-                    if (regexMatch) {
-                        dtsStr += regexMatch[2];
-                    } else {
-                        dtsStr += str;
-                    }
-
-                }
-                dtsStr = dtsStr.replace(/export {}/g, "");
-                dtsStr = dtsStr.replace(/export declare /g, "");
-                dtsStr = dtsStr.replace(/export default /g, "");
-
-                dtsStr = `declare namespace ${moduleName} {\n` + dtsStr + "}\n";
-
-                fs.writeFileSync(sigleDtsFilePath, dtsStr, "utf8");
-            })
-            // for (let i = 0; i < modules.length; i++) {
-            //     fileName = modules[i].id.includes("/") ? modules[i].id.split("/").pop() : modules[i].id.split("\\").pop();
-            //     if (fileName === "index.ts") {
-            //         continue;
-            //     }
-            //     dtsFilePath = path.join(process.cwd(), typesDir, fileName.replace(".ts", ".d.ts"));
-            //     dtsStr += fs.readFileSync(dtsFilePath, "utf8");
-
-            // }
-        }
     }
 
+}
+/**
+ * 生成声明文件
+ * @param {string} projRoot 
+ * @param {string} format 
+ * @param {string} typesDir 
+ * @param {string} moduleName
+ */
+function genDts(projRoot, format, typesDir, moduleName) {
+    /**
+     * @type {dtsGenerator}
+     */
+    const dtsGen = require("dts-generator").default;
+    const tsconfig = require(path.join(projRoot, `tsconfig.json`));
+    const typesDirPath = path.join(projRoot, typesDir);
+    const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
+    const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+    // console.log(dtsGenExclude);
+    let entry;
+    if (outputDir) {
+        //多入口 暂时不做声明输出 TODO
+
+    } else {
+        entry = entrys[0];
+        dtsGen({
+            baseDir: path.resolve(projRoot),
+            exclude: dtsGenExclude,
+            out: path.resolve(typesDirPath, `index.d.ts`),
+            // prefix: moduleName,
+            resolveModuleId: function (params) {
+                // console.log(params.currentModuleId)
+                if (params.currentModuleId === entry.split(".")[0]) {
+                    return moduleName;
+                }
+                return `${moduleName}/${params.currentModuleId}`
+            },
+            resolveModuleImport: function (params) {
+                // console.log(params)
+                // {
+                //     importedModuleId: './interfaces',
+                //     currentModuleId: 'src/index',
+                //     isDeclaredExternalModule: false
+                //   }
+                if (!params.isDeclaredExternalModule) {
+                    let importedModuleId = params.importedModuleId;
+                    if (params.importedModuleId.includes(".")) {
+                        //包内模块
+                        importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+                    }
+                    return importedModuleId;
+                }
+                return params.importedModuleId
+            }
+        }).then(() => {
+
+        })
+    }
+}
+/**
+ * 生成单个全局dts
+ * @param {string} projRoot 
+ * @param {string} format
+* @param {string} typesDir 
+ * @param {string} moduleName 
+ */
+function genCustomDts(projRoot, format, typesDir, moduleName) {
+    let dtsStr = "";
+    const sigleDtsFilePath = path.join(projRoot, `dist/${format}`, `${moduleName}.d.ts`);
+    if (fs.existsSync(sigleDtsFilePath)) {
+        fs.unlinkSync(sigleDtsFilePath);
+    }
+
+    // fs.readdirSync(path.join(process.cwd(), typesDir))
+    const typesDirPath = path.join(projRoot, typesDir);
+    const declareGlobalRegex = /(declare global \{{1})([\s\S]*\}{1})([\s]*\}{1})/g;
+    const importRegex = /import\s?{\s?[\w\d]*?\s?}\s?from\s?"[\w\W]*?";?/g
+    fs.readdir(typesDirPath, function (err, files) {
+        let str;
+        let regexMatch;
+        for (let i = 0; i < files.length; i++) {
+            if (files[i] === "index.d.ts") continue;
+            // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
+            const typeFilePath = path.join(typesDirPath, files[i]);
+            // console.log(typeFilePath);
+            str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
+            regexMatch = importRegex.exec(str);
+            if (regexMatch) {
+                regexMatch.forEach(function (match) {
+                    str = str.replace(match, "")
+                })
+            }
+            regexMatch = declareGlobalRegex.exec(str)
+            if (regexMatch) {
+                dtsStr += regexMatch[2];
+            } else {
+                dtsStr += str;
+            }
+
+        }
+        dtsStr = dtsStr.replace(/export {}/g, "");
+        dtsStr = dtsStr.replace(/export declare /g, "");
+        dtsStr = dtsStr.replace(/export default /g, "");
+
+        dtsStr = `declare namespace ${moduleName} {\n` + dtsStr + "}\n";
+
+        fs.writeFileSync(sigleDtsFilePath, dtsStr, "utf8");
+    })
+    // for (let i = 0; i < modules.length; i++) {
+    //     fileName = modules[i].id.includes("/") ? modules[i].id.split("/").pop() : modules[i].id.split("\\").pop();
+    //     if (fileName === "index.ts") {
+    //         continue;
+    //     }
+    //     dtsFilePath = path.join(process.cwd(), typesDir, fileName.replace(".ts", ".d.ts"));
+    //     dtsStr += fs.readFileSync(dtsFilePath, "utf8");
+
+    // }
 }
 /**
  * 输出js和dts声明文件
