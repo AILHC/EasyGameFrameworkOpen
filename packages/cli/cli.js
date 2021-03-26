@@ -46,7 +46,7 @@ program
     .command("build")
     .option('-p, --proj [proj]', '项目根路径，默认为执行命令处process.cwd()')
     .option('-w, --watch [watch]', '是否监视 默认false')
-    .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组')
+    .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口')
     .option('-o, --output [output]', '输出文件 默认dist/index.js')
     .option('-od, --output-dir [outputDir]', '输出文件夹')
     .option('-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名')
