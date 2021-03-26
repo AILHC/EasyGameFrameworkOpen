@@ -130,7 +130,7 @@ async function rollupBuild(
         projRoot = process.cwd();
     }
     if (!path.isAbsolute(projRoot)) {
-        projRoot = path.resolve(process.cwd(), projRoot);
+        projRoot = path.join(process.cwd(), projRoot);
     }
     if (format.includes("iife") || format.includes("umd")) {
         const strs = format.split(":");
@@ -194,7 +194,7 @@ async function rollupBuild(
         tsconfigOverride.compilerOptions.target = target;
     }
     tsconfigOverride.compilerOptions.declaration = customDts;
-    const tsconfig = require(path.join(process.cwd(), `tsconfig.json`));
+    const tsconfig = require(path.join(projRoot, `tsconfig.json`));
     let exclude = tsconfig.exclude ? tsconfig.exclude : [];
     exclude = exclude.concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
     let externalTag = tsconfig.externalTag;
@@ -212,7 +212,9 @@ async function rollupBuild(
         tsconfigOverride: tsconfigOverride,
         useTsconfigDeclarationDir: true,
     }
-
+    for (let i = 0; i < entrys.length; i++) {
+        entrys[i] = path.join(projRoot, entrys[i]);
+    }
 
     /**
      * @type {import('rollup').InputOptions}
@@ -273,10 +275,10 @@ async function rollupBuild(
     //     outputOpts.push(outputOption);
     // }
     if (output && !path.isAbsolute(output)) {
-        output = path.resolve(projRoot, output);
+        output = path.join(projRoot, output);
     }
     if (outputDir && !path.isAbsolute(outputDir)) {
-        outputDir = path.resolve(projRoot, outputDir);
+        outputDir = path.join(projRoot, outputDir);
     }
     /**
      * @type { import('rollup').OutputOptions }
@@ -316,7 +318,7 @@ async function rollupBuild(
 
             } else if (event.code === "BUNDLE_START") {
                 console.log("开始构建");
-                isGenDts && !customDts && genDts(projRoot, format, typesDir, moduleName, customDts);
+                isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, customDts);
                 console.log(event.output);
             } else if (event.code === "BUNDLE_END") {
                 console.log("构建结束");
@@ -338,7 +340,7 @@ async function rollupBuild(
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
 
-        isGenDts && !customDts && genDts(projRoot, format, typesDir, moduleName, customDts);
+        isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, customDts);
 
         const writeResult = await rollupBuild.write(outputOption);
         isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName, customDts);
@@ -369,11 +371,12 @@ async function rollupBuild(
 /**
  * 生成声明文件
  * @param {string} projRoot 
+ * @param {string[]} entrys 
  * @param {string} format 
  * @param {string} typesDir 
  * @param {string} moduleName
  */
-function genDts(projRoot, format, typesDir, moduleName) {
+function genDts(projRoot, entrys, format, typesDir, moduleName) {
     /**
      * @type {dtsGenerator}
      */
@@ -384,19 +387,23 @@ function genDts(projRoot, format, typesDir, moduleName) {
     const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
     // console.log(dtsGenExclude);
     let entry;
-    if (outputDir) {
+    if (entrys.length > 1) {
         //多入口 暂时不做声明输出 TODO
-
+        console.warn(`多入口暂不做声明输出`);
     } else {
         entry = entrys[0];
         dtsGen({
-            baseDir: path.resolve(projRoot),
+            baseDir: projRoot,
             exclude: dtsGenExclude,
-            out: path.resolve(typesDirPath, `index.d.ts`),
+            out: path.join(typesDirPath, `index.d.ts`),
             // prefix: moduleName,
             resolveModuleId: function (params) {
                 // console.log(params.currentModuleId)
-                if (params.currentModuleId === entry.split(".")[0]) {
+                let entryRelative = path.relative(projRoot, entry);
+                if (path.sep === "\\") {
+                    entryRelative = entryRelative.replace(/\\/g, '/');
+                }
+                if (params.currentModuleId === entryRelative.split(".")[0]) {
                     return moduleName;
                 }
                 return `${moduleName}/${params.currentModuleId}`
@@ -411,9 +418,15 @@ function genDts(projRoot, format, typesDir, moduleName) {
                 if (!params.isDeclaredExternalModule) {
                     let importedModuleId = params.importedModuleId;
                     if (params.importedModuleId.includes(".")) {
+
                         //包内模块
-                        importedModuleId = `${moduleName}/${entry.split("/")[0]}${params.importedModuleId.split(".")[1]}`;
+                        importedModuleId = path.join(path.dirname(path.relative(projRoot, entry)), params.importedModuleId);
+                        // importedModuleId = `${moduleName}/${entry.split("/")[0]}${path.normalize(params.importedModuleId)}`;
                     }
+                    if (path.sep === "\\") {
+                        importedModuleId = importedModuleId.replace(/\\/g, '/');
+                    }
+                    importedModuleId = `${moduleName}/${importedModuleId}`;
                     return importedModuleId;
                 }
                 return params.importedModuleId

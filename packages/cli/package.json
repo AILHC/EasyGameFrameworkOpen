@@ -54,8 +54,10 @@
     "egf": "./cli.js"
   },
   "scripts": {
-    "test:watch:cjs": "egf build -w -f cjs  -od ./__test__/dist -e ./__test__/src/index.ts ./__test__/src2/index.ts",
-    "test:build:es": "egf build -f es -e ./__test__/src/index.ts ./__test__/src2/index.ts",
-    "single:test:build:cjs": "egf build -f es -e ./__test__/src/index.ts"
+    "test:watch:cjs": "egf build -p ./__test__ -w -f cjs  -od ./dist -e ./src/index.ts ./src2/index.ts",
+    "test:build:es": "egf build -p ./__test__ -f es -e ./src/index.ts ./src2/index.ts -od ./muti-dist/es",
+    "test:build:cjs": "egf build -p ./__test__ -f cjs -e ./src/index.ts ./src2/index.ts -od ./muti-dist",
+    "nodts:test:build:cjs": "egf build -p ./__test__ -f cjs -e ./src/index.ts ./src2/index.ts -gd -od ./muti-dist",
+    "single:test:build:cjs": "egf build -p ./__test__ -f cjs -e ./src/index.ts"
   }
 }
