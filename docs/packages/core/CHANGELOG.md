@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.1.4...@ailhc/egf-core@1.2.0) (2021-03-27)
+
+
+### Features
+
+* 多入口编译支持 ([fb7a70f](https://github.com/AILHC/EasyGameFrameworkOpen/commit/fb7a70f11d77ede4938b72931e9aac63b059e500))
+
+
+
+
+
 ## [1.1.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.1.3...@ailhc/egf-core@1.1.4) (2021-02-21)
 
 
