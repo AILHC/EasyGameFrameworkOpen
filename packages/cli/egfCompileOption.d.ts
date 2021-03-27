@@ -61,5 +61,12 @@ declare interface IEgfCompileOption {
      * 自定义插件
      */
     plugins?: import("rollup").Plugin[]
+    /**
+     * 1. dtsGenExclude 生成.d.ts文件时所要忽略的  忽略测试目录下的文件，不生成声明文件
+     */
+    dtsGenExclude: string[],
+    /**externalTag 用来判断引用的模块是否做为外部引用(不编译进来)
+   因为packages内的A包，引用了B包，会把A和B的代码编译成一个js */
+    externalTag: string | string[]
 
 }
