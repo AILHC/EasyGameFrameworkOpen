@@ -118,10 +118,11 @@ const tsconfigOverride = {
  * @param {string} target 目标es标准
  * @param {boolean} minify 是否压缩
  * @param {boolean} isGenDts 是否生成dts
+ * @param {string} banner 输出的文件开头写入的脚本
  */
 async function rollupBuild(
     projRoot, isWatch, entrys, outputDir, output,
-    format, typesDir, unRemoveComments, target, minify, isGenDts) {
+    format, typesDir, unRemoveComments, target, minify, isGenDts, banner) {
 
     let moduleName;
     let customDts = false;
@@ -285,6 +286,7 @@ async function rollupBuild(
      */
     let outputOption = {
         file: output,
+        chunkFileNames:"[name].js",//公共模块生成规则
         entryFileNames: (chunkInfo) => {
             if (format === "es" || format === "esm") {
                 return `[name].mjs`
@@ -300,6 +302,7 @@ async function rollupBuild(
         //     fairygui: "fairygui",
         //     Laya: "Laya"
         // },
+        banner: banner,
         footer: moduleName && useFooter ? `var globalTarget =window?window:global; globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : ''
 
     }
