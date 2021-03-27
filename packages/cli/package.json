@@ -57,7 +57,12 @@
     "test:watch:cjs": "egf build -p ./__test__ -w -f cjs  -od ./dist -e ./src/index.ts ./src2/index.ts",
     "test:build:es": "egf build -p ./__test__ -f es -e ./src/index.ts ./src2/index.ts -od ./muti-dist/es",
     "test:build:cjs": "egf build -p ./__test__ -f cjs -e ./src/index.ts ./src2/index.ts -od ./muti-dist",
+    "test:build:cjs:min": "egf build -p ./__test__ -f cjs -e ./src/index.ts ./src2/index.ts -od ./muti-dist -m",
     "nodts:test:build:cjs": "egf build -p ./__test__ -f cjs -e ./src/index.ts ./src2/index.ts -gd -od ./muti-dist",
-    "single:test:build:cjs": "egf build -p ./__test__ -f cjs -e ./src/index.ts"
+    "single:test:build:cjs:min": "egf build -p ./__test__ -f cjs -e ./src/index.ts -m",
+    "single:test:build:cjs:nogenDts": "egf build -p ./__test__ -f cjs -e ./src/index.ts -ngd",
+    "single:test:build:cjs:noremoveComments": "egf build -p ./__test__ -f cjs -e ./src/index.ts -nrc",
+    "single:test:build:target:es6": "egf build -p ./__test__ -f cjs -e ./src/index.ts -t es6",
+    "single:test:build:config": "egf build -p ./__test__ -f cjs -e ./src/index.ts -c ./testOption.js"
   }
 }
