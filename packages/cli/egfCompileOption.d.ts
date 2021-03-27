@@ -3,7 +3,7 @@
 declare interface IEgfCompileOption {
     /**项目根路径，默认为执行命令处 process.cwd() */
     proj: string,
-    /**配置文件路径 */
+    /**配置文件路径，做更多的自定义处理,默认egf.compile.js */
     config: string,
     /**是否监听自动编译 ,默认为false*/
     watch: boolean,
@@ -13,8 +13,6 @@ declare interface IEgfCompileOption {
     output: string,
     /**多入口编译输出文件夹 默认dist/${format}/lib*/
     outputDir: string,
-    /**多入口输出基础文件夹，默认没有 */
-    baseDir: string
     /**输出文件规范,默认cjs,如果是iife和umd 需要加:<globalName> 冒号+全局变量名 */
     format: "cjs" | "es" | "esm" | "iife" | "system" | "umd",
     /**声明文件输出目录 默认dist/${format}/types*/

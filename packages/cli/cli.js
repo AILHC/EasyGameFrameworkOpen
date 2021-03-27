@@ -45,7 +45,7 @@ program
 program
     .command("build")
     .option('-p, --proj [proj]', '项目根路径，默认为执行命令处 process.cwd()')
-    .option('-c, --config [config]', '配置文件路径，做更多的自定义处理')
+    .option('-c, --config [config]', '配置文件路径，做更多的自定义处理,默认egf.compile.js')
     .option('-w, --watch [watch]', '是否监听自动编译')
     .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口')
     .option('-o, --output [output]', '输出文件 默认dist/index.js')
