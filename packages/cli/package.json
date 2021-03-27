@@ -39,7 +39,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "cmdjs": "^0.0.14",
     "colors": "^1.4.0",
-    "commander": "^4.1.0",
+    "commander": "^7.2.0",
     "dts-generator": "^3.0.0",
     "fs-extra": "^9.1.0",
     "matched": "^5.0.0",

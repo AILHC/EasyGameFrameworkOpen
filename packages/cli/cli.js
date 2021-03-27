@@ -55,6 +55,7 @@ program
     .option('-t, --target [target]', '编译目标es标准，默认es5')
     .option('-m, --minify [minify]', '是否压缩')
     .option('-gd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
+    .option('-bn, --banner [banner]', "在输出的js文件开头加上")
     .description(`构建`)
     .action(function (option) {
         rollupDo.build(
@@ -68,7 +69,8 @@ program
             option.unRemoveComments,
             option.target,
             option.minify,
-            option.genDts);
+            option.genDts,
+            option.banner);
     })
 
 program.parse(process.argv);
