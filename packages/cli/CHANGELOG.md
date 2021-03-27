@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.0...@ailhc/egf-cli@1.4.1) (2021-03-27)
+
+
+### Bug Fixes
+
+* 1. 修复自定义插件bug;2. 修复忽略编译bug ([3ef9053](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/3ef905334b490cfe3fc568d8af860bb4ec68489e))
+
+
+
+
+
 # [1.4.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.3.2...@ailhc/egf-cli@1.4.0) (2021-03-27)
 
 
