@@ -20,6 +20,7 @@
   "author": "AILHC <505126057@qq.com>",
   "license": "MIT",
   "main": "./cli.js",
+  "types": "./egfCompileOption.d.ts",
   "directories": {
     "test": "__tests__"
   },
@@ -29,7 +30,8 @@
     "utils.js",
     "README.md",
     "rollupdo.js",
-    "package-template"
+    "package-template",
+    "egfCompileOption.d.ts"
   ],
   "repository": {
     "type": "git",
