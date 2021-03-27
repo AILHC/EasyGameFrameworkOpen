@@ -122,19 +122,24 @@ async function rollupBuild(option) {
     if (!path.isAbsolute(projRoot)) {
         projRoot = path.join(process.cwd(), projRoot);
     }
-    let configPath = option.config ? option.config : "egf.compile.js";
-    if (!path.isAbsolute(configPath)) {
-        configPath = path.join(projRoot, configPath);
-    }
     /**
      * @type {IEgfCompileOption}
      */
     let optionOverride;
-    try {
-        optionOverride = require(configPath)
-    } catch (error) {
-        console.warn(`[warning]没有配置文件:${configPath}`)
+    if (option.config) {
+        let configPath = typeof option.config === "string" ? option.config : "egf.compile.js";
+        if (!path.isAbsolute(configPath)) {
+            configPath = path.join(projRoot, configPath);
+        }
+
+        try {
+            optionOverride = require(configPath)
+        } catch (error) {
+            console.warn(`[warning]没有配置文件:${configPath}`)
+        }
     }
+
+
     if (optionOverride) {
         option = Object.assign(option, optionOverride);
     }
