@@ -233,6 +233,21 @@ async function rollupBuild(option) {
     let externalTag = tsconfig.externalTag;
     if (typeof externalTag === "object" && typeof externalTag.length === "number") {
         externalTag = externalTag.length > 0 ? externalTag : undefined;
+    } else if (typeof externalTag === "string") {
+        externalTag = [externalTag];
+    } else {
+        externalTag = [];
+    }
+
+    let configExternalTag = option.externalTag;
+    if (typeof configExternalTag === "object" && typeof configExternalTag.length === "number") {
+        configExternalTag = configExternalTag.length > 0 ? configExternalTag : undefined;
+        externalTag = externalTag.concat(configExternalTag);
+    } else if (typeof configExternalTag === "string") {
+        externalTag.push(configExternalTag)
+    }
+    if (externalTag.length === 0) {
+        externalTag = undefined;
     }
     // console.log(exclude)
     tsconfigOverride.exclude = exclude;
@@ -311,20 +326,21 @@ async function rollupBuild(option) {
             `var globalTarget =window?window:global;
              globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` :
             '');
-
+    const entryFileNames = option.entryFileNames ? option.entryFileNames : (chunkInfo) => {
+        if (format === "es" || format === "esm") {
+            return `[name].mjs`
+        } else {
+            return `[name].js`
+        }
+    };
+    const chunkFileNames = option.chunkFileNames ? option.chunkFileNames : "[name].js";
     /**
      * @type { import('rollup').OutputOptions }
      */
     let outputOption = {
         file: output,
-        chunkFileNames: "[name].js", //公共模块生成规则
-        entryFileNames: (chunkInfo) => {
-            if (format === "es" || format === "esm") {
-                return `[name].mjs`
-            } else {
-                return `[name].js`
-            }
-        },
+        chunkFileNames: chunkFileNames, //公共模块生成规则
+        entryFileNames: entryFileNames,
         dir: outputDir,
         format: format,
         name: moduleName,
@@ -411,8 +427,9 @@ async function rollupBuild(option) {
  * @param {string} format 
  * @param {string} typesDir 
  * @param {string} moduleName
+ * @param {IEgfCompileOption} option
  */
-function genDts(projRoot, entrys, format, typesDir, moduleName) {
+function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
     /**
      * @type {dtsGenerator}
      */
@@ -420,7 +437,10 @@ function genDts(projRoot, entrys, format, typesDir, moduleName) {
     const tsconfig = require(path.join(projRoot, `tsconfig.json`));
     const typesDirPath = path.join(projRoot, typesDir);
     const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
-    const dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+    let dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+    if (option.dtsGenExclude && option.dtsGenExclude.length > 0) {
+        dtsGenExclude = dtsGenExclude.concat(option.dtsGenExclude);
+    }
     // console.log(dtsGenExclude);
     let entry;
     if (entrys.length > 1) {
