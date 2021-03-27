@@ -44,33 +44,23 @@ program
     })
 program
     .command("build")
-    .option('-p, --proj [proj]', '项目根路径，默认为执行命令处process.cwd()')
-    .option('-w, --watch [watch]', '是否监视 默认false')
+    .option('-p, --proj [proj]', '项目根路径，默认为执行命令处 process.cwd()')
+    .option('-c, --config [config]', '配置文件路径，做更多的自定义处理')
+    .option('-w, --watch [watch]', '是否监听自动编译')
     .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口')
     .option('-o, --output [output]', '输出文件 默认dist/index.js')
-    .option('-od, --output-dir [outputDir]', '输出文件夹')
+    .option('-od, --output-dir [outputDir]', '多入口编译输出文件夹 默认dist/${format}')
     .option('-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名')
     .option('-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/${format}/types')
-    .option('-u, --unRemoveComments [unRemoveComments]', '是否移除注释')
-    .option('-t, --target [target]', '编译目标es标准，默认es5')
-    .option('-m, --minify [minify]', '是否压缩')
-    .option('-gd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
-    .option('-bn, --banner [banner]', "在输出的js文件开头加上")
+    .option('-nrc, --no-remove-comments [removeComments]', '是否移除注释,默认移除')
+    .option('-t, --target [target]', '编译目标,默认使用tsconfig中的编译目标')
+    .option('-m, --minify [minify]', '是否压缩，默认不压缩')
+    .option('-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
+    .option('-bn, --banner [banner]', "自定义输出文件顶部文本")
+    .option('-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入")
     .description(`构建`)
     .action(function (option) {
-        rollupDo.build(
-            option.proj,
-            option.watch,
-            option.entry,
-            option.outputDir,
-            option.output,
-            option.format,
-            option.typesDir,
-            option.unRemoveComments,
-            option.target,
-            option.minify,
-            option.genDts,
-            option.banner);
+        rollupDo.build(option);
     })
 
 program.parse(process.argv);

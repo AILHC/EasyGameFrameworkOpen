@@ -104,35 +104,33 @@ const tsconfigOverride = {
     compilerOptions: {}
 }
 /**
- * 构建
- * @param {string} projRoot 项目根目录，默认为执行命令的当前路径
- * @param {boolean} isWatch 是否监视
- * @param {string[]} entrys 入口文件 默认src/index.ts，可以是数组,如果是多入口，则必须有outputDir参数
- * @param {string} outputDir 多输出文件夹
- * @param {string[]} output 输出文件 默认dist/${format}/lib/index.js
- * @param {string} format 输出格式 默认cjs,可选iife,umd,es  
- *  如果是iife和umd 需要加:<globalName> 冒号+全局变量名
- * @param {string} typesDir 声明文件输出目录,默认输出到dist/${format}/types
- * @param {string} sourceDir 源码目录数组，默认[src]
- * @param {string} unRemoveComments 不移除注释
- * @param {string} target 目标es标准
- * @param {boolean} minify 是否压缩
- * @param {boolean} isGenDts 是否生成dts
- * @param {string} banner 输出的文件开头写入的脚本
+ * 构建编译
+ * @param {IEgfCompileOption} option 
  */
-async function rollupBuild(
-    projRoot, isWatch, entrys, outputDir, output,
-    format, typesDir, unRemoveComments, target, minify, isGenDts, banner) {
-
+async function rollupBuild(option) {
+    // projRoot, isWatch, entrys, outputDir, output,
+    // format, typesDir, unRemoveComments, target, minify, isGenDts, banner
     let moduleName;
     let customDts = false;
     let useFooter;
+
+    let projRoot = option.proj;
+
     if (!projRoot) {
         projRoot = process.cwd();
     }
     if (!path.isAbsolute(projRoot)) {
         projRoot = path.join(process.cwd(), projRoot);
     }
+    /**
+     * @type {IEgfCompileOption}
+     */
+    const optionOverride = option.config ? require(path.join(projRoot, option.config)) : undefined;
+    if (optionOverride) {
+        option = Object.assign(option, optionOverride);
+    }
+    let format = option.format ? option.format : "cjs";
+
     if (format.includes("iife") || format.includes("umd")) {
         const strs = format.split(":");
         format = strs[0];
@@ -167,12 +165,18 @@ async function rollupBuild(
     if (!format) {
         format = "cjs"
     }
+    let entrys = option.entry ? option.entry.concat([]) : undefined;
     if (!entrys) {
         entrys = ["src/index.ts"];
     }
+    for (let i = 0; i < entrys.length; i++) {
+        entrys[i] = path.join(projRoot, entrys[i]);
+    }
+    let output = option.output;
+    let outputDir = option.outputDir;
     if (entrys.length > 1) {
         if (!outputDir) {
-            outputDir = `dist/${format}`;
+            outputDir = `dist/${format}/lib`;
         }
         output = undefined;
     } else {
@@ -183,19 +187,32 @@ async function rollupBuild(
             output = `dist/${format}/lib/index.js`;
         }
     }
+    if (output && !path.isAbsolute(output)) {
+        output = path.join(projRoot, output);
+    }
+
+    if (outputDir && !path.isAbsolute(outputDir)) {
+        outputDir = path.join(projRoot, outputDir);
+    }
+
+    let typesDir = option.typesDir;
     if (!typesDir) {
         typesDir = `dist/${format}/types`;
     }
-    if (unRemoveComments !== undefined) {
-        tsconfigOverride.compilerOptions.removeComments = !unRemoveComments;
+    tsconfigOverride.compilerOptions.declarationDir = typesDir;
+    tsconfigOverride.compilerOptions.declaration = customDts;
+    let removeComments = option.removeComments;
+    if (removeComments !== undefined) {
+        tsconfigOverride.compilerOptions.removeComments = removeComments;
     }
 
-    tsconfigOverride.compilerOptions.declarationDir = typesDir;
+    let target = option.target;
     if (target) {
         tsconfigOverride.compilerOptions.target = target;
     }
-    tsconfigOverride.compilerOptions.declaration = customDts;
+
     const tsconfig = require(path.join(projRoot, `tsconfig.json`));
+
     let exclude = tsconfig.exclude ? tsconfig.exclude : [];
     exclude = exclude.concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
     let externalTag = tsconfig.externalTag;
@@ -213,9 +230,7 @@ async function rollupBuild(
         tsconfigOverride: tsconfigOverride,
         useTsconfigDeclarationDir: true,
     }
-    for (let i = 0; i < entrys.length; i++) {
-        entrys[i] = path.join(projRoot, entrys[i]);
-    }
+
 
     /**
      * @type {import('rollup').InputOptions}
@@ -275,18 +290,19 @@ async function rollupBuild(
 
     //     outputOpts.push(outputOption);
     // }
-    if (output && !path.isAbsolute(output)) {
-        output = path.join(projRoot, output);
-    }
-    if (outputDir && !path.isAbsolute(outputDir)) {
-        outputDir = path.join(projRoot, outputDir);
-    }
+
+    const footerStr = option.footer ? option.footer :
+        (moduleName && useFooter ?
+            `var globalTarget =window?window:global;
+             globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})`
+            : '');
+
     /**
      * @type { import('rollup').OutputOptions }
      */
     let outputOption = {
         file: output,
-        chunkFileNames:"[name].js",//公共模块生成规则
+        chunkFileNames: "[name].js",//公共模块生成规则
         entryFileNames: (chunkInfo) => {
             if (format === "es" || format === "esm") {
                 return `[name].mjs`
@@ -302,13 +318,14 @@ async function rollupBuild(
         //     fairygui: "fairygui",
         //     Laya: "Laya"
         // },
-        banner: banner,
-        footer: moduleName && useFooter ? `var globalTarget =window?window:global; globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : ''
+        banner: option.banner,
+        footer: footerStr
 
     }
 
+    const isGenDts = option.genDts;
 
-    if (isWatch) {
+    if (option.watch) {
         /**@type {import('rollup').RollupWatchOptions} */
         const watchConfig = buildConfig;
         watchConfig.output = outputOption;
@@ -347,6 +364,7 @@ async function rollupBuild(
 
         const writeResult = await rollupBuild.write(outputOption);
         isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName, customDts);
+        const minify = option.minify;
         if (minify) {
             /**
                 * @type {import("rollup-plugin-terser").Options}
@@ -363,8 +381,9 @@ async function rollupBuild(
             const terserPlugin = terser.terser(terserOption);
             outputOption.sourcemap = false;
             outputOption.plugins = [terserPlugin];
-            outputOption.file = outputOption.file.replace(".", ".min.");
-
+            if (!(entrys.length > 1)) {
+                outputOption.file = outputOption.file.replace(".", ".min.");
+            }
             await rollupBuild.write(outputOption);
         }
 
@@ -392,7 +411,7 @@ function genDts(projRoot, entrys, format, typesDir, moduleName) {
     let entry;
     if (entrys.length > 1) {
         //多入口 暂时不做声明输出 TODO
-        console.warn(`多入口暂不做声明输出`);
+        console.warn(`[多入口暂不做声明输出]`);
     } else {
         entry = entrys[0];
         dtsGen({
