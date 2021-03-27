@@ -56,6 +56,10 @@ declare interface IEgfCompileOption {
         [extname]:文件的扩展名，以。如果它不是空的。
         output.extend
      */
-    entryFileNames: string | ((chunkInfo: import("rollup").PreRenderedChunk) => string)
+    entryFileNames: string | ((chunkInfo: import("rollup").PreRenderedChunk) => string),
+    /**
+     * 自定义插件
+     */
+    plugins?: import("rollup").Plugin[]
 
 }
