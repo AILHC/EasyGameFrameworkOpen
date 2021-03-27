@@ -17,10 +17,5 @@ export declare class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
     stop(): void;
     getModule<K extends keyof ModuleMap>(moduleKey: K): ModuleMap[K];
     protected setState(state: number): void;
-    /**
-     * 输出
-     * @param level 1 warn 2 error
-     * @param msg
-     */
     protected _log(msg: string, level?: number): void;
 }
