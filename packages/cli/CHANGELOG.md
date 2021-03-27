@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.2.4...@ailhc/egf-cli@1.3.0) (2021-03-27)
+
+
+### Features
+
+* 1. 增加自定义配置功能 2. 完善原本的编译处理 ([03412a7](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/03412a7689dfde1eae7f4dd18c87d8dc09b2e65c))
+* 1. 完善多入口编译和chunk编译 ([d70ac04](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/d70ac041a54ff4723b48dbeb384ce3150dafa6a6))
+* 多入口编译支持 ([fb7a70f](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/fb7a70f11d77ede4938b72931e9aac63b059e500))
+* 完善多入口的编译，以及测试 ([12bd815](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/12bd81507b93d182fd1f78c93c5d52d3c5e8e16d))
+* 完善多入口编译支持,增加参数控制是否生成声明 ([b9fb5e2](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/b9fb5e2e61db85af7ac88c667feeb1d9697c287e))
+
+
+
+
+
 ## [1.2.4](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.2.3...@ailhc/egf-cli@1.2.4) (2021-03-25)
 
 
