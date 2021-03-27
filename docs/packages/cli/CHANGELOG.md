@@ -3,6 +3,73 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.0...@ailhc/egf-cli@1.4.1) (2021-03-27)
+
+
+### Bug Fixes
+
+* 1. 修复自定义插件bug;2. 修复忽略编译bug ([3ef9053](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/3ef905334b490cfe3fc568d8af860bb4ec68489e))
+
+
+
+
+
+# [1.4.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.3.2...@ailhc/egf-cli@1.4.0) (2021-03-27)
+
+
+### Features
+
+* 支持自定义插件 ([c107f0a](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/c107f0a9a93b34a95eccca34dc2da0381bc90e8b))
+
+
+
+
+
+## [1.3.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.3.1...@ailhc/egf-cli@1.3.2) (2021-03-27)
+
+**Note:** Version bump only for package @ailhc/egf-cli
+
+
+
+
+
+## [1.3.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.3.0...@ailhc/egf-cli@1.3.1) (2021-03-27)
+
+
+### Bug Fixes
+
+* 修复cli编译配置的bug ([5c2e749](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/5c2e749aeefd0dc9a6ece2c752c4fb0dd08d286e))
+
+
+
+
+
+# [1.3.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.2.4...@ailhc/egf-cli@1.3.0) (2021-03-27)
+
+
+### Features
+
+* 1. 增加自定义配置功能 2. 完善原本的编译处理 ([03412a7](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/03412a7689dfde1eae7f4dd18c87d8dc09b2e65c))
+* 1. 完善多入口编译和chunk编译 ([d70ac04](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/d70ac041a54ff4723b48dbeb384ce3150dafa6a6))
+* 多入口编译支持 ([fb7a70f](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/fb7a70f11d77ede4938b72931e9aac63b059e500))
+* 完善多入口的编译，以及测试 ([12bd815](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/12bd81507b93d182fd1f78c93c5d52d3c5e8e16d))
+* 完善多入口编译支持,增加参数控制是否生成声明 ([b9fb5e2](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/b9fb5e2e61db85af7ac88c667feeb1d9697c287e))
+
+
+
+
+
+## [1.2.4](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.2.3...@ailhc/egf-cli@1.2.4) (2021-03-25)
+
+
+### Bug Fixes
+
+* 1. 修复Cannot find module 'fs-extra-promise'的bug,2. 移除protobuf-cli中对fs-extra的依赖 ([df82a19](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/df82a1984df6155678ec9f95416469a3ad1a27af))
+
+
+
+
+
 ## [1.2.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.2.2...@ailhc/egf-cli@1.2.3) (2021-02-18)
 
 
