@@ -16,7 +16,7 @@ program
     .command("convert")
     .description("")
     .option('-p, --projRoot [projRoot]', '项目根目录，默认执行命令处\n-------------------------')
-    .option('-c, --config [config]', '导表配置文件路径，如果没有则使用默认的\n-------------------------')
+    .option('-c, --config [config]', '配置文件路径，相对于projRoot\n-------------------------')
     .option('-t, --tableFileDir [tableFileDir]', "excel文件夹路径,如果没有则使用项目根目录\n-------------------------")
     .option('-pt, --pattern [pattern...]', 'excel文件名匹配规则,多个以空格隔开 以 -- 结束,\n如: -pt "\\**\\*.{xlsx,csv}" "!~$*.*" -- \n默认匹配规则["\\**\\*.{xlsx,csv}", "!~$*.*"]\n匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除\n参考：https://github.com/micromatch/micromatch\n--------')
     .option('-uc, --useCache', '是否使用缓存，默认不\n-------------------------')
