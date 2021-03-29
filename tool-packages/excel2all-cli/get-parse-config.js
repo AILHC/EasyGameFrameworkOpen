@@ -17,7 +17,7 @@ function getParseConfig(option) {
         config = option;
     }
     if (!config) {
-        console.error(`配置路径不存在:${option.config}`);
+        console.error(`配置文件不存在:${option.config}`);
         return;
     }
     if (!config.projRoot) {
