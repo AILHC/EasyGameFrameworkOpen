@@ -1,0 +1,17 @@
+{
+  "name": "@ailhc/excel2all-cli",
+  "version": "0.0.1",
+  "description": "",
+  "bin": "./cli.js",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ailhc/excel2all": "0.0.1",
+    "colors": "^1.4.0",
+    "commander": "^7.1.0"
+  }
+}

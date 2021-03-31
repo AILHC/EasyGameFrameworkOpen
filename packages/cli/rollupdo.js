@@ -563,6 +563,7 @@ function genCustomDts(projRoot, format, typesDir, moduleName) {
 async function build(buildConfig, entry, outputOption, typesDir, moduleName, customDts, minify) {
 
 }
+
 module.exports = {
     build: rollupBuild,
 }
