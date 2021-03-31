@@ -17,9 +17,6 @@
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
-  "directories": {
-    "dist": "dist"
-  },
   "exports": {
     "require": "./dist/cjs/lib/index.js",
     "import": "./dist/es/lib/index.mjs"

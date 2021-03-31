@@ -29,9 +29,6 @@
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
-  "directories": {
-    "dist": "dist"
-  },
   "files": [
     "dist"
   ],
