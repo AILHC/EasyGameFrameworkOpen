@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.1...@ailhc/egf-cli@1.4.2) (2021-03-31)
+
+
+### Bug Fixes
+
+* 修复package.json的exports字段,这会导致cocoscreator2.4.5import报错 ([6c22d71](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/6c22d71f6f32ec566b95e7b299ec91e732e99585))
+* 修复watch模式不生成dts的bug ([6159769](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/61597696274a231e032920adfbddf723eb109be9))
+
+
+
+
+
 ## [1.4.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.0...@ailhc/egf-cli@1.4.1) (2021-03-27)
 
 

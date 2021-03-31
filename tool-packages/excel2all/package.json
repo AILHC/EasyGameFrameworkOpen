@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/excel2all",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "将excel转换成任意文件格式工具",
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
