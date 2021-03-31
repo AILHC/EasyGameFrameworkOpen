@@ -19,7 +19,10 @@
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.es.js",
   "typings": "dist/cjs/types",
-  "exports": "./dist/es/lib/index.mjs",
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"

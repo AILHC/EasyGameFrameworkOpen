@@ -22,7 +22,10 @@
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/core#readme",
-  "exports": "./dist/es/lib/index.mjs",
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",

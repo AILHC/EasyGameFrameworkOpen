@@ -21,7 +21,10 @@
   "files": [
     "dist"
   ],
-  "exports": "./dist/es/lib/index.mjs",
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"

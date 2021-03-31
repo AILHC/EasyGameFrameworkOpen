@@ -19,7 +19,10 @@
   "directories": {
     "dist": "dist"
   },
-  "exports": "./dist/es/lib/index.mjs",
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
