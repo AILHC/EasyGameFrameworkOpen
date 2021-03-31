@@ -26,9 +26,7 @@
   },
   "files": [
     "cli.js",
-    "LICENSE",
     "utils.js",
-    "README.md",
     "rollupdo.js",
     "package-template",
     "egfCompileOption.d.ts"

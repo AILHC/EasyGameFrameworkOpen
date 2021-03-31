@@ -12,9 +12,6 @@
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/core#readme",
   "license": "MIT",
-  "directories": {
-    "dist": "dist"
-  },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",

@@ -10,9 +10,6 @@
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen#readme",
   "license": "MIT",
-  "directories": {
-    "dist": "dist"
-  },
   "files": [
     "dist"
   ],

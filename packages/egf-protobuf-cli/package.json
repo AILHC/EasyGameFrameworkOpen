@@ -15,18 +15,16 @@
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
-  "directories": {
-    "dist": "dist"
-  },
+  "files": [
+    "dist",
+    "pblib",
+    "config-template"
+  ],
   "main": "dist/cli.js",
   "bin": {
     "egf-pb": "dist/cli.js"
   },
-  "files": [
-    "pblib",
-    "dist",
-    "config-template"
-  ],
+  
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },

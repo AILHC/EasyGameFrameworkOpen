@@ -9,10 +9,6 @@
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
-  "directories": {
-    "dist": "dist",
-    "test": "__tests__"
-  },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
@@ -21,6 +17,7 @@
     "import": "./dist/es/lib/index.mjs"
   },
   "files": [
+    "__tests__",
     "libs",
     "src",
     "dist"
