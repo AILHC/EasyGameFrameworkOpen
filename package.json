@@ -57,7 +57,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "prettier --write"
+      "prettier --allow-empty --config ./.prettierrc.yml --ignore-path ./.prettierignore --write"
     ]
   },
   "devDependencies": {
