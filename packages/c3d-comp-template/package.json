@@ -13,9 +13,13 @@
     "dist": "dist",
     "test": "__tests__"
   },
-  "main": "dist/esm/lib/index.mjs",
-  "module": "dist/esm/lib/index.mjs",
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
   "files": [
     "libs",
     "src",

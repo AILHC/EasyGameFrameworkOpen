@@ -20,7 +20,10 @@
     "type": "git",
     "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
-  "exports": "./dist/es/index.mjs",
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
