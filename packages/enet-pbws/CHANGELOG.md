@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pbws@1.2.2...@ailhc/enet-pbws@1.2.3) (2021-03-31)
+
+
+### Bug Fixes
+
+* 修复package.json的exports字段,这会导致cocoscreator2.4.5import报错 ([6c22d71](https://github.com/AILHC/EasyGameFrameworkOpen/commit/6c22d71f6f32ec566b95e7b299ec91e732e99585))
+
+
+
+
+
 ## [1.2.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pbws@1.2.1...@ailhc/enet-pbws@1.2.2) (2021-03-25)
 
 **Note:** Version bump only for package @ailhc/enet-pbws

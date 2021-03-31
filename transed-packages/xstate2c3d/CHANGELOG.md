@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3dxstate2@1.1.3...c3dxstate2@1.1.4) (2021-03-31)
+
+
+### Bug Fixes
+
+* 修复package.json的exports字段,这会导致cocoscreator2.4.5import报错 ([6c22d71](https://github.com/AILHC/EasyGameFrameworkOpen/commit/6c22d71f6f32ec566b95e7b299ec91e732e99585))
+
+
+
+
+
 ## [1.1.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3dxstate2@1.1.2...c3dxstate2@1.1.3) (2021-02-21)
 
 

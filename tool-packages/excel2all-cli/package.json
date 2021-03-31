@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/excel2all-cli",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "bin": "./cli.js",
   "main": "cli.js",
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ailhc/excel2all": "0.0.1",
+    "@ailhc/excel2all": "^0.1.0",
     "colors": "^1.4.0",
     "commander": "^7.1.0"
   }

@@ -1,6 +1,6 @@
 {
   "name": "egf-protobuf",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "这是一个protobuf静态js文件生成工具",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/egf-protobuf-cli#readme",
@@ -24,7 +24,6 @@
   "bin": {
     "egf-pb": "dist/cli.js"
   },
-  
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
