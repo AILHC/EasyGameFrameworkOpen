@@ -77,11 +77,11 @@ function myMultiInput() {
                     return Promise.resolve('');
                 }
                 //拼接匹配正则
-                var patterns = include.concat(exclude.map(function(pattern) {
+                var patterns = include.concat(exclude.map(function (pattern) {
                     return '!' + pattern;
                 }));
                 //匹配出符合规则的路径集合
-                return matched.promise(patterns, { realpath: true }).then(function(paths) {
+                return matched.promise(patterns, { realpath: true }).then(function (paths) {
                     curPackFiles = paths; // 记录一下所有的文件
                     paths.sort(); //将路径集合排序一下
                     /**
@@ -100,12 +100,12 @@ function myMultiInput() {
     });
 }
 const tsconfigOverride = {
-        compilerOptions: {}
-    }
-    /**
-     * 构建编译
-     * @param {IEgfCompileOption} option 
-     */
+    compilerOptions: {}
+}
+/**
+ * 构建编译
+ * @param {IEgfCompileOption} option 
+ */
 async function rollupBuild(option) {
     // projRoot, isWatch, entrys, outputDir, output,
     // format, typesDir, unRemoveComments, target, minify, isGenDts, banner
@@ -232,7 +232,7 @@ async function rollupBuild(option) {
     exclude = exclude.concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
     let externalTag = tsconfig.externalTag;
     if (typeof externalTag === "object" && typeof externalTag.length === "number") {
-        externalTag = externalTag.length > 0 ? externalTag : undefined;
+        externalTag = externalTag.length > 0 ? externalTag : [];
     } else if (typeof externalTag === "string") {
         externalTag = [externalTag];
     } else {
@@ -241,7 +241,7 @@ async function rollupBuild(option) {
 
     let configExternalTag = option.externalTag;
     if (typeof configExternalTag === "object" && typeof configExternalTag.length === "number") {
-        configExternalTag = configExternalTag.length > 0 ? configExternalTag : undefined;
+        configExternalTag = configExternalTag.length > 0 ? configExternalTag : [];
         externalTag = externalTag.concat(configExternalTag);
     } else if (typeof configExternalTag === "string") {
         externalTag.push(configExternalTag)
@@ -255,77 +255,78 @@ async function rollupBuild(option) {
      * @type {import('rollup-plugin-typescript2/dist/ioptions').IOptions}
      */
     const tsOptions = {
-            clean: true,
-            abortOnError: false,
-            tsconfigOverride: tsconfigOverride,
-            useTsconfigDeclarationDir: true,
-        }
-        //自定义插件
+        clean: true,
+        abortOnError: false,
+        tsconfigOverride: tsconfigOverride,
+        useTsconfigDeclarationDir: true,
+    }
+    //自定义插件
     const customPlugins = option.plugins ? option.plugins : [];
     /**
      * @type {import('rollup').InputOptions}
      */
     const buildConfig = {
-            //输出log便于调试
-            onwarn: function({ loc, frame, message }) {
-                // 打印位置（如果适用）
-                if (loc) {
-                    console.warn(`${loc.file} (${loc.line}:${loc.column}) ${message}`);
-                    if (frame) console.warn(frame);
-                } else {
-                    console.warn(message);
-                }
-            },
-            external: (source,
-                importer,
-                isResolved) => {
-                if (!externalTag || externalTag === "") return false;
-                let tag = externalTag;
-                let isExternal = false;
-                if (typeof externalTag === "object" && externalTag.length) {
-                    for (let i = 0; i < externalTag.length; i++) {
-                        tag = externalTag[i];
-                        isExternal = source.includes(tag);
-                        if (isExternal) break;
-                    }
-                } else {
+        //输出log便于调试
+        onwarn: function ({ loc, frame, message }) {
+            // 打印位置（如果适用）
+            if (loc) {
+                console.warn(`${loc.file} (${loc.line}:${loc.column}) ${message}`);
+                if (frame) console.warn(frame);
+            } else {
+                console.warn(message);
+            }
+        },
+        external: (source,
+            importer,
+            isResolved) => {
+            if (!externalTag || externalTag === "") return false;
+            let tag = externalTag;
+            let isExternal = false;
+            if (typeof externalTag === "object" && externalTag.length) {
+                for (let i = 0; i < externalTag.length; i++) {
+                    tag = externalTag[i];
                     isExternal = source.includes(tag);
+                    if (isExternal) break;
                 }
-                if (isExternal) {
-                    console.log(`'${source}' is imported by ${importer}, is custom external  – treating it as an external dependency`)
+            } else {
+                isExternal = source.includes(tag);
+            }
+            if (isExternal) {
+                console.log(`'${source}' is imported by ${importer}, is custom external  – treating it as an external dependency`)
 
+            }
+            return isExternal;
+
+        },
+        input: entrys,
+        plugins: [
+            // myMultiInput(),
+            jsonPlugin(),
+            typescript(tsOptions),
+            rollupCjs(),
+            nodeResolve({
+                customResolveOptions: {
+                    moduleDirectory: "node_modules"
                 }
-                return isExternal;
-
-            },
-            input: entrys,
-            plugins: [
-                // myMultiInput(),
-                jsonPlugin(),
-                typescript(tsOptions),
-                rollupCjs(),
-                nodeResolve({
-                    customResolveOptions: {
-                        moduleDirectory: "node_modules"
-                    }
-                })
-                // rdts()
-            ].concat(customPlugins)
-        }
-        // /**
-        //  * @type { import('rollup').OutputOptions[] }
-        //  */
-        // const outputOpts = [];
-        // for (let i = 0; i < outputs.length; i++) {
+            })
+            // rdts()
+        ].concat(customPlugins)
+    }
+    // /**
+    //  * @type { import('rollup').OutputOptions[] }
+    //  */
+    // const outputOpts = [];
+    // for (let i = 0; i < outputs.length; i++) {
 
     //     outputOpts.push(outputOption);
     // }
 
-    const footerStr = option.footer ? option.footer :
-        (moduleName && useFooter ?
-            `var globalTarget =window?window:global;
-             globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` :
-            '');
+    let footerStr = option.footer ? option.footer : "";
+    footerStr = 
+    `${footerStr}
+    `+ (moduleName && useFooter ? `var globalTarget =window?window:global;
+    globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : "");
+
     const entryFileNames = option.entryFileNames ? option.entryFileNames : (chunkInfo) => {
         if (format === "es" || format === "esm") {
             return `[name].mjs`
@@ -453,7 +454,7 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
             exclude: dtsGenExclude,
             out: path.join(typesDirPath, `index.d.ts`),
             // prefix: moduleName,
-            resolveModuleId: function(params) {
+            resolveModuleId: function (params) {
                 // console.log(params.currentModuleId)
                 let entryRelative = path.relative(projRoot, entry);
                 if (path.sep === "\\") {
@@ -464,7 +465,7 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                 }
                 return `${moduleName}/${params.currentModuleId}`
             },
-            resolveModuleImport: function(params) {
+            resolveModuleImport: function (params) {
                 // console.log(params)
                 // {
                 //     importedModuleId: './interfaces',
@@ -510,44 +511,45 @@ function genCustomDts(projRoot, format, typesDir, moduleName) {
     const typesDirPath = path.join(projRoot, typesDir);
     const declareGlobalRegex = /(declare global \{{1})([\s\S]*\}{1})([\s]*\}{1})/g;
     const importRegex = /import\s?{\s?[\w\d]*?\s?}\s?from\s?"[\w\W]*?";?/g
-    fs.readdir(typesDirPath, function(err, files) {
-            let str;
-            let regexMatch;
-            for (let i = 0; i < files.length; i++) {
-                if (files[i] === "index.d.ts") continue;
-                // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
-                const typeFilePath = path.join(typesDirPath, files[i]);
-                // console.log(typeFilePath);
-                str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
-                regexMatch = importRegex.exec(str);
-                if (regexMatch) {
-                    regexMatch.forEach(function(match) {
-                        str = str.replace(match, "")
-                    })
-                }
-                regexMatch = declareGlobalRegex.exec(str)
-                if (regexMatch) {
-                    dtsStr += regexMatch[2];
-                } else {
-                    dtsStr += str;
-                }
-
+    fs.readdir(typesDirPath, function (err, files) {
+        let str;
+        let regexMatch;
+        if (!files || !files.length) return;
+        for (let i = 0; i < files.length; i++) {
+            if (files[i] === "index.d.ts") continue;
+            // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
+            const typeFilePath = path.join(typesDirPath, files[i]);
+            // console.log(typeFilePath);
+            str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
+            regexMatch = importRegex.exec(str);
+            if (regexMatch) {
+                regexMatch.forEach(function (match) {
+                    str = str.replace(match, "")
+                })
             }
-            dtsStr = dtsStr.replace(/export {}/g, "");
-            dtsStr = dtsStr.replace(/export declare /g, "");
-            dtsStr = dtsStr.replace(/export default /g, "");
+            regexMatch = declareGlobalRegex.exec(str)
+            if (regexMatch) {
+                dtsStr += regexMatch[2];
+            } else {
+                dtsStr += str;
+            }
 
-            dtsStr = `declare namespace ${moduleName} {\n` + dtsStr + "}\n";
+        }
+        dtsStr = dtsStr.replace(/export {}/g, "");
+        dtsStr = dtsStr.replace(/export declare /g, "");
+        dtsStr = dtsStr.replace(/export default /g, "");
 
-            fs.writeFileSync(sigleDtsFilePath, dtsStr, "utf8");
-        })
-        // for (let i = 0; i < modules.length; i++) {
-        //     fileName = modules[i].id.includes("/") ? modules[i].id.split("/").pop() : modules[i].id.split("\\").pop();
-        //     if (fileName === "index.ts") {
-        //         continue;
-        //     }
-        //     dtsFilePath = path.join(process.cwd(), typesDir, fileName.replace(".ts", ".d.ts"));
-        //     dtsStr += fs.readFileSync(dtsFilePath, "utf8");
+        dtsStr = `declare namespace ${moduleName} {\n` + dtsStr + "}\n";
+
+        fs.writeFileSync(sigleDtsFilePath, dtsStr, "utf8");
+    })
+    // for (let i = 0; i < modules.length; i++) {
+    //     fileName = modules[i].id.includes("/") ? modules[i].id.split("/").pop() : modules[i].id.split("\\").pop();
+    //     if (fileName === "index.ts") {
+    //         continue;
+    //     }
+    //     dtsFilePath = path.join(process.cwd(), typesDir, fileName.replace(".ts", ".d.ts"));
+    //     dtsStr += fs.readFileSync(dtsFilePath, "utf8");
 
     // }
 }
