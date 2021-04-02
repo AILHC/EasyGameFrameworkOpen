@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.3...@ailhc/egf-cli@1.5.0) (2021-04-02)
+
+
+### Bug Fixes
+
+* 修复声明声明忽略配置影响编译的bug，修复多层文件夹的index.ts输出的.d.ts报错问题 ([eb1cadc](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/eb1cadce5e25fa9d46573a89f62dce5d6e605624))
+
+
+### Features
+
+* sourcemap可以配置inline或不inline ([44e3696](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/44e3696f7cb6fac7ef195243a34de80a775a4f34))
+
+
+
+
+
 ## [1.4.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.2...@ailhc/egf-cli@1.4.3) (2021-04-01)
 
 
