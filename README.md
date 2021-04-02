@@ -8,7 +8,7 @@
 [![ReadCodeIn1s](https://img.shields.io/badge/ReadCode-In1S-blue.svg)](https://github1s.com/AILHC/EasyGameFrameworkOpen)
 
 <!-- [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/AILHC/EasyGameFrameworkOpen) -->
-![微信公众号-玩转游戏开发-brightgreen.svg](https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7-%E7%8E%A9%E8%BD%AC%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-brightgreen.svg)
+![玩转游戏开发-brightgreen.svg](https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7-%E7%8E%A9%E8%BD%AC%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-brightgreen.svg)
 
 基于Typescript的渐进式通用游戏前端开发框架
 
@@ -39,7 +39,7 @@ A progressive universal game front-end development framework based on [Typescrip
 
 各有优势，看项目和团队进行技术选型。
 
-我想这个框架可以不受限于引擎，适用于各种项目，不必因为换引擎而重复造轮子。
+我想这个框架可以不受限于引擎，适用于各种项目，不必因为换引擎而重复造🚗子。
 
 
 关于框架这个话题我写了几篇文章(感兴趣可以看一下)
@@ -250,7 +250,7 @@ A progressive universal game front-end development framework based on [Typescrip
 
 在以下这些渠道可以找到我和我的分享和创作:
 
-公众号搜索:玩转游戏开发
+搜索关注:玩转游戏开发
 
 或扫码:<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/abd0c14c9c954e56af20adb71fa00da9~tplv-k3u1fbpfcp-zoom-1.image" alt="img" style="zoom:50%;" />
 

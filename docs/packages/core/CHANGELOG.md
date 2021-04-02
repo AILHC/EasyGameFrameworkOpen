@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.2.0...@ailhc/egf-core@1.2.1) (2021-03-31)
+
+
+### Bug Fixes
+
+* 修复package.json的exports字段,这会导致cocoscreator2.4.5import报错 ([6c22d71](https://github.com/AILHC/EasyGameFrameworkOpen/commit/6c22d71f6f32ec566b95e7b299ec91e732e99585))
+
+
+
+
+
 # [1.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.1.4...@ailhc/egf-core@1.2.0) (2021-03-27)
 
 
