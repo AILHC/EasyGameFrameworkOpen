@@ -216,6 +216,8 @@ async function rollupBuild(option) {
     }
     tsconfigOverride.compilerOptions.declarationDir = typesDir;
     tsconfigOverride.compilerOptions.declaration = customDts;
+    tsconfigOverride.compilerOptions.inlineSources = true;
+    tsconfigOverride.compilerOptions.sourceMap = true;
     let removeComments = option.removeComments;
     if (removeComments !== undefined) {
         tsconfigOverride.compilerOptions.removeComments = removeComments;
@@ -334,6 +336,8 @@ async function rollupBuild(option) {
         }
     };
     const chunkFileNames = option.chunkFileNames ? option.chunkFileNames : "[name].js";
+    const compilerOptions = tsconfig.compilerOptions;
+    const sourcemap = compilerOptions.sourceMap ? (compilerOptions.inlineSourceMap ? "inline" : true) : false;
     /**
      * @type { import('rollup').OutputOptions }
      */
@@ -344,7 +348,7 @@ async function rollupBuild(option) {
         dir: outputDir,
         format: format,
         name: moduleName,
-        sourcemap: tsconfig.compilerOptions.sourceMap ? "inline" : false,
+        sourcemap: sourcemap,
         // globals: {
         //     fairygui: "fairygui",
         //     Laya: "Laya"

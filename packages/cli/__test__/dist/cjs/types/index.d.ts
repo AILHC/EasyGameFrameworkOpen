@@ -48,7 +48,7 @@ declare module '@ailhc/egf-cli/src2/classD' {
 	}
 
 }
-declare module '@ailhc/egf-cli/src2/index' {
+declare module '@ailhc/egf-cli/src2' {
 	export * from '@ailhc/egf-cli/src/classA';
 	export * from '@ailhc/egf-cli/src/classB';
 	export * from '@ailhc/egf-cli/src/classD';
