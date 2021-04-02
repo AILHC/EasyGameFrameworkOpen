@@ -229,7 +229,6 @@ async function rollupBuild(option) {
     const tsconfig = require(path.join(projRoot, `tsconfig.json`));
 
     let exclude = tsconfig.exclude ? tsconfig.exclude : [];
-    exclude = exclude.concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
     let externalTag = tsconfig.externalTag;
     if (typeof externalTag === "object" && typeof externalTag.length === "number") {
         externalTag = externalTag.length > 0 ? externalTag : [];
@@ -322,8 +321,8 @@ async function rollupBuild(option) {
     // }
 
     let footerStr = option.footer ? option.footer : "";
-    footerStr = 
-    `${footerStr}
+    footerStr =
+        `${footerStr}
     `+ (moduleName && useFooter ? `var globalTarget =window?window:global;
     globalTarget.${moduleName}?Object.assign({},globalTarget.${moduleName}):(globalTarget.${moduleName} = ${moduleName})` : "");
 
@@ -463,7 +462,13 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                 if (params.currentModuleId === entryRelative.split(".")[0]) {
                     return moduleName;
                 }
-                return `${moduleName}/${params.currentModuleId}`
+
+                const indexfile = params.currentModuleId.substr(-6, 6);
+                let currentModuleId = params.currentModuleId;
+                if (indexfile === "/index") {
+                    currentModuleId = currentModuleId.slice(0, currentModuleId.length - 6);
+                }
+                return `${moduleName}/${currentModuleId}`
             },
             resolveModuleImport: function (params) {
                 // console.log(params)
