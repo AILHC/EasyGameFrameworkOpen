@@ -7,6 +7,7 @@ declare interface IEgfCompileOption {
     config: string,
     /**是否监听自动编译 ,默认为false*/
     watch: boolean,
+
     /**入口文件 默认src/index.ts,可以是数组,多个入口 */
     entry: string[],
     /**单入口输出文件名  默认dist/${format}/lib/index.js*/
@@ -68,5 +69,13 @@ declare interface IEgfCompileOption {
     /**externalTag 用来判断引用的模块是否做为外部引用(不编译进来)
    因为packages内的A包，引用了B包，会把A和B的代码编译成一个js */
     externalTag: string | string[]
-
+    /**是否自动创建入口文件，默认false */
+    autoCti: boolean
+    /**自动创建入口文件模式 */
+    ctiMode: "create" | "entrypoint"
+    /**
+     * 自动创建入口文件配置
+     * 
+     */
+    ctiOption?: import("create-ts-index/dist/options/ICreateTsIndexOption").ICreateTsIndexOption
 }

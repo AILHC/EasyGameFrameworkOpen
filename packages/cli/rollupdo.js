@@ -562,17 +562,27 @@ function genCustomDts(projRoot, format, typesDir, moduleName) {
 
     // }
 }
+const cti = require("create-ts-index");
 /**
- * 输出js和dts声明文件
- * @param {import('rollup').InputOptions} buildConfig 构建配置
- * @param {import('rollup').OutputOptions} outputOption 输出配置
- * @param {string} typesDir 声明文件输出目录
- * @param {string} moduleName 模块名
- * @param {boolean} customDts iife和umd规范用
- * @param {boolean} minify 是否压缩
+ * @type {import("create-ts-index/dist/TypeScritIndexWriter").TypeScritIndexWriter}
  */
-async function build(buildConfig, entry, outputOption, typesDir, moduleName, customDts, minify) {
+const tsIndexWriter = new cti.TypeScritIndexWriter();
+/**
+ * 
+ * @param {string} entry 
+ * @param {IEgfCompileOption} option 
+ */
+function autoCreateIndex(entry, option) {
+    const ctiOpt = option.ctiOption;
+    const dirPath = path.dirname(path.join(option.proj, option.entry))
+    if(!ctiOpt.output){
+        // ctiOpt.output = path.
+    }
+    if (option.ctiMode === "create") {
+        await tsIndexWriter.create(ctiOpt,dirPath)
+    } else {
 
+    }
 }
 
 module.exports = {
