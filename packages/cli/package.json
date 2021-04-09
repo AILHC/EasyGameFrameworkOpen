@@ -48,8 +48,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "~0.21.2",
-    "typescript": "^3.8.3",
-    "create-ts-index": "^1.13.6"
+    "typescript": "^3.8.3"
   },
   "bin": {
     "egf": "./cli.js"
@@ -65,7 +64,11 @@
     "single:test:build:cjs:noremoveComments": "egf build -p ./__test__ -f cjs -e ./src/index.ts -nrc",
     "single:test:build:target:es6": "egf build -p ./__test__ -f cjs -e ./src/index.ts -t es6",
     "single:test:build:config": "egf build -p ./__test__ -f cjs -e ./src/index.ts -c ./testOption.js",
-    "single:test:build:config:footer": "egf build -p ./__test__ -f iife -e ./src/index.ts -c ./testOption.js"
+    "single:test:build:config:footer": "egf build -p ./__test__ -f iife -e ./src/index.ts -c ./testOption.js",
+    "test:single:build:autocti":"egf build -p ./__test__ -f cjs -acti -e ./src/index.ts",
+    "test:build:autocti":"egf build -p ./__test__ -f cjs -acti -e ./src/index.ts ./src2/index.ts",
+    "test:watch:autocti":"egf build -p ./__test__ -w -f cjs -acti -e ./src/index.ts ./src2/index.ts",
+    "single:test:watch:autocti":"egf build -p ./__test__ -w -f cjs -acti -e ./src/index.ts"
   },
   "devDependencies": {}
 }

@@ -44,11 +44,12 @@ program
     })
 program
     .command("build")
+    .description(`构建`)
     .option('-p, --proj [proj]', '项目根路径，默认为执行命令处 process.cwd()')
     .option('-c, --config [config]', '配置文件路径，做更多的自定义处理,默认egf.compile.js')
     .option('-w, --watch [watch]', '是否监听自动编译')
-    .option('-acti, --no-auto-cti [autoCti]','是否自动生成入口文件，默认否')
-    .option('-ctim, -cti-mode [cti-mode]','自动生成入口文件模式，默认create,可选:create,entrypoint,两种模式差异可见文档')
+    .option('-acti, --auto-cti [autoCti]', '是否自动生成入口文件，默认否')
+    .option('-ctim, -cti-mode [cti-mode]', '自动生成入口文件模式，默认create,可选:create,entrypoint,两种模式差异可见文档')
     .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口')
     .option('-o, --output [output]', '输出文件 默认dist/index.js')
     .option('-od, --output-dir [outputDir]', '多入口编译输出文件夹 默认dist/${format}')
@@ -60,11 +61,20 @@ program
     .option('-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
     .option('-bn, --banner [banner]', "自定义输出文件顶部文本")
     .option('-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入")
-    .description(`构建`)
     .action(function (option) {
         rollupDo.build(option);
-    })
+    });
+program
+    .command("cti")
+    .description(`
+    基于create-ts-index库
+    创建入口文件,一般用于生成库的index.ts比如fairygui`)
+    .option('-m, --mode [mode]', '创建模式，默认create,可选create、entrypoint')
+    .option('-d, --dir [dir]', '文件夹路径，可以相对也可以绝对，相对路径相对于process.cwd()执行命令处')
 
+    .action(function (option) {
+        rollupDo.createIndex(option.dir, option.mode);
+    });
 program.parse(process.argv);
 // 未知命令会报错
 program.on('command:*', function () {
