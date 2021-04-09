@@ -1,0 +1,1 @@
+export declare const options: Map<"output" | "excludes" | "quote" | "verbose" | "cwds" | "filefirst" | "addnewline" | "usesemicolon" | "includecwd" | "usetimestamp" | "fileexcludes" | "targetexts" | "withoutcomment" | "withoutbackup", any>;

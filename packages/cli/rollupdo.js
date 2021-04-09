@@ -1,14 +1,31 @@
+// @ts-check
+/**
+ * @type {any}
+ */
 const typescript = require('rollup-plugin-typescript2');
 const rollup = require("rollup");
+/**
+ * @type {any}
+ */
 const rollupCjs = require("rollup-plugin-commonjs");
+/**
+ * @type {any}
+ */
 const nodeResolve = require("rollup-plugin-node-resolve");
 const path = require("path");
 const matched = require("matched")
 const fs = require("fs");
 // const npmDts = require("npm-dts");
 const dtsGenerator = require('dts-generator');
+/**
+ * @type {any}
+ */
 const jsonPlugin = require("@rollup/plugin-json");
+/**
+ * @type {any}
+ */
 const terser = require("rollup-plugin-terser");
+const { TypeScritIndexWriter } = require('./libs/cti/TypeScritIndexWriter');
 var curPackFiles = null; //当前包的所有的文件
 var mentry = 'multientry:entry-point';
 
@@ -147,6 +164,9 @@ async function rollupBuild(option) {
     let format = option.format ? option.format : "cjs";
 
     if (format.includes("iife") || format.includes("umd")) {
+        /**
+         * @type {any[]}
+         */
         const strs = format.split(":");
         format = strs[0];
         moduleName = strs[1];
@@ -167,7 +187,9 @@ async function rollupBuild(option) {
         useFooter = true;
     }
     if (format.includes("system")) {
-
+        /**
+         * @type {any[]}
+         */
         const strs = format.split(":");
         format = strs[0];
         moduleName = strs[1];
@@ -253,13 +275,13 @@ async function rollupBuild(option) {
     // console.log(exclude)
     tsconfigOverride.exclude = exclude;
     /**
-     * @type {import('rollup-plugin-typescript2/dist/ioptions').IOptions}
+     * @type {Partial<import('rollup-plugin-typescript2/dist/ioptions').IOptions> }
      */
     const tsOptions = {
         clean: true,
         abortOnError: false,
         tsconfigOverride: tsconfigOverride,
-        useTsconfigDeclarationDir: true,
+        useTsconfigDeclarationDir: true
     }
     //自定义插件
     const customPlugins = option.plugins ? option.plugins : [];
@@ -300,6 +322,7 @@ async function rollupBuild(option) {
 
         },
         input: entrys,
+
         plugins: [
             // myMultiInput(),
             jsonPlugin(),
@@ -359,7 +382,9 @@ async function rollupBuild(option) {
     }
 
     const isGenDts = option.genDts;
-
+    if (option.autoCti) {
+        await autoCreateIndex(option);
+    }
     if (option.watch) {
         /**@type {import('rollup').RollupWatchOptions} */
         const watchConfig = buildConfig;
@@ -368,12 +393,14 @@ async function rollupBuild(option) {
             clearScreen: true
         }
         const rollupWatcher = await rollup.watch(watchConfig);
-        rollupWatcher.on("event", (event) => {
+        rollupWatcher.on("event", async (event) => {
+            
             if (event.code === "START") {
-
-            } else if (event.code === "BUNDLE_START") {
                 console.log("开始构建");
-                isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, customDts);
+            } else if (event.code === "BUNDLE_START") {
+                console.log("开始输出");
+
+                isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
                 console.log(event.output);
             } else if (event.code === "BUNDLE_END") {
                 console.log("构建结束");
@@ -394,10 +421,10 @@ async function rollupBuild(option) {
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
 
-        isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, customDts);
+        isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
 
         const writeResult = await rollupBuild.write(outputOption);
-        isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName, customDts);
+        isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName);
         const minify = option.minify;
         if (minify) {
             /**
@@ -435,9 +462,13 @@ async function rollupBuild(option) {
  */
 function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
     /**
+     * @type {any}
+     */
+    const dtsg = require("dts-generator");
+    /**
      * @type {dtsGenerator}
      */
-    const dtsGen = require("dts-generator").default;
+    const dtsGen = dtsg.default;
     const tsconfig = require(path.join(projRoot, `tsconfig.json`));
     const typesDirPath = path.join(projRoot, typesDir);
     const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
@@ -452,7 +483,10 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
         console.warn(`[多入口暂不做声明输出]`);
     } else {
         entry = entrys[0];
-        dtsGen({
+        /**
+         * @type {Partial<import('dts-generator').DtsGeneratorOptions> }
+         */
+        const dtsGOpt = {
             baseDir: projRoot,
             exclude: dtsGenExclude,
             out: path.join(typesDirPath, `index.d.ts`),
@@ -497,7 +531,9 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                 }
                 return params.importedModuleId
             }
-        }).then(() => {
+        }
+        // @ts-ignore
+        dtsGen(dtsGOpt).then(() => {
 
         })
     }
@@ -562,29 +598,39 @@ function genCustomDts(projRoot, format, typesDir, moduleName) {
 
     // }
 }
-const cti = require("create-ts-index");
-/**
- * @type {import("create-ts-index/dist/TypeScritIndexWriter").TypeScritIndexWriter}
- */
-const tsIndexWriter = new cti.TypeScritIndexWriter();
 /**
  * 
- * @param {string} entry 
  * @param {IEgfCompileOption} option 
  */
-function autoCreateIndex(entry, option) {
-    const ctiOpt = option.ctiOption;
-    const dirPath = path.dirname(path.join(option.proj, option.entry))
-    if(!ctiOpt.output){
-        // ctiOpt.output = path.
+async function autoCreateIndex(option) {
+    const mode = option.ctiMode;
+    let entrys = option.entry;
+    for (let i = 0; i < entrys.length; i++) {
+        const dirPath = path.dirname(path.join(option.proj, entrys[i]))
+        await createIndex(dirPath, mode, option.ctiOption);
     }
-    if (option.ctiMode === "create") {
-        await tsIndexWriter.create(ctiOpt,dirPath)
-    } else {
 
+}
+
+const tsIndexWriter = new TypeScritIndexWriter();
+/**
+ * 
+ * @param {string} dirPath 
+ * @param {"create"|"entrypoint"} mode
+ * @param {import("create-ts-index/dist/options/ICreateTsIndexOption").ICreateTsIndexOption} option
+ */
+async function createIndex(dirPath, mode, option) {
+    if (!option) {
+        option = tsIndexWriter.getDefaultOption(dirPath);
+    }
+    if (!mode || mode === "create") {
+        await tsIndexWriter.create(option, dirPath);
+    } else {
+        await tsIndexWriter.createEntrypoint(option, dirPath);
     }
 }
 
 module.exports = {
     build: rollupBuild,
+    createIndex: createIndex
 }

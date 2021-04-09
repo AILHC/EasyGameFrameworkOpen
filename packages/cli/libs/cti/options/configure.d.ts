@@ -1,0 +1,14 @@
+import * as glob from 'glob';
+import { Either } from 'my-easy-fp';
+import { ICreateTsIndexCliOption } from './ICreateTsIndexCliOption';
+import { ICreateTsIndexOption } from './ICreateTsIndexOption';
+export declare const CTIRC_FILENAME = ".ctirc";
+export declare function getRCFilename(configPath: string): string;
+export declare function getDeafultOptions(): ICreateTsIndexOption;
+export declare function createFromCli(args: Partial<ICreateTsIndexCliOption>, cwd: string, output?: string): Partial<ICreateTsIndexOption>;
+export declare function merging(src: Partial<ICreateTsIndexOption>, dst: Partial<ICreateTsIndexOption>): Partial<ICreateTsIndexOption>;
+export declare function mergingGlobOptions(prevSrc?: glob.IOptions, prevDst?: glob.IOptions): glob.IOptions;
+export declare function cleanGlobOptions(src?: glob.IOptions): glob.IOptions | undefined;
+export declare function cleansing(src: Partial<ICreateTsIndexOption>): Partial<ICreateTsIndexOption>;
+export declare function readConfigRC(configPath: string): Promise<Either<Partial<ICreateTsIndexOption>, Error>>;
+export declare function concreteConfig(config: Partial<ICreateTsIndexOption>): ICreateTsIndexOption;
