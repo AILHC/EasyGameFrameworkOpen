@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.5.0...@ailhc/egf-cli@1.6.0) (2021-04-16)
+
+
+### Features
+
+* 初步接入create-index ([8fd48a1](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/8fd48a1e833813eefc3d3a011b41ef3b8e610de9))
+* 增加手动创建入口的命令、完善文档 ([e0226a6](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/e0226a644cc5cc70ab068aef665998184f4254ca))
+* 增加create-ts-index库 ([9db6c5e](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/9db6c5efd6f7ffad73d3cdde27ef3efb24e1e326))
+
+
+
+
+
 # [1.5.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.3...@ailhc/egf-cli@1.5.0) (2021-04-02)
 
 
