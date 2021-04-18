@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.0...@ailhc/egf-cli@1.6.1) (2021-04-18)
+
+
+### Bug Fixes
+
+* 修复TypeScritIndexWriter找不到问题 ([bedd728](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/bedd728993464efeff66914646606fd1a24d8f64))
+
+
+
+
+
 # [1.6.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.5.0...@ailhc/egf-cli@1.6.0) (2021-04-16)
 
 
