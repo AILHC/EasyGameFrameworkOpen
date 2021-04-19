@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.0...@ailhc/egf-cli@1.6.1) (2021-04-18)
+
+
+### Bug Fixes
+
+* 修复TypeScritIndexWriter找不到问题 ([bedd728](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/bedd728993464efeff66914646606fd1a24d8f64))
+
+
+
+
+
+# [1.6.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.5.0...@ailhc/egf-cli@1.6.0) (2021-04-16)
+
+
+### Features
+
+* 初步接入create-index ([8fd48a1](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/8fd48a1e833813eefc3d3a011b41ef3b8e610de9))
+* 增加手动创建入口的命令、完善文档 ([e0226a6](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/e0226a644cc5cc70ab068aef665998184f4254ca))
+* 增加create-ts-index库 ([9db6c5e](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/9db6c5efd6f7ffad73d3cdde27ef3efb24e1e326))
+
+
+
+
+
+# [1.5.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.3...@ailhc/egf-cli@1.5.0) (2021-04-02)
+
+
+### Bug Fixes
+
+* 修复声明声明忽略配置影响编译的bug，修复多层文件夹的index.ts输出的.d.ts报错问题 ([eb1cadc](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/eb1cadce5e25fa9d46573a89f62dce5d6e605624))
+
+
+### Features
+
+* sourcemap可以配置inline或不inline ([44e3696](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/44e3696f7cb6fac7ef195243a34de80a775a4f34))
+
+
+
+
+
 ## [1.4.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.4.2...@ailhc/egf-cli@1.4.3) (2021-04-01)
 
 
