@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@1.1.4...@ailhc/obj-pool@1.2.0) (2021-04-19)
+
+
+### Features
+
+* 增加对象池阈值控制,完善文档 ([e4d9305](https://github.com/AILHC/EasyGameFrameworkOpen/commit/e4d9305e09607a3d0877802031f2036452c543f4))
+
+
+
+
+
 ## [1.1.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@1.1.3...@ailhc/obj-pool@1.1.4) (2021-03-31)
 
 

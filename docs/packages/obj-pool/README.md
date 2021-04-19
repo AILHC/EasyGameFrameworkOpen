@@ -49,26 +49,88 @@ class ClassA implements objPool.IObj{
 
     }
 }
-mgr.createByClass(ClassA, "test1");
+mgr.createObjPool({sign:"test1",clas:ClassA});
 const ins1 = mgr.get("test1");
+
 //注入通用对象处理函数
 //这样对于没有实现IObj接口的对象也可以
 const objPool = new BaseObjPool();
-objPool.setObjHandler({
-    onGet(obj: objPool.IObj, onGetData: any) {
 
-    },
-    onCreate(obj): void {
+objPool.init(
+    {
+        sign: "pool1",
+        objHandler: {
+            onGet(obj: objPool.IObj, onGetData: any) {
 
-    },
-    onFree(obj): void {
+            },
+            onCreate(obj): void {
 
-    },
-    onKill(obj): void {
+            },
+            onFree(obj): void {
 
+            },
+            onKill(obj): void {
+
+            }
+
+        }
     }
+)
+```
+2. 提示更加智能
+```ts
+interface ITestObjKeyType {
+    TestObj1: "TestObj1",
+    TestObj2: "TestObj2",
+    TestObj3: "TestObj3"
+}
+interface ITestObjGetDataMap {
+    TestObj1: { num: number },
+    TestObj2: { name: string },
+    TestObj3: { name: string }
+}
+const poolMgr = new ObjPoolMgr<ITestObjKeyType, ITestObjGetDataMap>();
+poolMgr.createByClass("TestObj1", TestObj1);
+poolMgr.createByFunc("TestObj2", () => {
+    return new TestObj2();
+});
+poolMgr.preCreate("TestObj1", 5);
+//get 这里get可以获得对应"TestObj1"的传参类型提示
+const testObj1: TestObj1 = poolMgr.get("TestObj1", { num: 2 });
 
-})
+//批量获取
+const testObj2s: TestObj2[] = poolMgr.getMore("TestObj2", { name: "testObj2" }, 4);
+
+```
+3. 阈值控制
+```ts
+const objPool = new BaseObjPool();
+
+objPool.init(
+    {
+        sign: "pool1",
+        objHandler: {
+            onGet(obj: objPool.IObj, onGetData: any) {
+
+            },
+            onCreate(obj): void {
+
+            },
+            onFree(obj): void {
+
+            },
+            onKill(obj): void {
+
+            }
+
+        },
+        //阈值
+        threshold: 100
+    }
+)
+//回收对象，如果对象池里的数量大于等于100，则这个obj就会被kill掉（销毁）;
+objPool.free(obj);
+
 ```
 
 ## [CHANGELOG](packages/obj-pool/CHANGELOG.md)

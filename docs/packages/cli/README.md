@@ -8,7 +8,9 @@ The Extension library build package based on Rollup's EasyGameFramework can also
 2. 可以导出iife，commonjs，systemjs等格式
 3. 将声明打包成单个dts声明文件
 4. 开箱即用 
+5. 支持自动和手动创建index.ts之类的入口文件(一般用于fairygui这些库将所有脚本通过index.ts导出)
 
+## [CHANGELOG](packages/cli/CHANGELOG.md)
 ## 安装
 ```bash
 npm install -D @ailhc/egf-cli
@@ -28,31 +30,12 @@ npm install -D @ailhc/egf-cli
 
 2. 支持CocosCreator2.x的插件ts编译，插件模板在CocosStore搜索:"plugin_template2_x" 购买下载
 
-
-### 构建配置项
-在tsconfig.json中可以增加配置
-1. dtsGenExclude 生成.d.ts文件时所要忽略的 
-   
-   比如 core包中的 
-   ```json
-    "dtsGenExclude": [
-        "__tests__/**/*"
-    ]
-   ```
-   忽略测试目录下的文件，不生成声明文件
-
-2. externalTag 用来判断引用的模块是否做为外部引用(不编译进来)
-   因为packages内的A包，引用了B包，会把A和B的代码编译成一个js
-   参考:
-   ```json
-   "externalTag":"@ailhc"
-   或
-   "externalTag":["@ailhc"]
-   ```
-### 构建命令行参数
+### 构建命令行参数(egf build)
 * '-p, --proj [proj]', '项目根路径，默认为执行命令处 process.cwd()')
 * '-c, --config [config]', '配置文件路径，做更多的自定义处理,默认egf.compile.js')
 * '-w, --watch [watch]', '是否监听自动编译')
+* '-acti, --auto-cti [autoCti]', '是否自动生成入口文件，默认否'
+* '-ctim, -cti-mode [cti-mode]', '自动生成入口文件模式，默认create,可选:create,entrypoint,两种模式差异可见文档'
 * '-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口')
 * '-o, --output [output]', '输出文件 默认dist/index.js')
 * '-od, --output-dir [outputDir]', '多入口编译输出文件夹 默认dist/${format}')
@@ -64,6 +47,12 @@ npm install -D @ailhc/egf-cli
 * '-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
 * '-bn, --banner [banner]', "自定义输出文件顶部文本")
 * '-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入")
+### 入口文件生成命令行参数(egf cti)
+`基于create-ts-index库创建入口文件,一般用于生成库的index.ts比如fairygui`
+
+* '-m, --mode [mode]', '创建模式，默认create,可选create、entrypoint'
+* '-d, --dir [dir]', '文件夹路径，可以相对也可以绝对，相对路径相对于process.cwd()执行命令处'
+
 
 ### 自定义配置文件接口
 
@@ -72,18 +61,17 @@ npm install -D @ailhc/egf-cli
 declare interface IEgfCompileOption {
     /**项目根路径，默认为执行命令处 process.cwd() */
     proj: string,
-    /**配置文件路径 */
+    /**配置文件路径，做更多的自定义处理,默认egf.compile.js */
     config: string,
     /**是否监听自动编译 ,默认为false*/
     watch: boolean,
+
     /**入口文件 默认src/index.ts,可以是数组,多个入口 */
     entry: string[],
     /**单入口输出文件名  默认dist/${format}/lib/index.js*/
     output: string,
     /**多入口编译输出文件夹 默认dist/${format}/lib*/
     outputDir: string,
-    /**多入口输出基础文件夹，默认没有 */
-    baseDir: string
     /**输出文件规范,默认cjs,如果是iife和umd 需要加:<globalName> 冒号+全局变量名 */
     format: "cjs" | "es" | "esm" | "iife" | "system" | "umd",
     /**声明文件输出目录 默认dist/${format}/types*/
@@ -127,11 +115,30 @@ declare interface IEgfCompileOption {
         [extname]:文件的扩展名，以。如果它不是空的。
         output.extend
      */
-    entryFileNames: string | ((chunkInfo: import("rollup").PreRenderedChunk) => string)
-
+    entryFileNames: string | ((chunkInfo: import("rollup").PreRenderedChunk) => string),
+    /**
+     * 自定义插件
+     */
+    plugins?: import("rollup").Plugin[]
+    /**
+     * 1. dtsGenExclude 生成.d.ts文件时所要忽略的  忽略测试目录下的文件，不生成声明文件
+     */
+    dtsGenExclude: string[],
+    /**externalTag 用来判断引用的模块是否做为外部引用(不编译进来)
+   因为packages内的A包，引用了B包，会把A和B的代码编译成一个js */
+    externalTag: string | string[]
+    /**是否自动创建入口文件，默认false */
+    autoCti: boolean
+    /**自动创建入口文件模式 */
+    ctiMode: "create" | "entrypoint"
+    /**
+     * 自动创建入口文件配置
+     * 具体的配置可见:https://hub.fastgit.org/imjuni/create-ts-index
+     */
+    ctiOption?: import("create-ts-index/dist/options/ICreateTsIndexOption").ICreateTsIndexOption
 }
 ```
 ### 注意事项
 1. 多入口编译暂不支持声明文件输出
-## [CHANGELOG](packages/cli/CHANGELOG.md)
+
 
