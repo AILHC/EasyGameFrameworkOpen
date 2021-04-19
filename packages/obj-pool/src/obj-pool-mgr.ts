@@ -1,16 +1,42 @@
 import { BaseObjPool } from "./obj-pool";
 const logType = {
-    poolIsNull: "对象池不存在",
-    poolExit: "对象池已存在",
-    signIsNull: "sign is null",
+    poolIsNull: "objPool is null",
+    poolExit: "objPool is exit",
+    signIsNull: "sign is null"
 };
 export class ObjPoolMgr<SignType = any, GetDataType = any> implements objPool.IPoolMgr<SignType, GetDataType> {
-
-    private _poolDic: { [key in keyof SignType]: BaseObjPool<any> } = {} as any;
+    private _poolDic: { [key in keyof SignType]: objPool.IPool<any> } = {} as any;
+    public setObjPoolThreshold<keyType extends keyof SignType = any>(sign: keyType, threshold: number): void {
+        const pool = this._poolDic[sign];
+        if (pool) {
+            pool.threshold = threshold;
+        } else {
+            this._log(`${logType.poolIsNull}:${sign}`);
+        }
+    }
     public setObjPoolHandler<keyType extends keyof SignType = any>(sign: keyType, objHandler: objPool.IObjHandler) {
         const pool = this._poolDic[sign];
         if (pool) {
             pool.setObjHandler(objHandler);
+        } else {
+            this._log(logType.poolIsNull);
+        }
+    }
+    createObjPool<T = any>(opt: objPool.IPoolInitOption<T, GetDataType, SignType>): objPool.IPool<T, GetDataType> {
+        const sign = opt.sign;
+        if (this.hasPool(sign)) {
+            this._log(`${logType.poolExit}${sign}`);
+            return;
+        }
+        if (sign && (sign as string).trim() !== "") {
+            let pool: objPool.IPool = new BaseObjPool();
+            pool = pool.init(opt);
+            if (pool) {
+                this._poolDic[sign] = pool;
+            }
+            return pool;
+        } else {
+            this._log(`${logType.signIsNull}`);
         }
     }
     public createByClass(sign: keyof SignType, cls: any): void {
@@ -79,20 +105,22 @@ export class ObjPoolMgr<SignType = any, GetDataType = any> implements objPool.IP
     public getMore<T, keyType extends keyof SignType = any>(
         sign: keyType,
         onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>],
-        num?: number): T extends objPool.IObj ? T[] : objPool.IObj[] {
+        num?: number
+    ): T extends objPool.IObj ? T[] : objPool.IObj[] {
         const pool = this._poolDic[sign];
-        return pool ? pool.getMore(onGetData, num) as any : undefined;
+        return pool ? (pool.getMore(onGetData, num) as any) : undefined;
     }
-    public getPoolObjsBySign<T extends objPool.IObj>(sign: keyof SignType): T extends objPool.IObj ? T[] : objPool.IObj[] {
+    public getPoolObjsBySign<T extends objPool.IObj>(
+        sign: keyof SignType
+    ): T extends objPool.IObj ? T[] : objPool.IObj[] {
         const pool = this._poolDic[sign];
 
-        return pool ? pool.poolObjs as any : undefined;
+        return pool ? (pool.poolObjs as any) : undefined;
     }
 
     public free(obj: objPool.IObj): void {
         const pool = this._poolDic[obj.poolSign as keyof SignType];
         if (pool) {
-            
             pool.free(obj);
         }
     }
@@ -105,15 +133,12 @@ export class ObjPoolMgr<SignType = any, GetDataType = any> implements objPool.IP
     public kill(obj: objPool.IObj): void {
         const pool = this._poolDic[obj.poolSign as keyof SignType];
         if (pool) {
-            
             pool.kill(obj);
         }
     }
 
-
-
     private _log(msg: string, level: number = 1) {
-        const tagStr = "[对象池管理器]";
+        const tagStr = "[objPool.ObjPoolMgr]";
         switch (level) {
             case 0:
                 console.log(tagStr + msg);
@@ -127,5 +152,4 @@ export class ObjPoolMgr<SignType = any, GetDataType = any> implements objPool.IP
                 break;
         }
     }
-
 }

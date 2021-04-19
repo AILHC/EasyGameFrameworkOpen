@@ -37,7 +37,8 @@
     "build:system": "egf build -f system -m true",
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
-    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $INIT_CWD",
+    "test2": "cross-var jest --config=../../jest.config.js --roots $INIT_CWD"
   },
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
