@@ -1,12 +1,12 @@
-export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> implements objPool.IPool<T, onGetDataType> {
-
+export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, SignType = any>
+    implements objPool.IPool<T, onGetDataType, SignType> {
     private _poolObjs: objPool.IObj[];
     private _usedObjMap: Map<objPool.IObj, objPool.IObj>;
     public get poolObjs(): objPool.IObj[] {
         return this._poolObjs;
     }
-    private _sign: string;
-    public get sign(): string {
+    private _sign: keyof SignType;
+    public get sign(): keyof SignType {
         return this._sign;
     }
     private _createFunc: (...args) => T;
@@ -18,9 +18,38 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> impl
     public get usedCount(): number {
         return this._usedObjMap ? this._usedObjMap.size : 0;
     }
+    public threshold: number;
+    public init(opt: objPool.IPoolInitOption<T, onGetDataType, SignType>): objPool.IPool<T, onGetDataType> {
+        if (!this._sign) {
+            if (!opt.sign) {
+                console.log(`[objPool] sign is undefind`);
+                return;
+            }
+            if (!opt.createFunc && !opt.clas) {
+                console.error(`[objPool] sign:${opt.sign}  no createFunc and class`);
+                return;
+            }
+            this._sign = opt.sign;
+            this._poolObjs = [];
+            this._usedObjMap = new Map();
+            this.threshold = opt.threshold;
+            const clas = opt.clas;
+            if (opt.createFunc) {
+                this._createFunc = opt.createFunc;
+            } else if (opt.clas) {
+                this._createFunc = function () {
+                    return new clas();
+                };
+            }
+            this._objHandler = opt.objHandler;
+        } else {
+            this._loghasInit();
+        }
+        return this;
+    }
     public initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType> {
         if (!this._sign) {
-            this._sign = sign;
+            this._sign = sign as any;
             this._poolObjs = [];
             this._usedObjMap = new Map();
             this._createFunc = createFunc;
@@ -28,12 +57,10 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> impl
             this._loghasInit();
         }
         return this;
-
     }
-    public initByClass(sign: string,
-        clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType> {
+    public initByClass(sign: string, clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType> {
         if (!this._sign) {
-            this._sign = sign;
+            this._sign = sign as any;
             this._poolObjs = [];
             this._usedObjMap = new Map();
             this._createFunc = function () {
@@ -63,7 +90,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> impl
             } else if (handler && handler.onCreate) {
                 handler.onCreate(obj);
             }
-            obj.poolSign = this._sign;
+            obj.poolSign = this._sign as any;
             obj.isInPool = true;
             poolObjs.push(obj);
         }
@@ -78,8 +105,6 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> impl
             }
             poolObjs.length = 0;
         }
-
-
     }
     public kill(obj: T extends objPool.IObj ? T : any): void {
         if (this._usedObjMap.has(obj)) {
@@ -105,7 +130,10 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> impl
         }
         if (!obj.isInPool) {
             const handler = this._objHandler;
-
+            if (this.threshold && this.size >= this.threshold) {
+                this.kill(obj);
+                return;
+            }
             if (obj.onFree) {
                 obj.onFree();
             } else if (handler && handler.onFree) {
@@ -135,7 +163,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> impl
         } else {
             obj = this._createFunc();
             obj.onCreate && obj.onCreate(this);
-            obj.poolSign = this._sign;
+            obj.poolSign = this._sign as any;
         }
         this._usedObjMap.set(obj, obj);
         obj.isInPool = false;
@@ -159,9 +187,9 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> impl
         return objs as any;
     }
     private _loghasInit() {
-        console.warn(`对象池${this._sign}已经初始化`);
+        console.warn(`objpool ${this._sign} already inited`);
     }
     private _logNotInit() {
-        console.error(`对象池还没初始化`);
+        console.error(`objpool is not init`);
     }
 }
