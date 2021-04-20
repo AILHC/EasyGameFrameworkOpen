@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@1.2.0...@ailhc/obj-pool@1.2.1) (2021-04-20)
+
+
+### Bug Fixes
+
+* 发布对象池模块 ([df527c1](https://github.com/AILHC/EasyGameFrameworkOpen/commit/df527c1f4a37ac22bb889367511534b626e926f8))
+
+
+
+
+
 # [1.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@1.1.4...@ailhc/obj-pool@1.2.0) (2021-04-19)
 
 

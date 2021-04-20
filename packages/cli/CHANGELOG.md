@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.1...@ailhc/egf-cli@1.6.2) (2021-04-20)
+
+
+### Bug Fixes
+
+* 修复发布iife、umd模块报错的问题 ([2e9abd0](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/2e9abd022d1365d5b6a85e3a3dad1535aa996927))
+
+
+
+
+
 ## [1.6.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.0...@ailhc/egf-cli@1.6.1) (2021-04-18)
 
 
