@@ -1,6 +1,8 @@
 export declare class ObjPoolMgr<SignType = any, GetDataType = any> implements objPool.IPoolMgr<SignType, GetDataType> {
     private _poolDic;
+    setObjPoolThreshold<keyType extends keyof SignType = any>(sign: keyType, threshold: number): void;
     setObjPoolHandler<keyType extends keyof SignType = any>(sign: keyType, objHandler: objPool.IObjHandler): void;
+    createObjPool<T = any>(opt: objPool.IPoolInitOption<T, GetDataType, SignType>): objPool.IPool<T, GetDataType>;
     createByClass(sign: keyof SignType, cls: any): void;
     createByFunc<T = any>(sign: keyof SignType, createFunc: () => T): void;
     hasPool(sign: keyof SignType): boolean;
