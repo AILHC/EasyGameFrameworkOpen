@@ -1,14 +1,16 @@
 declare module '@ailhc/obj-pool/src/obj-pool' {
-	export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any> implements objPool.IPool<T, onGetDataType> {
+	export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, SignType = any> implements objPool.IPool<T, onGetDataType, SignType> {
 	    private _poolObjs;
 	    private _usedObjMap;
 	    get poolObjs(): objPool.IObj[];
 	    private _sign;
-	    get sign(): string;
+	    get sign(): keyof SignType;
 	    private _createFunc;
 	    protected _objHandler: objPool.IObjHandler;
 	    get size(): number;
 	    get usedCount(): number;
+	    threshold: number;
+	    init(opt: objPool.IPoolInitOption<T, onGetDataType, SignType>): objPool.IPool<T, onGetDataType>;
 	    initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType>;
 	    initByClass(sign: string, clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType>;
 	    setObjHandler(objHandler: objPool.IObjHandler<onGetDataType>): void;
@@ -27,7 +29,9 @@ declare module '@ailhc/obj-pool/src/obj-pool' {
 declare module '@ailhc/obj-pool/src/obj-pool-mgr' {
 	export class ObjPoolMgr<SignType = any, GetDataType = any> implements objPool.IPoolMgr<SignType, GetDataType> {
 	    private _poolDic;
+	    setObjPoolThreshold<keyType extends keyof SignType = any>(sign: keyType, threshold: number): void;
 	    setObjPoolHandler<keyType extends keyof SignType = any>(sign: keyType, objHandler: objPool.IObjHandler): void;
+	    createObjPool<T = any>(opt: objPool.IPoolInitOption<T, GetDataType, SignType>): objPool.IPool<T, GetDataType>;
 	    createByClass(sign: keyof SignType, cls: any): void;
 	    createByFunc<T = any>(sign: keyof SignType, createFunc: () => T): void;
 	    hasPool(sign: keyof SignType): boolean;
@@ -102,7 +106,23 @@ declare module '@ailhc/obj-pool/src/obj-pool-interfaces' {
 	             */
 	            onKill(obj: IObj): void;
 	        }
-	        interface IPool<T = any, onGetDataType = any> {
+	        interface IPoolInitOption<T = any, onGetDataType = any, SignType = any> {
+	            /**对象池标志 */
+	            sign: keyof SignType;
+	            /**
+	             * 对象池阈值
+	             * size超过这个数则，则后续的对象回收就会直接销毁
+	             * 默认没有阈值，不作限制
+	             */
+	            threshold?: number;
+	            /**对象创建函数 */
+	            createFunc?: () => T;
+	            /**对象构建类 */
+	            clas?: Clas<T>;
+	            /**通用对象处理函数 */
+	            objHandler?: IObjHandler<onGetDataType>;
+	        }
+	        interface IPool<T = any, onGetDataType = any, SignType = any> {
 	            /**
 	             * 对象数组
 	             */
@@ -110,7 +130,7 @@ declare module '@ailhc/obj-pool/src/obj-pool-interfaces' {
 	            /**
 	             * 对象池标志
 	             */
-	            sign: string;
+	            sign: keyof SignType;
 	            /**
 	             * 对象池未使用对象数量
 	             */
@@ -120,22 +140,34 @@ declare module '@ailhc/obj-pool/src/obj-pool-interfaces' {
 	             */
 	            usedCount: number;
 	            /**
+	             * 阈值 对象池size的最大值
+	             * size超过这个数则，则后续的对象回收就会直接销毁
+	             * 默认没有阈值，不作限制
+	             */
+	            threshold: number;
+	            /**
+	             * 初始化
+	             * @param opt 配置
+	             */
+	            init(opt: objPool.IPoolInitOption<T, onGetDataType>): objPool.IPool<T, onGetDataType>;
+	            /**
 	             * 通过函数创建返回初始化
 	             * @param sign
 	             * @param createFunc
-	             * @param initData
+	             * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
 	             */
 	            initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType>;
 	            /**
 	             * 通过构造函数初始化
-	             * @param clas
 	             * @param sign 对象池标志,如果没有传,则使用clas["__name"] 的值，如果这个值没有，就使用自增id
-	             * @param initData
+	             * @param clas
+	             * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
 	             */
 	            initByClass(sign: string, clas: Clas<T>): objPool.IPool<T, onGetDataType>;
 	            /**
 	             * 设置对象池对象处理器，当对象在取、回收、销毁时调用
 	             * @param objHandler
+	             * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
 	             */
 	            setObjHandler(objHandler: IObjHandler<onGetDataType>): void;
 	            /**
@@ -176,21 +208,35 @@ declare module '@ailhc/obj-pool/src/obj-pool-interfaces' {
 	        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
 	        interface IPoolMgr<SignType = any, GetDataType = any> {
 	            /**
+	             * 设置对象池的阈值
+	             * @param sign
+	             * @param threshold 对象池阈值size超过这个数则，则后续的对象回收就会直接销毁
+	             * 默认没有阈值，不作限制
+	             */
+	            setObjPoolThreshold<keyType extends keyof SignType = any>(sign: keyType, threshold: number): void;
+	            /**
 	             * 设置对象池对象处理器，当对象在取、回收、销毁时调用
 	             * @param objHandler
+	             * @deprecated 方法将要废弃 请用createObjPool
 	             */
 	            setObjPoolHandler(sign: keyof SignType, objHandler: objPool.IObjHandler): void;
 	            /**
+	             * 创建对象池
+	             * @param opt
+	             */
+	            createObjPool<T = any>(opt: IPoolInitOption<T, GetDataType>): objPool.IPool<T, GetDataType>;
+	            /**
 	             * 使用类构造函数创建对象池
 	             * @param sign 对象池标志
-	             * @param cls
+	             * @param cls 对象类
+	             * @deprecated 方法将要废弃，请用createObjPool
 	             */
 	            createByClass(sign: keyof SignType, cls: any): void;
 	            /**
 	             * 使用创建函数创建对象池
 	             * @param sign
-	             * @param createFunc
-	             * @param initData
+	             * @param createFunc 创建对象的函数
+	             * @deprecated 方法将要废弃，请用createObjPool
 	             */
 	            createByFunc(sign: keyof SignType, createFunc: () => objPool.IObj): void;
 	            /**
@@ -233,16 +279,16 @@ declare module '@ailhc/obj-pool/src/obj-pool-interfaces' {
 	             */
 	            getMore<T, keyType extends keyof SignType = any>(sign: keyType, onGetData?: GetDataType[objPool.ToAnyIndexKey<keyType, GetDataType>], num?: number): T extends objPool.IObj ? T[] : objPool.IObj[];
 	            /**
-	            * 根据对象类型标识字符，获取对象池。
-	            * @param sign 对象类型标识字符。
-	            * @return 对象池。
-	            */
+	             * 根据对象类型标识字符，获取对象池。
+	             * @param sign 对象类型标识字符。
+	             * @return 对象池。
+	             */
 	            getPoolObjsBySign<T extends objPool.IObj>(sign: keyof SignType): T extends IObj ? T[] : IObj[];
 	            /**
-	            * 回收对象到对象池
-	            * @param obj 对象
-	            * @returns 返回是否回收成功
-	            */
+	             * 回收对象到对象池
+	             * @param obj 对象
+	             * @returns 返回是否回收成功
+	             */
 	            free(obj: IObj): void;
 	            /**
 	             * 回收所有正在使用的对象
@@ -250,10 +296,10 @@ declare module '@ailhc/obj-pool/src/obj-pool-interfaces' {
 	             */
 	            freeAll(sign: keyof SignType): void;
 	            /**
-	            * 销毁对象
-	            * @param obj 对象
-	            * @returns 返回是否回收成功
-	            */
+	             * 销毁对象
+	             * @param obj 对象
+	             * @returns 返回是否回收成功
+	             */
 	            kill(obj: IObj): void;
 	        }
 	    }
