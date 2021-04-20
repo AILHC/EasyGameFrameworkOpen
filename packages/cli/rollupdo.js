@@ -273,6 +273,10 @@ async function rollupBuild(option) {
         externalTag = undefined;
     }
     // console.log(exclude)
+    if (customDts) {
+        let dtsGenExclude = tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : [];
+        exclude = exclude.concat(dtsGenExclude);
+    }
     tsconfigOverride.exclude = exclude;
     /**
      * @type {Partial<import('rollup-plugin-typescript2/dist/ioptions').IOptions> }
@@ -394,7 +398,7 @@ async function rollupBuild(option) {
         }
         const rollupWatcher = await rollup.watch(watchConfig);
         rollupWatcher.on("event", async (event) => {
-            
+
             if (event.code === "START") {
                 console.log("开始构建");
             } else if (event.code === "BUNDLE_START") {
