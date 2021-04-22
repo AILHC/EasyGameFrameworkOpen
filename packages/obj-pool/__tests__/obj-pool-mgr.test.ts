@@ -5,31 +5,40 @@ interface ITestObjGetDataMap {
     TestObj3: { name: string };
 }
 class TestObj1 implements objPool.IObj {
+    poolSign: string;
+    isInPool: boolean;
+    pool: objPool.IPool<any, any, any>;
     curNum: number;
     onGet(data: ITestObjGetDataMap["TestObj1"]) {
         this.curNum = data ? data.num : 0;
     }
-    onCreate(pool: objPool.IPool) {}
+    onCreate() {}
     onFree() {
         this.curNum = undefined;
     }
     onKill() {}
 }
 class TestObj3 implements objPool.IObj {
+    poolSign: string;
+    isInPool: boolean;
+    pool: objPool.IPool<any, any, any>;
     name: string;
     onGet(data: ITestObjGetDataMap["TestObj3"]) {
         this.name = data ? data.name : "";
     }
-    onCreate(pool: objPool.IPool) {}
+    onCreate() {}
     onFree() {}
     onKill() {}
 }
 class TestObj2 implements objPool.IObj {
+    poolSign: string;
+    isInPool: boolean;
+    pool: objPool.IPool<any, any, any>;
     name: string;
     onGet(data: ITestObjGetDataMap["TestObj2"]) {
         this.name = data ? data.name : "";
     }
-    onCreate(pool: objPool.IPool) {}
+    onCreate() {}
     onFree() {}
     onKill() {}
 }
