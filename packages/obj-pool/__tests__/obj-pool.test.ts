@@ -5,12 +5,15 @@ interface ITestObjGetDataMap {
     TestObj2: { anum: number };
 }
 class TestObj1 implements objPool.IObj {
+    poolSign: string;
+    isInPool: boolean;
+    pool: objPool.IPool<any, any, any>;
     name: string;
     curNum: number;
     onGet(data: ITestObjGetDataMap["TestObj1"]) {
         this.curNum = data ? data.num : 0;
     }
-    onCreate(pool: objPool.IPool) {}
+    onCreate() {}
     onFree() {}
     onKill() {}
 }

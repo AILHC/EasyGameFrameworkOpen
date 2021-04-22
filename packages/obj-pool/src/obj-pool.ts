@@ -1,7 +1,10 @@
+type UnReadonly<T> = {
+    [P in keyof T]?: T[P];
+};
 export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any>
     implements objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
     private _poolObjs: T[];
-    private _usedObjMap: Map<T, T>;
+    private _usedObjMap: Map<objPool.IObj, objPool.IObj>;
     public get poolObjs(): T[] {
         return this._poolObjs;
     }
@@ -11,6 +14,12 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
     }
     private _createFunc: (...args) => T;
     protected _objHandler: objPool.IObjHandler;
+    public setObjHandler(objHandler: objPool.IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void {
+        if (objHandler) {
+            objHandler.pool = this;
+            this._objHandler = objHandler;
+        }
+    }
     public get size(): number {
         const poolObjs = this._poolObjs;
         return poolObjs ? poolObjs.length : 0;
@@ -73,9 +82,6 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
         }
         return this;
     }
-    public setObjHandler(objHandler: objPool.IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void {
-        this._objHandler = objHandler;
-    }
 
     public preCreate(num: number) {
         if (!this._sign) {
@@ -86,24 +92,25 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
         let obj: objPool.IObj;
         const handler = this._objHandler;
         for (let i = 0; i < num; i++) {
-            obj = this._createFunc();
+            obj = this._createFunc() as any;
             if (obj && obj.onCreate) {
-                obj.onCreate(this);
+                obj.onCreate();
             } else if (handler && handler.onCreate) {
                 handler.onCreate(obj);
             }
             obj.poolSign = this._sign as string;
             obj.isInPool = true;
-            poolObjs.push(obj as T);
+            obj.pool = this;
+            poolObjs.push(obj as any);
         }
     }
     public clear(): void {
         const poolObjs = this.poolObjs;
         if (poolObjs) {
-            let poolObj: objPool.IObj;
+            let poolObj;
             for (let i = 0; i < poolObjs.length; i++) {
                 poolObj = poolObjs[i];
-                this.kill(poolObj as any);
+                this.kill(poolObj);
             }
             poolObjs.length = 0;
         }
@@ -116,6 +123,7 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
             } else if (handler && handler.onFree) {
                 handler.onFree(obj);
             }
+
             this._usedObjMap.delete(obj);
         }
         const handler = this._objHandler;
@@ -123,6 +131,9 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
             obj.onKill();
         } else if (handler && handler.onKill) {
             handler.onKill(obj);
+        }
+        if (obj.pool) {
+            obj.pool = undefined;
         }
     }
     public free(obj: T extends objPool.IObj ? T : any): void {
@@ -159,15 +170,15 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
             return;
         }
 
-        let obj: objPool.IObj<SignKeyAndOnGetDataMap[Sign]>;
+        let obj: objPool.IObj;
         if (this.poolObjs.length) {
-            obj = this._poolObjs.pop();
+            obj = this._poolObjs.pop() as any;
         } else {
-            obj = this._createFunc();
-            obj.onCreate && obj.onCreate(this);
+            obj = this._createFunc() as any;
+            obj.onCreate && obj.onCreate();
             obj.poolSign = this._sign as any;
         }
-        this._usedObjMap.set(obj as T, obj as T);
+        this._usedObjMap.set(obj, obj);
         obj.isInPool = false;
         const handler = this._objHandler;
         if (obj.onGet) {
@@ -175,7 +186,7 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
         } else if (handler && handler.onGet) {
             handler.onGet(obj, onGetData);
         }
-        return obj as T;
+        return obj as any;
     }
     public getMore(onGetData: SignKeyAndOnGetDataMap[Sign], num: number = 1): T[] {
         const objs = [];

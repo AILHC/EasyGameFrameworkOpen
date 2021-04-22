@@ -5,17 +5,24 @@ declare global {
         interface IObj<onGetDataType = any> {
             /**
              * 对象池类型标志
+             * 创建时赋值
              */
-            poolSign?: string;
+            poolSign: string;
             /**
              * 是否在对象池内
+             * 创建时赋值
              */
-            isInPool?: boolean;
+            isInPool: boolean;
+            /**
+             * 对象池
+             * 创建时赋值
+             */
+            pool: objPool.IPool;
             /**
              * 创建时
              * @param pool
              */
-            onCreate?(pool: IPool<any>): void;
+            onCreate?(): void;
             /**
              * 当被取时
              */
@@ -28,36 +35,37 @@ declare global {
              * 当被销毁时
              */
             onKill?(): void;
-            /**
-             * 将自身回收到对象池里
-             */
-            freeSelf?(): void;
         }
         /**
          * 对象池的对象通用处理器
          */
-        interface IObjHandler<onGetDataType = any> {
+        interface IObjHandler<T = any, onGetDataType = any> {
+            /**
+             * 对象池
+             * setObjHandler时赋值
+             */
+            pool?: objPool.IPool;
             /**
              * 当对象创建时
              * @param obj
              */
-            onCreate(obj: IObj<onGetDataType>): void;
+            onCreate(obj: T): void;
             /**
              * 当对象获取时
              * @param obj
              * @param onGetData
              */
-            onGet(obj: IObj<onGetDataType>, onGetData?: onGetDataType): void;
+            onGet(obj: T, onGetData?: onGetDataType): void;
             /**
              * 当对象释放时
              * @param obj
              */
-            onFree(obj: IObj): void;
+            onFree(obj: T): void;
             /**
              * 当对象被kill掉时
              * @param obj
              */
-            onKill(obj: IObj): void;
+            onKill(obj: T): void;
         }
         interface IPoolInitOption<
             T = any,
