@@ -1,12 +1,12 @@
-export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, SignType = any>
-    implements objPool.IPool<T, onGetDataType, SignType> {
-    private _poolObjs: objPool.IObj[];
-    private _usedObjMap: Map<objPool.IObj, objPool.IObj>;
-    public get poolObjs(): objPool.IObj[] {
+export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any>
+    implements objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
+    private _poolObjs: T[];
+    private _usedObjMap: Map<T, T>;
+    public get poolObjs(): T[] {
         return this._poolObjs;
     }
-    private _sign: keyof SignType;
-    public get sign(): keyof SignType {
+    private _sign: Sign;
+    public get sign(): Sign {
         return this._sign;
     }
     private _createFunc: (...args) => T;
@@ -19,7 +19,9 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
         return this._usedObjMap ? this._usedObjMap.size : 0;
     }
     public threshold: number;
-    public init(opt: objPool.IPoolInitOption<T, onGetDataType, SignType>): objPool.IPool<T, onGetDataType> {
+    public init(
+        opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>
+    ): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
         if (!this._sign) {
             if (!opt.sign) {
                 console.log(`[objPool] sign is undefind`);
@@ -47,7 +49,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
         }
         return this;
     }
-    public initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType> {
+    public initByFunc(sign: Sign, createFunc: () => T): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
         if (!this._sign) {
             this._sign = sign as any;
             this._poolObjs = [];
@@ -58,7 +60,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
         }
         return this;
     }
-    public initByClass(sign: string, clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType> {
+    public initByClass(sign: Sign, clas: objPool.Clas<T>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
         if (!this._sign) {
             this._sign = sign as any;
             this._poolObjs = [];
@@ -71,7 +73,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
         }
         return this;
     }
-    public setObjHandler(objHandler: objPool.IObjHandler<onGetDataType>): void {
+    public setObjHandler(objHandler: objPool.IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void {
         this._objHandler = objHandler;
     }
 
@@ -90,9 +92,9 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
             } else if (handler && handler.onCreate) {
                 handler.onCreate(obj);
             }
-            obj.poolSign = this._sign as any;
+            obj.poolSign = this._sign as string;
             obj.isInPool = true;
-            poolObjs.push(obj);
+            poolObjs.push(obj as T);
         }
     }
     public clear(): void {
@@ -151,13 +153,13 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
         });
         this._usedObjMap.clear();
     }
-    public get(onGetData?: onGetDataType): T {
+    public get(onGetData?: SignKeyAndOnGetDataMap[Sign]): T {
         if (!this._sign) {
             this._logNotInit();
             return;
         }
 
-        let obj: objPool.IObj;
+        let obj: objPool.IObj<SignKeyAndOnGetDataMap[Sign]>;
         if (this.poolObjs.length) {
             obj = this._poolObjs.pop();
         } else {
@@ -165,7 +167,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
             obj.onCreate && obj.onCreate(this);
             obj.poolSign = this._sign as any;
         }
-        this._usedObjMap.set(obj, obj);
+        this._usedObjMap.set(obj as T, obj as T);
         obj.isInPool = false;
         const handler = this._objHandler;
         if (obj.onGet) {
@@ -175,7 +177,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
         }
         return obj as T;
     }
-    public getMore(onGetData?: onGetDataType, num: number = 1): T[] {
+    public getMore(onGetData: SignKeyAndOnGetDataMap[Sign], num: number = 1): T[] {
         const objs = [];
         if (!isNaN(num) && num > 1) {
             for (let i = 0; i < num; i++) {
@@ -184,7 +186,7 @@ export class BaseObjPool<T extends objPool.IObj = any, onGetDataType = any, Sign
         } else {
             objs.push(this.get(onGetData));
         }
-        return objs as any;
+        return objs as T[];
     }
     private _loghasInit() {
         console.warn(`objpool ${this._sign} already inited`);
