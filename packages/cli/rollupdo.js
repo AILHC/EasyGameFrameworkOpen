@@ -505,12 +505,13 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                     return moduleName;
                 }
 
-                const indexfile = params.currentModuleId.substr(-6, 6);
-                let currentModuleId = params.currentModuleId;
-                if (indexfile === "/index") {
-                    currentModuleId = currentModuleId.slice(0, currentModuleId.length - 6);
-                }
-                return `${moduleName}/${currentModuleId}`
+                // const indexfile = params.currentModuleId.substr(-6, 6);
+                // let currentModuleId = params.currentModuleId;
+                // if (indexfile === "/index") {
+                //     currentModuleId = currentModuleId.slice(0, currentModuleId.length - 6);
+                // }
+                // return `${moduleName}/${currentModuleId}`
+                return `${moduleName}`
             },
             resolveModuleImport: function (params) {
                 // console.log(params)
@@ -530,7 +531,8 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                     if (path.sep === "\\") {
                         importedModuleId = importedModuleId.replace(/\\/g, '/');
                     }
-                    importedModuleId = `${moduleName}/${importedModuleId}`;
+                    // importedModuleId = `${moduleName}/${importedModuleId}`;
+                    importedModuleId = `${moduleName}`;
                     return importedModuleId;
                 }
                 return params.importedModuleId
