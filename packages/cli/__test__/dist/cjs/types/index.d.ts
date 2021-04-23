@@ -1,4 +1,4 @@
-declare module '@ailhc/egf-cli/src/classA' {
+declare module '@ailhc/egf-cli' {
 	export class classA {
 	    /**
 	     * ffjfjf
@@ -8,25 +8,40 @@ declare module '@ailhc/egf-cli/src/classA' {
 	}
 
 }
-declare module '@ailhc/egf-cli/src/classB' {
+declare module '@ailhc/egf-cli' {
 	export class classB {
 	    sayb(b: string): void;
 	}
 
 }
-declare module '@ailhc/egf-cli/src/classC' {
+declare module '@ailhc/egf-cli' {
 	export class classC {
 	    sayd(cc: any): void;
 	}
 
 }
 declare module '@ailhc/egf-cli' {
-	export * from '@ailhc/egf-cli/src/classA';
-	export * from '@ailhc/egf-cli/src/classB';
-	export * from '@ailhc/egf-cli/src/classC';
+	export class bc {
+	    constructor();
+	}
 
 }
-declare module '@ailhc/egf-cli/src2/classA' {
+declare module '@ailhc/egf-cli' {
+	import { App } from '@ailhc/egf-core';
+	export class RefOtherPkg extends App {
+	    constructor();
+	}
+
+}
+declare module '@ailhc/egf-cli' {
+	export * from '@ailhc/egf-cli';
+	export * from '@ailhc/egf-cli';
+	export * from '@ailhc/egf-cli';
+	export * from '@ailhc/egf-cli';
+	export * from '@ailhc/egf-cli';
+
+}
+declare module '@ailhc/egf-cli' {
 	export class classA {
 	    /**
 	     * ffjfjf
@@ -36,21 +51,21 @@ declare module '@ailhc/egf-cli/src2/classA' {
 	}
 
 }
-declare module '@ailhc/egf-cli/src2/classB' {
+declare module '@ailhc/egf-cli' {
 	export class classB {
 	    sayb(b: string): void;
 	}
 
 }
-declare module '@ailhc/egf-cli/src2/classD' {
+declare module '@ailhc/egf-cli' {
 	export class classD {
 	    sayb(b: string): void;
 	}
 
 }
-declare module '@ailhc/egf-cli/src2' {
-	export * from '@ailhc/egf-cli/src/classA';
-	export * from '@ailhc/egf-cli/src/classB';
-	export * from '@ailhc/egf-cli/src/classD';
+declare module '@ailhc/egf-cli' {
+	export * from '@ailhc/egf-cli';
+	export * from '@ailhc/egf-cli';
+	export * from '@ailhc/egf-cli';
 
 }

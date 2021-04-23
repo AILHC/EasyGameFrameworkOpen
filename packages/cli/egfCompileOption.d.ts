@@ -77,5 +77,5 @@ declare interface IEgfCompileOption {
      * 自动创建入口文件配置
      * 具体的配置可见:https://hub.fastgit.org/imjuni/create-ts-index
      */
-    ctiOption?: import("create-ts-index/dist/options/ICreateTsIndexOption").ICreateTsIndexOption
+    ctiOption?: import("./libs/cti/options/ICreateTsIndexOption").ICreateTsIndexOption
 }

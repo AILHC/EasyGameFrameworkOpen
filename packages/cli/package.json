@@ -41,6 +41,7 @@
     "cmdjs": "^0.0.14",
     "colors": "^1.4.0",
     "commander": "^7.2.0",
+    "create-ts-index": "^1.13.6",
     "dts-generator": "^3.0.0",
     "fs-extra": "^9.1.0",
     "matched": "^5.0.0",
@@ -50,6 +51,9 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "~0.21.2",
     "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@ailhc/egf-core": "1.2.1"
   },
   "bin": {
     "egf": "./cli.js"
