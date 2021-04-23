@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.5](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/layer@0.1.4...@ailhc/layer@0.1.5) (2021-04-23)
+
+
+### Bug Fixes
+
+* 重新导出,修复声明识别错误的问题 ([4139c9e](https://github.com/AILHC/EasyGameFrameworkOpen/commit/4139c9ece90ef11d12374a42065bf89ebe44d053))
+
+
+
+
+
 ## [0.1.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/layer@0.1.3...@ailhc/layer@0.1.4) (2021-03-31)
 
 

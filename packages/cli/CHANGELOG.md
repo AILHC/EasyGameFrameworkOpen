@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.2...@ailhc/egf-cli@1.6.3) (2021-04-23)
+
+
+### Bug Fixes
+
+* 尝试修复类型声明生成让vscode误判的问题 ([c58c062](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/c58c062523e53ab8524583a1fa3a4de859cc5768))
+* 声明生成修复 ([43b8e4b](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/43b8e4bd6625dbc5d7be80a4cd1473440476a85f))
+* 修复生成的声明文件导致vscode自动导入错误问题 ([6c912c1](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/6c912c13bc64454153469adf3acbe4bfd6867aa5))
+
+
+
+
+
 ## [1.6.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.1...@ailhc/egf-cli@1.6.2) (2021-04-20)
 
 
