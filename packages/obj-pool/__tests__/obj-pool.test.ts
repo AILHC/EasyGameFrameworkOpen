@@ -58,24 +58,29 @@ test("test general Object Pool ObjHandler", function () {
     const spyonFree = jest.spyOn(handler, "onFree");
     const spyonReturn = jest.spyOn(handler, "onReturn");
     const spyonKill = jest.spyOn(handler, "onKill");
-    const testPool = new BaseObjPool<any, ITestObjGetDataMap>();
+    const testPool = new BaseObjPool<{ a: number } & objPool.IObj, ITestObjGetDataMap>();
     testPool.initByFunc("TestObj1", () => {
-        return { a: 1 };
+        return { a: 1 } as any;
     });
     testPool.setObjHandler(handler);
     testPool.preCreate(5);
+    expect(testPool.poolObjs[0].isInPool).toBe(true);
+    expect(testPool.poolObjs[0].poolSign).toBe("TestObj1");
+    expect(testPool.poolObjs[0].pool).toBe(testPool);
     expect(spyonCreate).toBeCalledTimes(5);
 
     const obj = testPool.get({ num: 3 });
     expect(obj.a).toBe(3);
     expect(spyonGet).toBeCalledTimes(1);
-
+    expect(obj.isInPool).toBe(false);
     const objs = testPool.getMore(undefined, 4);
     expect(objs.length).toBe(4);
     expect(spyonGet).toBeCalledTimes(5);
     expect(objs[0].a).toBe(0);
 
     testPool.free(obj);
+    expect(obj.isInPool).toBe(true);
+
     expect(testPool["usedCount"]).toBe(4);
     expect(testPool["_usedObjMap"].has(obj)).toBe(false);
     expect(testPool.poolObjs.length).toBe(1);
