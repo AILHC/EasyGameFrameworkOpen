@@ -127,17 +127,27 @@ export class ObjPoolMgr<SignKeyAndOnGetDataMap = any> implements objPool.IPoolMg
 
         return pool ? (pool.poolObjs as any) : undefined;
     }
-
+    /**
+     * 回收对象
+     * @param obj
+     * @deprecated 方法即将废弃，请使用return(obj)
+     */
     public free(obj: any): void {
+        this.return(obj);
+    }
+    public return(obj: any): void {
         const pool = this._poolDic[obj.poolSign];
         if (pool) {
             pool.free(obj);
         }
     }
     public freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void {
+        this.returnAll(sign);
+    }
+    public returnAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void {
         const pool = this._poolDic[sign];
         if (pool) {
-            pool.freeAll();
+            pool.returnAll();
         }
     }
     public kill(obj: any): void {
@@ -146,7 +156,6 @@ export class ObjPoolMgr<SignKeyAndOnGetDataMap = any> implements objPool.IPoolMg
             pool.kill(obj);
         }
     }
-
     private _log(msg: string, level: number = 1) {
         const tagStr = "[objPool.ObjPoolMgr]";
         switch (level) {
