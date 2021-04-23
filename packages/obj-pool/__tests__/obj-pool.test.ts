@@ -15,6 +15,7 @@ class TestObj1 implements objPool.IObj {
     }
     onCreate() {}
     onFree() {}
+    onReturn() {}
     onKill() {}
 }
 //测试创建接口
@@ -49,11 +50,13 @@ test("test general Object Pool ObjHandler", function () {
             obj["a"] = onGetData ? onGetData.num : 0;
         },
         onFree(obj) {},
+        onReturn(obj) {},
         onKill(obj) {}
     };
     const spyonCreate = jest.spyOn(handler, "onCreate");
     const spyonGet = jest.spyOn(handler, "onGet");
     const spyonFree = jest.spyOn(handler, "onFree");
+    const spyonReturn = jest.spyOn(handler, "onReturn");
     const spyonKill = jest.spyOn(handler, "onKill");
     const testPool = new BaseObjPool<any, ITestObjGetDataMap>();
     testPool.initByFunc("TestObj1", () => {
@@ -77,12 +80,13 @@ test("test general Object Pool ObjHandler", function () {
     expect(testPool["_usedObjMap"].has(obj)).toBe(false);
     expect(testPool.poolObjs.length).toBe(1);
     expect(spyonFree).toBeCalledTimes(1);
-
+    expect(spyonReturn).toBeCalledTimes(1);
     testPool.kill(objs.pop());
     expect(spyonKill).toBeCalledTimes(1);
 
     testPool.freeAll();
     expect(spyonFree).toBeCalledTimes(5);
+    expect(spyonReturn).toBeCalledTimes(5);
     expect(testPool.poolObjs.length).toBe(4);
 
     testPool.clear();

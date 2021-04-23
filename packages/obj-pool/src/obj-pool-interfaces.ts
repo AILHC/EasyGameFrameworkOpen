@@ -7,34 +7,45 @@ declare global {
              * 对象池类型标志
              * 创建时赋值
              */
-            poolSign: string;
+            poolSign?: string;
             /**
              * 是否在对象池内
              * 创建时赋值
              */
-            isInPool: boolean;
+            isInPool?: boolean;
             /**
              * 对象池
              * 创建时赋值
              */
-            pool: objPool.IPool;
+            pool?: objPool.IPool;
             /**
              * 创建时
-             * @param pool
              */
             onCreate?(): void;
             /**
+             * 创建时
+             * @param pool
+             * @deprecated 参数即将废弃，不再传参pool
+             */
+            onCreate?(pool: objPool.IPool): void;
+            /**
              * 当被取时
              */
-            onGet?(onGetData: onGetDataType): void;
+            onGet(onGetData: onGetDataType): void;
             /**
              * 当被回收时
+             * @deprecated 方法即将废弃，请使用onReturn
              */
-            onFree?(): void;
+            onFree(): void;
+            /**
+             * 当被回收时
+             * 做一些状态还原逻辑
+             */
+            onReturn?(): void;
             /**
              * 当被销毁时
              */
-            onKill?(): void;
+            onKill(): void;
         }
         /**
          * 对象池的对象通用处理器
@@ -59,8 +70,14 @@ declare global {
             /**
              * 当对象释放时
              * @param obj
+             * @deprecated 方法即将废弃，请使用onReturn(obj)
              */
             onFree(obj: T): void;
+            /**
+             * 当对象释放时
+             * @param obj
+             */
+            onReturn?(obj: T): void;
             /**
              * 当对象被kill掉时
              * @param obj
@@ -159,19 +176,30 @@ declare global {
              */
             clear(): void;
             /**
-             * 销毁一个对象
-             * @param obj
+             * 回收对象到对象池
+             * @param obj 对象
+             * @deprecated 该方法将废弃，请使用return()
              */
-            kill(obj: T): void;
+            free(obj: any): void;
             /**
-             * 回收对象
-             * @param obj
+             * 回收对象到对象池
+             * @param obj 对象
              */
-            free(obj: T): void;
+            return(obj: any): void;
             /**
-             * 回收所有在使用的对象
+             * 回收所有正在使用的对象
+             * @deprecated 该方法将废弃，请使用returnAll()
              */
             freeAll(): void;
+            /**
+             * 回收所有正在使用的对象
+             */
+            returnAll(): void;
+            /**
+             * 销毁对象
+             * @param obj 对象
+             */
+            kill(obj: any): void;
         }
         type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
         interface IPoolMgr<SignKeyAndOnGetDataMap = any> {
@@ -279,18 +307,28 @@ declare global {
             /**
              * 回收对象到对象池
              * @param obj 对象
-             * @returns 返回是否回收成功
+             * @deprecated 该方法将废弃，请使用return()
              */
             free(obj: any): void;
+            /**
+             * 回收对象到对象池
+             * @param obj 对象
+             */
+            return(obj: any): void;
+            /**
+             * 回收所有正在使用的对象
+             * @param sign
+             * @deprecated 该方法将废弃，请使用returnAll()
+             */
+            freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
             /**
              * 回收所有正在使用的对象
              * @param sign
              */
-            freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
+            returnAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
             /**
              * 销毁对象
              * @param obj 对象
-             * @returns 返回是否回收成功
              */
             kill(obj: any): void;
         }

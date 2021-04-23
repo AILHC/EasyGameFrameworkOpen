@@ -16,6 +16,7 @@ class TestObj1 implements objPool.IObj {
     onFree() {
         this.curNum = undefined;
     }
+    onReturn() {}
     onKill() {}
 }
 class TestObj3 implements objPool.IObj {
@@ -28,6 +29,7 @@ class TestObj3 implements objPool.IObj {
     }
     onCreate() {}
     onFree() {}
+    onReturn() {}
     onKill() {}
 }
 class TestObj2 implements objPool.IObj {
@@ -40,6 +42,7 @@ class TestObj2 implements objPool.IObj {
     }
     onCreate() {}
     onFree() {}
+    onReturn() {}
     onKill() {}
 }
 // 管理器接口调用测试
@@ -89,7 +92,7 @@ test("test createPool by Mgr", function () {
     expect(testObj3Pool.threshold).toBe(200);
 });
 test("test mgr functions", function () {
-    const poolMgr = new ObjPoolMgr<ITestObjGetDataMap>();
+    const poolMgr: objPool.IPoolMgr<ITestObjGetDataMap> = new ObjPoolMgr<ITestObjGetDataMap>();
     poolMgr.createByClass("TestObj1", TestObj1);
     poolMgr.createByFunc("TestObj2", () => {
         return new TestObj2();
@@ -115,6 +118,11 @@ test("test mgr functions", function () {
     poolMgr.freeAll("TestObj2");
     expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(4);
 
+    const newTestObj2s = poolMgr.getMore("TestObj2", { name: "testObj2" }, 4);
+    poolMgr.return(newTestObj2s[0]);
+    expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(1);
+    poolMgr.returnAll("TestObj2");
+    expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(4);
     //clear
     poolMgr.clearPool("TestObj2");
     expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(0);

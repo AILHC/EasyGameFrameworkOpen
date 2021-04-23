@@ -1,6 +1,3 @@
-type UnReadonly<T> = {
-    [P in keyof T]?: T[P];
-};
 export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any>
     implements objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
     private _poolObjs: T[];
@@ -94,7 +91,7 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
         for (let i = 0; i < num; i++) {
             obj = this._createFunc() as any;
             if (obj && obj.onCreate) {
-                obj.onCreate();
+                obj.onCreate(this);
             } else if (handler && handler.onCreate) {
                 handler.onCreate(obj);
             }
@@ -118,10 +115,12 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
     public kill(obj: T extends objPool.IObj ? T : any): void {
         if (this._usedObjMap.has(obj)) {
             const handler = this._objHandler;
-            if (obj.onFree) {
-                obj.onFree();
-            } else if (handler && handler.onFree) {
-                handler.onFree(obj);
+            if (obj.onFree || obj.onReturn) {
+                obj.onFree && obj.onFree();
+                obj.onReturn && obj.onReturn();
+            } else if (handler && (handler.onFree || handler.onReturn)) {
+                handler.onFree && handler.onFree(obj);
+                handler.onReturn && handler.onReturn(obj);
             }
 
             this._usedObjMap.delete(obj);
@@ -137,6 +136,9 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
         }
     }
     public free(obj: T extends objPool.IObj ? T : any): void {
+        this.return(obj);
+    }
+    public return(obj: T extends objPool.IObj ? T : any): void {
         if (!this._sign) {
             this._logNotInit();
             return;
@@ -147,10 +149,12 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
                 this.kill(obj);
                 return;
             }
-            if (obj.onFree) {
-                obj.onFree();
-            } else if (handler && handler.onFree) {
-                handler.onFree(obj);
+            if (obj.onFree || obj.onReturn) {
+                obj.onFree && obj.onFree();
+                obj.onReturn && obj.onReturn();
+            } else if (handler && (handler.onFree || handler.onReturn)) {
+                handler.onFree && handler.onFree(obj);
+                handler.onReturn && handler.onReturn(obj);
             }
             this._poolObjs.push(obj);
             this._usedObjMap.delete(obj);
@@ -158,11 +162,14 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
             console.warn(`pool :${this._sign} obj is in pool`);
         }
     }
-    public freeAll() {
+    public returnAll(): void {
         this._usedObjMap.forEach((value) => {
             this.free(value as any);
         });
         this._usedObjMap.clear();
+    }
+    public freeAll() {
+        this.returnAll();
     }
     public get(onGetData?: SignKeyAndOnGetDataMap[Sign]): T {
         if (!this._sign) {
@@ -175,7 +182,7 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
             obj = this._poolObjs.pop() as any;
         } else {
             obj = this._createFunc() as any;
-            obj.onCreate && obj.onCreate();
+            obj.onCreate && obj.onCreate(this);
             obj.poolSign = this._sign as any;
         }
         this._usedObjMap.set(obj, obj);
