@@ -497,13 +497,13 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
             // prefix: moduleName,
             resolveModuleId: function (params) {
                 // console.log(params.currentModuleId)
-                let entryRelative = path.relative(projRoot, entry);
-                if (path.sep === "\\") {
-                    entryRelative = entryRelative.replace(/\\/g, '/');
-                }
-                if (params.currentModuleId === entryRelative.split(".")[0]) {
-                    return moduleName;
-                }
+                // let entryRelative = path.relative(projRoot, entry);
+                // if (path.sep === "\\") {
+                //     entryRelative = entryRelative.replace(/\\/g, '/');
+                // }
+                // if (params.currentModuleId === entryRelative.split(".")[0]) {
+                //     return moduleName;
+                // }
 
                 // const indexfile = params.currentModuleId.substr(-6, 6);
                 // let currentModuleId = params.currentModuleId;
@@ -521,19 +521,19 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                 //     isDeclaredExternalModule: false
                 //   }
                 if (!params.isDeclaredExternalModule) {
-                    let importedModuleId = params.importedModuleId;
-                    if (params.importedModuleId.includes(".")) {
+                    // let importedModuleId = params.importedModuleId;
+                    // if (params.importedModuleId.includes(".")) {
 
-                        //包内模块
-                        importedModuleId = path.join(path.dirname(path.relative(projRoot, entry)), params.importedModuleId);
-                        // importedModuleId = `${moduleName}/${entry.split("/")[0]}${path.normalize(params.importedModuleId)}`;
-                    }
-                    if (path.sep === "\\") {
-                        importedModuleId = importedModuleId.replace(/\\/g, '/');
-                    }
-                    // importedModuleId = `${moduleName}/${importedModuleId}`;
-                    importedModuleId = `${moduleName}`;
-                    return importedModuleId;
+                    //     //包内模块
+                    //     importedModuleId = path.join(path.dirname(path.relative(projRoot, entry)), params.importedModuleId);
+                    //     // importedModuleId = `${moduleName}/${entry.split("/")[0]}${path.normalize(params.importedModuleId)}`;
+                    // }
+                    // if (path.sep === "\\") {
+                    //     importedModuleId = importedModuleId.replace(/\\/g, '/');
+                    // }
+                    // // importedModuleId = `${moduleName}/${importedModuleId}`;
+                    // importedModuleId = `${moduleName}`;
+                    return moduleName;
                 }
                 return params.importedModuleId
             }
@@ -623,7 +623,7 @@ const tsIndexWriter = new TypeScritIndexWriter();
  * 
  * @param {string} dirPath 
  * @param {"create"|"entrypoint"} mode
- * @param {import("create-ts-index/dist/options/ICreateTsIndexOption").ICreateTsIndexOption} option
+ * @param {import("./libs/cti/options/ICreateTsIndexOption").ICreateTsIndexOption} option
  */
 async function createIndex(dirPath, mode, option) {
     if (!option) {
