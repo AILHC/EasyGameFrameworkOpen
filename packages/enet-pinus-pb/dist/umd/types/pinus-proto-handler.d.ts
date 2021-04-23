@@ -1,6 +1,5 @@
 declare global {
     interface IPinusProtos {
-        /**默认为0 */
         version: any;
         client: any;
         server: any;
@@ -27,11 +26,6 @@ export declare class PinusProtoHandler implements enet.IProtoHandler {
     private _heartbeatConfig;
     get heartbeatConfig(): enet.IHeartBeatConfig;
     get handShakeRes(): any;
-    /**
-     * 初始化
-     * @param protos
-     * @param useProtobuf
-     */
     init(protos: IPinusProtos, useProtobuf?: boolean): void;
     private handshakeInit;
     protoKey2Key(protoKey: any): string;

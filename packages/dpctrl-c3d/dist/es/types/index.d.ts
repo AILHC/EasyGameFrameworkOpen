@@ -1,4 +1,4 @@
-declare module '@ailhc/dpctrl-c3d/src/node-ctrl' {
+declare module '@ailhc/dpctrl-c3d' {
 	import { Node } from 'cc';
 	export class NodeCtrl implements displayCtrl.ICtrl<Node> {
 	    key?: string | any;
@@ -27,7 +27,7 @@ declare module '@ailhc/dpctrl-c3d/src/node-ctrl' {
 	}
 
 }
-declare module '@ailhc/dpctrl-c3d/src/layer' {
+declare module '@ailhc/dpctrl-c3d' {
 	import { Node } from 'cc';
 	export class Layer extends Node implements layer.ILayer {
 	    protected _layerType: number;
@@ -45,7 +45,7 @@ declare module '@ailhc/dpctrl-c3d/src/layer' {
 
 }
 declare module '@ailhc/dpctrl-c3d' {
-	export * from '@ailhc/dpctrl-c3d/src/node-ctrl';
-	export * from '@ailhc/dpctrl-c3d/src/layer';
+	export * from '@ailhc/dpctrl-c3d';
+	export * from '@ailhc/dpctrl-c3d';
 
 }

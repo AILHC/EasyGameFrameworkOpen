@@ -1,4 +1,4 @@
-declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
+declare module '@ailhc/display-ctrl' {
 	 global {
 	    namespace displayCtrl {
 	        type CtrlClassType<T extends ICtrl = any> = {
@@ -318,7 +318,7 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-interfaces' {
 	export {};
 
 }
-declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
+declare module '@ailhc/display-ctrl' {
 	/**
 	 * DisplayControllerMgr
 	 * 显示控制类管理器基类
@@ -369,7 +369,7 @@ declare module '@ailhc/display-ctrl/src/dp-ctrl-mgr' {
 
 }
 declare module '@ailhc/display-ctrl' {
-	export * from '@ailhc/display-ctrl/src/dp-ctrl-interfaces';
-	export * from '@ailhc/display-ctrl/src/dp-ctrl-mgr';
+	export * from '@ailhc/display-ctrl';
+	export * from '@ailhc/display-ctrl';
 
 }

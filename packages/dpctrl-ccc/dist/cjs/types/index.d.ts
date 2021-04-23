@@ -1,4 +1,4 @@
-declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
+declare module '@ailhc/dpctrl-ccc' {
 	export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
 	    key?: string | any;
 	    isLoading?: boolean;
@@ -26,7 +26,7 @@ declare module '@ailhc/dpctrl-ccc/src/node-ctrl' {
 	}
 
 }
-declare module '@ailhc/dpctrl-ccc/src/layer' {
+declare module '@ailhc/dpctrl-ccc' {
 	export class Layer extends cc.Node implements layer.ILayer {
 	    protected _layerType: number;
 	    protected _layerMgr: layer.IMgr<cc.Node>;
@@ -43,7 +43,7 @@ declare module '@ailhc/dpctrl-ccc/src/layer' {
 
 }
 declare module '@ailhc/dpctrl-ccc' {
-	export * from '@ailhc/dpctrl-ccc/src/node-ctrl';
-	export * from '@ailhc/dpctrl-ccc/src/layer';
+	export * from '@ailhc/dpctrl-ccc';
+	export * from '@ailhc/dpctrl-ccc';
 
 }

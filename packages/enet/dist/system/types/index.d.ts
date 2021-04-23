@@ -1,4 +1,4 @@
-declare module '@ailhc/enet/src/net-interfaces' {
+declare module '@ailhc/enet' {
 	 global {
 	    namespace enet {
 	        /**网络数据格式 */
@@ -374,7 +374,7 @@ declare module '@ailhc/enet/src/net-interfaces' {
 	export {};
 
 }
-declare module '@ailhc/enet/src/default-net-event-handler' {
+declare module '@ailhc/enet' {
 	export class DefaultNetEventHandler implements enet.INetEventHandler {
 	    onStartConnenct?(connectOpt: enet.IConnectOptions): void;
 	    onConnectEnd?(connectOpt: enet.IConnectOptions, handshakeRes?: any): void;
@@ -391,7 +391,7 @@ declare module '@ailhc/enet/src/default-net-event-handler' {
 	}
 
 }
-declare module '@ailhc/enet/src/pkg-type' {
+declare module '@ailhc/enet' {
 	export enum PackageType {
 	    /**握手 */
 	    HANDSHAKE = 1,
@@ -406,7 +406,7 @@ declare module '@ailhc/enet/src/pkg-type' {
 	}
 
 }
-declare module '@ailhc/enet/src/socketStateType' {
+declare module '@ailhc/enet' {
 	export enum SocketState {
 	    /**连接中 */
 	    CONNECTING = 0,
@@ -419,8 +419,8 @@ declare module '@ailhc/enet/src/socketStateType' {
 	}
 
 }
-declare module '@ailhc/enet/src/wsocket' {
-	import { SocketState } from '@ailhc/enet/src/socketStateType';
+declare module '@ailhc/enet' {
+	import { SocketState } from '@ailhc/enet';
 	export class WSocket implements enet.ISocket {
 	    private _sk;
 	    private _eventHandler;
@@ -433,7 +433,7 @@ declare module '@ailhc/enet/src/wsocket' {
 	}
 
 }
-declare module '@ailhc/enet/src/net-node' {
+declare module '@ailhc/enet' {
 	export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
 	    /**
 	     * 套接字实现
@@ -606,11 +606,11 @@ declare module '@ailhc/enet/src/net-node' {
 
 }
 declare module '@ailhc/enet' {
-	export * from '@ailhc/enet/src/net-interfaces';
-	export * from '@ailhc/enet/src/net-node';
-	export * from '@ailhc/enet/src/pkg-type';
-	export * from '@ailhc/enet/src/socketStateType';
-	export * from '@ailhc/enet/src/wsocket';
-	export * from '@ailhc/enet/src/default-net-event-handler';
+	export * from '@ailhc/enet';
+	export * from '@ailhc/enet';
+	export * from '@ailhc/enet';
+	export * from '@ailhc/enet';
+	export * from '@ailhc/enet';
+	export * from '@ailhc/enet';
 
 }

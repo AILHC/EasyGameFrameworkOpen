@@ -24,13 +24,7 @@ function __decorate(decorators, target, key, desc) {
 
 const { ccclass, property, menu, help } = _decorator;
 let TestComp = class TestComp extends Component {
-    /* class member could be defined like this */
-    // dummy = '';
-    /* use `property` decorator if your want the member to be serializable */
-    // @property
-    // serializableDummy = 0;
     start() {
-        // Your initialization goes here.
         console.log("testComp");
     }
 };
@@ -41,4 +35,6 @@ TestComp = __decorate([
 ], TestComp);
 
 export { TestComp };
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgubWpzIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvVGVzdENvbXAudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgX2RlY29yYXRvciwgQ29tcG9uZW50LCBOb2RlIH0gZnJvbSAnY2MnO1xuY29uc3QgeyBjY2NsYXNzLCBwcm9wZXJ0eSwgbWVudSwgaGVscCB9ID0gX2RlY29yYXRvcjtcblxuQGNjY2xhc3MoJ1Rlc3RDb21wJylcbkBtZW51KFwiVGVzdC9UZXN0Q29tcFwiKVxuQGhlbHAoXCJodHRwczovL2dpdGh1Yi5jb20vQUlMSEMvRWFzeUdhbWVGcmFtZXdvcmtPcGVuXCIpXG5leHBvcnQgY2xhc3MgVGVzdENvbXAgZXh0ZW5kcyBDb21wb25lbnQge1xuICAgIC8qIGNsYXNzIG1lbWJlciBjb3VsZCBiZSBkZWZpbmVkIGxpa2UgdGhpcyAqL1xuICAgIC8vIGR1bW15ID0gJyc7XG5cbiAgICAvKiB1c2UgYHByb3BlcnR5YCBkZWNvcmF0b3IgaWYgeW91ciB3YW50IHRoZSBtZW1iZXIgdG8gYmUgc2VyaWFsaXphYmxlICovXG4gICAgLy8gQHByb3BlcnR5XG4gICAgLy8gc2VyaWFsaXphYmxlRHVtbXkgPSAwO1xuXG4gICAgc3RhcnQoKSB7XG4gICAgICAgIC8vIFlvdXIgaW5pdGlhbGl6YXRpb24gZ29lcyBoZXJlLlxuICAgICAgICBjb25zb2xlLmxvZyhcInRlc3RDb21wXCIpXG4gICAgfVxuXG4gICAgLy8gdXBkYXRlIChkZWx0YVRpbWU6IG51bWJlcikge1xuICAgIC8vICAgICAvLyBZb3VyIHVwZGF0ZSBmdW5jdGlvbiBnb2VzIGhlcmUuXG4gICAgLy8gfVxufSJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFDQSxNQUFNLEVBQUUsT0FBTyxFQUFFLFFBQVEsRUFBRSxJQUFJLEVBQUUsSUFBSSxFQUFFLEdBQUcsVUFBVSxDQUFDO0lBS3hDLFFBQVEsR0FBckIsTUFBYSxRQUFTLFNBQVEsU0FBUzs7Ozs7O0lBUW5DLEtBQUs7O1FBRUQsT0FBTyxDQUFDLEdBQUcsQ0FBQyxVQUFVLENBQUMsQ0FBQTtLQUMxQjtFQUtKO0FBaEJZLFFBQVE7SUFIcEIsT0FBTyxDQUFDLFVBQVUsQ0FBQztJQUNuQixJQUFJLENBQUMsZUFBZSxDQUFDO0lBQ3JCLElBQUksQ0FBQyxnREFBZ0QsQ0FBQztHQUMxQyxRQUFRLENBZ0JwQjs7OzsifQ==
+
+    
+//# sourceMappingURL=index.mjs.map

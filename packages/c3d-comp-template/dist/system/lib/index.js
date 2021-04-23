@@ -32,13 +32,7 @@ System.register('c3d-comp-template', ['cc'], function (exports) {
 
             const { ccclass, property, menu, help } = _decorator;
             let TestComp = exports('TestComp', class TestComp extends Component {
-                /* class member could be defined like this */
-                // dummy = '';
-                /* use `property` decorator if your want the member to be serializable */
-                // @property
-                // serializableDummy = 0;
                 start() {
-                    // Your initialization goes here.
                     console.log("testComp");
                 }
             });
@@ -51,4 +45,6 @@ System.register('c3d-comp-template', ['cc'], function (exports) {
         }
     };
 });
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9UZXN0Q29tcC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBfZGVjb3JhdG9yLCBDb21wb25lbnQsIE5vZGUgfSBmcm9tICdjYyc7XG5jb25zdCB7IGNjY2xhc3MsIHByb3BlcnR5LCBtZW51LCBoZWxwIH0gPSBfZGVjb3JhdG9yO1xuXG5AY2NjbGFzcygnVGVzdENvbXAnKVxuQG1lbnUoXCJUZXN0L1Rlc3RDb21wXCIpXG5AaGVscChcImh0dHBzOi8vZ2l0aHViLmNvbS9BSUxIQy9FYXN5R2FtZUZyYW1ld29ya09wZW5cIilcbmV4cG9ydCBjbGFzcyBUZXN0Q29tcCBleHRlbmRzIENvbXBvbmVudCB7XG4gICAgLyogY2xhc3MgbWVtYmVyIGNvdWxkIGJlIGRlZmluZWQgbGlrZSB0aGlzICovXG4gICAgLy8gZHVtbXkgPSAnJztcblxuICAgIC8qIHVzZSBgcHJvcGVydHlgIGRlY29yYXRvciBpZiB5b3VyIHdhbnQgdGhlIG1lbWJlciB0byBiZSBzZXJpYWxpemFibGUgKi9cbiAgICAvLyBAcHJvcGVydHlcbiAgICAvLyBzZXJpYWxpemFibGVEdW1teSA9IDA7XG5cbiAgICBzdGFydCgpIHtcbiAgICAgICAgLy8gWW91ciBpbml0aWFsaXphdGlvbiBnb2VzIGhlcmUuXG4gICAgICAgIGNvbnNvbGUubG9nKFwidGVzdENvbXBcIilcbiAgICB9XG5cbiAgICAvLyB1cGRhdGUgKGRlbHRhVGltZTogbnVtYmVyKSB7XG4gICAgLy8gICAgIC8vIFlvdXIgdXBkYXRlIGZ1bmN0aW9uIGdvZXMgaGVyZS5cbiAgICAvLyB9XG59Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O1lBQ0EsTUFBTSxFQUFFLE9BQU8sRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFLElBQUksRUFBRSxHQUFHLFVBQVUsQ0FBQztnQkFLeEMsUUFBUSx1QkFBckIsTUFBYSxRQUFTLFNBQVEsU0FBUzs7Ozs7O2dCQVFuQyxLQUFLOztvQkFFRCxPQUFPLENBQUMsR0FBRyxDQUFDLFVBQVUsQ0FBQyxDQUFBO2lCQUMxQjtlQUtKO1lBaEJZLFFBQVE7Z0JBSHBCLE9BQU8sQ0FBQyxVQUFVLENBQUM7Z0JBQ25CLElBQUksQ0FBQyxlQUFlLENBQUM7Z0JBQ3JCLElBQUksQ0FBQyxnREFBZ0QsQ0FBQztlQUMxQyxRQUFRLEVBZ0JwQjs7Ozs7OyJ9
+
+    
+//# sourceMappingURL=index.js.map

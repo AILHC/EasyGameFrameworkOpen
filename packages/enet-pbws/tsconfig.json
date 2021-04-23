@@ -26,6 +26,7 @@
   ],
 
   "dtsGenExclude": [
-    "__tests__/**/*"
+    "__tests__/**/*",
+    "libs/**/*"
   ]
 }
