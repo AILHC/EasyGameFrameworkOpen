@@ -1,3 +1,5 @@
 **/*.min.js
 **/*.min.mjs
+**/*.js.map
+**/*.mjs.map
 **/*.d.ts
