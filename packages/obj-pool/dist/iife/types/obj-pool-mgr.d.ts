@@ -15,7 +15,9 @@ export declare class ObjPoolMgr<SignKeyAndOnGetDataMap = any> implements objPool
     getMore<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign, onGetData?: SignKeyAndOnGetDataMap[Sign], num?: number): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T[] : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>[];
     getPoolObjsBySign<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T[] : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>[];
     free(obj: any): void;
+    return(obj: any): void;
     freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
+    returnAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
     kill(obj: any): void;
     private _log;
 }
