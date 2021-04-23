@@ -233,7 +233,7 @@
         function ObjPoolMgr() {
             this._poolDic = {};
         }
-        ObjPoolMgr.prototype.setObjPoolThreshold = function (sign, threshold) {
+        ObjPoolMgr.prototype.setPoolThreshold = function (sign, threshold) {
             var pool = this._poolDic[sign];
             if (pool) {
                 pool.threshold = threshold;
@@ -242,7 +242,7 @@
                 this._log(logType.poolIsNull + ":" + sign);
             }
         };
-        ObjPoolMgr.prototype.setObjPoolHandler = function (sign, objHandler) {
+        ObjPoolMgr.prototype.setPoolHandler = function (sign, objHandler) {
             var pool = this._poolDic[sign];
             if (pool) {
                 pool.setObjHandler(objHandler);
