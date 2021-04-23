@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3d-comp-template@1.0.5...c3d-comp-template@1.0.6) (2021-04-23)
+
+
+### Bug Fixes
+
+* 重新导出,修复声明识别错误的问题 ([4139c9e](https://github.com/AILHC/EasyGameFrameworkOpen/commit/4139c9ece90ef11d12374a42065bf89ebe44d053))
+
+
+
+
+
 ## [1.0.5](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3d-comp-template@1.0.4...c3d-comp-template@1.0.5) (2021-03-31)
 
 
