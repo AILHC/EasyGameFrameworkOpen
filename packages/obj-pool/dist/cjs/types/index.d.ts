@@ -7,17 +7,19 @@ declare module '@ailhc/obj-pool' {
 	    get sign(): Sign;
 	    private _createFunc;
 	    protected _objHandler: objPool.IObjHandler;
+	    setObjHandler(objHandler: objPool.IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void;
 	    get size(): number;
 	    get usedCount(): number;
 	    threshold: number;
 	    init(opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
 	    initByFunc(sign: Sign, createFunc: () => T): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
 	    initByClass(sign: Sign, clas: objPool.Clas<T>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
-	    setObjHandler(objHandler: objPool.IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void;
 	    preCreate(num: number): void;
 	    clear(): void;
 	    kill(obj: T extends objPool.IObj ? T : any): void;
 	    free(obj: T extends objPool.IObj ? T : any): void;
+	    return(obj: T extends objPool.IObj ? T : any): void;
+	    returnAll(): void;
 	    freeAll(): void;
 	    get(onGetData?: SignKeyAndOnGetDataMap[Sign]): T;
 	    getMore(onGetData: SignKeyAndOnGetDataMap[Sign], num?: number): T[];
@@ -43,8 +45,15 @@ declare module '@ailhc/obj-pool' {
 	    get<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign, onGetData?: SignKeyAndOnGetDataMap[Sign]): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>;
 	    getMore<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign, onGetData?: SignKeyAndOnGetDataMap[Sign], num?: number): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T[] : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>[];
 	    getPoolObjsBySign<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T[] : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>[];
+	    /**
+	     * 回收对象
+	     * @param obj
+	     * @deprecated 方法即将废弃，请使用return(obj)
+	     */
 	    free(obj: any): void;
+	    return(obj: any): void;
 	    freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
+	    returnAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
 	    kill(obj: any): void;
 	    private _log;
 	}
@@ -57,59 +66,84 @@ declare module '@ailhc/obj-pool' {
 	        interface IObj<onGetDataType = any> {
 	            /**
 	             * 对象池类型标志
+	             * 创建时赋值
 	             */
 	            poolSign?: string;
 	            /**
 	             * 是否在对象池内
+	             * 创建时赋值
 	             */
 	            isInPool?: boolean;
 	            /**
+	             * 对象池
+	             * 创建时赋值
+	             */
+	            pool?: objPool.IPool;
+	            /**
+	             * 创建时
+	             */
+	            onCreate?(): void;
+	            /**
 	             * 创建时
 	             * @param pool
+	             * @deprecated 参数即将废弃，不再传参pool
 	             */
-	            onCreate?(pool: IPool<any>): void;
+	            onCreate?(pool: objPool.IPool): void;
 	            /**
 	             * 当被取时
 	             */
-	            onGet?(onGetData: onGetDataType): void;
+	            onGet(onGetData: onGetDataType): void;
 	            /**
 	             * 当被回收时
+	             * @deprecated 方法即将废弃，请使用onReturn
 	             */
-	            onFree?(): void;
+	            onFree(): void;
+	            /**
+	             * 当被回收时
+	             * 做一些状态还原逻辑
+	             */
+	            onReturn?(): void;
 	            /**
 	             * 当被销毁时
 	             */
-	            onKill?(): void;
-	            /**
-	             * 将自身回收到对象池里
-	             */
-	            freeSelf?(): void;
+	            onKill(): void;
 	        }
 	        /**
 	         * 对象池的对象通用处理器
 	         */
-	        interface IObjHandler<onGetDataType = any> {
+	        interface IObjHandler<T = any, onGetDataType = any> {
+	            /**
+	             * 对象池
+	             * setObjHandler时赋值
+	             */
+	            pool?: objPool.IPool;
 	            /**
 	             * 当对象创建时
 	             * @param obj
 	             */
-	            onCreate(obj: IObj<onGetDataType>): void;
+	            onCreate(obj: T): void;
 	            /**
 	             * 当对象获取时
 	             * @param obj
 	             * @param onGetData
 	             */
-	            onGet(obj: IObj<onGetDataType>, onGetData?: onGetDataType): void;
+	            onGet(obj: T, onGetData?: onGetDataType): void;
+	            /**
+	             * 当对象释放时
+	             * @param obj
+	             * @deprecated 方法即将废弃，请使用onReturn(obj)
+	             */
+	            onFree(obj: T): void;
 	            /**
 	             * 当对象释放时
 	             * @param obj
 	             */
-	            onFree(obj: IObj): void;
+	            onReturn?(obj: T): void;
 	            /**
 	             * 当对象被kill掉时
 	             * @param obj
 	             */
-	            onKill(obj: IObj): void;
+	            onKill(obj: T): void;
 	        }
 	        interface IPoolInitOption<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any> {
 	            /**对象池标志 */
@@ -196,19 +230,30 @@ declare module '@ailhc/obj-pool' {
 	             */
 	            clear(): void;
 	            /**
-	             * 销毁一个对象
-	             * @param obj
+	             * 回收对象到对象池
+	             * @param obj 对象
+	             * @deprecated 该方法将废弃，请使用return()
 	             */
-	            kill(obj: T): void;
+	            free(obj: any): void;
 	            /**
-	             * 回收对象
-	             * @param obj
+	             * 回收对象到对象池
+	             * @param obj 对象
 	             */
-	            free(obj: T): void;
+	            return(obj: any): void;
 	            /**
-	             * 回收所有在使用的对象
+	             * 回收所有正在使用的对象
+	             * @deprecated 该方法将废弃，请使用returnAll()
 	             */
 	            freeAll(): void;
+	            /**
+	             * 回收所有正在使用的对象
+	             */
+	            returnAll(): void;
+	            /**
+	             * 销毁对象
+	             * @param obj 对象
+	             */
+	            kill(obj: any): void;
 	        }
 	        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
 	        interface IPoolMgr<SignKeyAndOnGetDataMap = any> {
@@ -292,18 +337,28 @@ declare module '@ailhc/obj-pool' {
 	            /**
 	             * 回收对象到对象池
 	             * @param obj 对象
-	             * @returns 返回是否回收成功
+	             * @deprecated 该方法将废弃，请使用return()
 	             */
 	            free(obj: any): void;
+	            /**
+	             * 回收对象到对象池
+	             * @param obj 对象
+	             */
+	            return(obj: any): void;
+	            /**
+	             * 回收所有正在使用的对象
+	             * @param sign
+	             * @deprecated 该方法将废弃，请使用returnAll()
+	             */
+	            freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
 	            /**
 	             * 回收所有正在使用的对象
 	             * @param sign
 	             */
-	            freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
+	            returnAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
 	            /**
 	             * 销毁对象
 	             * @param obj 对象
-	             * @returns 返回是否回收成功
 	             */
 	            kill(obj: any): void;
 	        }

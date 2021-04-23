@@ -21,6 +21,12 @@
             enumerable: false,
             configurable: true
         });
+        BaseObjPool.prototype.setObjHandler = function (objHandler) {
+            if (objHandler) {
+                objHandler.pool = this;
+                this._objHandler = objHandler;
+            }
+        };
         Object.defineProperty(BaseObjPool.prototype, "size", {
             get: function () {
                 var poolObjs = this._poolObjs;
@@ -92,9 +98,6 @@
             }
             return this;
         };
-        BaseObjPool.prototype.setObjHandler = function (objHandler) {
-            this._objHandler = objHandler;
-        };
         BaseObjPool.prototype.preCreate = function (num) {
             if (!this._sign) {
                 this._logNotInit();
@@ -113,6 +116,7 @@
                 }
                 obj.poolSign = this._sign;
                 obj.isInPool = true;
+                obj.pool = this;
                 poolObjs.push(obj);
             }
         };
@@ -130,11 +134,13 @@
         BaseObjPool.prototype.kill = function (obj) {
             if (this._usedObjMap.has(obj)) {
                 var handler_1 = this._objHandler;
-                if (obj.onFree) {
-                    obj.onFree();
+                if (obj.onFree || obj.onReturn) {
+                    obj.onFree && obj.onFree();
+                    obj.onReturn && obj.onReturn();
                 }
-                else if (handler_1 && handler_1.onFree) {
-                    handler_1.onFree(obj);
+                else if (handler_1 && (handler_1.onFree || handler_1.onReturn)) {
+                    handler_1.onFree && handler_1.onFree(obj);
+                    handler_1.onReturn && handler_1.onReturn(obj);
                 }
                 this._usedObjMap.delete(obj);
             }
@@ -145,8 +151,15 @@
             else if (handler && handler.onKill) {
                 handler.onKill(obj);
             }
+            obj.isInPool = false;
+            if (obj.pool) {
+                obj.pool = undefined;
+            }
         };
         BaseObjPool.prototype.free = function (obj) {
+            this.return(obj);
+        };
+        BaseObjPool.prototype.return = function (obj) {
             if (!this._sign) {
                 this._logNotInit();
                 return;
@@ -157,12 +170,15 @@
                     this.kill(obj);
                     return;
                 }
-                if (obj.onFree) {
-                    obj.onFree();
+                if (obj.onFree || obj.onReturn) {
+                    obj.onFree && obj.onFree();
+                    obj.onReturn && obj.onReturn();
                 }
-                else if (handler && handler.onFree) {
-                    handler.onFree(obj);
+                else if (handler && (handler.onFree || handler.onReturn)) {
+                    handler.onFree && handler.onFree(obj);
+                    handler.onReturn && handler.onReturn(obj);
                 }
+                obj.isInPool = true;
                 this._poolObjs.push(obj);
                 this._usedObjMap.delete(obj);
             }
@@ -170,12 +186,15 @@
                 console.warn("pool :" + this._sign + " obj is in pool");
             }
         };
-        BaseObjPool.prototype.freeAll = function () {
+        BaseObjPool.prototype.returnAll = function () {
             var _this = this;
             this._usedObjMap.forEach(function (value) {
                 _this.free(value);
             });
             this._usedObjMap.clear();
+        };
+        BaseObjPool.prototype.freeAll = function () {
+            this.returnAll();
         };
         BaseObjPool.prototype.get = function (onGetData) {
             if (!this._sign) {
@@ -342,15 +361,21 @@
             return pool ? pool.poolObjs : undefined;
         };
         ObjPoolMgr.prototype.free = function (obj) {
+            this.return(obj);
+        };
+        ObjPoolMgr.prototype.return = function (obj) {
             var pool = this._poolDic[obj.poolSign];
             if (pool) {
                 pool.free(obj);
             }
         };
         ObjPoolMgr.prototype.freeAll = function (sign) {
+            this.returnAll(sign);
+        };
+        ObjPoolMgr.prototype.returnAll = function (sign) {
             var pool = this._poolDic[sign];
             if (pool) {
-                pool.freeAll();
+                pool.returnAll();
             }
         };
         ObjPoolMgr.prototype.kill = function (obj) {
