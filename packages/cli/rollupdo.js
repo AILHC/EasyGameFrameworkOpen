@@ -477,6 +477,7 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
     const typesDirPath = path.join(projRoot, typesDir);
     const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
     let dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+    dtsGenExclude = dtsGenExclude.concat(tsconfig.exclude ? tsconfig.exclude : []);
     if (option.dtsGenExclude && option.dtsGenExclude.length > 0) {
         dtsGenExclude = dtsGenExclude.concat(option.dtsGenExclude);
     }
@@ -533,6 +534,10 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                     // }
                     // // importedModuleId = `${moduleName}/${importedModuleId}`;
                     // importedModuleId = `${moduleName}`;
+                    if (!params.importedModuleId.includes(".")) {
+                        // npm包
+                        return params.importedModuleId;
+                    }
                     return moduleName;
                 }
                 return params.importedModuleId

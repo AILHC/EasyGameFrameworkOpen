@@ -18,6 +18,7 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "declaration": true,
-    "removeComments": false
+    "removeComments": false,
+    "allowJs": true
   }
 }
