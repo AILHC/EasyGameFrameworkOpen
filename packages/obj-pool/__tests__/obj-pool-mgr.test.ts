@@ -1,46 +1,53 @@
 import { ObjPoolMgr } from "../src";
-interface ITestObjKeyType {
-    TestObj1: "TestObj1";
-    TestObj2: "TestObj2";
-    TestObj3: "TestObj3";
-}
 interface ITestObjGetDataMap {
     TestObj1: { num: number };
     TestObj2: { name: string };
     TestObj3: { name: string };
 }
 class TestObj1 implements objPool.IObj {
+    poolSign: string;
+    isInPool: boolean;
+    pool: objPool.IPool<any, any, any>;
     curNum: number;
     onGet(data: ITestObjGetDataMap["TestObj1"]) {
         this.curNum = data ? data.num : 0;
     }
-    onCreate(pool: objPool.IPool) {}
+    onCreate() {}
     onFree() {
         this.curNum = undefined;
     }
+    onReturn() {}
     onKill() {}
 }
 class TestObj3 implements objPool.IObj {
+    poolSign: string;
+    isInPool: boolean;
+    pool: objPool.IPool<any, any, any>;
     name: string;
     onGet(data: ITestObjGetDataMap["TestObj3"]) {
         this.name = data ? data.name : "";
     }
-    onCreate(pool: objPool.IPool) {}
+    onCreate() {}
     onFree() {}
+    onReturn() {}
     onKill() {}
 }
 class TestObj2 implements objPool.IObj {
+    poolSign: string;
+    isInPool: boolean;
+    pool: objPool.IPool<any, any, any>;
     name: string;
     onGet(data: ITestObjGetDataMap["TestObj2"]) {
         this.name = data ? data.name : "";
     }
-    onCreate(pool: objPool.IPool) {}
+    onCreate() {}
     onFree() {}
+    onReturn() {}
     onKill() {}
 }
 // 管理器接口调用测试
 test("test createPool by Mgr", function () {
-    const poolMgr = new ObjPoolMgr<ITestObjKeyType, ITestObjGetDataMap>();
+    const poolMgr: objPool.IPoolMgr<ITestObjGetDataMap> = new ObjPoolMgr<ITestObjGetDataMap>() as any;
 
     poolMgr.createByClass("TestObj1", TestObj1);
     poolMgr.createByFunc("TestObj2", () => {
@@ -57,6 +64,23 @@ test("test createPool by Mgr", function () {
     testObj3Pool.threshold = 100;
     expect(testObj3Pool.threshold).toBe(100);
     poolMgr.destroyPool("TestObj3");
+    // poolMgr.getPool("TestObj3").get()
+    // poolMgr.hasPool("TestObj3")
+    // poolMgr.createObjPool({ sign: "TestObj1", createFunc: () => { } });
+    // poolMgr.setPoolHandler("TestObj1", {
+    //     onCreate(obj) { },
+    //     onGet(obj, onGetData) {
+
+    //     },
+    //     onFree() {
+
+    //     },
+    //     onKill() {
+
+    //     }
+    // });
+
+    poolMgr.get("TestObj3");
     expect(poolMgr.getPool("TestObj3")).toBeUndefined();
     testObj3Pool = poolMgr.createObjPool({
         sign: "TestObj3",
@@ -68,7 +92,7 @@ test("test createPool by Mgr", function () {
     expect(testObj3Pool.threshold).toBe(200);
 });
 test("test mgr functions", function () {
-    const poolMgr = new ObjPoolMgr<ITestObjKeyType, ITestObjGetDataMap>();
+    const poolMgr: objPool.IPoolMgr<ITestObjGetDataMap> = new ObjPoolMgr<ITestObjGetDataMap>();
     poolMgr.createByClass("TestObj1", TestObj1);
     poolMgr.createByFunc("TestObj2", () => {
         return new TestObj2();
@@ -94,6 +118,11 @@ test("test mgr functions", function () {
     poolMgr.freeAll("TestObj2");
     expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(4);
 
+    const newTestObj2s = poolMgr.getMore("TestObj2", { name: "testObj2" }, 4);
+    poolMgr.return(newTestObj2s[0]);
+    expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(1);
+    poolMgr.returnAll("TestObj2");
+    expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(4);
     //clear
     poolMgr.clearPool("TestObj2");
     expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(0);
@@ -126,7 +155,7 @@ test("test setObjPoolHandler to pool", function () {
         }
     });
     const spyonGet = jest.spyOn(handler, "onGet");
-    poolMgr.setObjPoolHandler("testSetHandlerPool", handler);
+    poolMgr.setPoolHandler("testSetHandlerPool", handler);
     const obj = poolMgr.get("testSetHandlerPool");
     const obj2 = poolMgr.get("testSetHandlerPool2");
     expect(obj).toBeDefined();
@@ -137,10 +166,10 @@ test("test setObjPoolHandler to pool", function () {
 });
 
 test("test objPool thredshold", function () {
-    const poolMgr = new ObjPoolMgr();
+    const poolMgr: objPool.IPoolMgr = new ObjPoolMgr();
     poolMgr.createObjPool({ sign: "thredshold", clas: TestObj1, threshold: 5 });
     poolMgr.preCreate("thredshold", 6);
-    let obj = poolMgr.get<TestObj1>("thredshold");
+    let obj = poolMgr.get("thredshold");
     const spyonKill = jest.spyOn(obj, "onKill");
     poolMgr.free(obj);
     expect(spyonKill).toBeCalledTimes(1);
