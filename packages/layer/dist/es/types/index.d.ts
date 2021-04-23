@@ -1,4 +1,4 @@
-declare module '@ailhc/layer/src/layer-mgr' {
+declare module '@ailhc/layer' {
 	 type LayerClassType = layer.LayerClassType;
 	export class LayerMgr<T> implements layer.IMgr<T> {
 	    protected layerEnum: any;
@@ -20,7 +20,7 @@ declare module '@ailhc/layer/src/layer-mgr' {
 	export {};
 
 }
-declare module '@ailhc/layer/src/layer-interfaces' {
+declare module '@ailhc/layer' {
 	 global {
 	    namespace layer {
 	        type LayerClassType = new () => ILayer;
@@ -111,7 +111,7 @@ declare module '@ailhc/layer/src/layer-interfaces' {
 
 }
 declare module '@ailhc/layer' {
-	export * from '@ailhc/layer/src/layer-interfaces';
-	export * from '@ailhc/layer/src/layer-mgr';
+	export * from '@ailhc/layer';
+	export * from '@ailhc/layer';
 
 }

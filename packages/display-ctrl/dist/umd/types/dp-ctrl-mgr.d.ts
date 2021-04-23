@@ -1,20 +1,10 @@
-/**
- * DisplayControllerMgr
- * 显示控制类管理器基类
- */
 export declare class DpcMgr<CtrlKeyMapType = any, InitDataTypeMapType = any, ShowDataTypeMapType = any, UpdateDataTypeMapType = any> implements displayCtrl.IMgr<CtrlKeyMapType, InitDataTypeMapType, ShowDataTypeMapType, UpdateDataTypeMapType> {
     keys: CtrlKeyMapType;
-    /**
-     * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
-     */
     protected _sigCtrlCache: displayCtrl.CtrlInsMap;
     protected _sigCtrlShowCfgMap: {
         [P in keyof CtrlKeyMapType]: displayCtrl.IShowConfig;
     };
     protected _resHandler: displayCtrl.IResHandler;
-    /**
-     * 控制器类字典
-     */
     protected _ctrlClassMap: {
         [P in keyof CtrlKeyMapType]: displayCtrl.CtrlClassType<displayCtrl.ICtrl>;
     };

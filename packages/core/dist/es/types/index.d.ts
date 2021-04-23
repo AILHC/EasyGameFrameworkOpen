@@ -1,4 +1,4 @@
-declare module '@ailhc/egf-core/src/egf-app' {
+declare module '@ailhc/egf-core' {
 	export class App<ModuleMap = any> implements egf.IApp<ModuleMap> {
 	    static readonly UN_RUN: number;
 	    static readonly BOOTING: number;
@@ -27,7 +27,7 @@ declare module '@ailhc/egf-core/src/egf-app' {
 	}
 
 }
-declare module '@ailhc/egf-core/src/interfaces' {
+declare module '@ailhc/egf-core' {
 	 global {
 	    namespace egf {
 	        interface IModule {
@@ -105,7 +105,7 @@ declare module '@ailhc/egf-core/src/interfaces' {
 
 }
 declare module '@ailhc/egf-core' {
-	export * from '@ailhc/egf-core/src/egf-app';
-	export * from '@ailhc/egf-core/src/interfaces';
+	export * from '@ailhc/egf-core';
+	export * from '@ailhc/egf-core';
 
 }

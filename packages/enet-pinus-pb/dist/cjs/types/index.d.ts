@@ -1,4 +1,4 @@
-declare module '@ailhc/enet-pinus-pb/src/ByteArray' {
+declare module '@ailhc/enet-pinus-pb' {
 	/**
 	 * The Endian class contains values that denote the byte order used to represent multibyte numbers.
 	 * The byte order is either bigEndian (most significant byte first) or littleEndian (least significant byte first).
@@ -651,8 +651,8 @@ declare module '@ailhc/enet-pinus-pb/src/ByteArray' {
 	}
 
 }
-declare module '@ailhc/enet-pinus-pb/src/protobuf' {
-	import { ByteArray } from '@ailhc/enet-pinus-pb/src/ByteArray';
+declare module '@ailhc/enet-pinus-pb' {
+	import { ByteArray } from '@ailhc/enet-pinus-pb';
 	export class Protobuf {
 	    static TYPES: any;
 	    private static _clients;
@@ -678,15 +678,15 @@ declare module '@ailhc/enet-pinus-pb/src/protobuf' {
 	}
 
 }
-declare module '@ailhc/enet-pinus-pb/src/protocol' {
-	import { ByteArray } from '@ailhc/enet-pinus-pb/src/ByteArray';
+declare module '@ailhc/enet-pinus-pb' {
+	import { ByteArray } from '@ailhc/enet-pinus-pb';
 	export class Protocol {
 	    static strencode(str: string): ByteArray;
 	    static strdecode(byte: ByteArray): string;
 	}
 
 }
-declare module '@ailhc/enet-pinus-pb/src/route-dic' {
+declare module '@ailhc/enet-pinus-pb' {
 	export class Routedic {
 	    private static _ids;
 	    private static _names;
@@ -696,8 +696,8 @@ declare module '@ailhc/enet-pinus-pb/src/route-dic' {
 	}
 
 }
-declare module '@ailhc/enet-pinus-pb/src/message' {
-	import { ByteArray } from '@ailhc/enet-pinus-pb/src/ByteArray';
+declare module '@ailhc/enet-pinus-pb' {
+	import { ByteArray } from '@ailhc/enet-pinus-pb';
 	interface IMessage {
 	    /**
 	     * encode
@@ -744,8 +744,8 @@ declare module '@ailhc/enet-pinus-pb/src/message' {
 	export {};
 
 }
-declare module '@ailhc/enet-pinus-pb/src/package' {
-	import { ByteArray } from '@ailhc/enet-pinus-pb/src/ByteArray';
+declare module '@ailhc/enet-pinus-pb' {
+	import { ByteArray } from '@ailhc/enet-pinus-pb';
 	interface IPackage {
 	    encode(type: number, body?: ByteArray): ByteArray;
 	    decode(buffer: ByteArray): any;
@@ -766,7 +766,7 @@ declare module '@ailhc/enet-pinus-pb/src/package' {
 	export {};
 
 }
-declare module '@ailhc/enet-pinus-pb/src/pkg-type' {
+declare module '@ailhc/enet-pinus-pb' {
 	export enum PackageType {
 	    /**握手 */
 	    HANDSHAKE = 1,
@@ -781,7 +781,7 @@ declare module '@ailhc/enet-pinus-pb/src/pkg-type' {
 	}
 
 }
-declare module '@ailhc/enet-pinus-pb/src/pinus-proto-handler' {
+declare module '@ailhc/enet-pinus-pb' {
 	 global {
 	    interface IPinusProtos {
 	        /**默认为0 */
@@ -826,12 +826,12 @@ declare module '@ailhc/enet-pinus-pb/src/pinus-proto-handler' {
 
 }
 declare module '@ailhc/enet-pinus-pb' {
-	export * from '@ailhc/enet-pinus-pb/src/ByteArray';
-	export * from '@ailhc/enet-pinus-pb/src/message';
-	export * from '@ailhc/enet-pinus-pb/src/package';
-	export * from '@ailhc/enet-pinus-pb/src/pinus-proto-handler';
-	export * from '@ailhc/enet-pinus-pb/src/protobuf';
-	export * from '@ailhc/enet-pinus-pb/src/protocol';
-	export * from '@ailhc/enet-pinus-pb/src/route-dic';
+	export * from '@ailhc/enet-pinus-pb';
+	export * from '@ailhc/enet-pinus-pb';
+	export * from '@ailhc/enet-pinus-pb';
+	export * from '@ailhc/enet-pinus-pb';
+	export * from '@ailhc/enet-pinus-pb';
+	export * from '@ailhc/enet-pinus-pb';
+	export * from '@ailhc/enet-pinus-pb';
 
 }

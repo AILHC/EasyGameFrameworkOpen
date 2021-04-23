@@ -1,4 +1,4 @@
-declare module '@ailhc/broadcast/src/broadcast' {
+declare module '@ailhc/broadcast' {
 	/**
 	 * @author AILHC 505126057@qq.com
 	 */
@@ -102,7 +102,7 @@ declare module '@ailhc/broadcast/src/broadcast' {
 	}
 
 }
-declare module '@ailhc/broadcast/src/globalDefines' {
+declare module '@ailhc/broadcast' {
 	 global {
 	    namespace broadcast {
 	        interface IMsgKey {
@@ -207,7 +207,7 @@ declare module '@ailhc/broadcast/src/globalDefines' {
 
 }
 declare module '@ailhc/broadcast' {
-	export * from '@ailhc/broadcast/src/broadcast';
-	export * from '@ailhc/broadcast/src/globalDefines';
+	export * from '@ailhc/broadcast';
+	export * from '@ailhc/broadcast';
 
 }

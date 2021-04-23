@@ -1,26 +1,11 @@
 import { ByteArray } from "./ByteArray";
 interface IMessage {
-    /**
-     * encode
-     * @param id
-     * @param route
-     * @param msg
-     * @return ByteArray
-     */
     encode(id: number, route: string, msg: any): ByteArray;
-    /**
-     * decode
-     * @param buffer
-     * @return Object
-     */
     decode(buffer: ByteArray): any;
 }
 declare global {
     interface IPinusDecodeMessage {
         id: number;
-        /**
-         * Message.TYPE_xxx
-         */
         type: number;
         route: string;
         body: any;
