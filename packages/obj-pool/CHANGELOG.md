@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@1.2.1...@ailhc/obj-pool@2.0.0) (2021-04-23)
+
+
+### Bug Fixes
+
+* 完善对象池模块类型声明处理 ([4a54094](https://github.com/AILHC/EasyGameFrameworkOpen/commit/4a540941c4e9f98157eefa32017f5fe97d2fcfd9))
+* 修复对象回收后isInPool=false的bug ([6f3b9d6](https://github.com/AILHC/EasyGameFrameworkOpen/commit/6f3b9d6744de7f6f213af70010bece5fa2ec5756))
+
+
+### Features
+
+* 对象池接口修改和完善 ([8e7b500](https://github.com/AILHC/EasyGameFrameworkOpen/commit/8e7b500d2e4ac9cfe7cd75583a10e62ead45d10f))
+* 重构接口,并兼容旧的接口 ([5018767](https://github.com/AILHC/EasyGameFrameworkOpen/commit/5018767196b49295648a935a909ad547be1cd3d9))
+
+
+### BREAKING CHANGES
+
+* remove IObj.freeSelf() [移除IObj的freeSelf接口] , remove IObj.onCreate arg pool [移除IObj.onCreate 参数pool]
+
+
+
+
+
 ## [1.2.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@1.2.0...@ailhc/obj-pool@1.2.1) (2021-04-20)
 
 
