@@ -131,6 +131,7 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
         } else if (handler && handler.onKill) {
             handler.onKill(obj);
         }
+        obj.isInPool = false;
         if (obj.pool) {
             obj.pool = undefined;
         }
@@ -156,6 +157,7 @@ export class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends key
                 handler.onFree && handler.onFree(obj);
                 handler.onReturn && handler.onReturn(obj);
             }
+            obj.isInPool = true;
             this._poolObjs.push(obj);
             this._usedObjMap.delete(obj);
         } else {
