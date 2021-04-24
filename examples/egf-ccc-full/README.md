@@ -1,6 +1,5 @@
 ## EasyGameFramework的完整示例
 基于CocosCreator 2.4.2 
-由于2.4.3的引擎sourcemap不正确调试问题降级了
 
 ## 安装
 如果是单独下载这个项目
@@ -15,7 +14,12 @@ npm install
 ```bash
 yarn install
 ```
-## 目录结构
+## 例子说明
+1. broadcastTest 
+演示broadcast模块的神奇功能
+
+2. display-ctrl
+演示UI框架+层级管理模块的使用演示
 
 ## 注意
 1. 关于引用项目外npm包的问题(在框架仓库中打开这个项目需要注意)
