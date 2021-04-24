@@ -22,26 +22,24 @@ import { MutiInsView } from "./view-ctrls/MutiInsView";
 const { ccclass, property } = cc._decorator;
 declare global {
     interface Window {
-        globalType: IGlobalType
+        globalType: IGlobalType;
     }
     interface IGlobalType {
-        NodeCtrlType?: new () => NodeCtrl
+        NodeCtrlType?: new () => NodeCtrl;
     }
 }
 window.globalType = {} as any;
 window.globalType.NodeCtrlType = NodeCtrl;
 declare global {
-    interface IDpcTestViewKeyMap {
-
-    }
+    interface IDpcTestViewKeyMap {}
     interface IDpcTestModuleMap {
         uiMgr: displayCtrl.IMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap, IDpcTestUpdateDataMap>;
         layerMgr: layer.IMgr<cc.Node>;
         poolMgr: objPool.IPoolMgr;
-        abtest: InstanceType<IGlobalType["ABTestModuleType"]>
+        abtest: InstanceType<IGlobalType["ABTestModuleType"]>;
     }
     interface IDpcTestOnLoadData {
-        showLoading: boolean
+        showLoading: boolean;
     }
 }
 @ccclass
@@ -53,53 +51,51 @@ export default class DpcTestMainComp extends cc.Component {
     @property(cc.Node)
     ctrlBtns: cc.Node = undefined;
 
-
     private _depResViewTipsLabel: cc.Label;
     onLoad() {
         const app = new App<IDpcTestModuleMap>();
         this._app = app;
         const dpcMgr = new DpcMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap>();
 
-        dpcMgr.init(
-            {
-                loadRes: (config) => {
-                    const onLoadData: IDpcTestOnLoadData = config.onLoadData;
-                    onLoadData?.showLoading && dtM.uiMgr.showDpc("LoadingView");
-                    cc.assetManager.loadAny(config.ress,
-                        { bundle: "resources" },
-                        (finish, total) => {
-                            console.log(`${config.key}加载中:${finish}/${total}`);
-                            onLoadData?.showLoading && dtM.uiMgr.updateDpc("LoadingView", { finished: finish, total: total })
-                        },
-                        (err, items) => {
-                            if (err) {
-                                console.error(`加载失败`, err);
-                                config.error && config.error();
-                            } else {
-                                config.complete && config.complete();
-                            }
-                            onLoadData?.showLoading && dtM.uiMgr.hideDpc("LoadingView");
-                        })
-                },
-                releaseRes: (ctrlIns) => {
-                    const ress = ctrlIns.getRess();
-                    if (ress && ress.length) {
-                        let asset: cc.Asset;
-                        ress.forEach((res: { path: string }) => {
-                            asset = cc.resources.get(res.path);
-                            if (asset) {
-                                cc.assetManager.releaseAsset(asset);
-                            }
-                        });
-
+        dpcMgr.init({
+            loadRes: (config) => {
+                const onLoadData: IDpcTestOnLoadData = config.onLoadData;
+                onLoadData?.showLoading && dtM.uiMgr.showDpc("LoadingView");
+                cc.assetManager.loadAny(
+                    config.ress,
+                    { bundle: "resources" },
+                    (finish, total) => {
+                        console.log(`${config.key}加载中:${finish}/${total}`);
+                        onLoadData?.showLoading &&
+                            dtM.uiMgr.updateDpc("LoadingView", { finished: finish, total: total });
+                    },
+                    (err, items) => {
+                        if (err) {
+                            console.error(`加载失败`, err);
+                            config.error && config.error();
+                        } else {
+                            config.complete && config.complete();
+                        }
+                        onLoadData?.showLoading && dtM.uiMgr.hideDpc("LoadingView");
                     }
+                );
+            },
+            releaseRes: (ctrlIns) => {
+                const ress = ctrlIns.getRess();
+                if (ress && ress.length) {
+                    let asset: cc.Asset;
+                    ress.forEach((res: { path: string }) => {
+                        asset = cc.resources.get(res.path);
+                        if (asset) {
+                            cc.assetManager.releaseAsset(asset);
+                        }
+                    });
                 }
-
             }
-        )
+        });
         const layerMgr = new LayerMgr<cc.Node>();
         const canvas = cc.director.getScene().getChildByName("Canvas");
-        cc.game.addPersistRootNode(canvas);
+        // cc.game.addPersistRootNode(canvas);
 
         layerMgr.init(DpcTestLayerType, Layer, null, canvas);
         app.loadModule(layerMgr, "layerMgr");
@@ -110,7 +106,7 @@ export default class DpcTestMainComp extends cc.Component {
         app.bootstrap();
         app.init();
         setDpcTestModuleMap(app.moduleMap);
-        window["dtM"] = dtM;//控制台调试用
+        // window["dtM"] = dtM;//控制台调试用
         // TestView
         // dpcMgr.regist(LoadingView);
         dpcMgr.registTypes([LoadingView, AnimView, CustomResHandleView, DepResView, MutiInsView]);
@@ -123,11 +119,8 @@ export default class DpcTestMainComp extends cc.Component {
                 dtM.uiMgr.initSigDpc("LoadingView");
             }
         });
-
     }
-    start() {
-
-    }
+    start() {}
     //····················测试接口······························
     //DepResView 依赖资源界面接口调用
     showDepResView() {
@@ -142,9 +135,11 @@ export default class DpcTestMainComp extends cc.Component {
     getDepResViewRess() {
         const ress = dtM.uiMgr.getSigDpcIns(dtM.uiMgr.keys.DepResView)?.getRess();
         if (ress) {
-            this._depResViewTipsLabel.string = (ress as any[]).map((value) => {
-                return value.path as string;
-            }).toString();
+            this._depResViewTipsLabel.string = (ress as any[])
+                .map((value) => {
+                    return value.path as string;
+                })
+                .toString();
         }
     }
     preloadDepResViewRess() {
@@ -175,7 +170,7 @@ export default class DpcTestMainComp extends cc.Component {
         dtM.uiMgr.hideDpc(dtM.uiMgr.keys.CustomResHandleView);
     }
     destroyCustomResHandlerView() {
-        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.CustomResHandleView, true)
+        dtM.uiMgr.destroyDpc(dtM.uiMgr.keys.CustomResHandleView, true);
     }
 
     //MutiInsView 多实例界面
@@ -186,18 +181,19 @@ export default class DpcTestMainComp extends cc.Component {
                 loadCb: (ctrlIns) => {
                     this._createMutiInsView(ctrlIns);
                 }
-            })
+            });
         } else {
             this._createMutiInsView();
         }
-
     }
     private _createMutiInsView(ctrlIns?: displayCtrl.ICtrl) {
         if (!ctrlIns) {
             ctrlIns = dtM.uiMgr.insDpc(dtM.uiMgr.keys.MutiInsView);
         }
         dtM.uiMgr.initDpcByIns(ctrlIns);
-        dtM.uiMgr.showDpcByIns<"MutiInsView">(ctrlIns, { onShowData: { preStr: "egf", clickCount: getSomeRandomInt(0, 100, 1)[0] } });
+        dtM.uiMgr.showDpcByIns<"MutiInsView">(ctrlIns, {
+            onShowData: { preStr: "egf", clickCount: getSomeRandomInt(0, 100, 1)[0] }
+        });
         this._mutiInss.push(ctrlIns);
     }
     destroyAllMutiInsView() {
@@ -216,7 +212,7 @@ export default class DpcTestMainComp extends cc.Component {
 
             this._app.loadModule(new window.globalType.ABTestModuleType(), "abtest");
             dtM.uiMgr.hideDpc("LoadingView");
-        })
+        });
     }
     showAbTestView() {
         if (!dtM.abtest) {
@@ -224,7 +220,6 @@ export default class DpcTestMainComp extends cc.Component {
         } else {
             dtM.abtest.showABTestView();
         }
-
     }
     destroyAbTestView() {
         dtM.uiMgr.destroyDpc("ABTestView", true);
