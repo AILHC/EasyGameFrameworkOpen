@@ -4,57 +4,51 @@ declare global {
         interface IObj<onGetDataType = any> {
             poolSign?: string;
             isInPool?: boolean;
-            pool?: objPool.IPool;
+            pool: objPool.IPool;
             onCreate?(): void;
-            onCreate?(pool: objPool.IPool): void;
             onGet(onGetData: onGetDataType): void;
-            onFree(): void;
             onReturn?(): void;
-            onKill(): void;
+            onKill?(): void;
         }
         interface IObjHandler<T = any, onGetDataType = any> {
             pool?: objPool.IPool;
-            onCreate(obj: T): void;
+            onCreate?(obj: T): void;
             onGet(obj: T, onGetData?: onGetDataType): void;
-            onFree(obj: T): void;
             onReturn?(obj: T): void;
-            onKill(obj: T): void;
+            onKill?(obj: T): void;
         }
-        interface IPoolInitOption<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any> {
+        interface IPoolInitOption<T = any, onGetDataType = any, Sign = any> {
             sign: Sign;
             threshold?: number;
             createFunc?: () => T;
             clas?: Clas<T>;
-            objHandler?: IObjHandler<SignKeyAndOnGetDataMap[Sign]>;
+            objHandler?: IObjHandler<onGetDataType>;
         }
-        interface IPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any> {
+        interface IPool<T = any, onGetDataType = any> {
             poolObjs: T[];
-            sign: Sign;
+            sign: string;
             size: number;
             usedCount: number;
             threshold: number;
-            init(opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
-            initByFunc(sign: Sign, createFunc: () => T): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
-            initByClass(sign: Sign, clas: Clas<T>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
-            setObjHandler(objHandler: IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void;
+            init(opt: objPool.IPoolInitOption<T, onGetDataType, string>): objPool.IPool<T, onGetDataType>;
+            initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType>;
+            initByClass(sign: string, clas: Clas<T>): objPool.IPool<T, onGetDataType>;
+            setObjHandler(objHandler: IObjHandler<onGetDataType>): void;
             preCreate(num: number): void;
-            get(onGetData?: SignKeyAndOnGetDataMap[Sign]): T;
-            getMore(onGetData: SignKeyAndOnGetDataMap[Sign], num?: number): T[];
+            get(onGetData?: onGetDataType): T;
+            getMore(onGetData: onGetDataType, num?: number): T[];
             clear(): void;
-            free(obj: any): void;
             return(obj: any): void;
-            freeAll(): void;
             returnAll(): void;
             kill(obj: any): void;
         }
-        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
         interface IPoolMgr<SignKeyAndOnGetDataMap = any> {
             setPoolThreshold<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign, threshold: number): void;
             setPoolHandler<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign, objHandler: objPool.IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void;
-            createObjPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+            createObjPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap[Sign], Sign>): objPool.IPool<T, SignKeyAndOnGetDataMap[Sign]>;
             createByClass<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign, cls: any): void;
             createByFunc<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign, createFunc: () => T): void;
-            getPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+            getPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign): objPool.IPool<T, SignKeyAndOnGetDataMap[Sign]>;
             hasPool<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): boolean;
             destroyPool<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
             clearPool<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
@@ -62,9 +56,7 @@ declare global {
             get<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign, onGetData?: SignKeyAndOnGetDataMap[Sign]): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>;
             getMore<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign, onGetData?: SignKeyAndOnGetDataMap[Sign], num?: number): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T[] : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>[];
             getPoolObjsBySign<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(sign: Sign): T extends objPool.IObj<SignKeyAndOnGetDataMap[Sign]> ? T[] : objPool.IObj<SignKeyAndOnGetDataMap[Sign]>[];
-            free(obj: any): void;
             return(obj: any): void;
-            freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
             returnAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
             kill(obj: any): void;
         }
