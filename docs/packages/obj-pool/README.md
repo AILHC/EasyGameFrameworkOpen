@@ -42,7 +42,7 @@ class ClassA implements objPool.IObj{
     onGet(){
 
     }
-    onFree(){
+    onReturn(){
 
     }
     onKill(){
@@ -66,7 +66,7 @@ objPool.init(
             onCreate(obj): void {
 
             },
-            onFree(obj): void {
+            onReturn(obj): void {
 
             },
             onKill(obj): void {
@@ -79,17 +79,12 @@ objPool.init(
 ```
 2. 提示更加智能
 ```ts
-interface ITestObjKeyType {
-    TestObj1: "TestObj1",
-    TestObj2: "TestObj2",
-    TestObj3: "TestObj3"
-}
 interface ITestObjGetDataMap {
     TestObj1: { num: number },
     TestObj2: { name: string },
     TestObj3: { name: string }
 }
-const poolMgr = new ObjPoolMgr<ITestObjKeyType, ITestObjGetDataMap>();
+const poolMgr = new ObjPoolMgr<ITestObjGetDataMap>();
 poolMgr.createByClass("TestObj1", TestObj1);
 poolMgr.createByFunc("TestObj2", () => {
     return new TestObj2();
@@ -116,7 +111,7 @@ objPool.init(
             onCreate(obj): void {
 
             },
-            onFree(obj): void {
+            onReturn(obj): void {
 
             },
             onKill(obj): void {
@@ -129,7 +124,7 @@ objPool.init(
     }
 )
 //回收对象，如果对象池里的数量大于等于100，则这个obj就会被kill掉（销毁）;
-objPool.free(obj);
+objPool.return(obj);
 
 ```
 
