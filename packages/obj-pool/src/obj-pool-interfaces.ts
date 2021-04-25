@@ -17,26 +17,15 @@ declare global {
              * 对象池
              * 创建时赋值
              */
-            pool?: objPool.IPool;
+            pool: objPool.IPool;
             /**
              * 创建时
              */
             onCreate?(): void;
             /**
-             * 创建时
-             * @param pool
-             * @deprecated 参数即将废弃，不再传参pool
-             */
-            onCreate?(pool: objPool.IPool): void;
-            /**
              * 当被取时
              */
             onGet(onGetData: onGetDataType): void;
-            /**
-             * 当被回收时
-             * @deprecated 方法即将废弃，请使用onReturn
-             */
-            onFree(): void;
             /**
              * 当被回收时
              * 做一些状态还原逻辑
@@ -45,7 +34,7 @@ declare global {
             /**
              * 当被销毁时
              */
-            onKill(): void;
+            onKill?(): void;
         }
         /**
          * 对象池的对象通用处理器
@@ -60,7 +49,7 @@ declare global {
              * 当对象创建时
              * @param obj
              */
-            onCreate(obj: T): void;
+            onCreate?(obj: T): void;
             /**
              * 当对象获取时
              * @param obj
@@ -70,25 +59,15 @@ declare global {
             /**
              * 当对象释放时
              * @param obj
-             * @deprecated 方法即将废弃，请使用onReturn(obj)
-             */
-            onFree(obj: T): void;
-            /**
-             * 当对象释放时
-             * @param obj
              */
             onReturn?(obj: T): void;
             /**
              * 当对象被kill掉时
              * @param obj
              */
-            onKill(obj: T): void;
+            onKill?(obj: T): void;
         }
-        interface IPoolInitOption<
-            T = any,
-            SignKeyAndOnGetDataMap = any,
-            Sign extends keyof SignKeyAndOnGetDataMap = any
-        > {
+        interface IPoolInitOption<T = any, onGetDataType = any, Sign = any> {
             /**对象池标志 */
             sign: Sign;
             /**
@@ -102,9 +81,9 @@ declare global {
             /**对象构建类 */
             clas?: Clas<T>;
             /**通用对象处理函数 */
-            objHandler?: IObjHandler<SignKeyAndOnGetDataMap[Sign]>;
+            objHandler?: IObjHandler<onGetDataType>;
         }
-        interface IPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any> {
+        interface IPool<T = any, onGetDataType = any> {
             /**
              * 对象数组
              */
@@ -112,7 +91,7 @@ declare global {
             /**
              * 对象池标志
              */
-            sign: Sign;
+            sign: string;
             /**
              * 对象池未使用对象数量
              */
@@ -131,29 +110,25 @@ declare global {
              * 初始化
              * @param opt 配置
              */
-            init(
-                opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>
-            ): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+            init(opt: objPool.IPoolInitOption<T, onGetDataType, string>): objPool.IPool<T, onGetDataType>;
             /**
              * 通过函数创建返回初始化
              * @param sign
              * @param createFunc
-             * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
              */
-            initByFunc(sign: Sign, createFunc: () => T): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+            initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType>;
             /**
              * 通过构造函数初始化
              * @param sign 对象池标志,如果没有传,则使用clas["__name"] 的值，如果这个值没有，就使用自增id
              * @param clas
-             * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
              */
-            initByClass(sign: Sign, clas: Clas<T>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+            initByClass(sign: string, clas: Clas<T>): objPool.IPool<T, onGetDataType>;
             /**
              * 设置对象池对象处理器，当对象在取、回收、销毁时调用
              * @param objHandler
              * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
              */
-            setObjHandler(objHandler: IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void;
+            setObjHandler(objHandler: IObjHandler<onGetDataType>): void;
             /**
              * 预创建
              * @param num 数量
@@ -164,13 +139,13 @@ declare global {
              * @param onGetData 获取传参
              */
             // get(onGetData?: SignKeyAndOnGetDataMap[Sign]): T;
-            get(onGetData?: SignKeyAndOnGetDataMap[Sign]): T;
+            get(onGetData?: onGetDataType): T;
             /**
              * 批量获取对象
              * @param onGetData
              * @param num 默认1
              */
-            getMore(onGetData: SignKeyAndOnGetDataMap[Sign], num?: number): T[];
+            getMore(onGetData: onGetDataType, num?: number): T[];
             /**
              * 清空对象池
              */
@@ -178,19 +153,9 @@ declare global {
             /**
              * 回收对象到对象池
              * @param obj 对象
-             * @deprecated 该方法将废弃，请使用return()
-             */
-            free(obj: any): void;
-            /**
-             * 回收对象到对象池
-             * @param obj 对象
              */
             return(obj: any): void;
-            /**
-             * 回收所有正在使用的对象
-             * @deprecated 该方法将废弃，请使用returnAll()
-             */
-            freeAll(): void;
+
             /**
              * 回收所有正在使用的对象
              */
@@ -201,7 +166,6 @@ declare global {
              */
             kill(obj: any): void;
         }
-        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
         interface IPoolMgr<SignKeyAndOnGetDataMap = any> {
             /**
              * 设置对象池的阈值
@@ -224,20 +188,18 @@ declare global {
              * @param opt
              */
             createObjPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(
-                opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>
-            ): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+                opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap[Sign], Sign>
+            ): objPool.IPool<T, SignKeyAndOnGetDataMap[Sign]>;
             /**
              * 使用类构造函数创建对象池
              * @param sign 对象池标志
              * @param cls 对象类
-             * @deprecated 方法将要废弃，请用createObjPool
              */
             createByClass<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign, cls: any): void;
             /**
              * 使用创建函数创建对象池
              * @param sign
              * @param createFunc 创建对象的函数
-             * @deprecated 方法将要废弃，请用createObjPool
              */
             createByFunc<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(
                 sign: Sign,
@@ -249,7 +211,7 @@ declare global {
              */
             getPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(
                 sign: Sign
-            ): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+            ): objPool.IPool<T, SignKeyAndOnGetDataMap[Sign]>;
             /**
              * 判断对象池是否存在
              * @param sign
@@ -307,20 +269,8 @@ declare global {
             /**
              * 回收对象到对象池
              * @param obj 对象
-             * @deprecated 该方法将废弃，请使用return()
-             */
-            free(obj: any): void;
-            /**
-             * 回收对象到对象池
-             * @param obj 对象
              */
             return(obj: any): void;
-            /**
-             * 回收所有正在使用的对象
-             * @param sign
-             * @deprecated 该方法将废弃，请使用returnAll()
-             */
-            freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void;
             /**
              * 回收所有正在使用的对象
              * @param sign

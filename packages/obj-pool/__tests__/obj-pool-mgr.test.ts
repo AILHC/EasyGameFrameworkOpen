@@ -7,41 +7,38 @@ interface ITestObjGetDataMap {
 class TestObj1 implements objPool.IObj {
     poolSign: string;
     isInPool: boolean;
-    pool: objPool.IPool<any, any, any>;
+    pool: objPool.IPool<any, any>;
     curNum: number;
     onGet(data: ITestObjGetDataMap["TestObj1"]) {
         this.curNum = data ? data.num : 0;
     }
     onCreate() {}
-    onFree() {
+    onReturn() {
         this.curNum = undefined;
     }
-    onReturn() {}
     onKill() {}
 }
 class TestObj3 implements objPool.IObj {
     poolSign: string;
     isInPool: boolean;
-    pool: objPool.IPool<any, any, any>;
+    pool: objPool.IPool<any, any>;
     name: string;
     onGet(data: ITestObjGetDataMap["TestObj3"]) {
         this.name = data ? data.name : "";
     }
     onCreate() {}
-    onFree() {}
     onReturn() {}
     onKill() {}
 }
 class TestObj2 implements objPool.IObj {
     poolSign: string;
     isInPool: boolean;
-    pool: objPool.IPool<any, any, any>;
+    pool: objPool.IPool<any, any>;
     name: string;
     onGet(data: ITestObjGetDataMap["TestObj2"]) {
         this.name = data ? data.name : "";
     }
     onCreate() {}
-    onFree() {}
     onReturn() {}
     onKill() {}
 }
@@ -111,11 +108,13 @@ test("test mgr functions", function () {
     expect(poolMgr.getPool("TestObj2").usedCount).toBe(4);
 
     //free
-    poolMgr.free(testObj1);
+    // poolMgr.free(testObj1);
+    poolMgr.return(testObj1);
     expect(testObj1.curNum).toBe(undefined);
     expect(poolMgr.getPoolObjsBySign("TestObj1").length).toBe(5);
 
-    poolMgr.freeAll("TestObj2");
+    // poolMgr.freeAll("TestObj2");
+    poolMgr.returnAll("TestObj2");
     expect(poolMgr.getPoolObjsBySign("TestObj2").length).toBe(4);
 
     const newTestObj2s = poolMgr.getMore("TestObj2", { name: "testObj2" }, 4);
@@ -171,7 +170,8 @@ test("test objPool thredshold", function () {
     poolMgr.preCreate("thredshold", 6);
     let obj = poolMgr.get("thredshold");
     const spyonKill = jest.spyOn(obj, "onKill");
-    poolMgr.free(obj);
+    // poolMgr.free(obj);
+    poolMgr.return(obj);
     expect(spyonKill).toBeCalledTimes(1);
     expect(poolMgr.getPool("thredshold").size).toBe(5);
 });

@@ -26,8 +26,8 @@ export class ObjPoolMgr<SignKeyAndOnGetDataMap = any> implements objPool.IPoolMg
         }
     }
     public createObjPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(
-        opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>
-    ): BaseObjPool<T, SignKeyAndOnGetDataMap, Sign> {
+        opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap[Sign], Sign>
+    ): objPool.IPool<T, SignKeyAndOnGetDataMap[Sign]> {
         const sign = opt.sign;
         if (this.hasPool(sign)) {
             this._log(`${logType.poolExit}${sign}`);
@@ -35,7 +35,7 @@ export class ObjPoolMgr<SignKeyAndOnGetDataMap = any> implements objPool.IPoolMg
         }
         if (sign && (sign as string).trim() !== "") {
             let pool: objPool.IPool<any> = new BaseObjPool();
-            pool = pool.init(opt);
+            pool = pool.init(opt as any);
             if (pool) {
                 this._poolDic[sign] = pool;
             }
@@ -78,7 +78,7 @@ export class ObjPoolMgr<SignKeyAndOnGetDataMap = any> implements objPool.IPoolMg
     }
     public getPool<Sign extends keyof SignKeyAndOnGetDataMap = any, T = any>(
         sign: Sign
-    ): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
+    ): objPool.IPool<T, SignKeyAndOnGetDataMap[Sign]> {
         return this._poolDic[sign] as any;
     }
     public clearPool<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void {
@@ -127,22 +127,11 @@ export class ObjPoolMgr<SignKeyAndOnGetDataMap = any> implements objPool.IPoolMg
 
         return pool ? (pool.poolObjs as any) : undefined;
     }
-    /**
-     * 回收对象
-     * @param obj
-     * @deprecated 方法即将废弃，请使用return(obj)
-     */
-    public free(obj: any): void {
-        this.return(obj);
-    }
     public return(obj: any): void {
-        const pool = this._poolDic[obj.poolSign];
+        const pool: objPool.IPool = this._poolDic[(obj as objPool.IObj).poolSign];
         if (pool) {
-            pool.free(obj);
+            pool.return(obj);
         }
-    }
-    public freeAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void {
-        this.returnAll(sign);
     }
     public returnAll<Sign extends keyof SignKeyAndOnGetDataMap = any>(sign: Sign): void {
         const pool = this._poolDic[sign];

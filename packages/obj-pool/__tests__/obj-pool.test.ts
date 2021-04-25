@@ -7,7 +7,7 @@ interface ITestObjGetDataMap {
 class TestObj1 implements objPool.IObj {
     poolSign: string;
     isInPool: boolean;
-    pool: objPool.IPool<any, any, any>;
+    pool: objPool.IPool<any, any>;
     name: string;
     curNum: number;
     onGet(data: ITestObjGetDataMap["TestObj1"]) {
@@ -21,7 +21,7 @@ class TestObj1 implements objPool.IObj {
 //测试创建接口
 //测试通过创建函数初始化对象池
 test("test init Object Pool By CreateFunc", function () {
-    const testPool = new BaseObjPool<TestObj1, ITestObjGetDataMap, "TestObj1">();
+    const testPool = new BaseObjPool<TestObj1, ITestObjGetDataMap["TestObj1"]>();
     const createFunc = () => {
         return new TestObj1();
     };
@@ -33,7 +33,7 @@ test("test init Object Pool By CreateFunc", function () {
 });
 //测试 通过类初始化对象池
 test("test init Object Pool By Class", function () {
-    const testPool = new BaseObjPool<TestObj1, ITestObjGetDataMap, "TestObj1">();
+    const testPool = new BaseObjPool<TestObj1, ITestObjGetDataMap["TestObj1"]>();
 
     const mockFunc = jest.fn(TestObj1 as any);
     testPool.initByClass("TestObj1", mockFunc as any);
@@ -49,16 +49,16 @@ test("test general Object Pool ObjHandler", function () {
         onGet(obj, onGetData) {
             obj["a"] = onGetData ? onGetData.num : 0;
         },
-        onFree(obj) {},
+        // onFree(obj) {},
         onReturn(obj) {},
         onKill(obj) {}
     };
     const spyonCreate = jest.spyOn(handler, "onCreate");
     const spyonGet = jest.spyOn(handler, "onGet");
-    const spyonFree = jest.spyOn(handler, "onFree");
+    // const spyonFree = jest.spyOn(handler, "onFree");
     const spyonReturn = jest.spyOn(handler, "onReturn");
     const spyonKill = jest.spyOn(handler, "onKill");
-    const testPool = new BaseObjPool<{ a: number } & objPool.IObj, ITestObjGetDataMap>();
+    const testPool = new BaseObjPool<{ a: number } & objPool.IObj, ITestObjGetDataMap["TestObj1"]>();
     testPool.initByFunc("TestObj1", () => {
         return { a: 1 } as any;
     });
@@ -78,19 +78,22 @@ test("test general Object Pool ObjHandler", function () {
     expect(spyonGet).toBeCalledTimes(5);
     expect(objs[0].a).toBe(0);
 
-    testPool.free(obj);
+    // testPool.free(obj);
+    testPool.return(obj);
     expect(obj.isInPool).toBe(true);
 
     expect(testPool["usedCount"]).toBe(4);
     expect(testPool["_usedObjMap"].has(obj)).toBe(false);
     expect(testPool.poolObjs.length).toBe(1);
-    expect(spyonFree).toBeCalledTimes(1);
+    // expect(spyonFree).toBeCalledTimes(1);
     expect(spyonReturn).toBeCalledTimes(1);
     testPool.kill(objs.pop());
     expect(spyonKill).toBeCalledTimes(1);
 
-    testPool.freeAll();
-    expect(spyonFree).toBeCalledTimes(5);
+    // testPool.freeAll();
+    // expect(spyonFree).toBeCalledTimes(5);
+
+    testPool.returnAll();
     expect(spyonReturn).toBeCalledTimes(5);
     expect(testPool.poolObjs.length).toBe(4);
 
@@ -100,7 +103,7 @@ test("test general Object Pool ObjHandler", function () {
 });
 //对象池接口调用测试
 test("test Object Pool functions", function () {
-    const testPool: objPool.IPool<TestObj1, ITestObjGetDataMap, "TestObj1"> = new BaseObjPool();
+    const testPool: objPool.IPool<TestObj1, ITestObjGetDataMap["TestObj1"]> = new BaseObjPool();
     // testPool.get()
     // testPool.getMore()
 
@@ -114,14 +117,15 @@ test("test Object Pool functions", function () {
     expect(objs.length).toBe(4);
     expect(objs[0].curNum).toBe(0);
 
-    testPool.free(obj);
+    // testPool.free(obj);
+    testPool.return(obj);
     expect(testPool["usedCount"]).toBe(4);
     expect(testPool["_usedObjMap"].has(obj)).toBe(false);
     expect(testPool.poolObjs.length).toBe(1);
 
     testPool.kill(objs.pop());
 
-    testPool.freeAll();
+    testPool.returnAll();
     expect(testPool.poolObjs.length).toBe(4);
 
     testPool.clear();

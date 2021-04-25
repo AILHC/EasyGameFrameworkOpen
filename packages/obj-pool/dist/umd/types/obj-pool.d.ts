@@ -1,27 +1,25 @@
-export declare class BaseObjPool<T = any, SignKeyAndOnGetDataMap = any, Sign extends keyof SignKeyAndOnGetDataMap = any> implements objPool.IPool<T, SignKeyAndOnGetDataMap, Sign> {
+export declare class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<T, onGetDataType> {
     private _poolObjs;
     private _usedObjMap;
     get poolObjs(): T[];
     private _sign;
-    get sign(): Sign;
+    get sign(): string;
     private _createFunc;
     protected _objHandler: objPool.IObjHandler;
-    setObjHandler(objHandler: objPool.IObjHandler<SignKeyAndOnGetDataMap[Sign]>): void;
+    setObjHandler(objHandler: objPool.IObjHandler<onGetDataType>): void;
     get size(): number;
     get usedCount(): number;
     threshold: number;
-    init(opt: objPool.IPoolInitOption<T, SignKeyAndOnGetDataMap, Sign>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
-    initByFunc(sign: Sign, createFunc: () => T): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
-    initByClass(sign: Sign, clas: objPool.Clas<T>): objPool.IPool<T, SignKeyAndOnGetDataMap, Sign>;
+    init(opt: objPool.IPoolInitOption<T, onGetDataType, string>): objPool.IPool<T, onGetDataType>;
+    initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType>;
+    initByClass(sign: string, clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType>;
     preCreate(num: number): void;
     clear(): void;
     kill(obj: T extends objPool.IObj ? T : any): void;
-    free(obj: T extends objPool.IObj ? T : any): void;
     return(obj: T extends objPool.IObj ? T : any): void;
     returnAll(): void;
-    freeAll(): void;
-    get(onGetData?: SignKeyAndOnGetDataMap[Sign]): T;
-    getMore(onGetData: SignKeyAndOnGetDataMap[Sign], num?: number): T[];
+    get(onGetData?: onGetDataType): T;
+    getMore(onGetData: onGetDataType, num?: number): T[];
     private _loghasInit;
     private _logNotInit;
 }
