@@ -119,6 +119,7 @@ test("test Object Pool functions", function () {
 
     // testPool.free(obj);
     testPool.return(obj);
+    expect(obj.isInPool).toBe(true);
     expect(testPool["usedCount"]).toBe(4);
     expect(testPool["_usedObjMap"].has(obj)).toBe(false);
     expect(testPool.poolObjs.length).toBe(1);
@@ -130,4 +131,28 @@ test("test Object Pool functions", function () {
 
     testPool.clear();
     expect(testPool.poolObjs.length).toBe(0);
+    //Test get
+    let getTestObj1 = testPool.get({ num: 5 });
+    expect(getTestObj1.isInPool).toBe(false);
+    expect(getTestObj1.pool).toBe(testPool);
+    expect(getTestObj1.poolSign).toBe("TestObj1");
+    expect(testPool["usedCount"]).toBe(1);
+    expect(testPool["_usedObjMap"].has(getTestObj1)).toBe(true);
+});
+
+test("test objpool threshold", function () {
+    const testPool: objPool.IPool<TestObj1, ITestObjGetDataMap["TestObj1"]> = new BaseObjPool();
+    testPool.threshold = 5;
+    testPool.initByClass("TestObj1", TestObj1);
+    const objs = testPool.getMore({ num: 1 }, 6);
+    testPool.returnAll();
+    expect(testPool.size).toBe(5);
+    const objs2 = testPool.getMore({ num: 1 }, 5);
+    const outSizeObj = testPool.get({ num: 5 });
+    for (let i = 0; i < objs2.length; i++) {
+        testPool.return(objs2[i]);
+    }
+    testPool.return(outSizeObj);
+    expect(outSizeObj.isInPool).toBe(false);
+    expect(outSizeObj.pool).toBe(undefined);
 });
