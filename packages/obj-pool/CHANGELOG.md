@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@3.0.0...@ailhc/obj-pool@3.0.2) (2021-04-25)
+
+**Note:** Version bump only for package @ailhc/obj-pool
+
+
+
+
+
 # [3.0.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@2.0.0...@ailhc/obj-pool@3.0.0) (2021-04-25)
 
 
