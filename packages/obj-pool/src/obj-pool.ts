@@ -137,6 +137,7 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
             return;
         }
         if (!obj.isInPool) {
+            obj.isInPool = true;
             const handler = this._objHandler;
             if (this.threshold && this.size >= this.threshold) {
                 this.kill(obj);
@@ -147,7 +148,7 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
             } else if (handler && handler.onReturn) {
                 handler.onReturn && handler.onReturn(obj);
             }
-            obj.isInPool = true;
+
             this._poolObjs.push(obj);
             this._usedObjMap.delete(obj);
         } else {
@@ -167,16 +168,21 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         }
 
         let obj: objPool.IObj;
+        const handler = this._objHandler;
         if (this.poolObjs.length) {
             obj = this._poolObjs.pop() as any;
         } else {
             obj = this._createFunc() as any;
-            obj.onCreate && obj.onCreate();
+            if (obj && obj.onCreate) {
+                obj.onCreate();
+            } else if (handler && handler.onCreate) {
+                handler.onCreate(obj);
+            }
             obj.poolSign = this._sign as any;
+            obj.pool = this;
         }
         this._usedObjMap.set(obj, obj);
         obj.isInPool = false;
-        const handler = this._objHandler;
         if (obj.onGet) {
             obj.onGet(onGetData);
         } else if (handler && handler.onGet) {
