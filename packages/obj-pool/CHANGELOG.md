@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@3.0.2...@ailhc/obj-pool@3.0.3) (2021-04-25)
+
+
+### Bug Fixes
+
+* 修复通过get获取的对象中pool属性为undefined的bug，增加阈值的单元测试 ([01b3e6f](https://github.com/AILHC/EasyGameFrameworkOpen/commit/01b3e6f9485713f067c3b95617a5d724c5b24807))
+
+
+
+
+
 ## [3.0.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@3.0.0...@ailhc/obj-pool@3.0.2) (2021-04-25)
 
 **Note:** Version bump only for package @ailhc/obj-pool
