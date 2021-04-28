@@ -31,7 +31,9 @@
     
         git clone https://github.com/AILHC/EasyGameFrameworkOpen
     b. 直接复制packages/layer/src下的ts源码到项目文件夹下使用(排除index.ts)
+
 ## 使用
+
 1. 基础使用
 
 ```ts
@@ -78,6 +80,7 @@ objPool.init(
 )
 ```
 2. 提示更加智能
+
 ```ts
 interface ITestObjGetDataMap {
     TestObj1: { num: number },
@@ -97,7 +100,9 @@ const testObj1: TestObj1 = poolMgr.get("TestObj1", { num: 2 });
 const testObj2s: TestObj2[] = poolMgr.getMore("TestObj2", { name: "testObj2" }, 4);
 
 ```
+
 3. 阈值控制
+
 ```ts
 const objPool = new BaseObjPool();
 
@@ -125,7 +130,6 @@ objPool.init(
 )
 //回收对象，如果对象池里的数量大于等于100，则这个obj就会被kill掉（销毁）;
 objPool.return(obj);
-
 ```
 
 ## [CHANGELOG](packages/obj-pool/CHANGELOG.md)
