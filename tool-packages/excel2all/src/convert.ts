@@ -7,6 +7,7 @@ import { doParse } from "./do-parse";
 import { DefaultParseHandler } from "./default-parse-handler";
 import { Logger } from "./loger";
 import { DefaultConvertHook } from "./default-convert-hook";
+import { DefaultOutPutTransformer } from "./default-output-transformer";
 /**
  * 转换
  * @param converConfig 解析配置
@@ -20,6 +21,12 @@ export async function convert(converConfig: ITableConvertConfig) {
         convertHook = require(converConfig.customConvertHookPath);
     } else {
         convertHook = new DefaultConvertHook();
+    }
+    let outputTransformer: IOutPutTransformer;
+    if (converConfig.customOutPutTransformerPath) {
+        outputTransformer = require(converConfig.customOutPutTransformerPath);
+    } else {
+        outputTransformer = new DefaultOutPutTransformer();
     }
     const tableFileDir = converConfig.tableFileDir;
     if (!tableFileDir) {
@@ -39,10 +46,13 @@ export async function convert(converConfig: ITableConvertConfig) {
     }
     Logger.init(converConfig);
     const context: IConvertContext = {
-        convertConfig: converConfig
+        convertConfig: converConfig,
+        outputTransformer: outputTransformer
     } as any;
     //开始
-    convertHook.onStart(context);
+    await new Promise<void>((res) => {
+        convertHook.onStart(context, res);
+    });
 
     let changedFileInfos: IFileInfo[] = [];
     let deleteFileInfos: IFileInfo[] = [];
@@ -133,7 +143,9 @@ export async function convert(converConfig: ITableConvertConfig) {
     context.parseResultMap = parseResultMap;
     context.deleteFileInfos = deleteFileInfos;
     context.changedFileInfos = changedFileInfos;
-    convertHook.onParseBefore(context);
+    await new Promise<void>((res) => {
+        convertHook.onParseBefore(context, res);
+    });
 
     if (changedFileInfos.length > converConfig.threadParseFileMaxNum && converConfig.useMultiThread) {
         let logStr: string = "";
@@ -206,7 +218,10 @@ async function onParseEnd(
     }
 
     //解析结束，做导出处理
-    convertHook.onParseAfter(context);
+    await new Promise<void>((res) => {
+        convertHook.onParseAfter(context, res);
+    });
+
     if (context.outPutFileMap) {
         const outputFileMap = context.outPutFileMap;
         const outputFiles = Object.values(outputFileMap);

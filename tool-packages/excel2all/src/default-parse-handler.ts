@@ -1,5 +1,5 @@
 import * as xlsx from "xlsx";
-import { valueTransFuncMap } from ".";
+import { valueTransFuncMap } from "./default-value-func-map";
 import { Logger } from "./loger";
 import { horizontalForEachSheet, isEmptyCell, readTableFile, verticalForEachSheet } from "./table-utils";
 
@@ -296,10 +296,18 @@ export class DefaultParseHandler implements ITableParseHandler {
         const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
             Logger.log(
-                `表格:${tableParseResult.filePath},分表:${tableParseResult.curSheetName},行:${rowIndex},列：${colKey}解析出错`,
+                `!!!!!!!!!!!!!!!!!![-----解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
+                    `[sheetName|分表名]=> ${tableParseResult.curSheetName}\n` +
+                    `[row|行]=> ${rowIndex}\n` +
+                    `[col|列]=> ${colKey}\n` +
+                    `[field|字段]=> ${fieldInfo.originFieldName}\n` +
+                    `[type|类型]=> ${fieldInfo.originType}\n` +
+                    `[error|错误]=> ${
+                        typeof transResult.error === "string" ? transResult.error : transResult.error.message
+                    }\n`,
                 "error"
             );
-            Logger.log(transResult.error, "error");
+            // Logger.log(transResult.error, "error");
         }
         const transedValue = transResult.value;
         let mainKeyFieldName: string = tableParseResult.mainKeyFieldName;
@@ -351,10 +359,17 @@ export class DefaultParseHandler implements ITableParseHandler {
         const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
             Logger.log(
-                `表格:${tableParseResult.filePath},分表:${tableParseResult.curSheetName},行:${rowIndex},列：${colKey}解析出错`,
+                `!!!!!!!!!!!!!!!!!![-----解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
+                    `[sheetName|分表名]=> ${tableParseResult.curSheetName}\n` +
+                    `[row|行]=> ${rowIndex}\n` +
+                    `[col|列]=> ${colKey}\n` +
+                    `[field|字段]=> ${fieldInfo.originFieldName}\n` +
+                    `[type|类型]=> ${fieldInfo.originType}\n` +
+                    `[error|错误]=> ${
+                        typeof transResult.error === "string" ? transResult.error : transResult.error.message
+                    }\n`,
                 "error"
             );
-            Logger.log(transResult.error, "error");
         }
         const transedValue = transResult.value;
         if (!tableParseResult.tableObj) {
@@ -580,6 +595,7 @@ export class DefaultParseHandler implements ITableParseHandler {
         };
         let cellObj: xlsx.CellObject;
         parseResult.tableDefine = tableDefine;
+        Logger.log(`[parseTable|解析文件]=> ${fileInfo.filePath}`);
         for (let i = 0; i < sheetNames.length; i++) {
             sheetName = sheetNames[i];
             sheet = workbook.Sheets[sheetName];
@@ -587,7 +603,7 @@ export class DefaultParseHandler implements ITableParseHandler {
                 continue;
             }
             parseResult.curSheetName = sheetName;
-            Logger.log(`解析:${fileInfo.filePath}=> sheet:${sheetName} ....`);
+            Logger.log(`|=[parseSheet|解析分表]=> ${sheetName}`);
             if (tableDefine.tableType === TableType.vertical) {
                 let lastRowIndex: number;
 

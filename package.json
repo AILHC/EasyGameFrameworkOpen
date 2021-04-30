@@ -83,6 +83,6 @@
     "prettier": "^2.2.1",
     "typedoc": "0.19.2",
     "typedoc-plugin-remove-references": "^0.0.5",
-    "@ailhc/egf-cli":"^1.0.4"
+    "@ailhc/egf-cli":"^1.6.3"
   }
 }
