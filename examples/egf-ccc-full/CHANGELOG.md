@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-ccc-full@1.1.2...egf-ccc-full@1.2.0) (2021-05-05)
+
+
+### Features
+
+* 增加dpctrl-fgui模块，display-ctrl的fairygui实现 ([5488364](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/commits/548836485d02c944b18f7b4a8307d4acbb05882d))
+
+
+
+
+
 ## [1.1.2](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-ccc-full@1.1.1...egf-ccc-full@1.1.2) (2021-04-25)
 
 **Note:** Version bump only for package egf-ccc-full
