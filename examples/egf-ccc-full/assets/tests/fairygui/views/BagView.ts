@@ -6,7 +6,7 @@ declare global {
         BagView: string;
     }
 }
-export class BagView extends FDpctrl<fairygui.GComponent> {
+export class BagView extends FDpctrl {
     static typeKey = "BagView";
     onLoadData: IDpcTestOnLoadData = { showLoading: true };
     getRess() {
