@@ -27,6 +27,7 @@
     }
 ```
 2. 背包例子(具体可见examples/egf-ccc-full)
+
 ```ts
 //FDpcTestMainComp.ts 预注册UI
 //...
@@ -81,7 +82,7 @@ export class BagView extends FDpctrl<fairygui.GComponent> {
     }
 }
 ```
-3. 详细使用文档:
+1. 详细使用文档:
    GitHub:[display-ctrl/README.md](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl#readme)
 
    Gitee:[display-ctrl/README.md](https://gitee.com/AIGAMESTUDIO.AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl#readme)
