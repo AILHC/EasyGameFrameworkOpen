@@ -13,6 +13,7 @@
     * CocosCreator 实现
       * [2.4.x](packages/dpctrl-ccc/README.md)
       * [c3d](packages/dpctrl-c3d/README.md)
+    * FairyGUI 实现 (packages/dpctrl-fgui/README.md)
   <!-- * Laya实现 -->
   <!-- * Egret实现 -->
   * 网络通信
