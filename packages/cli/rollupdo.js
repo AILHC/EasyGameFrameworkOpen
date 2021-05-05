@@ -142,19 +142,17 @@ async function rollupBuild(option) {
      * @type {IEgfCompileOption}
      */
     let optionOverride;
-    if (option.config) {
-        let configPath = typeof option.config === "string" ? option.config : "egf.compile.js";
-        if (!path.isAbsolute(configPath)) {
-            configPath = path.join(projRoot, configPath);
-        }
+    let configPath = typeof option.config === "string" ? option.config : "egf.compile.js";
+    if (!path.isAbsolute(configPath)) {
+        configPath = path.join(projRoot, configPath);
+    }
 
-        try {
-            optionOverride = require(configPath)
-        } catch (error) {
-            console.warn(`[warning]没有配置文件或配置文件有问题:${configPath}`);
-            console.warn(error)
+    try {
+        optionOverride = require(configPath)
+    } catch (error) {
+        console.warn(`[warning]没有配置文件或配置文件有问题:${configPath}`);
+        console.warn(error)
 
-        }
     }
 
 
