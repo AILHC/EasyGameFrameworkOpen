@@ -1,1 +1,149 @@
-window.__require=function e(t,o,r){function n(i,c,p){if(!o[i]){if(!t[i]){var a=i;if(i.includes("./")&&(a=(a=i.split("/"))[a.length-1]),!t[a]){var u="function"==typeof __require&&__require;if(!c&&u)return u(a,!0);if(s)return s(a,!0);throw new Error("Cannot find module '"+i+"'")}i=a}var l=o[i]={exports:{}};t[i][0].call(l.exports,function(e){return n(t[i][1][e]||e,void 0,e.includes("./")?void 0:e)},l,l.exports,e,t,o,r)}return p&&o[i]&&!o[p]&&(o[p]=o[i]),o[i].exports}for(var s="function"==typeof __require&&__require,i=0;i<r.length;i++)n(r[i]);return n}({ABTestModule:[function(e,t,o){"use strict";cc._RF.push(t,"93e4ehDZRlN5L7XBu32tX6z","ABTestModule"),Object.defineProperty(o,"__esModule",{value:!0}),o.ABTestModule=void 0;var r=e("../setDpcTestModuleMap"),n=e("./ABTestView"),s=function(){function e(){}return e.prototype.onInit=function(){console.log("\u521d\u59cb\u5316"),r.dtM.uiMgr.regist(n.ABTestView,"ABTestView")},e.prototype.showABTestView=function(){r.dtM.uiMgr.showDpc("ABTestView")},e}();o.ABTestModule=s,window.globalType.ABTestModuleType=s,cc._RF.pop()},{"../setDpcTestModuleMap":void 0,"./ABTestView":"ABTestView"}],ABTestView:[function(e,t,o){"use strict";cc._RF.push(t,"e28066xP6BBaJ0n5eGHk/jM","ABTestView");var r=this&&this.__extends||function(){var e=function(t,o){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&(e[o]=t[o])})(t,o)};return function(t,o){function r(){this.constructor=t}e(t,o),t.prototype=null===o?Object.create(o):(r.prototype=o.prototype,new r)}}();Object.defineProperty(o,"__esModule",{value:!0}),o.ABTestView=void 0;var n=e("@ailhc/dpctrl-ccc"),s=e("../../../src/Utils"),i=e("../DpcTestLayerType"),c=e("../setDpcTestModuleMap"),p=function(e){function t(){var t=null!==e&&e.apply(this,arguments)||this;return t.onLoadData={showLoading:!0},t}return r(t,e),t.prototype.loadRes=function(e){cc.assetManager.loadAny([{path:t.prefabUrl,type:cc.Prefab},{path:"txt1",type:cc.TextAsset}],{bundle:"abtest"},function(t){t?e.error():e.complete()})},t.prototype.getRess=function(){return t._ress||(t._ress=[t.prefabUrl,"test-txts/txt1"]),t._ress},t.prototype.onInit=function(){var o=this;e.prototype.onInit.call(this);var r=cc.assetManager.bundles.get("abtest");this.node=cc.instantiate(r.get(t.prefabUrl,cc.Prefab)),this.node.getChildByName("close-icon").on(cc.Node.EventType.MOUSE_DOWN,function(){c.dtM.uiMgr.hideDpc(o.key)}),s.getChild(this.node,"bigTxt").getComponent(cc.Label).string=r.get("txt1",cc.TextAsset).text},t.prototype.onShow=function(t){e.prototype.onShow.call(this,t),c.dtM.layerMgr.addNodeToLayer(this.node,i.DpcTestLayerType.POP_UP_UI)},t.prototype.onHide=function(){e.prototype.onHide.call(this)},t.prototype.releaseRes=function(){var e=cc.assetManager.bundles.get("abtest").get(t.prefabUrl,cc.Prefab);cc.assetManager.releaseAsset(e)},t.typeKey="ABTestView",t.prefabUrl="ABTestView",t}(n.NodeCtrl);o.ABTestView=p,cc._RF.pop()},{"../../../src/Utils":void 0,"../DpcTestLayerType":void 0,"../setDpcTestModuleMap":void 0,"@ailhc/dpctrl-ccc":void 0}]},{},["ABTestModule","ABTestView"]);
+window.__require = function e(t, n, r) {
+  function s(o, u) {
+    if (!n[o]) {
+      if (!t[o]) {
+        var b = o.split("/");
+        b = b[b.length - 1];
+        if (!t[b]) {
+          var a = "function" == typeof __require && __require;
+          if (!u && a) return a(b, !0);
+          if (i) return i(b, !0);
+          throw new Error("Cannot find module '" + o + "'");
+        }
+        o = b;
+      }
+      var f = n[o] = {
+        exports: {}
+      };
+      t[o][0].call(f.exports, function(e) {
+        var n = t[o][1][e];
+        return s(n || e);
+      }, f, f.exports, e, t, n, r);
+    }
+    return n[o].exports;
+  }
+  var i = "function" == typeof __require && __require;
+  for (var o = 0; o < r.length; o++) s(r[o]);
+  return s;
+}({
+  ABTestModule: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "93e4ehDZRlN5L7XBu32tX6z", "ABTestModule");
+    "use strict";
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.ABTestModule = void 0;
+    var setDpcTestModuleMap_1 = require("../setDpcTestModuleMap");
+    var ABTestView_1 = require("./ABTestView");
+    var ABTestModule = function() {
+      function ABTestModule() {}
+      ABTestModule.prototype.onInit = function() {
+        console.log("\u521d\u59cb\u5316");
+        setDpcTestModuleMap_1.dtM.uiMgr.regist(ABTestView_1.ABTestView, "ABTestView");
+      };
+      ABTestModule.prototype.showABTestView = function() {
+        setDpcTestModuleMap_1.dtM.uiMgr.showDpc("ABTestView");
+      };
+      return ABTestModule;
+    }();
+    exports.ABTestModule = ABTestModule;
+    window.globalType.ABTestModuleType = ABTestModule;
+    cc._RF.pop();
+  }, {
+    "../setDpcTestModuleMap": void 0,
+    "./ABTestView": "ABTestView"
+  } ],
+  ABTestView: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "e28066xP6BBaJ0n5eGHk/jM", "ABTestView");
+    "use strict";
+    var __extends = this && this.__extends || function() {
+      var extendStatics = function(d, b) {
+        extendStatics = Object.setPrototypeOf || {
+          __proto__: []
+        } instanceof Array && function(d, b) {
+          d.__proto__ = b;
+        } || function(d, b) {
+          for (var p in b) b.hasOwnProperty(p) && (d[p] = b[p]);
+        };
+        return extendStatics(d, b);
+      };
+      return function(d, b) {
+        extendStatics(d, b);
+        function __() {
+          this.constructor = d;
+        }
+        d.prototype = null === b ? Object.create(b) : (__.prototype = b.prototype, new __());
+      };
+    }();
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    exports.ABTestView = void 0;
+    var dpctrl_ccc_1 = require("@ailhc/dpctrl-ccc");
+    var Utils_1 = require("../../../src/Utils");
+    var DpcTestLayerType_1 = require("../DpcTestLayerType");
+    var setDpcTestModuleMap_1 = require("../setDpcTestModuleMap");
+    var ABTestView = function(_super) {
+      __extends(ABTestView, _super);
+      function ABTestView() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.onLoadData = {
+          showLoading: true
+        };
+        return _this;
+      }
+      ABTestView.prototype.loadRes = function(config) {
+        cc.assetManager.loadAny([ {
+          path: ABTestView.prefabUrl,
+          type: cc.Prefab
+        }, {
+          path: "txt1",
+          type: cc.TextAsset
+        } ], {
+          bundle: "abtest"
+        }, function(err) {
+          err ? config.error() : config.complete();
+        });
+      };
+      ABTestView.prototype.getRess = function() {
+        ABTestView._ress || (ABTestView._ress = [ ABTestView.prefabUrl, "test-txts/txt1" ]);
+        return ABTestView._ress;
+      };
+      ABTestView.prototype.onInit = function() {
+        var _this = this;
+        _super.prototype.onInit.call(this);
+        var bundle = cc.assetManager.bundles.get("abtest");
+        this.node = cc.instantiate(bundle.get(ABTestView.prefabUrl, cc.Prefab));
+        this.node.getChildByName("close-icon").on(cc.Node.EventType.MOUSE_DOWN, function() {
+          setDpcTestModuleMap_1.dtM.uiMgr.hideDpc(_this.key);
+        });
+        var bigTxtNode = Utils_1.getChild(this.node, "bigTxt");
+        bigTxtNode.getComponent(cc.Label).string = bundle.get("txt1", cc.TextAsset).text;
+      };
+      ABTestView.prototype.onShow = function(config) {
+        _super.prototype.onShow.call(this, config);
+        setDpcTestModuleMap_1.dtM.layerMgr.addNodeToLayer(this.node, DpcTestLayerType_1.DpcTestLayerType.POP_UP_UI);
+      };
+      ABTestView.prototype.onHide = function() {
+        _super.prototype.onHide.call(this);
+      };
+      ABTestView.prototype.releaseRes = function() {
+        var viewPrefab = cc.assetManager.bundles.get("abtest").get(ABTestView.prefabUrl, cc.Prefab);
+        cc.assetManager.releaseAsset(viewPrefab);
+      };
+      ABTestView.typeKey = "ABTestView";
+      ABTestView.prefabUrl = "ABTestView";
+      return ABTestView;
+    }(dpctrl_ccc_1.NodeCtrl);
+    exports.ABTestView = ABTestView;
+    cc._RF.pop();
+  }, {
+    "../../../src/Utils": void 0,
+    "../DpcTestLayerType": void 0,
+    "../setDpcTestModuleMap": void 0,
+    "@ailhc/dpctrl-ccc": void 0
+  } ]
+}, {}, [ "ABTestModule", "ABTestView" ]);
+//# sourceMappingURL=index.js.map

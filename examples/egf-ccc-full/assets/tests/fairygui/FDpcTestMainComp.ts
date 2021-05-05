@@ -12,7 +12,7 @@ import { FDpcTestLayerType } from "./FDpcTestLayerType";
 import { fdtM, setFDpcTestModuleMap } from "./setFDpcTestModuleMap";
 import { error } from "console";
 import { BagView } from "./views/BagView";
-import { LoadingView } from "./views/LoadingView";
+import { LoadingView } from "./views/CCLoadingView";
 
 const { ccclass, property } = cc._decorator;
 
