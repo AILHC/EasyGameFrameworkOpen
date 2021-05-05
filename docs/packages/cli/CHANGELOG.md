@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.4](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.3...@ailhc/egf-cli@1.6.4) (2021-05-05)
+
+
+### Bug Fixes
+
+* 修复egf.compile.js配置不生效的bug,模版增加配置文件 ([7e715ef](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/7e715ef188c3207cc65d2cc74449bf1c44f9b251))
+
+
+
+
+
 ## [1.6.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.2...@ailhc/egf-cli@1.6.3) (2021-04-23)
 
 
