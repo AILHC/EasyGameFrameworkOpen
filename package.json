@@ -18,41 +18,37 @@
     "tool-packages/*"
   ],
   "scripts": {
-    "//梳理版本不推送":"",
+    "//梳理版本不推送": "",
     "vcnp": "lerna version --conventional-commits --no-push --git-remote github --force-git-tag --include-merged-tags",
-    "//梳理版本推送":"",
-    "vc":"lerna version --conventional-commits --git-remote origin --force-git-tag  --include-merged-tags",
-    "//构建所有包":"",
-    "ba":"lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
-    "//发布所有包到npmjs":"",
-    "pa":"lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish --registry https://registry.npmjs.org",
-    
-    "//清理":"",
+    "//梳理版本推送": "",
+    "vc": "lerna version --conventional-commits --git-remote origin --force-git-tag  --include-merged-tags",
+    "//构建所有包": "",
+    "ba": "lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
+    "//发布所有包到npmjs": "",
+    "pa": "lerna exec --concurrency 2 --no-private --parallel --no-bail --stream -- npm publish --registry https://registry.npmjs.org",
+    "//清理": "",
     "clean_nm": "lerna clean",
-    "//提交":"",
+    "//提交": "",
     "cm": "git-cz",
-    "//install钩子":"",
+    "//install钩子": "",
     "preinstall": "node ./scripts/checkYarn.js",
-    "//生成changelog":"",
+    "//生成changelog": "",
     "gcl": "lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
-    "//生成api文档":"",
+    "//生成api文档": "",
     "gapi": "rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
-
-    "//复制文档":"",
-    "cpdoc":"node ./scripts/copyDocs.js",
-
-    "//测试覆盖率":"",
-    "tc": "jest --coverage"
+    "//复制文档": "",
+    "cpdoc": "node ./scripts/copyDocs.js",
+    "//测试覆盖率": "",
+    "tc": "jest --coverage",
+    "//安装husky": "",
+    "ihusky": "husky install && husky add .husky/commit-msg npm run lintcms  && husky add .husky/pre-commit npm run lint-staged",
+    "//添加hook": "",
+    "addHuskyHook": "husky add .husky/commit-msg \"yarn commitlint --edit $1\" && husky add .husky/pre-commit \"npm run lint-staged\"",
+    "lint-staged": "lint-staged"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-lerna-changelog"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
@@ -61,28 +57,28 @@
     ]
   },
   "devDependencies": {
-    "cpr": "^3.0.1",
-    "cross-var": "^1.1.0",
-    "make-dir-cli": "^2.0.0",
-    "rimraf": "^3.0.2",
-    "typescript": "^3.7.3",
-    "@types/jest": "^24.0.23",
-    "jest": "^24.9.0",
-    "ts-jest": "^24.2.0",
+    "@ailhc/egf-cli": "^1.6.3",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@oasis-engine/typedoc-theme": "^0.0.2",
     "@strictsoftware/typedoc-plugin-monorepo": "^0.3.1",
+    "@types/jest": "^24.0.23",
     "commitizen": "^4.2.3",
     "conventional-changelog-cli": "^2.1.1",
+    "cpr": "^3.0.1",
+    "cross-var": "^1.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "cz-lerna-changelog": "^2.0.3",
-    "husky": "^4.3.8",
+    "jest": "^24.9.0",
     "lerna": "^3.22.1",
     "lint-staged": "^10.5.3",
+    "make-dir-cli": "^2.0.0",
     "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^24.2.0",
     "typedoc": "0.19.2",
     "typedoc-plugin-remove-references": "^0.0.5",
-    "@ailhc/egf-cli":"^1.0.4"
+    "typescript": "^3.7.3",
+    "husky": "^6.0.0"
   }
 }
