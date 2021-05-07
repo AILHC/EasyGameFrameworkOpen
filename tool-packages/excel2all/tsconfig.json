@@ -22,16 +22,5 @@
   },
   "exclude": [
     "dist"
-  ],
-  "dtsGenExclude": [
-    "__tests__/**/*"
-  ],
-  "externalTag": [
-    "fs-extra",
-    "js-base64",
-    "micromatch",
-    "zlib",
-    "crypto",
-    "xlsx"
   ]
 }

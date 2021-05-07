@@ -1,4 +1,4 @@
-`excell2all`
+`excel2all`
 
 excel配置表转换工具
 

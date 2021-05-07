@@ -2,6 +2,21 @@
   "name": "@ailhc/excel2all",
   "version": "0.1.0",
   "description": "将excel转换成任意文件格式工具",
+  "keywords": [
+    "excel",
+    "json",
+    "typescript",
+    "javascript"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
+  },
+  "author": "AILHC",
+  "license": "MIT",
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
@@ -21,8 +36,7 @@
     "build:iife": "egf build -f iife -m true",
     "clean-dist": "rimraf dist"
   },
-  "author": "AILHC",
-  "license": "MIT",
+  
   "dependencies": {
     "@types/fs-extra": "^9.0.2",
     "@types/micromatch": "^4.0.1",
@@ -32,13 +46,7 @@
     "micromatch": "^4.0.2",
     "xlsx": "^0.16.2"
   },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
-  },
+  
   "devDependencies": {
     "ts-node": "^9.1.1",
     "typescript": "^4.1.5"

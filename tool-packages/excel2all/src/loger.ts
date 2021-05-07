@@ -10,10 +10,14 @@ export class Logger {
     private static _enableOutPutLogFile: boolean;
     private static _logLevel: LogLevelEnum;
     private static _logStr: string = "";
-    public static init(parseConfig: ITableConvertConfig) {
-        const level: LogLevel = parseConfig.logLevel ? parseConfig.logLevel : "info";
+    /**
+     * 如果有输出过错误信息则为true
+     */
+    public static hasError: boolean = false;
+    public static init(convertConfig: ITableConvertConfig) {
+        const level: LogLevel = convertConfig.logLevel ? convertConfig.logLevel : "info";
         this._logLevel = LogLevelEnum[level];
-        this._enableOutPutLogFile = parseConfig.outputLogFile === undefined ? true : parseConfig.outputLogFile;
+        this._enableOutPutLogFile = convertConfig.outputLogDirPath === false ? false : true;
     }
     /**
      * 输出日志,日志等级只是限制了控制台输出，但不限制日志记录
@@ -26,6 +30,7 @@ export class Logger {
                 switch (level) {
                     case "error":
                         console.error(message);
+                        if (!this.hasError) this.hasError = true;
                         break;
                     case "info":
                         console.log(message);

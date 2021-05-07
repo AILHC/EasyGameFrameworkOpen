@@ -8,7 +8,7 @@ declare global {
         /**线程id */
         threadId: number;
         /**解析配置 */
-        parseConfig: ITableConvertConfig;
+        convertConfig: ITableConvertConfig;
         /**需要解析的文件数组 */
         fileInfos: IFileInfo[];
         /**解析结果 */
@@ -78,7 +78,7 @@ declare global {
         threadParseFileMaxNum?: number;
         /**
          * 缓存文件的文件夹路径，可以是相对路径，相对于projRoot
-         * 比如 cache 或者../cache
+         * 默认是项目根目录下的.excel2all文件夹
          */
         cacheFileDirPath?: string;
 
@@ -145,8 +145,12 @@ declare global {
         customConvertHookPath?: string;
         /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
         logLevel?: LogLevel;
-        /**默认输出日志文件 */
-        outputLogFile?: boolean;
+        /**
+         * 日志文件夹路径,默认输出到.excell2all/excell2all.log
+         * 可以是绝对或相对路径，相对路径相对于projRoot
+         * 填false则不生成log文件
+         */
+        outputLogDirPath?: string | boolean;
         /**输出配置 */
         outputConfig?: any;
     }
@@ -189,6 +193,11 @@ declare global {
          * 转换结果字典
          */
         outPutFileMap: OutPutFileMap;
+
+        /**
+         * 是否出错
+         */
+        hasError?: boolean;
     }
     interface IConvertHook {
         /**
