@@ -1,5 +1,6 @@
 export * from "./default-parse-handler";
 export * from "./default-convert-hook";
+export * from "./default-output-transformer";
 export * from "./default-value-func-map";
 export * from "./do-parse";
 export * from "./file-utils";

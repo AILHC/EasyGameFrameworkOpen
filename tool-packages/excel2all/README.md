@@ -12,10 +12,41 @@ excel配置表转换工具
 3. 默认支持解析xlsx和csv格式Excel表转换为json文件和ts声明文件
 4. 满足大部分需求的默认配置表解析规则
 5. 支持自定义解析和转换逻辑
-提供丰富的生命周期钩子，可以接入自动上传，自动svn提交之类的逻辑
+6. 提供丰富的生命周期钩子，可以接入自动上传，自动svn提交之类的逻辑
+
+## 自定义Excel解析器
 
 ## 生命周期钩子
-    
+通过这些
+```ts
+interface IConvertHook {
+    /**
+     * 开始转换
+     * 处理好配置
+     * @param context 上下文
+     * @param cb 生命周期结束回调,必须调用
+     */
+    onStart?(context: IConvertContext, cb: VoidFunction): void;
+    /**
+     * 遍历文件之后，解析之前
+     * @param context 上下文
+     * @param cb 生命周期结束回调,必须调用
+     */
+    onParseBefore?(context: IConvertContext, cb: VoidFunction): void;
+    /**
+     * 解析结束
+     * 可以转换解析结果为多个任意文件
+     * @param context 上下文
+     * @param cb 生命周期结束回调,必须调用
+     */
+    onParseAfter?(context: IConvertContext, cb: VoidFunction): void;
+    /**
+     * 写入文件结束
+     * @param context 上下文
+     */
+    onWriteFileEnd(context: IConvertContext): void;
+}
+```
 
 ## 默认支持的规范和逻辑
 ## 使用

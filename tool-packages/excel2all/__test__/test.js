@@ -5,7 +5,7 @@ const excel2all = require("@ailhc/excel2all")
 // console.log(mm.)
 const tableFileDir = path.join(process.cwd(), "test-excel-files");
 /**
- * @type { ITableParseConfig}
+ * @type {ITableConvertConfig}
  */
 const convertConfig = {
     tableFileDir: tableFileDir,
@@ -14,6 +14,7 @@ const convertConfig = {
     threadParseFileMaxNum: 2, //多线程比单线程快一点
     cacheFileDirPath: "./test-export/.cache",
     // customParseHandlerPath: path.join(process.cwd(), "./__test__/testCustomParseHandler.js")
+    customOutPutTransformerPath: path.join(process.cwd(), "./__test__/testCustomTransformer.js")
 };
 /**
  * @type {IOutputConfig}

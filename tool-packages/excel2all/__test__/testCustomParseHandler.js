@@ -5,7 +5,7 @@ const { Logger } = require('@ailhc/excel2all');
  */
 module.exports = {
     parseTableFile(parseConfig, fileInfo, parseResult) {
-        Logger.log("自定义解析输出")
+        Logger.log("自定义解析")
         return parseResult;
     }
 }
