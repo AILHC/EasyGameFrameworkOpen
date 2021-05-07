@@ -1,5 +1,5 @@
 import {} from "@ailhc/display-ctrl";
-export class FDpctrl implements displayCtrl.ICtrl<fairygui.GComponent> {
+export class FDpctrl<T extends fairygui.GComponent=fairygui.GComponent> implements displayCtrl.ICtrl<T> {
     onShow(config?: displayCtrl.IShowConfig<any, any, any>): void {
         if (this.node) {
             this.node.visible = true;
@@ -25,10 +25,10 @@ export class FDpctrl implements displayCtrl.ICtrl<fairygui.GComponent> {
     onDestroy(destroyRes?: boolean): void {
         this.node.dispose();
     }
-    getNode(): fairygui.GComponent {
+    getNode(): T {
         return this.node;
     }
-    protected node: fairygui.GComponent;
+    protected node: T;
 
     onHide() {
         if (this.node) {
