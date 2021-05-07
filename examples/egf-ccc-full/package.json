@@ -7,7 +7,7 @@
   "dependencies": {
     "@ailhc/broadcast": "^1.1.5",
     "@ailhc/dpctrl-ccc": "^1.1.5",
-    "@ailhc/dpctrl-fgui": "0.0.1",
+    "@ailhc/dpctrl-fgui": "0.10.0",
     "@ailhc/egf-core": "^1.2.2",
     "@ailhc/obj-pool": "^3.0.3"
   }
