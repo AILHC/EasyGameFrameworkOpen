@@ -41,7 +41,7 @@
     "//测试覆盖率": "",
     "tc": "jest --coverage",
     "//安装husky": "",
-    "ihusky": "husky install && husky add .husky/commit-msg npm run lintcms  && husky add .husky/pre-commit npm run lint-staged",
+    "ihusky": "husky install",
     "//添加hook": "",
     "addHuskyHook": "husky add .husky/commit-msg \"yarn commitlint --edit $1\" && husky add .husky/pre-commit \"npm run lint-staged\"",
     "lint-staged": "lint-staged"
