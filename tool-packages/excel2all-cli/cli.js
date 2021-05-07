@@ -20,12 +20,12 @@ program
     .option('-t, --tableFileDir [tableFileDir]', "excel文件夹路径,如果没有则使用项目根目录\n-------------------------")
     .option('-pt, --pattern [pattern...]', 'excel文件名匹配规则,多个以空格隔开 以 -- 结束,\n如: -pt "\\**\\*.{xlsx,csv}" "!~$*.*" -- \n默认匹配规则["\\**\\*.{xlsx,csv}", "!~$*.*"]\n匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除\n参考：https://github.com/micromatch/micromatch\n--------')
     .option('-uc, --useCache', '是否使用缓存，默认不\n-------------------------')
-    .option('-cf, --cacheFileDirPath [cacheFileDirPath]', '缓存文件文件夹，\n-------------------------')
+    .option('-cf, --cacheFileDirPath [cacheFileDirPath]', '缓存文件的文件夹路径，可以是相对路径，相对于projRoot，\n默认是项目根目录下的.excel2all文件夹\n-------------------------')
     .option('-mt, --useMultiThread', '是否使用多线程，默认不')
     .option('-tn, --threadParseFileMaxNum [threadParseFileMaxNum]', '单个线程解析文件的最大数量\n-------------------------')
 
     .option('-l --logLevel [logLevel]', '日志等级,只是限制了控制台输出，但不限制日志记录,"no" | "info" | "warn" | "error"\n-------------------------')
-    .option('-olf --outputLogFile', '是否输出日志文件，默认输出\n-------------------------')
+    .option('-olf --outputLogDirPath', '日志文件夹路径,默认输出到.excel2all/excel2all.log，\n可以是绝对或相对路径，相对路径相对于projRoot\n填false则不生成log文件\n-------------------------')
 
     .option('-cphp --customParseHandlerPath [customParseHandlerPath]', '自定义解析处理器实现路径，\n需要返回一个实现了ITableParseHandler的对象,\n可以直接调用parseTableFile方法\n-------------------------')
     .option('-cthp --customTrans2FileHandlerPath [customTrans2FileHandlerPath]', '自定义文件导出处理器路径，\n需要返回一个实现了ITransResult2AnyFileHandler的对象,\n可以直接调用trans2Files\n-------------------------')
@@ -61,4 +61,16 @@ program
             excel2all.testFileMatch(config)
         }
     })
-    .parse();
+    .parse(process.argv);
+// 未知命令会报错
+program.on('command:*', function () {
+    console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    process.exit(1);
+});
+// 当有选项verbose时会执行函数
+program.on('option:verbose', function () {
+    process.env.VERBOSE = this.verbose;
+});
+program.on('--help', () => {
+    console.log(`\r\nRun ${chalk.greenBright('egf <command> --help')} for detailed usage of given command.`);
+});

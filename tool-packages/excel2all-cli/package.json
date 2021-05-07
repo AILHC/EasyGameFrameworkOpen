@@ -1,17 +1,37 @@
 {
   "name": "@ailhc/excel2all-cli",
   "version": "0.1.0",
-  "description": "",
-  "bin": "./cli.js",
+  "description": "一个将excel文件转换为typescript声明文件和json工具\nA tool to convert Excel files to TypeScript declaration files and JSON",
+  "author": "AILHC",
+  "license": "MIT",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/tool-packages/excel2all-cli#readme",
+  "keywords": [
+    "cli",
+    "excel",
+    "json",
+    "typescript",
+    "javascript"
+  ],
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameClientFramework/issues"
+  },
+  "bin": {
+    "e2a": "./cli.js"
+  },
   "main": "cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test1": "node ./cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -uc cf ./.cache",
+    "test2": "node ./cli.js convert -c ./__tests__/testConfig"
   },
-  "author": "",
-  "license": "ISC",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
+  },
   "dependencies": {
     "@ailhc/excel2all": "^0.1.0",
-    "colors": "^1.4.0",
     "commander": "^7.1.0"
   }
 }

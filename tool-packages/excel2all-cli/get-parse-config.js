@@ -28,7 +28,7 @@ function getParseConfig(option) {
     } else if (!path.isAbsolute(config.tableFileDir)) {
         config.tableFileDir = path.join(config.projRoot, config.tableFileDir);
     }
-
+    
     if (!config.outputConfig) {
         /**
          * @type {IOutputConfig}
@@ -40,7 +40,7 @@ function getParseConfig(option) {
             isGenDts: option.isGenDts,
             clientDtsOutDir: option.clientDtsOutDir,
             isBundleDts: option.isBundleDts,
-
+            
             bundleDtsFileName: option.bundleDtsFileName,
             isCompress: option.isCompress
         }
