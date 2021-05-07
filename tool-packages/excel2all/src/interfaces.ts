@@ -18,8 +18,11 @@ declare global {
      * 多线程执行结果
      */
     interface IWorkDoResult {
+        /**线程id */
         threadId: number;
+        /**解析结果 */
         parseResultMap: TableParseResultMap;
+        /**日志 */
         logStr: string;
     }
     /**
@@ -43,6 +46,9 @@ declare global {
      * key为表的文件路径，value为解析结果
      */
     type TableParseResultMap = { [key: string]: ITableParseResult };
+    /**
+     * 配置
+     */
 
     interface ITableConvertConfig {
         /**
@@ -101,6 +107,23 @@ declare global {
          */
         customParseHandlerPath?: string;
         /**
+         * 自定义输出转换器，require(customOutPutTransformerPath)
+         *
+         * 需要返回一个
+         * @type {IOutPutTransformer} 实现了IOutPutTransformer的对象
+         *
+         * @example
+         *
+         * class CustomOutPutTransformer  implements IOutPutTransformer {
+         *      transform(context: IConvertContext, cb:VoidFunction): void {
+         *          //doSomething
+         *      }
+         * }
+         * module.exports = new CustomOutPutTransformer();
+         *
+         */
+        customOutPutTransformerPath?: string;
+        /**
          * 自定义导出处理器，require(customTrans2FileHandlerPath)
          *
          * 需要返回一个
@@ -144,7 +167,12 @@ declare global {
         transCellValue(filed: ITableField, cellValue: string): any;
     }
     interface IConvertContext {
+        /**配置 */
         convertConfig: ITableConvertConfig;
+        /**
+         * 导出转换器
+         */
+        outputTransformer: IOutPutTransformer;
         /**
          * 变动的文件信息数组
          */
@@ -157,26 +185,51 @@ declare global {
          * 解析结果字典
          */
         parseResultMap: TableParseResultMap;
+        /**
+         * 转换结果字典
+         */
         outPutFileMap: OutPutFileMap;
     }
     interface IConvertHook {
-        onStart?(context: IConvertContext): void;
+        /**
+         * 开始转换
+         * 处理好配置
+         * @param context 上下文
+         * @param cb 生命周期结束回调,必须调用
+         */
+        onStart?(context: IConvertContext, cb: VoidFunction): void;
         /**
          * 遍历文件之后，解析之前
-         * @param context
+         * @param context 上下文
+         * @param cb 生命周期结束回调,必须调用
          */
-        onParseBefore?(context: IConvertContext): void;
+        onParseBefore?(context: IConvertContext, cb: VoidFunction): void;
         /**
          * 解析结束
          * 可以转换解析结果为多个任意文件
-         * @param context
+         * @param context 上下文
+         * @param cb 生命周期结束回调,必须调用
          */
-        onParseAfter?(context: IConvertContext): void;
+        onParseAfter?(context: IConvertContext, cb: VoidFunction): void;
         /**
          * 写入文件结束
-         * @param context
+         * @param context 上下文
          */
         onWriteFileEnd(context: IConvertContext): void;
+    }
+    /**
+     * 输出转换器
+     */
+    interface IOutPutTransformer {
+        /**
+         * 转换
+         * 将结果文件输出路径为key,
+         * 输出文件对象(文本就是字符串，或者二进制)为值，
+         * 写入IConvertContext.outPutFileMap
+         * @param context
+         * @param cb 回调，必须调用
+         */
+        transform(context: IConvertContext, cb: VoidFunction): void;
     }
     interface ITableParseHandler {
         /**
