@@ -1,159 +1,3 @@
-interface ITBase<T> {
-    [key: string]: T;
-}
-interface IT_TableMap {
-    readonly AidHeroSetting?: ITBase<IT_AidHeroSetting>;
-    readonly AidTypeSetting?: ITBase<IT_AidTypeSetting>;
-    readonly ArenaRobotSetting?: ITBase<IT_ArenaRobotSetting>;
-    readonly ChallengeRewardSetting?: ITBase<IT_ChallengeRewardSetting>;
-    readonly ConfigValue?: ITBase<IT_ConfigValue>;
-    readonly RankRewardSetting?: ITBase<IT_RankRewardSetting>;
-    readonly D3SceneSetting?: ITBase<IT_D3SceneSetting>;
-    readonly ObjTypeD3SceneSetting?: IT_ObjTypeD3SceneSetting;
-}
-interface IT_AidHeroSetting {
-    /** 主键 */
-    readonly id?: number;
-    /** 普攻技能配置标识 */
-    readonly commonId?: number;
-    /** 大招技能配置标识 */
-    readonly ultimateId?: number;
-    /** 死亡技能配置标识 */
-    readonly deadId?: number;
-    /** 进场技能配置标识 */
-    readonly startId?: number;
-    /** 英雄base标识 */
-    readonly base?: number;
-    /** 稀有度 */
-    readonly rarity?: number;
-    /** 模型 */
-    readonly model?: number;
-    /** 羁绊配置标识 */
-    readonly bondageId?: number;
-    /** 等级 */
-    readonly level?: number;
-    /** 战斗力 */
-    readonly fightPower?: number;
-    /** 星级 */
-    readonly star?: number;
-    /** 名称 */
-    readonly name?: string;
-    /** 元素 */
-    readonly element?: string;
-    /** 职业 */
-    readonly profession?: string;
-    /** 模拟战斗行为控制id(关联SimulatedActSetting) */
-    readonly simulate_act?: number;
-    readonly attributes?: {
-        /** 物理攻击 */
-        readonly STR?: undefined;
-        /** 生命值 */
-        readonly HP?: undefined;
-        /** 护甲 */
-        readonly ARMOR?: undefined;
-        /** 法防（千倍） */
-        readonly REST?: undefined;
-        /** 命中率（千倍） */
-        readonly HIT?: undefined;
-        /** 闪避率（千倍） */
-        readonly DODGE?: undefined;
-        /** 暴击率（千倍） */
-        readonly CRIT?: undefined;
-        /** 暴击伤害加深（千倍） */
-        readonly DEEPEN?: undefined;
-        /** 格挡率（千倍） */
-        readonly BLOCK?: undefined;
-        /** 格挡减伤（千倍） */
-        readonly REDUCE?: undefined;
-        /** 真实伤害（千倍） */
-        readonly REAL?: undefined;
-        /** 生命值上限 */
-        readonly HP_MAX?: undefined;
-        /** 能量值 */
-        readonly MP?: undefined;
-        /** 能量值上限 */
-        readonly MP_MAX?: undefined;
-        /** 自动回能值 */
-        readonly MP_INCR?: undefined;
-        /** 大招能量 */
-        readonly ULTIMATE_MP?: undefined;
-        /** 待机间隔 */
-        readonly IDLE_INTERVAL?: undefined;
-        /** 横向移动间隔 */
-        readonly MOVE_INTERVAL?: undefined;
-        /** 斜向移动间隔 */
-        readonly MOVE_DIAG_INTERVAL?: undefined;
-        /** 跳跃间隔时间 */
-        readonly JUMP_INTERVAL?: undefined;
-        /** 最大移动距离 */
-        readonly MOVE_LIMITED?: undefined;
-    };
-}
-interface IT_AidTypeSetting {
-    /** 援军类型 */
-    readonly aidType?: string;
-    /** 可使用次数(不存在为无限次使用) */
-    readonly counts?: { [key: string]: number };
-    /** 重置时间(不填为不可重置) */
-    readonly timingKey?: string;
-    /** 单次可上阵数量限制(-1为不限制) */
-    readonly onceCount?: number;
-    /** 是否临时获得 */
-    readonly isTempGet?: boolean;
-    /** 是否配置提供 */
-    readonly isAidSetting?: boolean;
-}
-interface IT_ArenaRobotSetting {
-    /** 机器人ID */
-    readonly id?: number;
-    /** 玩家名 */
-    readonly name?: string;
-    /** 战斗力 */
-    readonly power?: number;
-    /** 模型ID */
-    readonly model?: number;
-    /** 头像框ID */
-    readonly frame?: number;
-    /** 怪物配置{@link NpcSetting#getId()} */
-    readonly npcId?: number;
-}
-interface IT_ChallengeRewardSetting {}
-interface IT_ConfigValue {
-    /** 主键 */
-    readonly id?: string;
-    /** 客户端配置 */
-    readonly value?: any;
-}
-interface IT_RankRewardSetting {
-    /** 阶段 */
-    readonly step?: number;
-    /** 排行奖励 */
-    readonly rewards?: any;
-}
-interface IT_D3SceneSetting {
-    /** 主键 */
-    readonly key?: string;
-    /** 场景 */
-    readonly scene?: string;
-}
-interface IT_ObjTypeD3SceneSetting {
-    /** 挂机默认场景 */
-    readonly Simulated?: string;
-    /** 推图默认场景 */
-    readonly Dungeon?: string;
-    /** xxx默认 */
-    readonly Avalon?: string;
-    /** 竞技场 */
-    readonly Area?: string;
-    /** 哈哈默认 */
-    readonly Mystery?: string;
-    readonly MyObject?: {
-        /** 对象测试:主键id */
-        readonly id?: undefined;
-        /** 名字 */
-        readonly name?: undefined;
-    };
-}
 declare module '@ailhc/excel2all' {
 	/**当前系统行尾  platform === "win32" ? "\n" : "\r\n";*/
 	export const osEol: string;
@@ -164,7 +8,11 @@ declare module '@ailhc/excel2all' {
 	    private static _enableOutPutLogFile;
 	    private static _logLevel;
 	    private static _logStr;
-	    static init(parseConfig: ITableConvertConfig): void;
+	    /**
+	     * 如果有输出过错误信息则为true
+	     */
+	    static hasError: boolean;
+	    static init(convertConfig: ITableConvertConfig): void;
 	    /**
 	     * 输出日志,日志等级只是限制了控制台输出，但不限制日志记录
 	     * @param message
@@ -326,8 +174,6 @@ declare module '@ailhc/excel2all' {
 	        originFieldName: string;
 	        /**解析后的类型值 */
 	        type?: string;
-	        /**解析后的子类型值 */
-	        subType?: string;
 	        /**解析后的字段名值 */
 	        fieldName?: string;
 	        /**对象的子字段名 */
@@ -611,7 +457,7 @@ declare module '@ailhc/excel2all' {
 	        /**线程id */
 	        threadId: number;
 	        /**解析配置 */
-	        parseConfig: ITableConvertConfig;
+	        convertConfig: ITableConvertConfig;
 	        /**需要解析的文件数组 */
 	        fileInfos: IFileInfo[];
 	        /**解析结果 */
@@ -681,7 +527,7 @@ declare module '@ailhc/excel2all' {
 	        threadParseFileMaxNum?: number;
 	        /**
 	         * 缓存文件的文件夹路径，可以是相对路径，相对于projRoot
-	         * 比如 cache 或者../cache
+	         * 默认是项目根目录下的.excel2all文件夹
 	         */
 	        cacheFileDirPath?: string;
 	        /**
@@ -747,8 +593,12 @@ declare module '@ailhc/excel2all' {
 	        customConvertHookPath?: string;
 	        /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
 	        logLevel?: LogLevel;
-	        /**默认输出日志文件 */
-	        outputLogFile?: boolean;
+	        /**
+	         * 日志文件夹路径,默认输出到.excell2all/excell2all.log
+	         * 可以是绝对或相对路径，相对路径相对于projRoot
+	         * 填false则不生成log文件
+	         */
+	        outputLogDirPath?: string | boolean;
 	        /**输出配置 */
 	        outputConfig?: any;
 	    }
@@ -792,6 +642,10 @@ declare module '@ailhc/excel2all' {
 	         * 转换结果字典
 	         */
 	        outPutFileMap: OutPutFileMap;
+	        /**
+	         * 是否出错
+	         */
+	        hasError?: boolean;
 	    }
 	    interface IConvertHook {
 	        /**

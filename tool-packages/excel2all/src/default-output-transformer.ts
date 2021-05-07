@@ -228,7 +228,7 @@ export class DefaultOutPutTransformer {
                     "\t\treadonly " +
                     tableField.subFieldName +
                     "?: " +
-                    (typeStrMap[tableField.subType] ? typeStrMap[tableField.subType] : tableField.subType) +
+                    (typeStrMap[tableField.type] ? typeStrMap[tableField.type] : tableField.type) +
                     ";" +
                     osEol;
             }

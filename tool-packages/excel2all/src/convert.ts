@@ -8,6 +8,9 @@ import { DefaultParseHandler } from "./default-parse-handler";
 import { Logger } from "./loger";
 import { DefaultConvertHook } from "./default-convert-hook";
 import { DefaultOutPutTransformer } from "./default-output-transformer";
+const defaultDir = ".excel2all";
+const cacheFileName = ".e2aprmc";
+const logFileName = "excel2all.log";
 /**
  * 转换
  * @param converConfig 解析配置
@@ -89,11 +92,11 @@ export async function convert(converConfig: ITableConvertConfig) {
     if (!converConfig.useCache) {
         forEachFile(tableFileDir, eachFileCallback);
     } else {
-        if (!cacheFileDirPath) cacheFileDirPath = ".cache";
+        if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
         if (!path.isAbsolute(cacheFileDirPath)) {
             cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
         }
-        parseResultMapCacheFilePath = path.join(cacheFileDirPath, ".egfprmc");
+        parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
         parseResultMap = getCacheData(parseResultMapCacheFilePath);
         if (!parseResultMap) {
             parseResultMap = {};
@@ -165,6 +168,9 @@ export async function convert(converConfig: ITableConvertConfig) {
             }
             completeCount++;
             logStr += data.logStr + Logger.logStr;
+            if (!context.hasError) {
+                context.hasError = Logger.hasError;
+            }
             if (completeCount >= count) {
                 const t2 = new Date().getTime();
                 Logger.log(`[多线程导表时间]:${t2 - t1}`);
@@ -179,7 +185,7 @@ export async function convert(converConfig: ITableConvertConfig) {
                     threadId: i,
                     fileInfos: subFileInfos,
                     parseResultMap: parseResultMap,
-                    parseConfig: converConfig
+                    convertConfig: converConfig
                 } as IWorkerShareData
             });
             workerMap[i] = worker;
@@ -191,6 +197,7 @@ export async function convert(converConfig: ITableConvertConfig) {
         doParse(converConfig, changedFileInfos, parseResultMap, parseHandler);
         const t2 = new Date().getTime();
         Logger.systemLog(`[单线程导表时间]:${t2 - t1}`);
+        context.hasError = Logger.hasError;
         onParseEnd(context, parseResultMapCacheFilePath, convertHook);
     }
 }
@@ -212,11 +219,11 @@ async function onParseEnd(
 ) {
     const convertConfig = context.convertConfig;
     const parseResultMap = context.parseResultMap;
-    //写入解析缓存
-    if (convertConfig.useCache) {
+    //如果没有错误,则写入解析缓存
+    //有错误不能写入缓存，避免错误被下次解析给忽略掉
+    if (convertConfig.useCache && !context.hasError) {
         writeCacheData(parseResultMapCacheFilePath, parseResultMap);
     }
-
     //解析结束，做导出处理
     await new Promise<void>((res) => {
         convertHook.onParseAfter(context, res);
@@ -244,15 +251,24 @@ async function onParseEnd(
         Logger.systemLog(`没有可写入文件~`);
     }
 
-    //日志文件
+    //写入日志文件
+
     if (!logStr) {
         logStr = Logger.logStr;
     }
-    const outputLogFileInfo: IOutPutFileInfo = {
-        filePath: path.join(process.cwd(), "excel2all.log"),
-        data: logStr
-    };
-    writeOrDeleteOutPutFiles([outputLogFileInfo]);
+    if (logStr.trim() !== "") {
+        let logFileDirPath = context.convertConfig.outputLogDirPath as string;
+        if (!logFileDirPath) logFileDirPath = defaultDir;
+        if (!path.isAbsolute(logFileDirPath)) {
+            logFileDirPath = path.join(context.convertConfig.projRoot, logFileDirPath);
+        }
+
+        const outputLogFileInfo: IOutPutFileInfo = {
+            filePath: path.join(logFileDirPath, logFileName),
+            data: logStr
+        };
+        writeOrDeleteOutPutFiles([outputLogFileInfo]);
+    }
     //写入结束
     convertHook.onWriteFileEnd(context);
 }

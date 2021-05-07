@@ -13,8 +13,6 @@ declare global {
         originFieldName: string;
         /**解析后的类型值 */
         type?: string;
-        /**解析后的子类型值 */
-        subType?: string;
         /**解析后的字段名值 */
         fieldName?: string;
         /**对象的子字段名 */
@@ -359,7 +357,7 @@ export class DefaultParseHandler implements ITableParseHandler {
         const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
             Logger.log(
-                `!!!!!!!!!!!!!!!!!![-----解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
+                `!!!!!!!!!!!!!!!!!![-----ParseError|解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
                     `[sheetName|分表名]=> ${tableParseResult.curSheetName}\n` +
                     `[row|行]=> ${rowIndex}\n` +
                     `[col|列]=> ${colKey}\n` +
@@ -367,7 +365,9 @@ export class DefaultParseHandler implements ITableParseHandler {
                     `[type|类型]=> ${fieldInfo.originType}\n` +
                     `[error|错误]=> ${
                         typeof transResult.error === "string" ? transResult.error : transResult.error.message
-                    }\n`,
+                    }\n` +
+                    `!!!!!!!!!!!!!!!!!![-----ParseError|解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n`,
+
                 "error"
             );
         }

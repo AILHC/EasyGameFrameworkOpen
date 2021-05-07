@@ -10,14 +10,14 @@ const wt = require("worker_threads");
 const workerData = wt.workerData;
 const fileInfos = workerData.fileInfos;
 const parseResultMap = workerData.parseResultMap;
-const parseConfig = workerData.parseConfig;
-Logger.init(parseConfig);
+const convertConfig = workerData.convertConfig;
+Logger.init(convertConfig);
 /**
  * @type {ITableParseHandler}
  */
 let parseHandler;
-if (parseConfig.customParseHandlerPath) {
-    parseHandler = require(parseConfig.customParseHandlerPath);
+if (convertConfig.customParseHandlerPath) {
+    parseHandler = require(convertConfig.customParseHandlerPath);
 } else {
     parseHandler = new DefaultParseHandler();
 }
@@ -29,7 +29,7 @@ for (let i = fileInfos.length - 1; i >= 0; i--) {
         parseResult = { filePath: fileInfos[i].filePath };
     }
     if (!parseResult.tableObj) {
-        parseResult = parseHandler.parseTableFile(parseConfig, fileInfos[i], parseResult);
+        parseResult = parseHandler.parseTableFile(convertConfig, fileInfos[i], parseResult);
     }
     if (parseResult) {
         parseResultMap[fileInfos[i].filePath] = parseResult;

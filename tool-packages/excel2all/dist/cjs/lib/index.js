@@ -100,20 +100,19 @@ var LogLevelEnum;
     LogLevelEnum[LogLevelEnum["no"] = 3] = "no";
 })(LogLevelEnum || (LogLevelEnum = {}));
 class Logger {
-    static init(parseConfig) {
-        const level = parseConfig.logLevel ? parseConfig.logLevel : "info";
+    static init(convertConfig) {
+        const level = convertConfig.logLevel ? convertConfig.logLevel : "info";
         this._logLevel = LogLevelEnum[level];
-        this._enableOutPutLogFile = parseConfig.outputLogFile === undefined ? true : parseConfig.outputLogFile;
+        this._enableOutPutLogFile = convertConfig.outputLogDirPath === false ? false : true;
     }
     static log(message, level = "info") {
         if (level !== "no") {
-            if (message) {
-                message = "++[--excel2all--]++" + message;
-            }
             if (this._logLevel <= LogLevelEnum[level]) {
                 switch (level) {
                     case "error":
                         console.error(message);
+                        if (!this.hasError)
+                            this.hasError = true;
                         break;
                     case "info":
                         console.log(message);
@@ -143,6 +142,7 @@ class Logger {
     }
 }
 Logger._logStr = "";
+Logger.hasError = false;
 
 function isEmptyCell(cell) {
     if (cell && cell.v !== undefined) {
@@ -440,13 +440,14 @@ class DefaultParseHandler {
         }
         const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
-            Logger.log(`!!!!!!!!!!!!!!!!!![-----解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
+            Logger.log(`!!!!!!!!!!!!!!!!!![-----ParseError|解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
                 `[sheetName|分表名]=> ${tableParseResult.curSheetName}\n` +
                 `[row|行]=> ${rowIndex}\n` +
                 `[col|列]=> ${colKey}\n` +
                 `[field|字段]=> ${fieldInfo.originFieldName}\n` +
                 `[type|类型]=> ${fieldInfo.originType}\n` +
-                `[error|错误]=> ${typeof transResult.error === "string" ? transResult.error : transResult.error.message}\n`, "error");
+                `[error|错误]=> ${typeof transResult.error === "string" ? transResult.error : transResult.error.message}\n` +
+                `!!!!!!!!!!!!!!!!!![-----ParseError|解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n`, "error");
         }
         const transedValue = transResult.value;
         if (!tableParseResult.tableObj) {
@@ -850,7 +851,7 @@ class DefaultOutPutTransformer {
                     "\t\treadonly " +
                         tableField.subFieldName +
                         "?: " +
-                        (typeStrMap[tableField.subType] ? typeStrMap[tableField.subType] : tableField.subType) +
+                        (typeStrMap[tableField.type] ? typeStrMap[tableField.type] : tableField.type) +
                         ";" +
                         osEol;
             }
@@ -1028,6 +1029,9 @@ function getFileMd5(filePath) {
     });
 }
 
+const defaultDir = ".excel2all";
+const cacheFileName = ".e2aprmc";
+const logFileName = "excel2all.log";
 function convert(converConfig) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!converConfig.projRoot) {
@@ -1106,11 +1110,11 @@ function convert(converConfig) {
         }
         else {
             if (!cacheFileDirPath)
-                cacheFileDirPath = ".cache";
+                cacheFileDirPath = defaultDir;
             if (!path.isAbsolute(cacheFileDirPath)) {
                 cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
             }
-            parseResultMapCacheFilePath = path.join(cacheFileDirPath, ".egfprmc");
+            parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
             parseResultMap = getCacheData(parseResultMapCacheFilePath);
             if (!parseResultMap) {
                 parseResultMap = {};
@@ -1179,6 +1183,9 @@ function convert(converConfig) {
                 }
                 completeCount++;
                 logStr += data.logStr + Logger.logStr;
+                if (!context.hasError) {
+                    context.hasError = Logger.hasError;
+                }
                 if (completeCount >= count) {
                     const t2 = new Date().getTime();
                     Logger.log(`[多线程导表时间]:${t2 - t1}`);
@@ -1193,7 +1200,7 @@ function convert(converConfig) {
                         threadId: i,
                         fileInfos: subFileInfos,
                         parseResultMap: parseResultMap,
-                        parseConfig: converConfig
+                        convertConfig: converConfig
                     }
                 });
                 worker.on("message", onWorkerParseEnd);
@@ -1204,6 +1211,7 @@ function convert(converConfig) {
             doParse(converConfig, changedFileInfos, parseResultMap, parseHandler);
             const t2 = new Date().getTime();
             Logger.systemLog(`[单线程导表时间]:${t2 - t1}`);
+            context.hasError = Logger.hasError;
             onParseEnd(context, parseResultMapCacheFilePath, convertHook);
         }
     });
@@ -1212,7 +1220,7 @@ function onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr) {
     return __awaiter(this, void 0, void 0, function* () {
         const convertConfig = context.convertConfig;
         const parseResultMap = context.parseResultMap;
-        if (convertConfig.useCache) {
+        if (convertConfig.useCache && !context.hasError) {
             writeCacheData(parseResultMapCacheFilePath, parseResultMap);
         }
         yield new Promise((res) => {
@@ -1237,11 +1245,19 @@ function onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr) {
         if (!logStr) {
             logStr = Logger.logStr;
         }
-        const outputLogFileInfo = {
-            filePath: path.join(process.cwd(), "excel2all.log"),
-            data: logStr
-        };
-        writeOrDeleteOutPutFiles([outputLogFileInfo]);
+        if (logStr.trim() !== "") {
+            let logFileDirPath = context.convertConfig.outputLogDirPath;
+            if (!logFileDirPath)
+                logFileDirPath = defaultDir;
+            if (!path.isAbsolute(logFileDirPath)) {
+                logFileDirPath = path.join(context.convertConfig.projRoot, logFileDirPath);
+            }
+            const outputLogFileInfo = {
+                filePath: path.join(logFileDirPath, logFileName),
+                data: logStr
+            };
+            writeOrDeleteOutPutFiles([outputLogFileInfo]);
+        }
         convertHook.onWriteFileEnd(context);
     });
 }
