@@ -150,9 +150,7 @@ async function rollupBuild(option) {
     try {
         optionOverride = require(configPath)
     } catch (error) {
-        console.warn(`[warning]没有配置文件或配置文件有问题:${configPath}`);
-        console.warn(error)
-
+        console.warn(`[warning] 没有配置文件或配置文件有问题:${configPath},如果不用配置文件则无视这个警告`);
     }
 
 
@@ -236,8 +234,6 @@ async function rollupBuild(option) {
     }
     tsconfigOverride.compilerOptions.declarationDir = typesDir;
     tsconfigOverride.compilerOptions.declaration = customDts;
-    tsconfigOverride.compilerOptions.inlineSources = true;
-    tsconfigOverride.compilerOptions.sourceMap = true;
     let removeComments = option.removeComments;
     if (removeComments !== undefined) {
         tsconfigOverride.compilerOptions.removeComments = removeComments;
@@ -362,7 +358,7 @@ async function rollupBuild(option) {
     };
     const chunkFileNames = option.chunkFileNames ? option.chunkFileNames : "[name].js";
     const compilerOptions = tsconfig.compilerOptions;
-    const sourcemap = compilerOptions.sourceMap ? (compilerOptions.inlineSourceMap ? "inline" : true) : false;
+    const sourcemap = (compilerOptions.sourceMap | compilerOptions.inlineSourceMap) ? (compilerOptions.inlineSourceMap ? "inline" : true) : false;
     /**
      * @type { import('rollup').OutputOptions }
      */
