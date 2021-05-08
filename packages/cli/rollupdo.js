@@ -479,7 +479,7 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
     const dtsGen = dtsg.default;
     const tsconfig = require(path.join(projRoot, `tsconfig.json`));
     const typesDirPath = path.join(projRoot, typesDir);
-    const isIife = format === "iife" || format === "umd";
+    const isIIFE = format === "iife" || format === "umd";
     const pkgName = process.env.npm_package_name;
     // const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
     let dtsGenExclude = ["node_modules/**/*.d.ts",].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
@@ -500,11 +500,11 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
         const dtsGOpt = {
             baseDir: projRoot,
             exclude: dtsGenExclude,
-            out: path.join(typesDirPath, isIife ? `${moduleName}.d.ts` : `index.d.ts`),
+            out: path.join(typesDirPath, isIIFE ? `${moduleName}.d.ts` : `index.d.ts`),
             // prefix: moduleName,
             resolveModuleId: function (params) {
 
-                return `${pkgName}`
+                return isIIFE ? moduleName : pkgName;
             },
             resolveModuleImport: function (params) {
 
@@ -514,25 +514,25 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                         // npm包
                         return params.importedModuleId;
                     }
-                    return pkgName;
+                    return isIIFE ? moduleName : pkgName;
                 }
                 return params.importedModuleId
             }
-        }
-        // @ts-ignore
+        };
+        
         dtsGen(dtsGOpt).then((args) => {
-            if (format === "iife" || format === "umd") {
+            if (isIIFE) {
                 let dtsFileStr = fs.readFileSync(dtsGOpt.out, "utf-8");
                 //去掉export * from ""
                 //去掉export default 
                 //去掉export 
-
-                const pkgNames = pkgName.split("/");
-                const newPkgName = pkgNames.length > 1 ? (pkgNames[0] + "\/" + pkgNames[1]) : pkgNames[0];
-                // dtsFileStr = dtsFileStr.replace(new RegExp("export \* from " + "'" + pkgName.replace() + "';", "g"), "");
-                dtsFileStr = dtsFileStr.replace(new RegExp("export default ", "g"), "");
-                dtsFileStr = dtsFileStr.replace(new RegExp("export ", "g"), "");
-                dtsFileStr += `\ndeclare const ${moduleName}:typeof import("${pkgName}");`;
+                
+                // dtsFileStr = dtsFileStr.replace(/export \* from /g, "");
+                dtsFileStr = dtsFileStr.replace(new RegExp(`export \\* from '${moduleName}';`,"g"),"");
+                dtsFileStr = dtsFileStr.replace(/export default /g, "");
+                dtsFileStr = dtsFileStr.replace(/export /g, "");
+                // dtsFileStr = dtsFileStr.replace(new RegExp(`${moduleName}`,"g"),"");
+                dtsFileStr += `\ndeclare const ${moduleName}:typeof import("${moduleName}");`;
                 fs.writeFileSync(dtsGOpt.out, dtsFileStr);
             }
         })
