@@ -1,10 +1,10 @@
 if (CC_EDITOR) {
     const path = process.mainModule.require("path");
-    let scriptPath = "\\app.asar\\editor\\page\\project-scripts.js";
+    let scriptPath = "\\editor\\page\\project-scripts.js";
     if (process.platform === "darwin") {
         scriptPath = scriptPath.replace(/\\/g, "/");
     }
-    const projectScriptsModule = process.mainModule.constructor._cache[process.resourcesPath + scriptPath];
+    const projectScriptsModule = process.mainModule.constructor._cache[Editor.appPath + scriptPath];
     // cc.log(projectScriptsModule.paths);
     if (!projectScriptsModule.isAddCustomPaths) {
         const projectPath = Editor.remote.AssetDB.assetdb.cwd;//项目路径
