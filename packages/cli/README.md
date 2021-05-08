@@ -9,6 +9,7 @@ The Extension library build package based on Rollup's EasyGameFramework can also
 3. 将声明打包成单个dts声明文件
 4. 开箱即用 
 5. 支持自动和手动创建index.ts之类的入口文件(一般用于fairygui这些库将所有脚本通过index.ts导出)
+6. 完美支持sourcemap调试
 
 ## [CHANGELOG](packages/cli/CHANGELOG.md)
 ## 安装
@@ -28,25 +29,26 @@ npm install -D @ailhc/egf-cli
 1. 更多使用可以参考 模板项目
 [package-template](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/cli/package-template)
 
-2. 支持CocosCreator2.x的插件ts编译，插件模板在CocosStore搜索:"plugin_template2_x" 购买下载
+2. 支持CocosCreator2.x的插件ts编译，插件模板在CocosStore搜索:"完美typescript插件模板" 购买下载
 
 ### 构建命令行参数(egf build)
-* '-p, --proj [proj]', '项目根路径，默认为执行命令处 process.cwd()')
-* '-c, --config [config]', '配置文件路径，做更多的自定义处理,默认egf.compile.js')
-* '-w, --watch [watch]', '是否监听自动编译')
+* '-p, --proj [proj]', '项目根路径，默认为执行命令处 process.cwd()'
+* '-c, --config [config]', '配置文件路径，做更多的自定义处理,默认egf.compile.js'
+* '-w, --watch [watch]', '是否监听自动编译'
 * '-acti, --auto-cti [autoCti]', '是否自动生成入口文件，默认否'
 * '-ctim, -cti-mode [cti-mode]', '自动生成入口文件模式，默认create,可选:create,entrypoint,两种模式差异可见文档'
-* '-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口')
-* '-o, --output [output]', '输出文件 默认dist/index.js')
-* '-od, --output-dir [outputDir]', '多入口编译输出文件夹 默认dist/${format}')
-* '-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名')
-* '-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/${format}/types')
-* '-nrc, --no-remove-comments [removeComments]', '是否移除注释,默认移除')
-* '-t, --target [target]', '编译目标,默认使用tsconfig中的编译目标')
-* '-m, --minify [minify]', '是否压缩，默认不压缩')
-* '-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
-* '-bn, --banner [banner]', "自定义输出文件顶部文本")
-* '-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入")
+* '-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口'
+* '-o, --output [output]', '输出文件 默认dist/index.js'
+* '-od, --output-dir [outputDir]', '多入口编译输出文件夹 默认dist/${format}'
+* '-f, --format [format]', '输出格式 默认cjs,可选iife,umd,es <br>如果是iife和umd 需要加:<globalName> 冒号+全局变量名'
+* '-d, --types-dir [typesDir]', '声明文件输出目录 默认 dist/${format}/types'
+* '-nrc, --no-remove-comments [removeComments]', '是否移除注释,默认移除'
+* '-t, --target [target]', '编译目标,默认使用tsconfig中的编译目标'
+* '-m, --minify [minify]', '是否压缩，默认不压缩'
+* '-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成"
+* '-bn, --banner [banner]', "自定义输出文件顶部文本"
+* '-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入"
+* '-s, --no-sourcemap [sourcemap]','默认true,输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map'
 ### 入口文件生成命令行参数(egf cti)
 `基于create-ts-index库创建入口文件,一般用于生成库的index.ts比如fairygui`
 
@@ -65,7 +67,8 @@ declare interface IEgfCompileOption {
     config: string,
     /**是否监听自动编译 ,默认为false*/
     watch: boolean,
-
+    /**输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map */
+    sourcemap?: boolean | "inline"
     /**入口文件 默认src/index.ts,可以是数组,多个入口 */
     entry: string[],
     /**单入口输出文件名  默认dist/${format}/lib/index.js*/
@@ -135,10 +138,11 @@ declare interface IEgfCompileOption {
      * 自动创建入口文件配置
      * 具体的配置可见:https://hub.fastgit.org/imjuni/create-ts-index
      */
-    ctiOption?: import("create-ts-index/dist/options/ICreateTsIndexOption").ICreateTsIndexOption
+    ctiOption?: import("./libs/cti/options/ICreateTsIndexOption").ICreateTsIndexOption
 }
 ```
 ### 注意事项
 1. 多入口编译暂不支持声明文件输出
+2. tsconfig中没法控制sourcemap的生成，需要使用命令行参数或者配置文件控制
 
 
