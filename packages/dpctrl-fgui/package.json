@@ -35,10 +35,10 @@
   "scripts": {
     "cti": "egf cti -d ./src",
     "watch:cjs": "egf build -w true -f cjs",
-    "build:cjs": "egf build -f cjs -m true",
+    "build:cjs": "egf build -f cjs -m true -s inline",
     "build:es": "egf build -f es -m true",
-    "build:umd": "egf build -f umd:egf -m true",
-    "build:iife": "egf build -f iife:egf -m true",
+    "build:umd": "egf build -f umd -m true",
+    "build:iife": "egf build -f iife -m true",
     "build:system": "egf build -f system:@ailhc/dpctrl-fgui -m true",
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
