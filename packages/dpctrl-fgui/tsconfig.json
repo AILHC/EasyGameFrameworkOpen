@@ -11,7 +11,7 @@
       "es2015",
       "es2016.array.include"
     ],
-    "inlineSourceMap": true,
+    "sourceMap": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
@@ -19,5 +19,9 @@
     "skipLibCheck": true,
     "declaration": true,
     "removeComments": false
-  }
+  },
+  "exclude": [
+    "demo",
+    "dist"
+  ]
 }
