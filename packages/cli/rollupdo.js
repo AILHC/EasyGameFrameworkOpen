@@ -127,7 +127,6 @@ async function rollupBuild(option) {
     // projRoot, isWatch, entrys, outputDir, output,
     // format, typesDir, unRemoveComments, target, minify, isGenDts, banner
     let moduleName;
-    let customDts = false;
     let useFooter;
 
     let projRoot = option.proj;
@@ -158,8 +157,8 @@ async function rollupBuild(option) {
         option = Object.assign(option, optionOverride);
     }
     let format = option.format ? option.format : "cjs";
-
-    if (format.includes("iife") || format.includes("umd")) {
+    const isIIFE = format.includes("iife") || format.includes("umd");
+    if (isIIFE) {
         /**
          * @type {any[]}
          */
@@ -179,7 +178,7 @@ async function rollupBuild(option) {
             }
             moduleName = camelize(moduleName);
         }
-        customDts = true;
+
         useFooter = true;
     }
     if (format.includes("system")) {
@@ -217,7 +216,12 @@ async function rollupBuild(option) {
             output = `dist/es/lib/index.mjs`
         }
         if (!output) {
-            output = `dist/${format}/lib/index.js`;
+            if (isIIFE) {
+                output = `dist/${format}/${moduleName}.js`;
+            } else {
+                output = `dist/${format}/lib/index.js`;
+            }
+
         }
     }
     if (output && !path.isAbsolute(output)) {
@@ -230,10 +234,16 @@ async function rollupBuild(option) {
 
     let typesDir = option.typesDir;
     if (!typesDir) {
-        typesDir = `dist/${format}/types`;
+        if (isIIFE) {
+            typesDir = `dist/${format}`;
+        } else {
+            typesDir = `dist/${format}/types`;
+        }
+
     }
     tsconfigOverride.compilerOptions.declarationDir = typesDir;
-    tsconfigOverride.compilerOptions.declaration = customDts;
+    tsconfigOverride.compilerOptions.declaration = false;
+    tsconfigOverride.compilerOptions.sourceMap = true;
     let removeComments = option.removeComments;
     if (removeComments !== undefined) {
         tsconfigOverride.compilerOptions.removeComments = removeComments;
@@ -265,11 +275,6 @@ async function rollupBuild(option) {
     }
     if (externalTag.length === 0) {
         externalTag = undefined;
-    }
-    // console.log(exclude)
-    if (customDts) {
-        let dtsGenExclude = tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : [];
-        exclude = exclude.concat(dtsGenExclude);
     }
     tsconfigOverride.exclude = exclude;
     /**
@@ -357,8 +362,8 @@ async function rollupBuild(option) {
         }
     };
     const chunkFileNames = option.chunkFileNames ? option.chunkFileNames : "[name].js";
-    const compilerOptions = tsconfig.compilerOptions;
-    const sourcemap = (compilerOptions.sourceMap | compilerOptions.inlineSourceMap) ? (compilerOptions.inlineSourceMap ? "inline" : true) : false;
+
+    const pkgName = process.env.npm_package_name;
     /**
      * @type { import('rollup').OutputOptions }
      */
@@ -369,7 +374,12 @@ async function rollupBuild(option) {
         dir: outputDir,
         format: format,
         name: moduleName,
-        sourcemap: sourcemap,
+        sourcemap: option.sourcemap,
+        sourcemapPathTransform: (relativePath, sourcemapPath) => {
+            let sourceFilePath = require("path").join(sourcemapPath, "../", relativePath);
+            sourceFilePath = sourceFilePath.replace(projRoot, pkgName);
+            return sourceFilePath;
+        },
         // globals: {
         //     fairygui: "fairygui",
         //     Laya: "Laya"
@@ -398,11 +408,11 @@ async function rollupBuild(option) {
             } else if (event.code === "BUNDLE_START") {
                 console.log("开始输出");
 
-                isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
-                console.log(event.output);
+                isGenDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
+                // console.log(event.output);
             } else if (event.code === "BUNDLE_END") {
                 console.log("构建结束");
-                isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName);
+
             } else if (event.code === "END") {
                 console.log(`结束`)
             } else if (event.code === "ERROR") {
@@ -419,10 +429,10 @@ async function rollupBuild(option) {
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
 
-        isGenDts && !customDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
+        isGenDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
 
         const writeResult = await rollupBuild.write(outputOption);
-        isGenDts && customDts && genCustomDts(projRoot, format, typesDir, moduleName);
+
         const minify = option.minify;
         if (minify) {
             /**
@@ -469,8 +479,10 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
     const dtsGen = dtsg.default;
     const tsconfig = require(path.join(projRoot, `tsconfig.json`));
     const typesDirPath = path.join(projRoot, typesDir);
-    const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
-    let dtsGenExclude = ["node_modules/**/*.d.ts"].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
+    const isIife = format === "iife" || format === "umd";
+    const pkgName = process.env.npm_package_name;
+    // const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
+    let dtsGenExclude = ["node_modules/**/*.d.ts",].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
     dtsGenExclude = dtsGenExclude.concat(tsconfig.exclude ? tsconfig.exclude : []);
     if (option.dtsGenExclude && option.dtsGenExclude.length > 0) {
         dtsGenExclude = dtsGenExclude.concat(option.dtsGenExclude);
@@ -488,121 +500,45 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
         const dtsGOpt = {
             baseDir: projRoot,
             exclude: dtsGenExclude,
-            out: path.join(typesDirPath, `index.d.ts`),
+            out: path.join(typesDirPath, isIife ? `${moduleName}.d.ts` : `index.d.ts`),
             // prefix: moduleName,
             resolveModuleId: function (params) {
-                // console.log(params.currentModuleId)
-                // let entryRelative = path.relative(projRoot, entry);
-                // if (path.sep === "\\") {
-                //     entryRelative = entryRelative.replace(/\\/g, '/');
-                // }
-                // if (params.currentModuleId === entryRelative.split(".")[0]) {
-                //     return moduleName;
-                // }
 
-                // const indexfile = params.currentModuleId.substr(-6, 6);
-                // let currentModuleId = params.currentModuleId;
-                // if (indexfile === "/index") {
-                //     currentModuleId = currentModuleId.slice(0, currentModuleId.length - 6);
-                // }
-                // return `${moduleName}/${currentModuleId}`
-                return `${moduleName}`
+                return `${pkgName}`
             },
             resolveModuleImport: function (params) {
-                // console.log(params)
-                // {
-                //     importedModuleId: './interfaces',
-                //     currentModuleId: 'src/index',
-                //     isDeclaredExternalModule: false
-                //   }
-                if (!params.isDeclaredExternalModule) {
-                    // let importedModuleId = params.importedModuleId;
-                    // if (params.importedModuleId.includes(".")) {
 
-                    //     //包内模块
-                    //     importedModuleId = path.join(path.dirname(path.relative(projRoot, entry)), params.importedModuleId);
-                    //     // importedModuleId = `${moduleName}/${entry.split("/")[0]}${path.normalize(params.importedModuleId)}`;
-                    // }
-                    // if (path.sep === "\\") {
-                    //     importedModuleId = importedModuleId.replace(/\\/g, '/');
-                    // }
-                    // // importedModuleId = `${moduleName}/${importedModuleId}`;
-                    // importedModuleId = `${moduleName}`;
+                if (!params.isDeclaredExternalModule) {
+
                     if (!params.importedModuleId.includes(".")) {
                         // npm包
                         return params.importedModuleId;
                     }
-                    return moduleName;
+                    return pkgName;
                 }
                 return params.importedModuleId
             }
         }
         // @ts-ignore
-        dtsGen(dtsGOpt).then(() => {
+        dtsGen(dtsGOpt).then((args) => {
+            if (format === "iife" || format === "umd") {
+                let dtsFileStr = fs.readFileSync(dtsGOpt.out, "utf-8");
+                //去掉export * from ""
+                //去掉export default 
+                //去掉export 
 
+                const pkgNames = pkgName.split("/");
+                const newPkgName = pkgNames.length > 1 ? (pkgNames[0] + "\/" + pkgNames[1]) : pkgNames[0];
+                // dtsFileStr = dtsFileStr.replace(new RegExp("export \* from " + "'" + pkgName.replace() + "';", "g"), "");
+                dtsFileStr = dtsFileStr.replace(new RegExp("export default ", "g"), "");
+                dtsFileStr = dtsFileStr.replace(new RegExp("export ", "g"), "");
+                dtsFileStr += `\ndeclare const ${moduleName}:typeof import("${pkgName}");`;
+                fs.writeFileSync(dtsGOpt.out, dtsFileStr);
+            }
         })
     }
 }
-/**
- * 生成单个全局dts
- * @param {string} projRoot 
- * @param {string} format
- * @param {string} typesDir 
- * @param {string} moduleName 
- */
-function genCustomDts(projRoot, format, typesDir, moduleName) {
-    let dtsStr = "";
-    const sigleDtsFilePath = path.join(projRoot, `dist/${format}`, `${moduleName}.d.ts`);
-    if (fs.existsSync(sigleDtsFilePath)) {
-        fs.unlinkSync(sigleDtsFilePath);
-    }
 
-    // fs.readdirSync(path.join(process.cwd(), typesDir))
-    const typesDirPath = path.join(projRoot, typesDir);
-    const declareGlobalRegex = /(declare global \{{1})([\s\S]*\}{1})([\s]*\}{1})/g;
-    const importRegex = /import\s?{\s?[\w\d]*?\s?}\s?from\s?"[\w\W]*?";?/g
-    fs.readdir(typesDirPath, function (err, files) {
-        let str;
-        let regexMatch;
-        if (!files || !files.length) return;
-        for (let i = 0; i < files.length; i++) {
-            if (files[i] === "index.d.ts") continue;
-            // if (files[i] === "index.d.ts" || files[i].includes("interface")) continue;
-            const typeFilePath = path.join(typesDirPath, files[i]);
-            // console.log(typeFilePath);
-            str = fs.readFileSync(path.join(typesDirPath, files[i]), "utf8");
-            regexMatch = importRegex.exec(str);
-            if (regexMatch) {
-                regexMatch.forEach(function (match) {
-                    str = str.replace(match, "")
-                })
-            }
-            regexMatch = declareGlobalRegex.exec(str)
-            if (regexMatch) {
-                dtsStr += regexMatch[2];
-            } else {
-                dtsStr += str;
-            }
-
-        }
-        dtsStr = dtsStr.replace(/export {}/g, "");
-        dtsStr = dtsStr.replace(/export declare /g, "");
-        dtsStr = dtsStr.replace(/export default /g, "");
-
-        dtsStr = `declare namespace ${moduleName} {\n` + dtsStr + "}\n";
-
-        fs.writeFileSync(sigleDtsFilePath, dtsStr, "utf8");
-    })
-    // for (let i = 0; i < modules.length; i++) {
-    //     fileName = modules[i].id.includes("/") ? modules[i].id.split("/").pop() : modules[i].id.split("\\").pop();
-    //     if (fileName === "index.ts") {
-    //         continue;
-    //     }
-    //     dtsFilePath = path.join(process.cwd(), typesDir, fileName.replace(".ts", ".d.ts"));
-    //     dtsStr += fs.readFileSync(dtsFilePath, "utf8");
-
-    // }
-}
 /**
  * 
  * @param {IEgfCompileOption} option 
