@@ -35,9 +35,9 @@
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
   "scripts": {
-    "watch:cjs": "egf build -w true -f cjs",
+    "watch:cjs": "egf build -w true -f cjs -s inline",
     "build:system": "egf build -f system:@ailhc/emitter3",
-    "build:es": "egf build -f es -m true",
+    "build:es": "egf build -f es -m true -s inline",
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:system & npm run build:es",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"

@@ -35,7 +35,7 @@
   },
   "scripts": {
     "watch:cjs": "egf build -w true -f system:@ailhc/xstate2c3d",
-    "build:es": "egf build -f es -m true",
+    "build:es": "egf build -f es -m true -s inline",
     "build:system": "egf build -f system:@ailhc/xstate2c3d",
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:system & npm run build:es",
