@@ -31,7 +31,7 @@
     "dist"
   ],
   "scripts": {
-    "watch:cjs": "egf build -w true -f cjs -m",
+    "watch:cjs": "egf build -w true -f cjs -s inline -m",
     "build:cjs": "egf build -f cjs -m",
     "build:es": "egf build -f es -m",
     "build:umd": "egf build -f umd -m",

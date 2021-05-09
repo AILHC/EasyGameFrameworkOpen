@@ -797,12 +797,12 @@ System.register('@ailhc/xstate2c3d', [], function (exports) {
       var cancel = ActionTypes.Cancel;
       var nullEvent = ActionTypes.NullEvent;
       var assign = ActionTypes.Assign;
-      ActionTypes.After;
-      ActionTypes.DoneState;
+      var after = ActionTypes.After;
+      var doneState = ActionTypes.DoneState;
       var log = ActionTypes.Log;
       var init = ActionTypes.Init;
       var invoke = ActionTypes.Invoke;
-      ActionTypes.ErrorExecution;
+      var errorExecution = ActionTypes.ErrorExecution;
       var errorPlatform = ActionTypes.ErrorPlatform;
       var error = ActionTypes.ErrorCustom;
       var update = ActionTypes.Update;
@@ -1112,7 +1112,7 @@ System.register('@ailhc/xstate2c3d', [], function (exports) {
        */
 
 
-      function after(delayRef, id) {
+      function after$1(delayRef, id) {
         var idSuffix = id ? "#" + id : '';
         return ActionTypes.After + "(" + delayRef + ")" + idSuffix;
       }
@@ -1750,10 +1750,10 @@ exports('State',       /*#__PURE__*/
         };
 
         State.prototype.toJSON = function () {
-          var _a = this;
-              _a.configuration;
-              _a.transitions;
-              var jsonValues = __rest(_a, ["configuration", "transitions"]);
+          var _a = this,
+              configuration = _a.configuration,
+              transitions = _a.transitions,
+              jsonValues = __rest(_a, ["configuration", "transitions"]);
 
           return jsonValues;
         };
@@ -1874,9 +1874,9 @@ exports('State',       /*#__PURE__*/
           type: invoke
         }, invokeConfig), {
           toJSON: function () {
-            invokeConfig.onDone;
-                invokeConfig.onError;
-                var invokeDef = __rest(invokeConfig, ["onDone", "onError"]);
+            var onDone = invokeConfig.onDone,
+                onError = invokeConfig.onError,
+                invokeDef = __rest(invokeConfig, ["onDone", "onError"]);
 
             return __assign(__assign({}, invokeDef), {
               type: invoke,
@@ -2208,7 +2208,7 @@ exports('StateNode',       /*#__PURE__*/
 
           var mutateEntryExit = function (delay, i) {
             var delayRef = isFunction(delay) ? _this.id + ":delay[" + i + "]" : delay;
-            var eventType = after(delayRef, _this.id);
+            var eventType = after$1(delayRef, _this.id);
 
             _this.onEntry.push(send$1(eventType, {
               delay: delay
@@ -2302,8 +2302,7 @@ exports('StateNode',       /*#__PURE__*/
           var configuration = Array.from(getConfiguration([], this.getStateNodes(state.value)));
           return new State(__assign(__assign({}, state), {
             value: this.resolve(state.value),
-            configuration: configuration,
-            done: isInFinalState(configuration, this)
+            configuration: configuration
           }));
         };
 
@@ -4107,11 +4106,6 @@ exports('Interpreter',       /*#__PURE__*/
             }
           }
 
-          if (!this.initialized) {
-            // Interpreter already stopped; do nothing
-            return this;
-          }
-
           this.state.configuration.forEach(function (stateNode) {
             var e_11, _a;
 
@@ -4907,7 +4901,7 @@ exports('Interpreter',       /*#__PURE__*/
         start: start$1,
         stop: stop$1,
         assign: assign$1,
-        after: after,
+        after: after$1,
         done: done,
         respond: respond,
         forwardTo: forwardTo,

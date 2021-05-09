@@ -1,4 +1,4 @@
-declare module '@ailhc/xstate2c3d' {
+declare module 'c3dxstate2' {
 	export * from 'xstate';
 
 }

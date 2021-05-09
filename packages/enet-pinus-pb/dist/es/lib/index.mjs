@@ -658,7 +658,7 @@ var Protobuf = (function () {
                 var floats = new ByteArray();
                 buffer.readBytes(floats, 0, 4);
                 floats.endian = Endian.LITTLE_ENDIAN;
-                buffer.readFloat();
+                var float = buffer.readFloat();
                 return floats.readFloat();
             case "double":
                 var doubles = new ByteArray();
