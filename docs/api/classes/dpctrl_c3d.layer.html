@@ -1459,8 +1459,8 @@
 									<dd><p>属性配置函数。在 attrs 的所有属性将被设置为节点属性。</p>
 									</dd>
 									<dt>example</dt>
-									<dd><pre><code>var attrs = { <span class="hljs-attr">name:</span> <span class="hljs-string">&#x27;New Name&#x27;</span>, <span class="hljs-attr">active:</span> <span class="hljs-literal">false</span> };
-node.attr(attrs);
+									<dd><pre><code>var attrs = {<span class="hljs-built_in"> name</span>: <span class="hljs-string">&#x27;New Name&#x27;</span>, active:<span class="hljs-built_in"> false</span> };
+<span class="hljs-type">node</span>.attr(attrs);
 </code></pre>
 									</dd>
 								</dl>
@@ -3260,12 +3260,12 @@ node.on(SystemEventType.TOUCH_END, callback, <span class="hljs-built_in">this</s
 									<dd><p>please destroy the component to remove it.</p>
 									</dd>
 									<dt>example</dt>
-									<dd><pre><code><span class="hljs-keyword">import</span> { Sprite } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;cc&#x27;</span>;
-<span class="hljs-keyword">const</span> sprite = node.getComponent(Sprite);
+									<dd><pre><code><span class="hljs-keyword">import</span> { Sprite } from <span class="hljs-string">&#x27;cc&#x27;</span>;
+const sprite = <span class="hljs-type">node</span>.getComponent(Sprite);
 <span class="hljs-keyword">if</span> (sprite) {
-    node.removeComponent(sprite);
+    <span class="hljs-type">node</span>.removeComponent(sprite);
 }
-node.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
+<span class="hljs-type">node</span>.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
 </code></pre>
 									</dd>
 								</dl>
@@ -4261,10 +4261,10 @@ node.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
 										请不要在 walk 过程中对任何其他的节点嵌套执行 walk。</p>
 									</dd>
 									<dt>example</dt>
-									<dd><pre><code>node.walk(<span class="hljs-function"><span class="hljs-keyword">function</span></span> (<span class="hljs-keyword">target</span>) {
-    console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;Walked through node &#x27;</span> + <span class="hljs-keyword">target</span>.<span class="hljs-keyword">name</span> + <span class="hljs-string">&#x27; for the first time&#x27;</span>);
-}, <span class="hljs-function"><span class="hljs-keyword">function</span></span> (<span class="hljs-keyword">target</span>) {
-    console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;Walked through node &#x27;</span> + <span class="hljs-keyword">target</span>.<span class="hljs-keyword">name</span> + <span class="hljs-string">&#x27; after walked all children in its sub tree&#x27;</span>);
+									<dd><pre><code>node.walk(function (target) {
+    console.<span class="hljs-built_in">log</span>(&#x27;Walked <span class="hljs-keyword">through</span> node &#x27; + target.<span class="hljs-built_in">name</span> + &#x27; <span class="hljs-keyword">for</span> <span class="hljs-keyword">the</span> <span class="hljs-keyword">first</span> <span class="hljs-built_in">time</span>&#x27;);
+}, function (target) {
+    console.<span class="hljs-built_in">log</span>(&#x27;Walked <span class="hljs-keyword">through</span> node &#x27; + target.<span class="hljs-built_in">name</span> + &#x27; <span class="hljs-keyword">after</span> walked all children <span class="hljs-keyword">in</span> <span class="hljs-keyword">its</span> sub tree&#x27;);
 });
 </code></pre>
 									</dd>
@@ -4410,6 +4410,9 @@ node.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
 						<a href="../modules/dpctrl_ccc.html">dpctrl-<wbr>ccc</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="../modules/dpctrl_fgui.html">dpctrl-<wbr>fgui</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="../modules/egf_protobuf_cli.html">egf-<wbr>protobuf-<wbr>cli</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -4420,6 +4423,12 @@ node.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/enet_pbws.html">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/enet_pinus_pb.html">enet-<wbr>pinus-<wbr>pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/excel2all.html">excel2all</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/layer.html">layer</a>
@@ -4800,6 +4809,9 @@ node.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
 						<a href="../modules/dpctrl_ccc.html" class="tsd-kind-icon">dpctrl-<wbr>ccc</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="../modules/dpctrl_fgui.html" class="tsd-kind-icon">dpctrl-<wbr>fgui</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="../modules/egf_protobuf_cli.html" class="tsd-kind-icon">egf-<wbr>protobuf-<wbr>cli</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -4810,6 +4822,12 @@ node.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/enet_pbws.html" class="tsd-kind-icon">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/enet_pinus_pb.html" class="tsd-kind-icon">enet-<wbr>pinus-<wbr>pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/excel2all.html" class="tsd-kind-icon">excel2all</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/layer.html" class="tsd-kind-icon">layer</a>
@@ -4849,6 +4867,9 @@ node.removeComponent(<span class="hljs-string">&#x27;Sprite&#x27;</span>);
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 			</ul>
 		</div>
 	</div>

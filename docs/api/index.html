@@ -60,6 +60,10 @@
 				</a>
 				<p><img src="https://img.shields.io/github/license/JoeyBling/hexo-theme-yilia-plus" alt="LICENSE" title="LICENSE">
 				<img src="https://img.shields.io/badge/Author-AILHC-red.svg" alt="Author" title="Author"></p>
+				<p><a href="https://gitpod.io/#https://github.com/AILHC/EasyGameFrameworkOpen"><img src="https://gitpod.io/button/open-in-gitpod.svg" alt="Open in Gitpod"></a></p>
+				<p><a href="https://github1s.com/AILHC/EasyGameFrameworkOpen"><img src="https://img.shields.io/badge/ReadCode-In1S-blue.svg" alt="ReadCodeIn1s"></a></p>
+				<!-- [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/AILHC/EasyGameFrameworkOpen) -->
+				<p><img src="https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7-%E7%8E%A9%E8%BD%AC%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-brightgreen.svg" alt="玩转游戏开发-brightgreen.svg"></p>
 				<p>基于Typescript的渐进式通用游戏前端开发框架</p>
 				<p>A progressive universal game front-end development framework based on <a href="https://www.tslang.cn/">Typescript</a></p>
 				<a href="#名词解释" id="名词解释" style="color: inherit; text-decoration: none;">
@@ -83,16 +87,32 @@
 					<li>...</li>
 				</ul>
 				<p>各有优势，看项目和团队进行技术选型。</p>
-				<p>我想这个框架可以不受限于引擎，适用于各种项目，不必因为换引擎而重复造轮子。</p>
+				<p>我想这个框架可以不受限于引擎，适用于各种项目，不必因为换引擎而重复造🚗子。</p>
 				<p>关于框架这个话题我写了几篇文章(感兴趣可以看一下)</p>
 				<ul>
 					<li><a href="https://pgd.vercel.app/2020/11/17/The-Birth-of-Frames-Zero%EF%BC%9AWhy-write-framework/">为什么写框架</a></li>
 					<li><a href="https://pgd.vercel.app/2020/11/29/The-Birth-of-a-Framework-One-The-Framework-I-Want/">我想要的框架</a></li>
 					<li><a href="https://pgd.vercel.app/2020/12/02/The-birth-of-the-framework-two-positioning/">定位</a></li>
 				</ul>
-				<a href="#modules模块" id="modules模块" style="color: inherit; text-decoration: none;">
-					<h2>Modules(模块)</h2>
+				<a href="#文档网址" id="文档网址" style="color: inherit; text-decoration: none;">
+					<h2>文档网址</h2>
 				</a>
+				<ul>
+					<li><a href="https://ailhc.github.io/EasyGameFrameworkOpen/#/">Github上</a></li>
+					<li><a href="http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/#/">Gitee上</a></li>
+				</ul>
+				<a href="#在线示例" id="在线示例" style="color: inherit; text-decoration: none;">
+					<h2>在线示例</h2>
+				</a>
+				<ul>
+					<li><p><a href="http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc-full">主要模块例子演示Gitee</a></p>
+					</li>
+					<li><p><a href="https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc-full">主要模块例子演示GitHub</a></p>
+						<a href="#modules模块" id="modules模块" style="color: inherit; text-decoration: none;">
+							<h2>Modules(模块)</h2>
+						</a>
+					</li>
+				</ul>
 				<a href="#core" id="core" style="color: inherit; text-decoration: none;">
 					<h3>Core</h3>
 				</a>
@@ -232,13 +252,13 @@
 </code></pre>
 					</li>
 					<li>*移除依赖**</li>
-					<li>移除指定包对某包的依赖<pre><code class="language-bash">yarn workspace packageB remove packageA
+					<li>移除指定包对xxx包的依赖<pre><code class="language-bash">yarn workspace packageB remove packageA
 </code></pre>
 					</li>
 					<li>移除所有包对指定包的依赖<pre><code class="language-bash">yarn workspaces remove lodash
 </code></pre>
 					</li>
-					<li>移除根目录下对某包的依赖<pre><code class="language-bash">yarn remove -W -D typescript
+					<li>移除根目录下对xxx包的依赖<pre><code class="language-bash">yarn remove -W -D typescript
 </code></pre>
 					</li>
 					<li>安装所有依赖<pre><code class="language-bash">yarn install 或者 lerna bootstrap
@@ -276,7 +296,7 @@ yarn link @egf/core
 				<p>在这游戏开发的道路上并肩前行</p>
 				<p>你的关注是我持续更新的动力~</p>
 				<p>在以下这些渠道可以找到我和我的分享和创作:</p>
-				<p>公众号搜索:玩转游戏开发</p>
+				<p>搜索关注:玩转游戏开发</p>
 				<p>或扫码:<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/abd0c14c9c954e56af20adb71fa00da9~tplv-k3u1fbpfcp-zoom-1.image" alt="img" style="zoom:50%;" /></p>
 				<p>一起讨论技术的 QQ 群: 1103157878</p>
 				<p>博客主页: <a href="https://pgd.vercel.app/">https://pgd.vercel.app/</a></p>
@@ -315,6 +335,9 @@ yarn link @egf/core
 						<a href="modules/dpctrl_ccc.html">dpctrl-<wbr>ccc</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/dpctrl_fgui.html">dpctrl-<wbr>fgui</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/egf_protobuf_cli.html">egf-<wbr>protobuf-<wbr>cli</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -325,6 +348,12 @@ yarn link @egf/core
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/enet_pbws.html">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/enet_pinus_pb.html">enet-<wbr>pinus-<wbr>pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/excel2all.html">excel2all</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/layer.html">layer</a>
@@ -364,6 +393,9 @@ yarn link @egf/core
 						<a href="modules/dpctrl_ccc.html" class="tsd-kind-icon">dpctrl-<wbr>ccc</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/dpctrl_fgui.html" class="tsd-kind-icon">dpctrl-<wbr>fgui</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/egf_protobuf_cli.html" class="tsd-kind-icon">egf-<wbr>protobuf-<wbr>cli</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -374,6 +406,12 @@ yarn link @egf/core
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/enet_pbws.html" class="tsd-kind-icon">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/enet_pinus_pb.html" class="tsd-kind-icon">enet-<wbr>pinus-<wbr>pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/excel2all.html" class="tsd-kind-icon">excel2all</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/layer.html" class="tsd-kind-icon">layer</a>
@@ -406,6 +444,9 @@ yarn link @egf/core
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 			</ul>
 		</div>
 	</div>

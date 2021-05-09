@@ -51,7 +51,7 @@
 					<a href="obj_pool.__global.objpool.ipoolmgr.html">IPoolMgr</a>
 				</li>
 			</ul>
-			<span class="tsd-breadcrumb-current">Interface IPoolMgr&lt;SignType, GetDataType&gt;</span>
+			<span class="tsd-breadcrumb-current">Interface IPoolMgr&lt;SignKeyAndOnGetDataMap&gt;</span>
 			<div id="tsd-filter">
 				<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
 				<div class="tsd-filter-group">
@@ -70,10 +70,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>SignType = <span class="tsd-signature-type">any</span></h4>
-					</li>
-					<li>
-						<h4>GetDataType = <span class="tsd-signature-type">any</span></h4>
+						<h4>SignKeyAndOnGetDataMap = <span class="tsd-signature-type">any</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -98,20 +95,22 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#clearpool" class="tsd-kind-icon">clear<wbr>Pool</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#createbyclass" class="tsd-kind-icon">create<wbr>ByClass</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#createbyfunc" class="tsd-kind-icon">create<wbr>ByFunc</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#destroypool" class="tsd-kind-icon">destroy<wbr>Pool</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#free" class="tsd-kind-icon">free</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#freeall" class="tsd-kind-icon">free<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#clearpool" class="tsd-kind-icon">clear<wbr>Pool</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#createbyclass" class="tsd-kind-icon">create<wbr>ByClass</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#createbyfunc" class="tsd-kind-icon">create<wbr>ByFunc</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#createobjpool" class="tsd-kind-icon">create<wbr>Obj<wbr>Pool</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#destroypool" class="tsd-kind-icon">destroy<wbr>Pool</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#get" class="tsd-kind-icon">get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#getmore" class="tsd-kind-icon">get<wbr>More</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#getpool" class="tsd-kind-icon">get<wbr>Pool</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#getpoolobjsbysign" class="tsd-kind-icon">get<wbr>Pool<wbr>Objs<wbr>BySign</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#haspool" class="tsd-kind-icon">has<wbr>Pool</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#haspool" class="tsd-kind-icon">has<wbr>Pool</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#kill" class="tsd-kind-icon">kill</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#precreate" class="tsd-kind-icon">pre<wbr>Create</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#setobjpoolhandler" class="tsd-kind-icon">set<wbr>Obj<wbr>Pool<wbr>Handler</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#precreate" class="tsd-kind-icon">pre<wbr>Create</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.ipoolmgr.html#return" class="tsd-kind-icon">return</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#returnall" class="tsd-kind-icon">return<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#setpoolhandler" class="tsd-kind-icon">set<wbr>Pool<wbr>Handler</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="obj_pool.__global.objpool.ipoolmgr.html#setpoolthreshold" class="tsd-kind-icon">set<wbr>Pool<wbr>Threshold</a></li>
 							</ul>
 						</section>
 					</div>
@@ -119,17 +118,17 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 					<a name="clearpool" class="tsd-anchor"></a>
 					<h3>clear<wbr>Pool</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">clear<wbr>Pool<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">clear<wbr>Pool&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:173</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:229</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -137,10 +136,16 @@
 									<p>清空对象池（如果不在池子中，对象不会被清）</p>
 								</div>
 							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>对象池的标志</p>
 									</div>
@@ -150,17 +155,17 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 					<a name="createbyclass" class="tsd-anchor"></a>
 					<h3>create<wbr>ByClass</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>ByClass<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span>, cls<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>ByClass&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span>, cls<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:146</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:198</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -168,10 +173,16 @@
 									<p>使用类构造函数创建对象池</p>
 								</div>
 							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>对象池标志</p>
 									</div>
@@ -179,6 +190,7 @@
 								<li>
 									<h5>cls: <span class="tsd-signature-type">any</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>对象类</p>
 									</div>
 								</li>
 							</ul>
@@ -186,17 +198,17 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 					<a name="createbyfunc" class="tsd-anchor"></a>
 					<h3>create<wbr>ByFunc</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>ByFunc<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span>, createFunc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>ByFunc&lt;Sign, T&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span>, createFunc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:153</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:204</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -204,21 +216,33 @@
 									<p>使用创建函数创建对象池</p>
 								</div>
 							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+								<li>
+									<h4>T = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 								</li>
 								<li>
-									<h5>createFunc: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a></h5>
+									<h5>createFunc: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">T</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>创建对象的函数</p>
+									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-signature">
 											<ul class="tsd-signatures tsd-kind-type-literal">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
-													<h4 class="tsd-returns-title">Returns <a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
 												</li>
 											</ul>
 										</li>
@@ -229,17 +253,56 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="destroypool" class="tsd-anchor"></a>
-					<h3>destroy<wbr>Pool</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">destroy<wbr>Pool<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="createobjpool" class="tsd-anchor"></a>
+					<h3>create<wbr>Obj<wbr>Pool</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Obj<wbr>Pool&lt;Sign, T&gt;<span class="tsd-signature-symbol">(</span>opt<span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.ipoolinitoption.html" class="tsd-signature-type">IPoolInitOption</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:168</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:190</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>创建对象池</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+								<li>
+									<h4>T = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>opt: <a href="obj_pool.__global.objpool.ipoolinitoption.html" class="tsd-signature-type">IPoolInitOption</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="destroypool" class="tsd-anchor"></a>
+					<h3>destroy<wbr>Pool</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">destroy<wbr>Pool&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:224</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -247,72 +310,16 @@
 									<p>销毁指定对象池</p>
 								</div>
 							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="free" class="tsd-anchor"></a>
-					<h3>free</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">free<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:211</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>回收对象到对象池</p>
-								</div>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>obj: <a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>对象</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-							<p>返回是否回收成功</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="freeall" class="tsd-anchor"></a>
-					<h3>free<wbr>All</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">free<wbr>All<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:216</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>回收所有正在使用的对象</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -325,13 +332,13 @@
 					<a name="get" class="tsd-anchor"></a>
 					<h3>get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">get&lt;T, keyType&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">keyType</span>, onGetData<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">objPool.ToAnyIndexKey</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">keyType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+						<li class="tsd-signature tsd-kind-icon">get&lt;Sign, T&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span>, onGetData<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:186</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:242</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -342,28 +349,28 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
 								</li>
 								<li>
-									<h4>keyType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span> = <span class="tsd-signature-type">any</span></h4>
+									<h4>T = <span class="tsd-signature-type">any</span></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-type">keyType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>对象池标志（对象类型）</p>
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> onGetData: <span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">objPool.ToAnyIndexKey</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">keyType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">]</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> onGetData: <span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>当对象出池子时的参数，默认没有</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -371,13 +378,13 @@
 					<a name="getmore" class="tsd-anchor"></a>
 					<h3>get<wbr>More</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>More&lt;T, keyType&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">keyType</span>, onGetData<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">objPool.ToAnyIndexKey</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">keyType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">]</span>, num<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>More&lt;Sign, T&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span>, onGetData<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span>, num<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:196</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:252</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -388,22 +395,22 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
 								</li>
 								<li>
-									<h4>keyType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span> = <span class="tsd-signature-type">any</span></h4>
+									<h4>T = <span class="tsd-signature-type">any</span></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-type">keyType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>对象池标志（对象类型）</p>
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> onGetData: <span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">objPool.ToAnyIndexKey</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">keyType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">GetDataType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">]</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> onGetData: <span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>onGet参数</p>
 									</div>
@@ -415,7 +422,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">[]</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -423,13 +430,13 @@
 					<a name="getpool" class="tsd-anchor"></a>
 					<h3>get<wbr>Pool</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Pool&lt;T&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Pool&lt;Sign, T&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:158</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:212</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -440,18 +447,21 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+								<li>
+									<h4>T = <span class="tsd-signature-type">any</span></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -459,13 +469,13 @@
 					<a name="getpoolobjsbysign" class="tsd-anchor"></a>
 					<h3>get<wbr>Pool<wbr>Objs<wbr>BySign</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Pool<wbr>Objs<wbr>BySign&lt;T&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Pool<wbr>Objs<wbr>BySign&lt;Sign, T&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:205</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:264</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -476,34 +486,37 @@
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T<span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a></h4>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+								<li>
+									<h4>T = <span class="tsd-signature-type">any</span></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>对象类型标识字符。</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">[]</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> extends </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> ? </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> : </span><span class="tsd-signature-type">IObj</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4>
 							<p>对象池。</p>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 					<a name="haspool" class="tsd-anchor"></a>
 					<h3>has<wbr>Pool</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">has<wbr>Pool<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Pool&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:163</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:219</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -511,10 +524,16 @@
 									<p>判断对象池是否存在</p>
 								</div>
 							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -527,13 +546,13 @@
 					<a name="kill" class="tsd-anchor"></a>
 					<h3>kill</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">kill<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">kill<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:222</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:283</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -544,28 +563,27 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>obj: <a href="obj_pool.__global.objpool.iobj.html" class="tsd-signature-type">IObj</a></h5>
+									<h5>obj: <span class="tsd-signature-type">any</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>对象</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-							<p>返回是否回收成功</p>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 					<a name="precreate" class="tsd-anchor"></a>
 					<h3>pre<wbr>Create</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">pre<wbr>Create<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span>, preCreateCount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">pre<wbr>Create&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span>, preCreateCount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:179</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:235</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -573,10 +591,16 @@
 									<p>预先创建对象</p>
 								</div>
 							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>对象类型</p>
 									</div>
@@ -593,31 +617,148 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="setobjpoolhandler" class="tsd-anchor"></a>
-					<h3>set<wbr>Obj<wbr>Pool<wbr>Handler</h3>
+					<a name="return" class="tsd-anchor"></a>
+					<h3>return</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Obj<wbr>Pool<wbr>Handler<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span>, objHandler<span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.iobjhandler.html" class="tsd-signature-type">IObjHandler</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">return<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:139</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:273</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>回收对象到对象池</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>obj: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>对象</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="returnall" class="tsd-anchor"></a>
+					<h3>return<wbr>All</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">return<wbr>All&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:278</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>回收所有正在使用的对象</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="setpoolhandler" class="tsd-anchor"></a>
+					<h3>set<wbr>Pool<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Pool<wbr>Handler&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span>, objHandler<span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.iobjhandler.html" class="tsd-signature-type">IObjHandler</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:182</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>设置对象池对象处理器，当对象在取、回收、销毁时调用</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd><p>方法将要废弃 请用createObjPool</p>
+									</dd>
+								</dl>
 							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sign: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignType</span></h5>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
 								</li>
 								<li>
-									<h5>objHandler: <a href="obj_pool.__global.objpool.iobjhandler.html" class="tsd-signature-type">IObjHandler</a></h5>
+									<h5>objHandler: <a href="obj_pool.__global.objpool.iobjhandler.html" class="tsd-signature-type">IObjHandler</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Sign</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="setpoolthreshold" class="tsd-anchor"></a>
+					<h3>set<wbr>Pool<wbr>Threshold</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Pool<wbr>Threshold&lt;Sign&gt;<span class="tsd-signature-symbol">(</span>sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sign</span>, threshold<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:176</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>设置对象池的阈值</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>Sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SignKeyAndOnGetDataMap</span> = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sign: <span class="tsd-signature-type">Sign</span></h5>
+								</li>
+								<li>
+									<h5>threshold: <span class="tsd-signature-type">number</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>对象池阈值size超过这个数则，则后续的对象回收就会直接销毁
+										默认没有阈值，不作限制</p>
 									</div>
 								</li>
 							</ul>
@@ -658,6 +799,9 @@
 						<a href="../modules/dpctrl_ccc.html">dpctrl-<wbr>ccc</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="../modules/dpctrl_fgui.html">dpctrl-<wbr>fgui</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="../modules/egf_protobuf_cli.html">egf-<wbr>protobuf-<wbr>cli</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -668,6 +812,12 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/enet_pbws.html">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/enet_pinus_pb.html">enet-<wbr>pinus-<wbr>pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/excel2all.html">excel2all</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/layer.html">layer</a>
@@ -697,7 +847,7 @@
 					<li class="current tsd-kind-namespace tsd-parent-kind-namespace">
 						<a href="../modules/obj_pool.__global.objpool.html" class="tsd-kind-icon">obj<wbr>Pool</a>
 						<ul>
-							<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="obj_pool.__global.objpool.iobj.html" class="tsd-kind-icon">IObj</a>
 							</li>
 							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
@@ -706,26 +856,26 @@
 							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="obj_pool.__global.objpool.ipool.html" class="tsd-kind-icon">IPool</a>
 							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="obj_pool.__global.objpool.ipoolinitoption.html" class="tsd-kind-icon">IPool<wbr>Init<wbr>Option</a>
+							</li>
 							<li class="current tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="obj_pool.__global.objpool.ipoolmgr.html" class="tsd-kind-icon">IPool<wbr>Mgr</a>
 								<ul>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#clearpool" class="tsd-kind-icon">clear<wbr>Pool</a>
 									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#createbyclass" class="tsd-kind-icon">create<wbr>ByClass</a>
 									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#createbyfunc" class="tsd-kind-icon">create<wbr>ByFunc</a>
 									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+										<a href="obj_pool.__global.objpool.ipoolmgr.html#createobjpool" class="tsd-kind-icon">create<wbr>Obj<wbr>Pool</a>
+									</li>
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#destroypool" class="tsd-kind-icon">destroy<wbr>Pool</a>
-									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
-										<a href="obj_pool.__global.objpool.ipoolmgr.html#free" class="tsd-kind-icon">free</a>
-									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
-										<a href="obj_pool.__global.objpool.ipoolmgr.html#freeall" class="tsd-kind-icon">free<wbr>All</a>
 									</li>
 									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#get" class="tsd-kind-icon">get</a>
@@ -739,25 +889,31 @@
 									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#getpoolobjsbysign" class="tsd-kind-icon">get<wbr>Pool<wbr>Objs<wbr>BySign</a>
 									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#haspool" class="tsd-kind-icon">has<wbr>Pool</a>
 									</li>
 									<li class=" tsd-kind-method tsd-parent-kind-interface">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#kill" class="tsd-kind-icon">kill</a>
 									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 										<a href="obj_pool.__global.objpool.ipoolmgr.html#precreate" class="tsd-kind-icon">pre<wbr>Create</a>
 									</li>
 									<li class=" tsd-kind-method tsd-parent-kind-interface">
-										<a href="obj_pool.__global.objpool.ipoolmgr.html#setobjpoolhandler" class="tsd-kind-icon">set<wbr>Obj<wbr>Pool<wbr>Handler</a>
+										<a href="obj_pool.__global.objpool.ipoolmgr.html#return" class="tsd-kind-icon">return</a>
+									</li>
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+										<a href="obj_pool.__global.objpool.ipoolmgr.html#returnall" class="tsd-kind-icon">return<wbr>All</a>
+									</li>
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+										<a href="obj_pool.__global.objpool.ipoolmgr.html#setpoolhandler" class="tsd-kind-icon">set<wbr>Pool<wbr>Handler</a>
+									</li>
+									<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+										<a href="obj_pool.__global.objpool.ipoolmgr.html#setpoolthreshold" class="tsd-kind-icon">set<wbr>Pool<wbr>Threshold</a>
 									</li>
 								</ul>
 							</li>
 							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="../modules/obj_pool.__global.objpool.html#clas" class="tsd-kind-icon">Clas</a>
-							</li>
-							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
-								<a href="../modules/obj_pool.__global.objpool.html#toanyindexkey" class="tsd-kind-icon">To<wbr>Any<wbr>Index<wbr>Key</a>
 							</li>
 						</ul>
 					</li>
@@ -780,14 +936,15 @@
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 		</div>
 	</div>

@@ -51,7 +51,7 @@
 					<a href="obj_pool.__global.objpool.iobj.html">IObj</a>
 				</li>
 			</ul>
-			<span class="tsd-breadcrumb-current">Interface IObj</span>
+			<span class="tsd-breadcrumb-current">Interface IObj&lt;onGetDataType&gt;</span>
 			<div id="tsd-filter">
 				<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
 				<div class="tsd-filter-group">
@@ -66,6 +66,14 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>onGetDataType = <span class="tsd-signature-type">any</span></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -82,17 +90,17 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#isinpool" class="tsd-kind-icon">is<wbr>InPool</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#pool" class="tsd-kind-icon">pool</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#poolsign" class="tsd-kind-icon">pool<wbr>Sign</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#freeself" class="tsd-kind-icon">free<wbr>Self</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#oncreate" class="tsd-kind-icon">on<wbr>Create</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#onfree" class="tsd-kind-icon">on<wbr>Free</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#onget" class="tsd-kind-icon">on<wbr>Get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#onkill" class="tsd-kind-icon">on<wbr>Kill</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="obj_pool.__global.objpool.iobj.html#onreturn" class="tsd-kind-icon">on<wbr>Return</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,12 +114,29 @@
 					<div class="tsd-signature tsd-kind-icon">is<wbr>InPool<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:13</li>
+							<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:15</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>是否在对象池内</p>
+							<p>是否在对象池内
+							创建时赋值</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="pool" class="tsd-anchor"></a>
+					<h3>pool</h3>
+					<div class="tsd-signature tsd-kind-icon">pool<span class="tsd-signature-symbol">:</span> <a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:20</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>对象池
+							创建时赋值</p>
 						</div>
 					</div>
 				</section>
@@ -121,12 +146,13 @@
 					<div class="tsd-signature tsd-kind-icon">pool<wbr>Sign<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:9</li>
+							<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:10</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>对象池类型标志</p>
+							<p>对象池类型标志
+							创建时赋值</p>
 						</div>
 					</div>
 				</section>
@@ -134,73 +160,21 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="freeself" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> free<wbr>Self</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">free<wbr>Self<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:34</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>将自身回收到对象池里</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="oncreate" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Create</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">on<wbr>Create<span class="tsd-signature-symbol">(</span>pool<span class="tsd-signature-symbol">: </span><a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Create<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:18</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:24</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>创建时</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>pool: <a href="obj_pool.__global.objpool.ipool.html" class="tsd-signature-type">IPool</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="onfree" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Free</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">on<wbr>Free<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:26</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>当被回收时</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -209,15 +183,15 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="onget" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Get</h3>
+					<h3>on<wbr>Get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">on<wbr>Get<span class="tsd-signature-symbol">(</span>onGetData<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Get<span class="tsd-signature-symbol">(</span>onGetData<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">onGetDataType</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:22</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:28</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -228,7 +202,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>onGetData: <span class="tsd-signature-type">any</span></h5>
+									<h5>onGetData: <span class="tsd-signature-type">onGetDataType</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -245,12 +219,35 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:30</li>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:37</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>当被销毁时</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="onreturn" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Return</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">on<wbr>Return<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in packages/obj-pool/src/obj-pool-interfaces.ts:33</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>当被回收时
+									做一些状态还原逻辑</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -290,6 +287,9 @@
 						<a href="../modules/dpctrl_ccc.html">dpctrl-<wbr>ccc</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="../modules/dpctrl_fgui.html">dpctrl-<wbr>fgui</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="../modules/egf_protobuf_cli.html">egf-<wbr>protobuf-<wbr>cli</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -300,6 +300,12 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/enet_pbws.html">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/enet_pinus_pb.html">enet-<wbr>pinus-<wbr>pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/excel2all.html">excel2all</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/layer.html">layer</a>
@@ -329,29 +335,29 @@
 					<li class="current tsd-kind-namespace tsd-parent-kind-namespace">
 						<a href="../modules/obj_pool.__global.objpool.html" class="tsd-kind-icon">obj<wbr>Pool</a>
 						<ul>
-							<li class="current tsd-kind-interface tsd-parent-kind-namespace">
+							<li class="current tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="obj_pool.__global.objpool.iobj.html" class="tsd-kind-icon">IObj</a>
 								<ul>
 									<li class=" tsd-kind-property tsd-parent-kind-interface">
 										<a href="obj_pool.__global.objpool.iobj.html#isinpool" class="tsd-kind-icon">is<wbr>InPool</a>
 									</li>
 									<li class=" tsd-kind-property tsd-parent-kind-interface">
+										<a href="obj_pool.__global.objpool.iobj.html#pool" class="tsd-kind-icon">pool</a>
+									</li>
+									<li class=" tsd-kind-property tsd-parent-kind-interface">
 										<a href="obj_pool.__global.objpool.iobj.html#poolsign" class="tsd-kind-icon">pool<wbr>Sign</a>
 									</li>
 									<li class=" tsd-kind-method tsd-parent-kind-interface">
-										<a href="obj_pool.__global.objpool.iobj.html#freeself" class="tsd-kind-icon">free<wbr>Self</a>
-									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
 										<a href="obj_pool.__global.objpool.iobj.html#oncreate" class="tsd-kind-icon">on<wbr>Create</a>
-									</li>
-									<li class=" tsd-kind-method tsd-parent-kind-interface">
-										<a href="obj_pool.__global.objpool.iobj.html#onfree" class="tsd-kind-icon">on<wbr>Free</a>
 									</li>
 									<li class=" tsd-kind-method tsd-parent-kind-interface">
 										<a href="obj_pool.__global.objpool.iobj.html#onget" class="tsd-kind-icon">on<wbr>Get</a>
 									</li>
 									<li class=" tsd-kind-method tsd-parent-kind-interface">
 										<a href="obj_pool.__global.objpool.iobj.html#onkill" class="tsd-kind-icon">on<wbr>Kill</a>
+									</li>
+									<li class=" tsd-kind-method tsd-parent-kind-interface">
+										<a href="obj_pool.__global.objpool.iobj.html#onreturn" class="tsd-kind-icon">on<wbr>Return</a>
 									</li>
 								</ul>
 							</li>
@@ -362,13 +368,13 @@
 								<a href="obj_pool.__global.objpool.ipool.html" class="tsd-kind-icon">IPool</a>
 							</li>
 							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
+								<a href="obj_pool.__global.objpool.ipoolinitoption.html" class="tsd-kind-icon">IPool<wbr>Init<wbr>Option</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="obj_pool.__global.objpool.ipoolmgr.html" class="tsd-kind-icon">IPool<wbr>Mgr</a>
 							</li>
 							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="../modules/obj_pool.__global.objpool.html#clas" class="tsd-kind-icon">Clas</a>
-							</li>
-							<li class=" tsd-kind-type-alias tsd-parent-kind-namespace tsd-has-type-parameter">
-								<a href="../modules/obj_pool.__global.objpool.html#toanyindexkey" class="tsd-kind-icon">To<wbr>Any<wbr>Index<wbr>Key</a>
 							</li>
 						</ul>
 					</li>
@@ -391,6 +397,7 @@
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
