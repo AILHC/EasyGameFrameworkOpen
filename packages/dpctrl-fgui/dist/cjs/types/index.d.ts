@@ -128,8 +128,7 @@ declare module '@ailhc/dpctrl-fgui' {
 
 }
 declare module '@ailhc/dpctrl-fgui' {
-	export class FDpctrl implements displayCtrl.ICtrl<fairygui.GComponent> {
-	    onShow(config?: displayCtrl.IShowConfig<any, any, any>): void;
+	export class FDpctrl<T extends fairygui.GComponent = fairygui.GComponent> implements displayCtrl.ICtrl<T> {
 	    key?: any;
 	    isLoading?: boolean;
 	    isLoaded?: boolean;
@@ -141,11 +140,12 @@ declare module '@ailhc/dpctrl-fgui' {
 	    onLoadData?: any;
 	    getRess?(): any[] | string[];
 	    onInit(config?: displayCtrl.IInitConfig<any, any>): void;
+	    onShow(config?: displayCtrl.IShowConfig<any, any, any>): void;
 	    onUpdate(updateData: any): void;
 	    getFace<T>(): displayCtrl.ReturnCtrlType<T>;
 	    onDestroy(destroyRes?: boolean): void;
-	    getNode(): fairygui.GComponent;
-	    protected node: fairygui.GComponent;
+	    getNode(): T;
+	    protected node: T;
 	    onHide(): void;
 	    forceHide(): void;
 	    onResize(): void;

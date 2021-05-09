@@ -190,15 +190,15 @@ var dpctrlFgui = (function (exports) {
     var FDpctrl = (function () {
         function FDpctrl() {
         }
+        FDpctrl.prototype.getRess = function () {
+            return undefined;
+        };
+        FDpctrl.prototype.onInit = function (config) { };
         FDpctrl.prototype.onShow = function (config) {
             if (this.node) {
                 this.node.visible = true;
             }
         };
-        FDpctrl.prototype.getRess = function () {
-            return undefined;
-        };
-        FDpctrl.prototype.onInit = function (config) { };
         FDpctrl.prototype.onUpdate = function (updateData) { };
         FDpctrl.prototype.getFace = function () {
             return this;
