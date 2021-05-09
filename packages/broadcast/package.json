@@ -1,7 +1,7 @@
 {
   "name": "@ailhc/broadcast",
   "globalName": "broadcast",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "一个基于TypeScript的一套**高效灵活**的广播系统，可以帮助开发者**轻松**、**有序**的构建具有**极具复杂性的关联交互**和**状态变化**的游戏和应用。",
   "keywords": [
     "broadcast",

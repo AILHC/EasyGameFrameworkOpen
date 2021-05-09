@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/enet",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "General front-end Socket network management module, with high scalability, development does not need to care about the implementation of the underlying socket, communication protocols, developers can customize the implementation of different underlying sockets and communication protocols",
   "keywords": [
     "net",

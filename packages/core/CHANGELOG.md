@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.2.2...@ailhc/egf-core@1.2.3) (2021-05-09)
+
+**Note:** Version bump only for package @ailhc/egf-core
+
+
+
+
+
 ## [1.2.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/egf-core@1.2.1...@ailhc/egf-core@1.2.2) (2021-04-23)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/dpctrl-c3d",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Cocoscreator3d implements display management module",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-ccc#readme",
@@ -38,7 +38,7 @@
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
   },
   "dependencies": {
-    "@ailhc/display-ctrl": "^1.1.5",
-    "@ailhc/layer": "^0.1.5"
+    "@ailhc/display-ctrl": "^1.1.6",
+    "@ailhc/layer": "^0.1.6"
   }
 }

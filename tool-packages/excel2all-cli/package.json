@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/excel2all-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "一个将excel文件转换为typescript声明文件和json工具\nA tool to convert Excel files to TypeScript declaration files and JSON",
   "author": "AILHC",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
   "dependencies": {
-    "@ailhc/excel2all": "^0.1.0",
+    "@ailhc/excel2all": "^0.2.0",
     "commander": "^7.1.0"
   }
 }

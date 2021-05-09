@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.1.0...@ailhc/excel2all@0.2.0) (2021-05-09)
+
+
+### Bug Fixes
+
+* 修复些bug和完善日志输出 ([ffb24f4](https://github.com/AILHC/EasyGameFrameworkOpen/commit/ffb24f45ba27696d49631423fd11eac84b6b8105))
+
+
+### Features
+
+* 增加自定义输出转换，完善log输出，增加测试配置表，用于功能测试 ([528fe7a](https://github.com/AILHC/EasyGameFrameworkOpen/commit/528fe7a3536fd11bf1aed64c41ebedde97871cbe))
+
+
+
+
+
 # 0.1.0 (2021-03-31)
 
 

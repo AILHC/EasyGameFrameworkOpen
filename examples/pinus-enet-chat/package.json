@@ -1,6 +1,6 @@
 {
   "name": "pinus-enet-chat",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "main": "index.js",
   "author": "AILHC",
   "license": "MIT",
@@ -14,8 +14,8 @@
     "devClient": "node ./web-server/app.js"
   },
   "dependencies": {
-    "@ailhc/enet": "^1.2.3",
-    "@ailhc/enet-pinus-pb": "^0.2.5",
+    "@ailhc/enet": "^1.2.4",
+    "@ailhc/enet-pinus-pb": "^0.2.6",
     "@types/bluebird": "^3.5.19",
     "@types/crc": "^3.4.0",
     "@types/node": "8.10.54",
