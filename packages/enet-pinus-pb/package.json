@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/enet-pinus-pb",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "基于enet.IProtoHandler的适用于Pinus或pomelo的前端协议处理器",
   "keywords": [
     "pinus",
@@ -45,6 +45,6 @@
   },
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/enet-pinus-pb#readme",
   "devDependencies": {
-    "@ailhc/enet": "^1.2.3"
+    "@ailhc/enet": "^1.2.4"
   }
 }

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-ccc-full@1.2.0...egf-ccc-full@1.2.1) (2021-05-09)
+
+
+### Bug Fixes
+
+* 修复示例声明报错 ([5d15cb7](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/commits/5d15cb7c8baae30bd7619daa3352ffbb84245a24))
+* 修改dpctrl-fgui的引用版本号 ([3eceb6c](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/commits/3eceb6c68671ba7c5284e4e20d721b9c7fde303f))
+* 升级到2.4.4，修复不同环境editor_require_fix报错的问题 ([b84e9d7](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/commits/b84e9d764b990fabf964a31145c59c47f9376873))
+
+
+
+
+
 # [1.2.0](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-ccc-full@1.1.2...egf-ccc-full@1.2.0) (2021-05-05)
 
 

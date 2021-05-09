@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/obj-pool",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "General purpose object pool module, provides a concise and complete interface for managing object pools for object generation and collection, as well as object pool manager.",
   "keywords": [
     "object",

@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/display-ctrl",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "General purpose display controller module, simple and high scalability",
   "author": "AILHC <505126057@qq.com>",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl#readme",

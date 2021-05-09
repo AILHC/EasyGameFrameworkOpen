@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/excel2all",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "将excel转换成任意文件格式工具",
   "keywords": [
     "excel",
@@ -36,7 +36,6 @@
     "build:iife": "egf build -f iife -m true",
     "clean-dist": "rimraf dist"
   },
-  
   "dependencies": {
     "@types/fs-extra": "^9.0.2",
     "@types/micromatch": "^4.0.1",
@@ -46,7 +45,6 @@
     "micromatch": "^4.0.2",
     "xlsx": "^0.16.2"
   },
-  
   "devDependencies": {
     "ts-node": "^9.1.1",
     "typescript": "^4.1.5"

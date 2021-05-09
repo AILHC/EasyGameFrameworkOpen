@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-core",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "This is the core of EasyGameFramework, which provides the ability to register modules, get module instances, and load subroutine scripts",
   "keywords": [
     "module",
