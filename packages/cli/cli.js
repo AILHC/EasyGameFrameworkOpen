@@ -58,6 +58,7 @@ program
     .option('-nrc, --no-remove-comments [removeComments]', '是否移除注释,默认移除')
     .option('-t, --target [target]', '编译目标,默认使用tsconfig中的编译目标')
     .option('-m, --minify [minify]', '是否压缩，默认不压缩')
+    .option('-ms, --minify-sourcemap [minifySourcemap]', '是否生成压缩后的js的sourcemap，默认不生成')
     .option('-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成")
     .option('-bn, --banner [banner]', "自定义输出文件顶部文本")
     .option('-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入")

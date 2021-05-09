@@ -140,22 +140,22 @@ async function rollupBuild(option) {
     /**
      * @type {IEgfCompileOption}
      */
-    let optionOverride;
+    let configOption;
     let configPath = typeof option.config === "string" ? option.config : "egf.compile.js";
     if (!path.isAbsolute(configPath)) {
         configPath = path.join(projRoot, configPath);
     }
-
-    try {
-        optionOverride = require(configPath)
-    } catch (error) {
-        console.warn(`[warning] 没有配置文件或配置文件有问题:${configPath},如果不用配置文件则无视这个警告`);
+    if(fs.existsSync(configPath)){
+        try {
+            configOption = require(configPath)
+        } catch (error) {
+            console.error(`配置文件有问题:${configPath}`);
+        }
+        if (configOption) {
+            option = Object.assign(configOption, option);
+        }
     }
-
-
-    if (optionOverride) {
-        option = Object.assign(option, optionOverride);
-    }
+    
     let format = option.format ? option.format : "cjs";
     const isIIFE = format.includes("iife") || format.includes("umd");
     if (isIIFE) {
@@ -448,7 +448,7 @@ async function rollupBuild(option) {
                 }
             }
             const terserPlugin = terser.terser(terserOption);
-            outputOption.sourcemap = false;
+            outputOption.sourcemap = !!option.minifySourcemap;
             outputOption.plugins = [terserPlugin];
             if (!(entrys.length > 1)) {
                 outputOption.file = outputOption.file.replace(".", ".min.");

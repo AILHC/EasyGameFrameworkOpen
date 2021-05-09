@@ -25,6 +25,8 @@ declare interface IEgfCompileOption {
     target: "es5" | "es6",
     /**是否压缩，默认不压缩 */
     minify: boolean,
+    /**是否生成压缩后的js的sourcemap，默认不生成 */
+    minifySourcemap: boolean
     /**是否生成声明文件，默认生成 */
     genDts: boolean,
     /**自定义输出文件顶部文本 */

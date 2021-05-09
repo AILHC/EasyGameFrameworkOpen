@@ -45,6 +45,7 @@ npm install -D @ailhc/egf-cli
 * '-nrc, --no-remove-comments [removeComments]', '是否移除注释,默认移除'
 * '-t, --target [target]', '编译目标,默认使用tsconfig中的编译目标'
 * '-m, --minify [minify]', '是否压缩，默认不压缩'
+* '-ms, --minify-sourcemap [minifySourcemap]', '是否生成压缩后的js的sourcemap，默认不生成'
 * '-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成"
 * '-bn, --banner [banner]', "自定义输出文件顶部文本"
 * '-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入"
@@ -59,6 +60,8 @@ npm install -D @ailhc/egf-cli
 ### 自定义配置文件接口
 
 ```ts
+
+
 
 declare interface IEgfCompileOption {
     /**项目根路径，默认为执行命令处 process.cwd() */
@@ -85,6 +88,8 @@ declare interface IEgfCompileOption {
     target: "es5" | "es6",
     /**是否压缩，默认不压缩 */
     minify: boolean,
+    /**是否生成压缩后的js的sourcemap，默认不生成 */
+    minifySourcemap: boolean
     /**是否生成声明文件，默认生成 */
     genDts: boolean,
     /**自定义输出文件顶部文本 */
@@ -144,5 +149,7 @@ declare interface IEgfCompileOption {
 ### 注意事项
 1. 多入口编译暂不支持声明文件输出
 2. tsconfig中没法控制sourcemap的生成，需要使用命令行参数或者配置文件控制
+3. 命令行参数配置优先于config文件参数配置
+4. inline类型的 sourcemap 适用性更广，index.js.map的方式cocoscreator不识别
 
 
