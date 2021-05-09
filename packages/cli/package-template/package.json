@@ -7,7 +7,7 @@
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
-    "access":"public"
+    "access": "public"
   },
   "main": "dist/cjs/lib/index.js",
   "module": "dist/es/lib/index.mjs",
@@ -27,6 +27,8 @@
     "import": "./dist/es/lib/index.mjs"
   },
   "scripts": {
+    "//创建index.ts,具体参数看文档": "",
+    "cti": "egf cti -d ./src",
     "watch:cjs": "egf build -w true -f cjs -s inline",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
