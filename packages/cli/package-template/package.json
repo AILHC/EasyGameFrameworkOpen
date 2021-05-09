@@ -27,7 +27,7 @@
     "import": "./dist/es/lib/index.mjs"
   },
   "scripts": {
-    "watch:cjs": "egf build -w true -f cjs",
+    "watch:cjs": "egf build -w true -f cjs -s inline",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
     "build:umd": "egf build -f umd:packageTemplate",
