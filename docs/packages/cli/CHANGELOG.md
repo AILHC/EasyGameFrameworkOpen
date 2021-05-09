@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.5](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.4...@ailhc/egf-cli@1.6.5) (2021-05-09)
+
+
+### Bug Fixes
+
+* 修复sourcemap生成bug,完善sourcemap生成 ([2f9fe4b](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/2f9fe4bc90d6e19f696d839957b6d4da05565227))
+* 修复sourcemap生成问题 ([f25a622](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/f25a622e58cc36518a4d6dd40aea9c5bb20493c4))
+* 修复命令行参数不起效的问题，修改为命令行参数配置优先 ([966ba33](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/966ba331fb3a5fbd399667760e42289de8bc56b9))
+* 完善iife和umd规范的声明文件生成逻辑 ([c5655c4](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/c5655c406cd42114869991b24faff99b3f9d524e))
+
+
+
+
+
 ## [1.6.4](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.3...@ailhc/egf-cli@1.6.4) (2021-05-05)
 
 

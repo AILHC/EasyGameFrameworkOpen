@@ -87,6 +87,7 @@
 				<ul class="tsd-hierarchy">
 					<li><a href="../classes/enet.defaultprotohandler.html" class="tsd-signature-type">DefaultProtoHandler</a></li>
 					<li><a href="../classes/enet_pbws.pbprotohandler.html" class="tsd-signature-type">PbProtoHandler</a></li>
+					<li><a href="../classes/enet_pinus_pb.pinusprotohandler.html" class="tsd-signature-type">PinusProtoHandler</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -96,6 +97,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="enet.__global.enet.iprotohandler.html#handshakeres" class="tsd-kind-icon">hand<wbr>Shake<wbr>Res</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="enet.__global.enet.iprotohandler.html#heartbeatconfig" class="tsd-kind-icon">heartbeat<wbr>Config</a></li>
 							</ul>
 						</section>
@@ -114,17 +116,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="handshakeres" class="tsd-anchor"></a>
+					<h3>hand<wbr>Shake<wbr>Res</h3>
+					<div class="tsd-signature tsd-kind-icon">hand<wbr>Shake<wbr>Res<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in packages/enet/src/net-interfaces.ts:111</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>握手数据</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="heartbeatconfig" class="tsd-anchor"></a>
 					<h3>heartbeat<wbr>Config</h3>
 					<div class="tsd-signature tsd-kind-icon">heartbeat<wbr>Config<span class="tsd-signature-symbol">:</span> <a href="enet.__global.enet.iheartbeatconfig.html" class="tsd-signature-type">IHeartBeatConfig</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in packages/enet/src/net-interfaces.ts:128</li>
+							<li>Defined in packages/enet/src/net-interfaces.ts:109</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>心跳配置</p>
+							<p>心跳配置,如果为空则和后端没有心跳交互</p>
 						</div>
 					</div>
 				</section>
@@ -141,7 +158,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/enet/src/net-interfaces.ts:124</li>
+									<li>Defined in packages/enet/src/net-interfaces.ts:133</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -177,7 +194,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/enet/src/net-interfaces.ts:119</li>
+									<li>Defined in packages/enet/src/net-interfaces.ts:128</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -220,7 +237,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/enet/src/net-interfaces.ts:113</li>
+									<li>Defined in packages/enet/src/net-interfaces.ts:122</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -260,7 +277,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/enet/src/net-interfaces.ts:107</li>
+									<li>Defined in packages/enet/src/net-interfaces.ts:116</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -313,6 +330,9 @@
 						<a href="../modules/dpctrl_ccc.html">dpctrl-<wbr>ccc</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="../modules/dpctrl_fgui.html">dpctrl-<wbr>fgui</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="../modules/egf_protobuf_cli.html">egf-<wbr>protobuf-<wbr>cli</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -333,6 +353,12 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/enet_pbws.html">enet-<wbr>pbws</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/enet_pinus_pb.html">enet-<wbr>pinus-<wbr>pb</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/excel2all.html">excel2all</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/layer.html">layer</a>
@@ -385,6 +411,9 @@
 							<li class="current tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
 								<a href="enet.__global.enet.iprotohandler.html" class="tsd-kind-icon">IProto<wbr>Handler</a>
 								<ul>
+									<li class=" tsd-kind-property tsd-parent-kind-interface">
+										<a href="enet.__global.enet.iprotohandler.html#handshakeres" class="tsd-kind-icon">hand<wbr>Shake<wbr>Res</a>
+									</li>
 									<li class=" tsd-kind-property tsd-parent-kind-interface">
 										<a href="enet.__global.enet.iprotohandler.html#heartbeatconfig" class="tsd-kind-icon">heartbeat<wbr>Config</a>
 									</li>
@@ -444,6 +473,7 @@
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
 			</ul>

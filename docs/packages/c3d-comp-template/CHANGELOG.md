@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3d-comp-template@1.0.6...c3d-comp-template@1.0.7) (2021-05-09)
+
+**Note:** Version bump only for package c3d-comp-template
+
+
+
+
+
 ## [1.0.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3d-comp-template@1.0.5...c3d-comp-template@1.0.6) (2021-04-23)
 
 
