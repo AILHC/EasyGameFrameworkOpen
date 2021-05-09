@@ -11,6 +11,7 @@
       "es2015",
       "es2016.array.include"
     ],
+    "noEmit": true,
     "sourceMap": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,

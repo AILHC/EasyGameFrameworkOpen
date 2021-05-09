@@ -73,6 +73,7 @@
     "test:single:build:autocti": "egf build -p ./__test__ -f cjs -acti -e ./src/index.ts",
     "test:build:autocti": "egf build -p ./__test__ -f cjs -acti -e ./src/index.ts ./src2/index.ts",
     "test:watch:autocti": "egf build -p ./__test__ -w -f cjs -acti -e ./src/index.ts ./src2/index.ts",
-    "single:test:watch:autocti": "egf build -p ./__test__ -w -f cjs -acti -e ./src/index.ts"
+    "single:test:watch:autocti": "egf build -p ./__test__ -w -f cjs -acti -e ./src/index.ts",
+    "single:test:iife-dts-sourcemap":"egf build -p ./__test__ -f iife:testModule -s inline"
   }
 }
