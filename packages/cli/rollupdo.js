@@ -145,7 +145,7 @@ async function rollupBuild(option) {
     if (!path.isAbsolute(configPath)) {
         configPath = path.join(projRoot, configPath);
     }
-    if(fs.existsSync(configPath)){
+    if (fs.existsSync(configPath)) {
         try {
             configOption = require(configPath)
         } catch (error) {
@@ -155,7 +155,7 @@ async function rollupBuild(option) {
             option = Object.assign(configOption, option);
         }
     }
-    
+
     let format = option.format ? option.format : "cjs";
     const isIIFE = format.includes("iife") || format.includes("umd");
     if (isIIFE) {
@@ -519,18 +519,56 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                 return params.importedModuleId
             }
         };
-        
+
         dtsGen(dtsGOpt).then((args) => {
             if (isIIFE) {
                 let dtsFileStr = fs.readFileSync(dtsGOpt.out, "utf-8");
                 //去掉export * from ""
                 //去掉export default 
                 //去掉export 
-                
+
                 // dtsFileStr = dtsFileStr.replace(/export \* from /g, "");
-                dtsFileStr = dtsFileStr.replace(new RegExp(`export \\* from '${moduleName}';`,"g"),"");
+                dtsFileStr = dtsFileStr.replace(new RegExp(`export \\* from '${moduleName}';`, "g"), "");
                 dtsFileStr = dtsFileStr.replace(/export default /g, "");
                 dtsFileStr = dtsFileStr.replace(/export /g, "");
+                let namespacesStr = `\ndeclare namespace ${moduleName} {`;
+                const typeRegx = new RegExp(/(class|interface){1}\s(.*){/gm);
+                const matchs = [...dtsFileStr.matchAll(typeRegx)];
+                let classOrInterfaceName;
+                let type;
+
+                for (let i = 0; i < matchs.length; i++) {
+                    // type = matchs[i][1];
+
+                    classOrInterfaceName = matchs[i][2];
+
+                    if (classOrInterfaceName.includes("<") && classOrInterfaceName.includes("extends")) {
+
+                        if (classOrInterfaceName.indexOf("<") < classOrInterfaceName.indexOf("extends")) {
+                            classOrInterfaceName = classOrInterfaceName.split("<")[0];
+                        } else {
+                            classOrInterfaceName = classOrInterfaceName.split(" ")[0];
+                        }
+                    } else if (classOrInterfaceName.includes("<") && classOrInterfaceName.includes("implements")) {
+                        if (classOrInterfaceName.indexOf("<") < classOrInterfaceName.indexOf("implements")) {
+                            classOrInterfaceName = classOrInterfaceName.split("<")[0];
+                        } else {
+                            classOrInterfaceName = classOrInterfaceName.split(" ")[0];
+                        }
+                    } else if ((classOrInterfaceName.includes("extends")
+                        || classOrInterfaceName.includes("implements"))
+                        && !classOrInterfaceName.includes("<")
+                    ) {
+                        classOrInterfaceName = classOrInterfaceName.split(" ")[0];
+                    } else if (classOrInterfaceName.includes("<")) {
+                        classOrInterfaceName = classOrInterfaceName.split("<")[0];
+                    }
+                    classOrInterfaceName = classOrInterfaceName.trim();
+                    namespacesStr += `\n\ttype ${classOrInterfaceName} = import('${moduleName}').${classOrInterfaceName};`;
+
+                }
+                namespacesStr += "\n}";
+                dtsFileStr += namespacesStr;
                 // dtsFileStr = dtsFileStr.replace(new RegExp(`${moduleName}`,"g"),"");
                 dtsFileStr += `\ndeclare const ${moduleName}:typeof import("${moduleName}");`;
                 fs.writeFileSync(dtsGOpt.out, dtsFileStr);
