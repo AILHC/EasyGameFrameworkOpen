@@ -116,47 +116,48 @@ github:[EasyGameFramework](https://github.com/AILHC/EasyGameFrameworkOpen/tree/m
 
 2. 资源处理接口定制
 每个项目都有自己的资源处理需求，所以这部分逻辑解耦出来，让使用者注入资源处理器。
+
     ```ts
     //egf-ccc-full DpcTestMainComp.ts
     const dpcMgr = new DpcMgr<IDpcTestViewKeyMap, any, IDpcTestViewShowDataMap>();
 
-            dpcMgr.init(
-                {
-                    loadRes: (config) => {
-                        const onLoadData: IDpcTestOnLoadData = config.onLoadData;
-                        onLoadData?.showLoading && dtM.uiMgr.showDpc("LoadingView");
-                        cc.assetManager.loadAny(config.ress,
-                            { bundle: "resources" },
-                            (finish, total) => {
-                                console.log(`${config.key}加载中:${finish}/${total}`);
-                                onLoadData?.showLoading && dtM.uiMgr.updateDpc("LoadingView", { finished: finish, total: total })
-                            },
-                            (err, items) => {
-                                if (err) {
-                                    console.error(`加载失败`, err);
-                                    config.error && config.error();
-                                } else {
-                                    config.complete && config.complete();
-                                }
-                                onLoadData?.showLoading && dtM.uiMgr.hideDpc("LoadingView");
-                            })
+    dpcMgr.init(
+        {
+            loadRes: (config) => {
+                const onLoadData: IDpcTestOnLoadData = config.onLoadData;
+                onLoadData?.showLoading && dtM.uiMgr.showDpc("LoadingView");
+                cc.assetManager.loadAny(config.ress,
+                    { bundle: "resources" },
+                    (finish, total) => {
+                        console.log(`${config.key}加载中:${finish}/${total}`);
+                        onLoadData?.showLoading && dtM.uiMgr.updateDpc("LoadingView", { finished: finish, total: total })
                     },
-                    releaseRes: (ctrlIns) => {
-                        const ress = ctrlIns.getRess();
-                        if (ress && ress.length) {
-                            let asset: cc.Asset;
-                            ress.forEach((res: { path: string }) => {
-                                asset = cc.resources.get(res.path);
-                                if (asset) {
-                                    cc.assetManager.releaseAsset(asset);
-                                }
-                            });
-
+                    (err, items) => {
+                        if (err) {
+                            console.error(`加载失败`, err);
+                            config.error && config.error();
+                        } else {
+                            config.complete && config.complete();
                         }
-                    }
+                        onLoadData?.showLoading && dtM.uiMgr.hideDpc("LoadingView");
+                    })
+            },
+            releaseRes: (ctrlIns) => {
+                const ress = ctrlIns.getRess();
+                if (ress && ress.length) {
+                    let asset: cc.Asset;
+                    ress.forEach((res: { path: string }) => {
+                        asset = cc.resources.get(res.path);
+                        if (asset) {
+                            cc.assetManager.releaseAsset(asset);
+                        }
+                    });
 
                 }
-            )
+            }
+
+        }
+    )
     ```
 
 #### 开始使用
@@ -215,6 +216,11 @@ github:[EasyGameFramework](https://github.com/AILHC/EasyGameFrameworkOpen/tree/m
         }
     }
     ```
+* 注册界面
+
+    ```ts
+    dpcMgr.registTypes([DepResView]);
+    ```
 
 **来一串基本操作:调用管理器接口**
 1. 显示
@@ -225,9 +231,10 @@ github:[EasyGameFramework](https://github.com/AILHC/EasyGameFrameworkOpen/tree/m
 
     dtM.uiMgr.showDpc("MutiInsView",onShowData);//打出双引号就有类型提示了
     ```
-所传数据也有类型提示，需要在任意地方声明（最好是在对应的控制器代码文件中声明）
-这里以MutiInsView为例，具体可见: 
-[examples\egf-ccc-full\assets\tests\display-ctrl\view-ctrls\MutiInsView.ts](https://github.com/AILHC/EasyGameFrameworkOpen/blob/main/examples/egf-ccc-full/assets/tests/display-ctrl/view-ctrls/MutiInsView.ts)
+    所传数据也有类型提示，需要在任意地方声明（最好是在对应的控制器代码文件中声明）
+    这里以MutiInsView为例，具体可见: 
+    [examples\egf-ccc-full\assets\tests\display-ctrl\view-ctrls\MutiInsView.ts](https://github.com/AILHC/EasyGameFrameworkOpen/blob/main/examples/egf-ccc-full/assets/tests/display-ctrl/view-ctrls/MutiInsView.ts);
+
     ```ts
     declare global {
         interface IDpcTestViewKeyMap {
