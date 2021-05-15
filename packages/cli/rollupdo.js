@@ -145,7 +145,7 @@ async function rollupBuild(option) {
     if (!path.isAbsolute(configPath)) {
         configPath = path.join(projRoot, configPath);
     }
-    if(fs.existsSync(configPath)){
+    if (fs.existsSync(configPath)) {
         try {
             configOption = require(configPath)
         } catch (error) {
@@ -155,7 +155,7 @@ async function rollupBuild(option) {
             option = Object.assign(configOption, option);
         }
     }
-    
+
     let format = option.format ? option.format : "cjs";
     const isIIFE = format.includes("iife") || format.includes("umd");
     if (isIIFE) {
@@ -519,18 +519,116 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
                 return params.importedModuleId
             }
         };
-        
+
         dtsGen(dtsGOpt).then((args) => {
             if (isIIFE) {
+                const ts = require("typescript");
+
                 let dtsFileStr = fs.readFileSync(dtsGOpt.out, "utf-8");
                 //去掉export * from ""
                 //去掉export default 
                 //去掉export 
-                
+
                 // dtsFileStr = dtsFileStr.replace(/export \* from /g, "");
-                dtsFileStr = dtsFileStr.replace(new RegExp(`export \\* from '${moduleName}';`,"g"),"");
+                const source = ts.createSourceFile(`${moduleName}.d.ts`, dtsFileStr, ts.ScriptTarget.ESNext, true);
+                const statements = source.statements;
+                /**
+                 * @type {ts.Statement}
+                 */
+                let statement;
+                /**
+                 * 
+                 * @param {ts.Statement} statement 
+                 * @returns {statement is ts.ModuleDeclaration}
+                 */
+                const isModuleDeclare = function (statement) {
+                    return statement.kind === ts.SyntaxKind.ModuleDeclaration;
+                }
+                let namespacesStr = `\ndeclare namespace ${moduleName} {`;
+                for (let i = 0; i < statements.length; i++) {
+                    statement = statements[i];
+
+                    if (isModuleDeclare(statement)) {
+                        /**
+                         * @type {ts.ModuleBlock}
+                         */
+                        let moduleBlock = statement.body;
+                        let childStatements = moduleBlock.statements;
+                        for (let k = 0; k < childStatements.length; k++) {
+                            /**
+                             * @type {ts.ClassDeclaration}
+                             */
+                            let childeStatement = childStatements[k];
+
+                            if (childStatements[k].kind === ts.SyntaxKind.ClassDeclaration) {
+                                //泛型处理
+                                const typeParameters = childeStatement.typeParameters;
+                                let typeStr = "";
+                                let refTypeStr = "";
+                                if (typeParameters && typeParameters.length > 0) {
+                                    typeStr = "<";
+                                    refTypeStr = "<";
+
+                                    for (let j = 0; j < typeParameters.length; j++) {
+                                        typeStr += typeParameters[j].getFullText();
+                                        refTypeStr += typeParameters[j].name.escapedText;
+                                        if (j < typeParameters.length - 1) {
+                                            typeStr += ", ";
+                                            refTypeStr += ", ";
+                                        }
+                                    }
+                                    typeStr += ">";
+                                    refTypeStr += ">";
+                                }
+                                let className = childeStatement.name.escapedText;
+                                namespacesStr += `\n\ttype ${className + typeStr} = import('${moduleName}').${className + refTypeStr};`;
+                            }
+                        }
+                    }
+                }
+                namespacesStr += "\n}";
+                dtsFileStr = dtsFileStr.replace(new RegExp(`export \\* from '${moduleName}';`, "g"), "");
+                dtsFileStr = dtsFileStr.replace(/export {};/g, "");
                 dtsFileStr = dtsFileStr.replace(/export default /g, "");
                 dtsFileStr = dtsFileStr.replace(/export /g, "");
+
+                // const typeRegx = new RegExp(/(class|interface){1}\s(.*){/gm);
+                // const matchs = [...dtsFileStr.matchAll(typeRegx)];
+                // let classOrInterfaceName;
+                // let type;
+
+                // for (let i = 0; i < matchs.length; i++) {
+                //     // type = matchs[i][1];
+
+                //     classOrInterfaceName = matchs[i][2];
+
+                //     if (classOrInterfaceName.includes("<") && classOrInterfaceName.includes("extends")) {
+
+                //         if (classOrInterfaceName.indexOf("<") < classOrInterfaceName.indexOf("extends")) {
+                //             classOrInterfaceName = classOrInterfaceName.split("<")[0];
+                //         } else {
+                //             classOrInterfaceName = classOrInterfaceName.split(" ")[0];
+                //         }
+                //     } else if (classOrInterfaceName.includes("<") && classOrInterfaceName.includes("implements")) {
+                //         if (classOrInterfaceName.indexOf("<") < classOrInterfaceName.indexOf("implements")) {
+                //             classOrInterfaceName = classOrInterfaceName.split("<")[0];
+                //         } else {
+                //             classOrInterfaceName = classOrInterfaceName.split(" ")[0];
+                //         }
+                //     } else if ((classOrInterfaceName.includes("extends")
+                //         || classOrInterfaceName.includes("implements"))
+                //         && !classOrInterfaceName.includes("<")
+                //     ) {
+                //         classOrInterfaceName = classOrInterfaceName.split(" ")[0];
+                //     } else if (classOrInterfaceName.includes("<")) {
+                //         classOrInterfaceName = classOrInterfaceName.split("<")[0];
+                //     }
+                //     classOrInterfaceName = classOrInterfaceName.trim();
+                //     namespacesStr += `\n\ttype ${classOrInterfaceName} = import('${moduleName}').${classOrInterfaceName};`;
+
+                // }
+
+                dtsFileStr += namespacesStr;
                 // dtsFileStr = dtsFileStr.replace(new RegExp(`${moduleName}`,"g"),"");
                 dtsFileStr += `\ndeclare const ${moduleName}:typeof import("${moduleName}");`;
                 fs.writeFileSync(dtsGOpt.out, dtsFileStr);
