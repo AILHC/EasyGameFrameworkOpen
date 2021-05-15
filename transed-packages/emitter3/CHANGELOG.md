@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3demitter3@1.1.6...c3demitter3@1.1.7) (2021-05-15)
+
+
+### Bug Fixes
+
+* 修复iife规范的.d.ts声明错误 ([5deed01](https://github.com/AILHC/EasyGameFrameworkOpen/commit/5deed01795ca4abab2bbafbb7b55664d4d23be8f))
+
+
+
+
+
 ## [1.1.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/c3demitter3@1.1.5...c3demitter3@1.1.6) (2021-05-09)
 
 **Note:** Version bump only for package c3demitter3

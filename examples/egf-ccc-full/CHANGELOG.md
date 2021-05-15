@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-ccc-full@1.2.2...egf-ccc-full@1.2.3) (2021-05-15)
+
+**Note:** Version bump only for package egf-ccc-full
+
+
+
+
+
 ## [1.2.2](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-ccc-full@1.2.1...egf-ccc-full@1.2.2) (2021-05-09)
 
 **Note:** Version bump only for package egf-ccc-full
