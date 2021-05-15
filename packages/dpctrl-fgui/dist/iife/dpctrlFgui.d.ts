@@ -169,7 +169,7 @@ declare module 'dpctrlFgui' {
 
 }
 declare module 'dpctrlFgui' {
-	{};
+	
 
 }
 declare module 'dpctrlFgui' {
@@ -182,4 +182,11 @@ declare module 'dpctrlFgui' {
 
 }
 
+declare namespace dpctrlFgui {
+	type BinderTool<T = any> = import('dpctrlFgui').BinderTool<T>;
+	type BindNode2TargetPlugin = import('dpctrlFgui').BindNode2TargetPlugin;
+	type FBinderTool = import('dpctrlFgui').FBinderTool;
+	type FDpctrl<T extends fairygui.GComponent = fairygui.GComponent> = import('dpctrlFgui').FDpctrl<T>;
+	type FLayer = import('dpctrlFgui').FLayer;
+}
 declare const dpctrlFgui:typeof import("dpctrlFgui");

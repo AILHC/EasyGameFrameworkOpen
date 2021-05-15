@@ -48,4 +48,8 @@ declare module 'dpctrlCcc' {
 
 }
 
+declare namespace dpctrlCcc {
+	type NodeCtrl = import('dpctrlCcc').NodeCtrl;
+	type Layer = import('dpctrlCcc').Layer;
+}
 declare const dpctrlCcc:typeof import("dpctrlCcc");

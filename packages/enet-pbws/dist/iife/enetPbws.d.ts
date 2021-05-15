@@ -386,4 +386,8 @@ declare module 'enetPbws' {
 
 }
 
+declare namespace enetPbws {
+	type Byte = import('enetPbws').Byte;
+	type PbProtoHandler = import('enetPbws').PbProtoHandler;
+}
 declare const enetPbws:typeof import("enetPbws");

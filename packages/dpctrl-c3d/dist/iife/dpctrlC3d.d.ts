@@ -50,4 +50,8 @@ declare module 'dpctrlC3d' {
 
 }
 
+declare namespace dpctrlC3d {
+	type NodeCtrl = import('dpctrlC3d').NodeCtrl;
+	type Layer = import('dpctrlC3d').Layer;
+}
 declare const dpctrlC3d:typeof import("dpctrlC3d");
