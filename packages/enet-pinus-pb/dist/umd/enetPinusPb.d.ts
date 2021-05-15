@@ -741,7 +741,7 @@ declare module 'enetPinusPb' {
 	    encode(id: number, route: string, msg: any): ByteArray;
 	    decode(buffer: ByteArray): IPinusDecodeMessage;
 	}
-	{};
+	
 
 }
 declare module 'enetPinusPb' {
@@ -763,7 +763,7 @@ declare module 'enetPinusPb' {
 	        length: number;
 	    };
 	}
-	{};
+	
 
 }
 declare module 'enetPinusPb' {
@@ -836,4 +836,14 @@ declare module 'enetPinusPb' {
 
 }
 
+declare namespace enetPinusPb {
+	type Endian = import('enetPinusPb').Endian;
+	type ByteArray = import('enetPinusPb').ByteArray;
+	type Protobuf = import('enetPinusPb').Protobuf;
+	type Protocol = import('enetPinusPb').Protocol;
+	type Routedic = import('enetPinusPb').Routedic;
+	type Message = import('enetPinusPb').Message;
+	type Package = import('enetPinusPb').Package;
+	type PinusProtoHandler = import('enetPinusPb').PinusProtoHandler;
+}
 declare const enetPinusPb:typeof import("enetPinusPb");

@@ -315,7 +315,7 @@ declare module 'displayCtrl' {
 	        }
 	    }
 	}
-	{};
+	
 
 }
 declare module 'displayCtrl' {
@@ -374,4 +374,7 @@ declare module 'displayCtrl' {
 
 }
 
+declare namespace displayCtrl {
+	type DpcMgr<CtrlKeyMapType = any,  InitDataTypeMapType = any,  ShowDataTypeMapType = any,  UpdateDataTypeMapType = any> = import('displayCtrl').DpcMgr<CtrlKeyMapType, InitDataTypeMapType, ShowDataTypeMapType, UpdateDataTypeMapType>;
+}
 declare const displayCtrl:typeof import("displayCtrl");

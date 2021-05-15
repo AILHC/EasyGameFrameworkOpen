@@ -371,7 +371,7 @@ declare module 'enet' {
 	        }
 	    }
 	}
-	{};
+	
 
 }
 declare module 'enet' {
@@ -615,4 +615,9 @@ declare module 'enet' {
 
 }
 
+declare namespace enet {
+	type DefaultNetEventHandler = import('enet').DefaultNetEventHandler;
+	type WSocket = import('enet').WSocket;
+	type NetNode<ProtoKeyType> = import('enet').NetNode<ProtoKeyType>;
+}
 declare const enet:typeof import("enet");

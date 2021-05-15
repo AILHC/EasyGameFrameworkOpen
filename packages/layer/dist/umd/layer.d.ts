@@ -17,7 +17,7 @@ declare module 'layer' {
 	    addNodeToLayer(node: T, layerType: number): void;
 	    getLayerByType<T extends layer.ILayer>(layerType: number): T;
 	}
-	{};
+	
 
 }
 declare module 'layer' {
@@ -107,7 +107,7 @@ declare module 'layer' {
 	        }
 	    }
 	}
-	{};
+	
 
 }
 declare module 'layer' {
@@ -116,4 +116,7 @@ declare module 'layer' {
 
 }
 
+declare namespace layer {
+	type LayerMgr<T> = import('layer').LayerMgr<T>;
+}
 declare const layer:typeof import("layer");

@@ -203,7 +203,7 @@ declare module 'broadcast' {
 	        }
 	    }
 	}
-	{};
+	
 
 }
 declare module 'broadcast' {
@@ -212,4 +212,7 @@ declare module 'broadcast' {
 
 }
 
+declare namespace broadcast {
+	type Broadcast<MsgKeyType extends broadcast.IMsgKey,  ValueType = any,  ResultType = any> = import('broadcast').Broadcast<MsgKeyType, ValueType, ResultType>;
+}
 declare const broadcast:typeof import("broadcast");

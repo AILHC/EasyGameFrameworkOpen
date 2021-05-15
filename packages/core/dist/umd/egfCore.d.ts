@@ -101,7 +101,7 @@ declare module 'egfCore' {
 	        }
 	    }
 	}
-	{};
+	
 
 }
 declare module 'egfCore' {
@@ -110,4 +110,7 @@ declare module 'egfCore' {
 
 }
 
+declare namespace egfCore {
+	type App<ModuleMap = any> = import('egfCore').App<ModuleMap>;
+}
 declare const egfCore:typeof import("egfCore");

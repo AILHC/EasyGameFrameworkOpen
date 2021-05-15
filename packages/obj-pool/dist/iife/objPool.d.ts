@@ -309,7 +309,7 @@ declare module 'objPool' {
 	        }
 	    }
 	}
-	{};
+	
 
 }
 declare module 'objPool' {
@@ -319,4 +319,8 @@ declare module 'objPool' {
 
 }
 
+declare namespace objPool {
+	type BaseObjPool<T = any,  onGetDataType = any> = import('objPool').BaseObjPool<T, onGetDataType>;
+	type ObjPoolMgr<SignKeyAndOnGetDataMap = any> = import('objPool').ObjPoolMgr<SignKeyAndOnGetDataMap>;
+}
 declare const objPool:typeof import("objPool");
