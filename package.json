@@ -19,9 +19,9 @@
   ],
   "scripts": {
     "//梳理版本不推送": "",
-    "vcnp": "lerna version --conventional-commits --no-push --git-remote github --force-git-tag --include-merged-tags",
+    "vcnp": "lerna version --conventional-commits --no-push --git-remote origin --force-git-tag --include-merged-tags",
     "//梳理版本推送": "",
-    "vc": "lerna version --conventional-commits --git-remote origin --force-git-tag  --include-merged-tags",
+    "vc": "lerna version --conventional-commits --git-remote origin --force-git-tag --include-merged-tags",
     "//调用所有非private包的构建命令": "",
     "ba": "lerna exec --concurrency 2 --no-private --include-dependencies --no-bail --stream -- yarn build:all",
     "//发布所有包到npmjs": "",
