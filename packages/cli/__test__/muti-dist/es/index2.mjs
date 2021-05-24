@@ -1,15 +1,11 @@
-var classA = /** @class */ (function () {
+var classA = (function () {
     function classA() {
     }
-    /**
-     * ffjfjf
-     * @param a
-     */
     classA.prototype.sayA = function (a) { };
     return classA;
 }());
 
-var classB = /** @class */ (function () {
+var classB = (function () {
     function classB() {
     }
     classB.prototype.sayb = function (b) {
@@ -18,7 +14,7 @@ var classB = /** @class */ (function () {
     return classB;
 }());
 
-var classD = /** @class */ (function () {
+var classD = (function () {
     function classD() {
     }
     classD.prototype.sayb = function (b) {
@@ -28,4 +24,6 @@ var classD = /** @class */ (function () {
 }());
 
 export { classA, classB, classD };
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgyLm1qcyIsInNvdXJjZXMiOltdLCJzb3VyY2VzQ29udGVudCI6W10sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+
+    
+//# sourceMappingURL=index2.mjs.map

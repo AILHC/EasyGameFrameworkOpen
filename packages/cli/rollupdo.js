@@ -253,8 +253,8 @@ async function rollupBuild(option) {
     if (target) {
         tsconfigOverride.compilerOptions.target = target;
     }
-
-    const tsconfig = require(path.join(projRoot, `tsconfig.json`));
+    const tsconfigPath = path.join(projRoot, `tsconfig.json`);
+    const tsconfig = require(tsconfigPath);
 
     let exclude = tsconfig.exclude ? tsconfig.exclude : [];
     let externalTag = tsconfig.externalTag;
@@ -281,6 +281,7 @@ async function rollupBuild(option) {
      * @type {Partial<import('rollup-plugin-typescript2/dist/ioptions').IOptions> }
      */
     const tsOptions = {
+        tsconfig: tsconfigPath,
         clean: true,
         abortOnError: false,
         tsconfigOverride: tsconfigOverride,
