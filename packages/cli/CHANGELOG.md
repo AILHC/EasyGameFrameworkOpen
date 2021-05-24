@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.7](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.6...@ailhc/egf-cli@1.6.7) (2021-05-24)
+
+
+### Bug Fixes
+
+* 修复tsconfig指向不对的问题 ([f9f4463](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/f9f4463a4bcd9268fc8c7531c033d24516c105f7))
+
+
+
+
+
 ## [1.6.6](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.5...@ailhc/egf-cli@1.6.6) (2021-05-15)
 
 
