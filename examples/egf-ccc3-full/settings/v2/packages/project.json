@@ -1,0 +1,41 @@
+{
+  "__version__": "1.0.1",
+  "layer": [
+    {
+      "name": "Default",
+      "value": 1
+    },
+    {
+      "name": "Background",
+      "value": 2
+    },
+    {
+      "name": "Actor",
+      "value": 4
+    },
+    {
+      "name": "Platform",
+      "value": 8
+    },
+    {
+      "name": "Wall",
+      "value": 16
+    },
+    {
+      "name": "Collider",
+      "value": 32
+    },
+    {
+      "name": "Bullet",
+      "value": 64
+    },
+    {
+      "name": "Ui",
+      "value": 128
+    },
+    {
+      "name": "Ball",
+      "value": 256
+    }
+  ]
+}

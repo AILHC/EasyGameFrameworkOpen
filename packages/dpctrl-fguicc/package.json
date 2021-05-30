@@ -1,0 +1,49 @@
+{
+  "name": "@ailhc/dpctrl-fguicc",
+  "version": "0.10.3",
+  "description": "This is a FairyGui implementation of the UI framework <display-ctrl>",
+  "keywords": [
+    "fairygui",
+    "ui",
+    "framework",
+    "game"
+  ],
+  "author": "AILHC <505126057@qq.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
+  },
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-fgui-cc#readme",
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
+  "typings": "dist/cjs/types",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "cti": "egf cti -d ./src",
+    "watch:cjs": "egf build -w true -f cjs -s inline",
+    "build:cjs": "egf build -f cjs -m true -s inline",
+    "build:es": "egf build -f es -m true -s inline",
+    "clean-dist": "rimraf dist",
+    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es",
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
+  },
+  "dependencies": {
+    "@ailhc/display-ctrl": "^1.1.7",
+    "@ailhc/layer": "^0.1.7",
+    "fairygui-cc": "^1.0.1"
+  }
+}

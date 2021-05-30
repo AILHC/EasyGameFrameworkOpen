@@ -1,0 +1,46 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "mutiinsViewShowAnimClip",
+  "_objFlags": 0,
+  "_native": "",
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "events": [],
+  "_duration": 1,
+  "_keys": [
+    [
+      0,
+      0.16666666666666666,
+      1
+    ]
+  ],
+  "_stepness": 0,
+  "_curves": [
+    {
+      "modifiers": [
+        "y"
+      ],
+      "data": {
+        "keys": 0,
+        "values": [
+          0,
+          0,
+          166
+        ],
+        "easingMethods": {
+          "1": "quartInOut"
+        }
+      },
+      "commonTarget": 0
+    }
+  ],
+  "_commonTargets": [
+    {
+      "modifiers": [
+        "position"
+      ]
+    }
+  ],
+  "_hash": 0
+}
