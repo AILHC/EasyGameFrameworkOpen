@@ -41,7 +41,7 @@
     "//测试并生成覆盖率报告": "",
     "tc": "jest --coverage",
     "//安装husky": "",
-    "ihusky": "husky install",
+    "ihusky": "husky install && yarn addHuskyHook",
     "//添加hook": "",
     "addHuskyHook": "husky add .husky/commit-msg \"yarn commitlint --edit $1\" && husky add .husky/pre-commit \"npm run lint-staged\"",
     "lint-staged": "lint-staged"
@@ -69,6 +69,7 @@
     "cross-var": "^1.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "cz-lerna-changelog": "^2.0.3",
+    "husky": "^6.0.0",
     "jest": "^24.9.0",
     "lerna": "^3.22.1",
     "lint-staged": "^10.5.3",
@@ -78,7 +79,6 @@
     "ts-jest": "^24.2.0",
     "typedoc": "0.19.2",
     "typedoc-plugin-remove-references": "^0.0.5",
-    "typescript": "^3.7.3",
-    "husky": "^6.0.0"
+    "typescript": "^3.7.3"
   }
 }
