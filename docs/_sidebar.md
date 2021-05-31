@@ -14,6 +14,7 @@
       * [2.4.x](packages/dpctrl-ccc/README.md)
       * [c3d](packages/dpctrl-c3d/README.md)
     * [FairyGUI 实现](packages/dpctrl-fgui/README.md)
+    * [Creator3.0Fgui 实现](packages/dpctrl-fguicc/README.md)
   <!-- * Laya实现 -->
   <!-- * Egret实现 -->
   * 网络通信
