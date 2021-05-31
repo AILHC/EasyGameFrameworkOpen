@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/dpctrl-fguicc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "This is a FairyGui implementation of the UI framework <display-ctrl>",
   "keywords": [
     "fairygui",
