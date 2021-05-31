@@ -172,7 +172,7 @@ declare module '@ailhc/dpctrl-fguicc' {
 
 }
 declare module '@ailhc/dpctrl-fguicc' {
-	import { Node } from 'cc'; module 'fairygui-cc' {
+	import { Node } from 'cc'; module "fairygui-cc" {
 	    interface GComponent {
 	        displayObject: Node;
 	    }
