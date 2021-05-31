@@ -7,9 +7,68 @@
     ".png",
     ".json"
   ],
-  "subMetas": {},
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "f99f7c13-0fb6-4036-9754-e8109df446dc@6c48a",
+      "displayName": "i3",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "imageUuidOrDatabaseUri": "f99f7c13-0fb6-4036-9754-e8109df446dc",
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true
+      },
+      "ver": "1.0.21",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f9941": {
+      "importer": "sprite-frame",
+      "uuid": "f99f7c13-0fb6-4036-9754-e8109df446dc@f9941",
+      "displayName": "i3",
+      "id": "f9941",
+      "name": "spriteFrame",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 0,
+        "width": 90,
+        "height": 90,
+        "rawWidth": 90,
+        "rawHeight": 90,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "f99f7c13-0fb6-4036-9754-e8109df446dc@6c48a",
+        "atlasUuid": ""
+      },
+      "ver": "1.0.9",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
   "userData": {
-    "type": "raw",
-    "hasAlpha": true
+    "type": "sprite-frame",
+    "hasAlpha": true,
+    "redirect": "f99f7c13-0fb6-4036-9754-e8109df446dc@f9941"
   }
 }

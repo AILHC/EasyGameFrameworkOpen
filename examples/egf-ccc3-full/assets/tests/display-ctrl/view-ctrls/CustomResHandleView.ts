@@ -26,7 +26,11 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.IResHan
                 this._monsterIconRess = ress;
                 randomMonsterNameIndexs.forEach((element) => {
                     ress.push({
-                        path: CustomResHandleView._monsterIconDir + "/" + CustomResHandleView._monsterNames[element],
+                        path:
+                            CustomResHandleView._monsterIconDir +
+                            "/" +
+                            CustomResHandleView._monsterNames[element] +
+                            "/spriteFrame",
                         type: cc.SpriteFrame
                     });
                 });
@@ -44,6 +48,7 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.IResHan
                     (err, data) => {
                         if (err) {
                             config.error();
+                            console.error(err);
                         } else {
                             config.complete();
                         }
@@ -66,6 +71,7 @@ export class CustomResHandleView extends NodeCtrl implements displayCtrl.IResHan
         const monsterNodeA = getChild(this.node, "monsterA");
         const monsterNodeB = getChild(this.node, "monsterB");
         const monsterSpCompA = getComp(monsterNodeA, cc.Sprite);
+
         monsterSpCompA.spriteFrame = cc.resources.get(this._monsterIconRess[0].path, cc.SpriteFrame);
         const monsterSpCompB = getComp(monsterNodeB, cc.Sprite);
         monsterSpCompB.spriteFrame = cc.resources.get(this._monsterIconRess[1].path, cc.SpriteFrame);

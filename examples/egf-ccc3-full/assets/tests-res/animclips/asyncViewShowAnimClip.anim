@@ -7,11 +7,12 @@
   "speed": 0.5,
   "wrapMode": 1,
   "events": [],
-  "_duration": 1.3333333333333333,
+  "enableTrsBlending": false,
+  "_duration": 0.8333333333333334,
   "_keys": [
     [
       0,
-      1.3333333333333333
+      0.8333333333333334
     ]
   ],
   "_stepness": 0,
@@ -25,8 +26,8 @@
         "values": [
           {
             "__type__": "cc.Vec3",
-            "x": 1,
-            "y": 1,
+            "x": 0.1,
+            "y": 0.1,
             "z": 1
           },
           {
@@ -41,5 +42,5 @@
     }
   ],
   "_commonTargets": [],
-  "_hash": 0
+  "_hash": 875273490
 }
