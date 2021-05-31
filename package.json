@@ -38,6 +38,8 @@
     "gapi": "rimraf docs/api && typedoc --options tools/typedoc/typedoc.js",
     "//复制文档到docs": "",
     "cpdoc": "node ./scripts/copyDocs.js",
+    "//打开文档": "",
+    "showdoc": "docsify serve ./docs",
     "//测试并生成覆盖率报告": "",
     "tc": "jest --coverage",
     "//安装husky": "",
