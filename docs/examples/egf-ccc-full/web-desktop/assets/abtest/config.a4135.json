@@ -1,0 +1,54 @@
+{
+    "paths": {
+        "c9RcFFEHVLNboY6Bnk7fkq": [
+            "ABTestView",
+            "cc.Prefab"
+        ],
+        "c7kGr5mqJODYfu7XKwjjLg": [
+            "txt1",
+            "cc.TextAsset"
+        ]
+    },
+    "uuids": [
+        "209q9y5lBA/7BBLOfWaoUw",
+        "3dehhIKFpPcJ3Ds3y+6DS/",
+        "c6+8kHkd1O/Lx4u+e8w58b",
+        "c7kGr5mqJODYfu7XKwjjLg",
+        "c9RcFFEHVLNboY6Bnk7fkq",
+        "da0KzAAnVLQb9uR/qurT0F",
+        "ecpdLyjvZBwrvm+cedCcQy"
+    ],
+    "scenes": {},
+    "redirect": [
+        "209q9y5lBA/7BBLOfWaoUw",
+        0,
+        "3dehhIKFpPcJ3Ds3y+6DS/",
+        0,
+        "c6+8kHkd1O/Lx4u+e8w58b",
+        0,
+        "da0KzAAnVLQb9uR/qurT0F",
+        0,
+        "ecpdLyjvZBwrvm+cedCcQy",
+        1
+    ],
+    "deps": [
+        "resources",
+        "internal"
+    ],
+    "packs": {},
+    "name": "abtest",
+    "importBase": "import",
+    "nativeBase": "native",
+    "debug": true,
+    "isZip": false,
+    "encrypted": false,
+    "versions": {
+        "import": [
+            "c7kGr5mqJODYfu7XKwjjLg",
+            "585dc",
+            "c9RcFFEHVLNboY6Bnk7fkq",
+            "595c7"
+        ],
+        "native": []
+    }
+}

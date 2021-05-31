@@ -1,0 +1,51 @@
+{
+    "importBase": "import",
+    "nativeBase": "native",
+    "name": "abtest",
+    "deps": [
+        "resources"
+    ],
+    "uuids": [
+        "1f222f89-7486-4c29-9adc-ecc830df064c@f9941",
+        "bb6571c1-9322-4128-8543-a0e991bd3f4d@f9941",
+        "c298830c-60c8-45ab-8b60-23d0bf50228f@f9941",
+        "c7906af9-9aa2-4e0d-87ee-ed72b08e32e0",
+        "c945c145-1075-4b35-ba18-e819e4edf92a",
+        "faa26a6b-9166-495a-b899-4f0668300aa5@f9941",
+        "fda095cb-831d-4601-ad94-846013963de8"
+    ],
+    "paths": {
+        "c945c145-1075-4b35-ba18-e819e4edf92a": [
+            "ABTestView",
+            "cc.Prefab"
+        ],
+        "c7906af9-9aa2-4e0d-87ee-ed72b08e32e0": [
+            "txt1",
+            "cc.TextAsset"
+        ]
+    },
+    "scenes": {},
+    "packs": {},
+    "versions": {
+        "import": [
+            "c7906af9-9aa2-4e0d-87ee-ed72b08e32e0",
+            "0c8f2",
+            "c945c145-1075-4b35-ba18-e819e4edf92a",
+            "d925e"
+        ],
+        "native": []
+    },
+    "redirect": [
+        "1f222f89-7486-4c29-9adc-ecc830df064c@f9941",
+        "0",
+        "bb6571c1-9322-4128-8543-a0e991bd3f4d@f9941",
+        "0",
+        "c298830c-60c8-45ab-8b60-23d0bf50228f@f9941",
+        "0",
+        "faa26a6b-9166-495a-b899-4f0668300aa5@f9941",
+        "0",
+        "fda095cb-831d-4601-ad94-846013963de8",
+        "0"
+    ],
+    "debug": true
+}
