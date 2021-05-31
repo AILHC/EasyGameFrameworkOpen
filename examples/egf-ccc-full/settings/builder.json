@@ -54,6 +54,7 @@
   },
   "ios": {
     "REMOTE_SERVER_ROOT": "",
+    "ios_enable_jit": true,
     "packageName": "org.cocos2d.examplecases"
   },
   "mac": {
@@ -69,5 +70,6 @@
   },
   "mainCompressionType": "default",
   "mainIsRemote": false,
-  "nativeMd5Cache": true
+  "nativeMd5Cache": true,
+  "agreements": {}
 }
