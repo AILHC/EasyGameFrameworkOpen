@@ -15,17 +15,17 @@
 0. 安装
     
     通过npm安装 
-    npm install @ailhc/dpctrl-fgui
+    npm install @ailhc/dpctrl-fguicc
 
 
 1. 基础使用
 ```ts
-    import { FDpctrl } from "@ailhc/dpctrl-fgui"
+    import { FDpctrl } from "@ailhc/dpctrl-fguicc"
     export class AView extends FDpctrl {
         
     }
 ```
-2. 背包例子(具体可见examples/egf-ccc-full)
+2. 背包例子(具体可见examples/egf-ccc3-full)
 
 ```ts
 //FDpcTestMainComp.ts 预注册UI
