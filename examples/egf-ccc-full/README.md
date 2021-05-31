@@ -1,5 +1,5 @@
 ## EasyGameFramework的完整示例
-基于CocosCreator 2.4.2 
+基于CocosCreator 2.4.x
 
 ## 安装
 如果是单独下载这个项目
@@ -20,6 +20,9 @@ yarn install
 
 2. display-ctrl
 演示UI框架+层级管理模块的使用演示
+
+3. fairygui
+演示了如何结合fairygui使用
 
 ## 注意
 1. 关于引用项目外npm包的问题(在框架仓库中打开这个项目需要注意)
