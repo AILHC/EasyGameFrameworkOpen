@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
-  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-fgui-cc#readme",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-fguicc#readme",
   "exports": {
     "require": "./dist/cjs/lib/index.js",
     "import": "./dist/es/lib/index.mjs"
