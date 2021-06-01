@@ -1,5 +1,5 @@
 /**
- * @type {IEgfCompileOption}
+ * @type {import("@ailhc/egf-cli").IEgfCompileOption}
  */
 const config = {
     dtsGenExclude: [

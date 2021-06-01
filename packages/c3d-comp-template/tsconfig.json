@@ -22,10 +22,5 @@
   },
   "exclude": [
     "dist"
-  ],
-  "dtsGenExclude": [
-    "__tests__/**/*",
-    "libs/**/*"
-  ],
-  "externalTag": ["cc"]
+  ]
 }
