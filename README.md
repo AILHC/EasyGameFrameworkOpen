@@ -55,9 +55,11 @@ A progressive universal game front-end development framework based on [Typescrip
 
 ## 在线示例
 
-* [主要模块例子演示Gitee](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc-full)
+* [Creator2.x主要模块例子演示Gitee](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc-full/desktop)
+* [Creator3.x主要模块例子演示Gitee](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc3-full/desktop)
 
-* [主要模块例子演示GitHub](https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc-full)
+* [Creator2.x主要模块例子演示GitHub](https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc-full/desktop)
+* [Creator3.x主要模块例子演示GitHub](https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc3-full/desktop)
 ## Modules(模块)
 
 ### Core
