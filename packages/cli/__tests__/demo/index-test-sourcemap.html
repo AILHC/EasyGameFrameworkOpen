@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+    var onScriptLoad = function () {
+        const cb = new testModule.classB();
+        cb.sayb();
+    }
+</script>
+<script async=true type="text/javascript" src="./iife/testModule.js" onload="onScriptLoad()">
+</script>

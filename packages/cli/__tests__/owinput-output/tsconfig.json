@@ -11,13 +11,14 @@
       "es2015",
       "es2016.array.include"
     ],
-    "sourceMap": true,
+    "sourceMap": false,
+    "inlineSourceMap": false,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "declaration": true,
+    "declaration": false,
     "removeComments": false
   },
   "exclude": [
