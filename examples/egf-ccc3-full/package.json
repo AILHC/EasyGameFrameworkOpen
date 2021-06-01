@@ -11,6 +11,8 @@
     "@ailhc/display-ctrl": "^1.1.7",
     "@ailhc/dpctrl-c3d": "^1.1.7",
     "@ailhc/egf-core": "^1.2.4",
+    "@ailhc/obj-pool": "^3.0.5",
+    "@ailhc/dpctrl-fguicc": "0.2.0",
     "fairygui-cc": "^1.0.1"
   }
 }
