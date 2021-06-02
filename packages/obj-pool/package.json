@@ -14,7 +14,7 @@
     "dist"
   ],
   "main": "dist/cjs/lib/index.js",
-  "module": "dist/es/lib/index.es.js",
+  "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "exports": {
     "require": "./dist/cjs/lib/index.js",
