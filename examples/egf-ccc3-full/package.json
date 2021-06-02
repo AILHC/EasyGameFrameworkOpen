@@ -2,17 +2,17 @@
   "name": "egf-ccc3-full",
   "type": "3d",
   "uuid": "aff0f106-e839-4c9e-b988-26a3df304a67",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "creator": {
     "version": "3.1.0"
   },
   "dependencies": {
-    "@ailhc/broadcast": "^1.1.7",
-    "@ailhc/display-ctrl": "^1.1.7",
-    "@ailhc/dpctrl-c3d": "^1.1.7",
-    "@ailhc/dpctrl-fguicc": "0.2.0",
-    "@ailhc/egf-core": "^1.2.4",
-    "@ailhc/obj-pool": "^3.0.6",
+    "@ailhc/broadcast": "^1.1.8",
+    "@ailhc/display-ctrl": "^1.1.8",
+    "@ailhc/dpctrl-c3d": "^1.1.8",
+    "@ailhc/dpctrl-fguicc": "^0.3.0",
+    "@ailhc/egf-core": "^1.2.5",
+    "@ailhc/obj-pool": "^3.0.7",
     "fairygui-cc": "^1.0.1"
   }
 }

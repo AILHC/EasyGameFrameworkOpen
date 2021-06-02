@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.7](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/pinus-enet-chat@1.1.6...pinus-enet-chat@1.1.7) (2021-06-02)
+
+**Note:** Version bump only for package pinus-enet-chat
+
+
+
+
+
 ## [1.1.6](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/pinus-enet-chat@1.1.5...pinus-enet-chat@1.1.6) (2021-05-15)
 
 **Note:** Version bump only for package pinus-enet-chat
