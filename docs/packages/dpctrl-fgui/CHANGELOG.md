@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/dpctrl-fgui@0.10.3...@ailhc/dpctrl-fgui@0.10.4) (2021-06-02)
+
+**Note:** Version bump only for package @ailhc/dpctrl-fgui
+
+
+
+
+
 ## [0.10.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/dpctrl-fgui@0.10.2...@ailhc/dpctrl-fgui@0.10.3) (2021-05-15)
 
 

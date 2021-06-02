@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@3.0.5...@ailhc/obj-pool@3.0.7) (2021-06-02)
+
+
+### Bug Fixes
+
+* package.json中路径错误，会导致构建时当作外部模块，已修复 ([5d07f22](https://github.com/AILHC/EasyGameFrameworkOpen/commit/5d07f225a506b3bda47f0cdb4244589e57e04482))
+
+
+
+
+
 ## [3.0.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@3.0.5...@ailhc/obj-pool@3.0.6) (2021-06-02)
 
 
