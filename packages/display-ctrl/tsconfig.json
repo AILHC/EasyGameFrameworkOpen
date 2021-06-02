@@ -22,8 +22,5 @@
     },
     "exclude": [
         "dist"
-    ],
-    "dtsGenExclude": [
-        "__tests__/**/*"
     ]
 }

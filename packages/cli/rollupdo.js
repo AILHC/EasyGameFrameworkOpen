@@ -4,6 +4,7 @@
  */
 const typescript = require('rollup-plugin-typescript2');
 const rollup = require("rollup");
+const rollupLoadConfig = require("rollup/dist/shared/loadConfigFile");
 /**
  * @type {any}
  */
@@ -13,7 +14,7 @@ const rollupCjs = require("rollup-plugin-commonjs");
  */
 const nodeResolve = require("rollup-plugin-node-resolve");
 const path = require("path");
-const matched = require("matched")
+
 const fs = require("fs");
 // const npmDts = require("npm-dts");
 const dtsGenerator = require('dts-generator');
@@ -26,102 +27,13 @@ const jsonPlugin = require("@rollup/plugin-json");
  */
 const terser = require("rollup-plugin-terser");
 const { TypeScritIndexWriter } = require('./libs/cti/TypeScritIndexWriter');
-var curPackFiles = null; //当前包的所有的文件
-var mentry = 'multientry:entry-point';
 
-function myMultiInput() {
-    var include = [];
-    var exclude = [];
-    //解析输入的路径
-    function configure(config) {
-        if (typeof config === 'string') {
-            include = [config];
-        } else if (Array.isArray(config)) {
-            include = config;
-        } else {
-            include = config.include || [];
-            exclude = config.exclude || [];
-
-            if (config.exports === false) {
-                exporter = function exporter(p) {
-                    if (p.substr(p.length - 3) == '.ts') {
-                        p = p.substr(0, p.length - 3);
-                    }
-                    return `import ${JSON.stringify(p)};`;
-                };
-            }
-        }
-    }
-    /**将每个ts文件里的东西导出 返回 export * from <path> */
-    var exporter = function exporter(p) {
-        if (p.substr(p.length - 3) == '.ts') {
-            p = p.substr(0, p.length - 3);
-        }
-        return `export * from ${JSON.stringify(p)};`;
-    };
-
-    return ({ //解析调用rollup时传入的配置
-        options(options) {
-            configure(options.input);
-            options.input = mentry;
-        },
-        //解决每个文件里的引用
-        //id 被引用的文件，importer引用者
-        resolveId(id, importer) { //entry是个特殊字符串，rollup并不识别，所以假装这里解析一下
-            if (id === mentry) { //被引用的是多路径就返回
-                return mentry;
-            }
-            if (mentry == importer) //引用者是多路径集合返回
-                return;
-            //以下处理，是Laya针对，引用的文件不存在于这个包内的，返回Laya的标识，当作全局引用处理
-            var importfile = path.join(path.dirname(importer), id);
-            var ext = path.extname(importfile);
-            if (ext != '.ts' && ext != '.glsl' && ext != '.vs' && ext != '.ps' && ext != '.fs') {
-                importfile += '.ts';
-            }
-            //console.log('import ', importfile);
-            // if (curPackFiles.indexOf(importfile) < 0) {
-            //     //其他包里的文件
-            //     // console.log('other pack:',id,'importer=', importer);
-            //     return 'Laya';
-            // }
-        },
-        load(id) {
-            //id加载的文件名
-            if (id === mentry) {
-                //是多路径集合
-                if (!include.length) {
-                    return Promise.resolve('');
-                }
-                //拼接匹配正则
-                var patterns = include.concat(exclude.map(function (pattern) {
-                    return '!' + pattern;
-                }));
-                //匹配出符合规则的路径集合
-                return matched.promise(patterns, { realpath: true }).then(function (paths) {
-                    curPackFiles = paths; // 记录一下所有的文件
-                    paths.sort(); //将路径集合排序一下
-                    /**
-                     * 遍历生成
-                     * 类似
-                     * export * from "<path1>";
-                     * export * from "<path2>";
-                     */
-                    const matchExportResult = paths.map(exporter).join('\n');
-                    return matchExportResult
-                });
-            } else {
-                //console.log('load ',id);
-            }
-        }
-    });
-}
 const tsconfigOverride = {
     compilerOptions: {}
 }
 /**
  * 构建编译
- * @param {IEgfCompileOption} option 
+ * @param {import("@ailhc/egf-cli").IEgfCompileOption} option 
  */
 async function rollupBuild(option) {
     // projRoot, isWatch, entrys, outputDir, output,
@@ -138,7 +50,7 @@ async function rollupBuild(option) {
         projRoot = path.join(process.cwd(), projRoot);
     }
     /**
-     * @type {IEgfCompileOption}
+     * @type {import("@ailhc/egf-cli").IEgfCompileOption}
      */
     let configOption;
     let configPath = typeof option.config === "string" ? option.config : "egf.compile.js";
@@ -191,7 +103,6 @@ async function rollupBuild(option) {
     }
     if (!moduleName) {
         moduleName = process.env.npm_package_name;
-
     }
 
     if (!format) {
@@ -213,7 +124,7 @@ async function rollupBuild(option) {
         output = undefined;
     } else {
         if (!output && (format === "es" || format === "esm")) {
-            output = `dist/es/lib/index.mjs`
+            output = `dist/${format}/lib/index.mjs`
         }
         if (!output) {
             if (isIIFE) {
@@ -254,29 +165,9 @@ async function rollupBuild(option) {
         tsconfigOverride.compilerOptions.target = target;
     }
     const tsconfigPath = path.join(projRoot, `tsconfig.json`);
-    const tsconfig = require(tsconfigPath);
 
-    let exclude = tsconfig.exclude ? tsconfig.exclude : [];
-    let externalTag = tsconfig.externalTag;
-    if (typeof externalTag === "object" && typeof externalTag.length === "number") {
-        externalTag = externalTag.length > 0 ? externalTag : [];
-    } else if (typeof externalTag === "string") {
-        externalTag = [externalTag];
-    } else {
-        externalTag = [];
-    }
+    let externalTag = option.externalTag;
 
-    let configExternalTag = option.externalTag;
-    if (typeof configExternalTag === "object" && typeof configExternalTag.length === "number") {
-        configExternalTag = configExternalTag.length > 0 ? configExternalTag : [];
-        externalTag = externalTag.concat(configExternalTag);
-    } else if (typeof configExternalTag === "string") {
-        externalTag.push(configExternalTag)
-    }
-    if (externalTag.length === 0) {
-        externalTag = undefined;
-    }
-    tsconfigOverride.exclude = exclude;
     /**
      * @type {Partial<import('rollup-plugin-typescript2/dist/ioptions').IOptions> }
      */
@@ -290,20 +181,15 @@ async function rollupBuild(option) {
     //自定义插件
     const customPlugins = option.plugins ? option.plugins : [];
     /**
-     * @type {import('rollup').InputOptions}
+     * @type {import("rollup").ExternalOption}
+     * @param {*} source 
+     * @param {*} importer 
+     * @param {*} isResolved 
+     * @returns 
      */
-    const buildConfig = {
-        //输出log便于调试
-        onwarn: function ({ loc, frame, message }) {
-            // 打印位置（如果适用）
-            if (loc) {
-                console.warn(`${loc.file} (${loc.line}:${loc.column}) ${message}`);
-                if (frame) console.warn(frame);
-            } else {
-                console.warn(message);
-            }
-        },
-        external: (source,
+    let customExternal;
+    if (externalTag) {
+        customExternal = (source,
             importer,
             isResolved) => {
             if (!externalTag || externalTag === "") return false;
@@ -315,7 +201,7 @@ async function rollupBuild(option) {
                     isExternal = source.includes(tag);
                     if (isExternal) break;
                 }
-            } else {
+            } else if (typeof tag === "string") {
                 isExternal = source.includes(tag);
             }
             if (isExternal) {
@@ -324,7 +210,25 @@ async function rollupBuild(option) {
             }
             return isExternal;
 
-        },
+        };
+    }
+
+    /**
+     * @type {import('rollup').InputOptions}
+     */
+    let buildConfig = {
+        //输出log便于调试
+        // onwarn: function ({ loc, frame, message }) {
+        //     // 打印位置（如果适用）
+        //     if (loc) {
+        //         console.warn(`${loc.file} (${loc.line}:${loc.column}) ${message}`);
+        //         if (frame) console.warn(frame);
+        //     } else {
+        //         console.warn(message);
+        //     }
+        // },
+        onwarn: rollupLoadConfig.batchWarnings().add,
+        external: customExternal,
         input: entrys,
 
         plugins: [
@@ -339,6 +243,10 @@ async function rollupBuild(option) {
             })
             // rdts()
         ].concat(customPlugins)
+    }
+    // 合并输入配置，会覆盖原先的输入配置字段
+    if (option.owInput) {
+        buildConfig = Object.assign(buildConfig, option.owInput);
     }
     // /**
     //  * @type { import('rollup').OutputOptions[] }
@@ -357,12 +265,20 @@ async function rollupBuild(option) {
 
     const entryFileNames = option.entryFileNames ? option.entryFileNames : (chunkInfo) => {
         if (format === "es" || format === "esm") {
-            return `[name].mjs`
+
+            return `[name]${option.minify ? ".min" : ""}.mjs`
         } else {
-            return `[name].js`
+            return `[name]${option.minify ? ".min" : ""}.js`
         }
     };
-    const chunkFileNames = option.chunkFileNames ? option.chunkFileNames : "[name].js";
+    const chunkFileNames = option.chunkFileNames ? option.chunkFileNames : (chunkInfo) => {
+        if (format === "es" || format === "esm") {
+
+            return `[name]${option.minify ? ".min" : ""}.mjs`
+        } else {
+            return `[name]${option.minify ? ".min" : ""}.js`
+        }
+    };
 
     const pkgName = process.env.npm_package_name;
     /**
@@ -388,6 +304,10 @@ async function rollupBuild(option) {
         banner: option.banner,
         footer: footerStr
 
+    }
+    //合并输出配置，会覆盖原先的输出配置字段
+    if (option.owOutput) {
+        outputOption = Object.assign(outputOption, option.owOutput)
     }
 
     const isGenDts = option.genDts;
@@ -467,7 +387,7 @@ async function rollupBuild(option) {
  * @param {string} format 
  * @param {string} typesDir 
  * @param {string} moduleName
- * @param {IEgfCompileOption} option
+ * @param {import("@ailhc/egf-cli").IEgfCompileOption} option
  */
 function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
     /**
@@ -478,16 +398,11 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
      * @type {dtsGenerator}
      */
     const dtsGen = dtsg.default;
-    const tsconfig = require(path.join(projRoot, `tsconfig.json`));
     const typesDirPath = path.join(projRoot, typesDir);
     const isIIFE = format === "iife" || format === "umd";
     const pkgName = process.env.npm_package_name;
     // const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
-    let dtsGenExclude = ["node_modules/**/*.d.ts",].concat(tsconfig.dtsGenExclude ? tsconfig.dtsGenExclude : []);
-    dtsGenExclude = dtsGenExclude.concat(tsconfig.exclude ? tsconfig.exclude : []);
-    if (option.dtsGenExclude && option.dtsGenExclude.length > 0) {
-        dtsGenExclude = dtsGenExclude.concat(option.dtsGenExclude);
-    }
+    let dtsGenExclude = ["node_modules/**/*.d.ts",].concat(option.dtsGenExclude ? option.dtsGenExclude : []);
     // console.log(dtsGenExclude);
     let entry;
     if (entrys.length > 1) {
@@ -640,7 +555,7 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
 
 /**
  * 
- * @param {IEgfCompileOption} option 
+ * @param {import("@ailhc/egf-cli").IEgfCompileOption} option 
  */
 async function autoCreateIndex(option) {
     const mode = option.ctiMode;
