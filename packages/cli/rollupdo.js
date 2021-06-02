@@ -33,7 +33,7 @@ const tsconfigOverride = {
 }
 /**
  * 构建编译
- * @param {IEgfCompileOption} option 
+ * @param {import("@ailhc/egf-cli").IEgfCompileOption} option 
  */
 async function rollupBuild(option) {
     // projRoot, isWatch, entrys, outputDir, output,
@@ -50,7 +50,7 @@ async function rollupBuild(option) {
         projRoot = path.join(process.cwd(), projRoot);
     }
     /**
-     * @type {IEgfCompileOption}
+     * @type {import("@ailhc/egf-cli").IEgfCompileOption}
      */
     let configOption;
     let configPath = typeof option.config === "string" ? option.config : "egf.compile.js";
@@ -387,7 +387,7 @@ async function rollupBuild(option) {
  * @param {string} format 
  * @param {string} typesDir 
  * @param {string} moduleName
- * @param {IEgfCompileOption} option
+ * @param {import("@ailhc/egf-cli").IEgfCompileOption} option
  */
 function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
     /**
@@ -555,7 +555,7 @@ function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
 
 /**
  * 
- * @param {IEgfCompileOption} option 
+ * @param {import("@ailhc/egf-cli").IEgfCompileOption} option 
  */
 async function autoCreateIndex(option) {
     const mode = option.ctiMode;
