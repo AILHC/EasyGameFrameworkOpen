@@ -22,9 +22,5 @@
   },
   "exclude": [
     "dist"
-  ],
-  "dtsGenExclude": [
-    "__tests__/**/*"
-  ],
-  "externalTag": ["adapters/http"]
+  ]
 }

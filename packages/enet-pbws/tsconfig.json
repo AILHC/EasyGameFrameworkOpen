@@ -23,10 +23,5 @@
   "exclude": [
     "dist",
     "protobuf"
-  ],
-
-  "dtsGenExclude": [
-    "__tests__/**/*",
-    "libs/**/*"
   ]
 }
