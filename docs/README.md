@@ -55,11 +55,11 @@ A progressive universal game front-end development framework based on [Typescrip
 
 ## 在线示例
 
-* [Creator2.x主要模块例子演示Gitee](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc-full/desktop)
-* [Creator3.x主要模块例子演示Gitee](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc3-full/desktop)
+* [Creator2.x主要模块例子演示Gitee](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc-full/web-desktop)
+* [Creator3.x主要模块例子演示Gitee](http://aigamestudio.ailhc.gitee.io/easygameframeworkopen/examples/egf-ccc3-full/web-desktop)
 
-* [Creator2.x主要模块例子演示GitHub](https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc-full/desktop)
-* [Creator3.x主要模块例子演示GitHub](https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc3-full/desktop)
+* [Creator2.x主要模块例子演示GitHub](https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc-full/web-desktop)
+* [Creator3.x主要模块例子演示GitHub](https://ailhc.github.io/EasyGameFrameworkOpen/examples/egf-ccc3-full/web-desktop)
 ## Modules(模块)
 
 ### Core
@@ -84,9 +84,11 @@ A progressive universal game front-end development framework based on [Typescrip
 
 「传送门」:[display-ctrl](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl)
 
-在仓库中同时提供了基于CocosCreator2.4.2和CocosCreator3D实现的库(包含layer层级管理库的实现)
+在仓库中同时提供了基于CocosCreator2.4.2和CocosCreator3D实现的库(包含layer层级管理库的实现),以及与[FairyGUI](https://www.fairygui.com/)相关的2.x实现和3.x实现
 1. [dpctrl-ccc](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-ccc)
 2. [dpctrl-c3d](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-c3d)
+3. [dpctrl-fgui](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-fgui) 适用于Creator2.x上的fgui适配，同时也适用于Laya、Egret等
+4. [dpctrl-fguicc](https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/dpctrl-fguicc) 3.x上的fgui适配
 
 ### 🤙🤳🏾 Broadcast
     一个基于TypeScript的一套高效灵活的广播系统，可以帮助开发者轻松、有序的构建具有极具复杂性的关联交互和状态变化的游戏和应用。
