@@ -1,6 +1,6 @@
 {
   "name": "egf-ccc-full",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "main": "index.js",
   "license": "MIT",
   "private": true,
@@ -9,6 +9,6 @@
     "@ailhc/dpctrl-ccc": "^1.1.7",
     "@ailhc/dpctrl-fgui": "^0.10.3",
     "@ailhc/egf-core": "^1.2.4",
-    "@ailhc/obj-pool": "^3.0.5"
+    "@ailhc/obj-pool": "^3.0.6"
   }
 }
