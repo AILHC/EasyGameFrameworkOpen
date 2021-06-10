@@ -4,6 +4,7 @@ const package = require("./package.json");
 const rollupDo = require("./rollupdo");
 const path = require("path");
 const fs = require("fs-extra");
+const genDts = require('./genDts');
 
 
 
@@ -62,7 +63,7 @@ program
     .option('-ngd, --no-gen-dts [genDts]', "是否不生成声明文件，默认生成")
     .option('-bn, --banner [banner]', "自定义输出文件顶部文本")
     .option('-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入")
-    .option('-s, --no-sourcemap [sourcemap]','默认true,输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map')
+    .option('-s, --no-sourcemap [sourcemap]', '默认true,输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map')
     .action(function (option) {
         rollupDo.build(option);
     });
@@ -76,6 +77,29 @@ program
 
     .action(function (option) {
         rollupDo.createIndex(option.dir, option.mode);
+    });
+program
+    .command("dts")
+    .description(`声明文件生成`)
+    .option('-p, --proj [proj]', '根目录，可以是相对路径(相对于 process.cwd())要构建生成dts的基本目录,将排除在此目录之外发现的任何依赖项，默认process.cwd()')
+    .option('-o, --out [out]', '输出文件路径,可以是相对路径(相对于 proj),默认dist/index.d.ts')
+    .option('-n, --module-name [moduleName]', '模块名,默认读package.name')
+    .option('-e, --exclude [exclude...]', '忽略列表')
+    .option('-g, --global [global]', '是否为全局声明，默认否')
+    .option('-l, --log [log]', '是否输出log，默认否')
+    .action(function (option) {
+        let projRoot = option.proj ? option.proj : process.cwd();
+        if (!path.isAbsolute(projRoot)) {
+            projRoot = path.join(process.cwd(), projRoot);
+        }
+        let out = option.out ? option.out : './dist/index.d.ts';
+        if (!path.isAbsolute(out)) {
+            out = path.join(projRoot, out);
+        }
+        let moduleName = option.moduleName ? option.moduleName : process.env.npm_package_name;
+        let exclude = option.exclude ? option.exclude : [];
+        let isGlobal = !!option.global
+        genDts(projRoot, out, moduleName, exclude, isGlobal, !!option.log);
     });
 program.parse(process.argv);
 // 未知命令会报错
