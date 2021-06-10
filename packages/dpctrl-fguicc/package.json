@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/dpctrl-fguicc",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "This is a FairyGui implementation of the UI framework <display-ctrl>",
   "keywords": [
     "fairygui",
@@ -42,8 +42,8 @@
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
   },
   "dependencies": {
-    "@ailhc/display-ctrl": "^1.1.8",
-    "@ailhc/layer": "^0.1.8",
+    "@ailhc/display-ctrl": "^1.1.9",
+    "@ailhc/layer": "^0.1.9",
     "fairygui-cc": "^1.0.1"
   }
 }
