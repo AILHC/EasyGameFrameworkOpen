@@ -50,17 +50,26 @@ npm install -D @ailhc/egf-cli
 * '-bn, --banner [banner]', "自定义输出文件顶部文本"
 * '-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入"
 * '-s, --no-sourcemap [sourcemap]','默认true,输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map'
+
 ### 入口文件生成命令行参数(egf cti)
 `基于create-ts-index库创建入口文件,一般用于生成库的index.ts比如fairygui`
+
+* '-p, --proj [proj]', '根目录，可以是相对路径(相对于 process.cwd())要构建生成dts的基本目录,将排除在此目录之外发现的任何依赖项，默认process.cwd()'
+* '-o, --out [out]', '输出文件路径,可以是相对路径(相对于 proj),默认dist/index.d.ts'
+* '-n, --module-name [moduleName]', '模块名,默认读package.name'
+* '-e, --exclude [exclude...]', '忽略列表'
+* '-g, --global [global]', '是否为全局声明，默认否'
+* '-l, --log [log]', '是否输出log，默认否'
+
+### dts声明文件生成命令行参数(egf dts)
+`声明文件生成`
 
 * '-m, --mode [mode]', '创建模式，默认create,可选create、entrypoint'
 * '-d, --dir [dir]', '文件夹路径，可以相对也可以绝对，相对路径相对于process.cwd()执行命令处'
 
-
 ### 自定义配置文件接口
 
 ```ts
-
 
 declare module "@ailhc/egf-cli" {
     interface IEgfCompileOption {
@@ -160,9 +169,8 @@ const config = {}
 module.exports = config;
 ```
 ### 注意事项
-1. 多入口编译暂不支持声明文件输出
-2. tsconfig中没法控制sourcemap的生成，需要使用命令行参数或者配置文件控制
-3. 命令行参数配置优先于config文件参数配置
-4. inline类型的 sourcemap 适用性更广，index.js.map的方式cocoscreator不识别
+1. tsconfig中没法控制sourcemap的生成，需要使用命令行参数或者配置文件控制
+2. 命令行参数配置优先于config文件参数配置
+3. inline类型的 sourcemap 适用性更广，index.js.map的方式cocoscreator不识别
 
 
