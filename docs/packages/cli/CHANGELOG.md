@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.7...@ailhc/egf-cli@3.0.0) (2021-06-10)
+
+
+### Features
+
+* 修复entry配置bug，新增单独生成dts文件的命令 ([496ddb2](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/496ddb2afdf6e72efc48969167cd047bedd5f760))
+* 增加覆写rollup配置的配置，完全兼容rollup ([3617a6f](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/3617a6fe74e119b48873fdc949bdc81ad2455f6b))
+
+
+### BREAKING CHANGES
+
+* 配置类型引用方式修改，tsconfig里不再配置externalTag和dtsGenExclude
+
+
+
+
+
 # [2.0.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.7...@ailhc/egf-cli@2.0.0) (2021-06-02)
 
 
