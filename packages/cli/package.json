@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@rollup/plugin-json": "^4.1.0",
+    "@types/dts-generator": "^2.1.5",
     "commander": "^7.2.0",
     "create-ts-index": "^1.13.6",
     "dts-generator": "^3.0.0",
@@ -66,6 +67,11 @@
     "test:single2:target:build:es6": "egf build -p ./__tests__/single2 -f cjs -e ./src/index.ts -t es6",
     "test:single2:customConfigPath:build:es": "egf build -p ./__tests__/single2 -f es -e ./src/index.ts -c ./testOption.js",
     "test:single2:iife-dts-inline-ourcemap:build:iife": "egf build -p ./__tests__/single2 -f iife:testModule -s inline",
+    "test:single3:config-single-entry:compile-third-npm-pkg:build:cjs": "egf build -p ./__tests__/single3 -f cjs",
+    
+    "test:gen-dts:error": "egf dts -p ./__tests__/gen-dts/src",
+    "test:gen-dts:global": "egf dts -p ./__tests__/gen-dts -g -n genDts -o dist/genDts.d.ts",
+    "test:gen-dts": "egf dts -p ./__tests__/gen-dts -l",
     "test:auto_create_index:build:cjs": "egf build -p ./__tests__/auto_create_index -f cjs -acti -e ./src/index.ts",
     "test:owinput-output:build": "egf build -p ./__tests__/owinput-output -f cjs -e ./src/index.ts -c"
   }

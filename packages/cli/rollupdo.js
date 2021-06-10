@@ -16,8 +16,7 @@ const nodeResolve = require("rollup-plugin-node-resolve");
 const path = require("path");
 
 const fs = require("fs");
-// const npmDts = require("npm-dts");
-const dtsGenerator = require('dts-generator');
+
 /**
  * @type {any}
  */
@@ -27,6 +26,7 @@ const jsonPlugin = require("@rollup/plugin-json");
  */
 const terser = require("rollup-plugin-terser");
 const { TypeScritIndexWriter } = require('./libs/cti/TypeScritIndexWriter');
+const genDts = require('./genDts');
 
 const tsconfigOverride = {
     compilerOptions: {}
@@ -108,9 +108,15 @@ async function rollupBuild(option) {
     if (!format) {
         format = "cjs"
     }
-    let entrys = option.entry ? option.entry.concat([]) : undefined;
+
+    let entrys = option.entry ? option.entry : undefined;
     if (!entrys) {
         entrys = ["src/index.ts"];
+    }
+    if (typeof entrys === "string") {
+        entrys = [entrys];
+    } else if (typeof entrys === "object") {
+        entrys = [].concat(entrys)
     }
     for (let i = 0; i < entrys.length; i++) {
         entrys[i] = path.join(projRoot, entrys[i]);
@@ -218,16 +224,6 @@ async function rollupBuild(option) {
      */
     let buildConfig = {
         //输出log便于调试
-        // onwarn: function ({ loc, frame, message }) {
-        //     // 打印位置（如果适用）
-        //     if (loc) {
-        //         console.warn(`${loc.file} (${loc.line}:${loc.column}) ${message}`);
-        //         if (frame) console.warn(frame);
-        //     } else {
-        //         console.warn(message);
-        //     }
-        // },
-        onwarn: rollupLoadConfig.batchWarnings().add,
         external: customExternal,
         input: entrys,
 
@@ -312,9 +308,10 @@ async function rollupBuild(option) {
 
     const isGenDts = option.genDts;
     if (option.autoCti) {
-        await autoCreateIndex(option);
+        await autoCreateIndex(option.ctiMode, entrys, option.ctiOption);
     }
     if (option.watch) {
+        console.log(`[EGF-CLI] 监听模式开启`)
         /**@type {import('rollup').RollupWatchOptions} */
         const watchConfig = buildConfig;
         watchConfig.output = outputOption;
@@ -325,37 +322,38 @@ async function rollupBuild(option) {
         rollupWatcher.on("event", async (event) => {
 
             if (event.code === "START") {
-                console.log("开始构建");
+                console.log("[EGF-CLI] 开始");
             } else if (event.code === "BUNDLE_START") {
-                console.log("开始输出");
+                console.log("[EGF-CLI] BUNDLE开始");
 
-                isGenDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
                 // console.log(event.output);
             } else if (event.code === "BUNDLE_END") {
-                console.log("构建结束");
+                console.log("[EGF-CLI] BUNDLE构建结束");
 
             } else if (event.code === "END") {
-                console.log(`结束`)
+                console.log(`[EGF-CLI] 构建结束`);
+                isGenDts && doGenDts(projRoot, entrys, format, typesDir, moduleName, option);
             } else if (event.code === "ERROR") {
-                console.error(`构建错误`, event.error);
+                console.error(`[EGF-CLI] 构建错误`, event.error);
             }
 
 
         })
     } else {
+        console.log("[EGF-CLI] 开始构建js");
         // await build(buildConfig, outputOpts[i], typesDir[i], moduleName, customDts, minify);
         /**
          * @type { import('rollup').RollupBuild }
          */
         let rollupBuild;
         rollupBuild = await rollup.rollup(buildConfig);
-
-        isGenDts && genDts(projRoot, entrys, format, typesDir, moduleName, option);
+        console.log("[EGF-CLI] 构建js结束");
 
         const writeResult = await rollupBuild.write(outputOption);
 
         const minify = option.minify;
         if (minify) {
+            console.log("[EGF-CLI] 生成压缩js");
             /**
              * @type {import("rollup-plugin-terser").Options}
              */
@@ -376,6 +374,8 @@ async function rollupBuild(option) {
             }
             await rollupBuild.write(outputOption);
         }
+        isGenDts && doGenDts(projRoot, entrys, format, typesDir, moduleName, option);
+
 
     }
 
@@ -389,180 +389,31 @@ async function rollupBuild(option) {
  * @param {string} moduleName
  * @param {import("@ailhc/egf-cli").IEgfCompileOption} option
  */
-function genDts(projRoot, entrys, format, typesDir, moduleName, option) {
-    /**
-     * @type {any}
-     */
-    const dtsg = require("dts-generator");
-    /**
-     * @type {dtsGenerator}
-     */
-    const dtsGen = dtsg.default;
+function doGenDts(projRoot, entrys, format, typesDir, moduleName, option) {
+
     const typesDirPath = path.join(projRoot, typesDir);
-    const isIIFE = format === "iife" || format === "umd";
+    const isGlobal = format === "iife" || format === "umd";
     const pkgName = process.env.npm_package_name;
-    // const dtsFileName = moduleName.includes("@") ? moduleName.split("/")[1] : moduleName;
+
     let dtsGenExclude = ["node_modules/**/*.d.ts",].concat(option.dtsGenExclude ? option.dtsGenExclude : []);
-    // console.log(dtsGenExclude);
-    let entry;
-    if (entrys.length > 1) {
-        //多入口 暂时不做声明输出 TODO
-        console.warn(`[多入口暂不做声明输出]`);
-    } else {
-        entry = entrys[0];
-        /**
-         * @type {Partial<import('dts-generator').DtsGeneratorOptions> }
-         */
-        const dtsGOpt = {
-            baseDir: projRoot,
-            exclude: dtsGenExclude,
-            out: path.join(typesDirPath, isIIFE ? `${moduleName}.d.ts` : `index.d.ts`),
-            // prefix: moduleName,
-            resolveModuleId: function (params) {
 
-                return isIIFE ? moduleName : pkgName;
-            },
-            resolveModuleImport: function (params) {
+    const out = path.join(typesDirPath, isGlobal ? `${moduleName}.d.ts` : `index.d.ts`);
+    moduleName = isGlobal ? moduleName : pkgName;
+    // console.log(dtsGenExclude)
 
-                if (!params.isDeclaredExternalModule) {
-
-                    if (!params.importedModuleId.includes(".")) {
-                        // npm包
-                        return params.importedModuleId;
-                    }
-                    return isIIFE ? moduleName : pkgName;
-                }
-                return params.importedModuleId
-            }
-        };
-
-        dtsGen(dtsGOpt).then((args) => {
-            if (isIIFE) {
-                const ts = require("typescript");
-
-                let dtsFileStr = fs.readFileSync(dtsGOpt.out, "utf-8");
-                //去掉export * from ""
-                //去掉export default 
-                //去掉export 
-
-                // dtsFileStr = dtsFileStr.replace(/export \* from /g, "");
-                const source = ts.createSourceFile(`${moduleName}.d.ts`, dtsFileStr, ts.ScriptTarget.ESNext, true);
-                const statements = source.statements;
-                /**
-                 * @type {ts.Statement}
-                 */
-                let statement;
-                /**
-                 * 
-                 * @param {ts.Statement} statement 
-                 * @returns {statement is ts.ModuleDeclaration}
-                 */
-                const isModuleDeclare = function (statement) {
-                    return statement.kind === ts.SyntaxKind.ModuleDeclaration;
-                }
-                let namespacesStr = `\ndeclare namespace ${moduleName} {`;
-                for (let i = 0; i < statements.length; i++) {
-                    statement = statements[i];
-
-                    if (isModuleDeclare(statement)) {
-                        /**
-                         * @type {ts.ModuleBlock}
-                         */
-                        let moduleBlock = statement.body;
-                        let childStatements = moduleBlock.statements;
-                        for (let k = 0; k < childStatements.length; k++) {
-                            /**
-                             * @type {ts.ClassDeclaration}
-                             */
-                            let childeStatement = childStatements[k];
-
-                            if (childStatements[k].kind === ts.SyntaxKind.ClassDeclaration) {
-                                //泛型处理
-                                const typeParameters = childeStatement.typeParameters;
-                                let typeStr = "";
-                                let refTypeStr = "";
-                                if (typeParameters && typeParameters.length > 0) {
-                                    typeStr = "<";
-                                    refTypeStr = "<";
-
-                                    for (let j = 0; j < typeParameters.length; j++) {
-                                        typeStr += typeParameters[j].getFullText();
-                                        refTypeStr += typeParameters[j].name.escapedText;
-                                        if (j < typeParameters.length - 1) {
-                                            typeStr += ", ";
-                                            refTypeStr += ", ";
-                                        }
-                                    }
-                                    typeStr += ">";
-                                    refTypeStr += ">";
-                                }
-                                let className = childeStatement.name.escapedText;
-                                namespacesStr += `\n\ttype ${className + typeStr} = import('${moduleName}').${className + refTypeStr};`;
-                            }
-                        }
-                    }
-                }
-                namespacesStr += "\n}";
-                dtsFileStr = dtsFileStr.replace(new RegExp(`export \\* from '${moduleName}';`, "g"), "");
-                dtsFileStr = dtsFileStr.replace(/export {};/g, "");
-                dtsFileStr = dtsFileStr.replace(/export default /g, "");
-                dtsFileStr = dtsFileStr.replace(/export /g, "");
-
-                // const typeRegx = new RegExp(/(class|interface){1}\s(.*){/gm);
-                // const matchs = [...dtsFileStr.matchAll(typeRegx)];
-                // let classOrInterfaceName;
-                // let type;
-
-                // for (let i = 0; i < matchs.length; i++) {
-                //     // type = matchs[i][1];
-
-                //     classOrInterfaceName = matchs[i][2];
-
-                //     if (classOrInterfaceName.includes("<") && classOrInterfaceName.includes("extends")) {
-
-                //         if (classOrInterfaceName.indexOf("<") < classOrInterfaceName.indexOf("extends")) {
-                //             classOrInterfaceName = classOrInterfaceName.split("<")[0];
-                //         } else {
-                //             classOrInterfaceName = classOrInterfaceName.split(" ")[0];
-                //         }
-                //     } else if (classOrInterfaceName.includes("<") && classOrInterfaceName.includes("implements")) {
-                //         if (classOrInterfaceName.indexOf("<") < classOrInterfaceName.indexOf("implements")) {
-                //             classOrInterfaceName = classOrInterfaceName.split("<")[0];
-                //         } else {
-                //             classOrInterfaceName = classOrInterfaceName.split(" ")[0];
-                //         }
-                //     } else if ((classOrInterfaceName.includes("extends")
-                //         || classOrInterfaceName.includes("implements"))
-                //         && !classOrInterfaceName.includes("<")
-                //     ) {
-                //         classOrInterfaceName = classOrInterfaceName.split(" ")[0];
-                //     } else if (classOrInterfaceName.includes("<")) {
-                //         classOrInterfaceName = classOrInterfaceName.split("<")[0];
-                //     }
-                //     classOrInterfaceName = classOrInterfaceName.trim();
-                //     namespacesStr += `\n\ttype ${classOrInterfaceName} = import('${moduleName}').${classOrInterfaceName};`;
-
-                // }
-
-                dtsFileStr += namespacesStr;
-                // dtsFileStr = dtsFileStr.replace(new RegExp(`${moduleName}`,"g"),"");
-                dtsFileStr += `\ndeclare const ${moduleName}:typeof import("${moduleName}");`;
-                fs.writeFileSync(dtsGOpt.out, dtsFileStr);
-            }
-        })
-    }
+    genDts(projRoot, out, moduleName, dtsGenExclude, isGlobal, false);
 }
 
 /**
- * 
- * @param {import("@ailhc/egf-cli").IEgfCompileOption} option 
+ * @param {"create"|"entrypoint"} ctiMode 
+ * @param {string[]} entrys
+ * @param {import("./libs/cti/options/ICreateTsIndexOption").ICreateTsIndexOption} option
  */
-async function autoCreateIndex(option) {
-    const mode = option.ctiMode;
-    let entrys = option.entry;
+async function autoCreateIndex(ctiMode, entrys, option) {
+
     for (let i = 0; i < entrys.length; i++) {
-        const dirPath = path.dirname(path.join(option.proj, entrys[i]))
-        await createIndex(dirPath, mode, option.ctiOption);
+        const dirPath = path.dirname(entrys[i])
+        await createIndex(dirPath, ctiMode, option);
     }
 
 }
