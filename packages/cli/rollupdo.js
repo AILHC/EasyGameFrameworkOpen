@@ -4,7 +4,6 @@
  */
 const typescript = require('rollup-plugin-typescript2');
 const rollup = require("rollup");
-const rollupLoadConfig = require("rollup/dist/shared/loadConfigFile");
 /**
  * @type {any}
  */
@@ -27,7 +26,6 @@ const jsonPlugin = require("@rollup/plugin-json");
 const terser = require("rollup-plugin-terser");
 const { TypeScritIndexWriter } = require('./libs/cti/TypeScritIndexWriter');
 const genDts = require('./genDts');
-
 const tsconfigOverride = {
     compilerOptions: {}
 }
@@ -173,6 +171,9 @@ async function rollupBuild(option) {
     const tsconfigPath = path.join(projRoot, `tsconfig.json`);
 
     let externalTag = option.externalTag;
+    /**
+     * @type {any}
+     */
 
     /**
      * @type {Partial<import('rollup-plugin-typescript2/dist/ioptions').IOptions> }
