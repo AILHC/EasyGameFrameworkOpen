@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 const program = require('commander');
 const package = require("./package.json");
-const rollupDo = require("./rollupdo");
+const rollupDo = require("./libs/rollupdo");
 const path = require("path");
 const fs = require("fs-extra");
-const genDts = require('./genDts');
+const genDts = require('./libs/genDts');
 
 
 

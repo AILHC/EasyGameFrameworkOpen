@@ -27,8 +27,6 @@
   "files": [
     "cli.js",
     "libs",
-    "utils.js",
-    "rollupdo.js",
     "package-template",
     "egfCompileOption.d.ts"
   ],

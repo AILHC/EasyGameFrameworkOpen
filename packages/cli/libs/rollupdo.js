@@ -24,7 +24,7 @@ const jsonPlugin = require("@rollup/plugin-json");
  * @type {any}
  */
 const terser = require("rollup-plugin-terser");
-const { TypeScritIndexWriter } = require('./libs/cti/TypeScritIndexWriter');
+const { TypeScritIndexWriter } = require('./cti/TypeScritIndexWriter');
 const genDts = require('./genDts');
 const tsconfigOverride = {
     compilerOptions: {}
@@ -156,7 +156,6 @@ async function rollupBuild(option) {
         }
 
     }
-    tsconfigOverride.compilerOptions.declarationDir = typesDir;
     tsconfigOverride.compilerOptions.declaration = false;
     tsconfigOverride.compilerOptions.sourceMap = true;
     let removeComments = option.removeComments;
@@ -408,7 +407,7 @@ function doGenDts(projRoot, entrys, format, typesDir, moduleName, option) {
 /**
  * @param {"create"|"entrypoint"} ctiMode 
  * @param {string[]} entrys
- * @param {import("./libs/cti/options/ICreateTsIndexOption").ICreateTsIndexOption} option
+ * @param {import("./cti/options/ICreateTsIndexOption").ICreateTsIndexOption} option
  */
 async function autoCreateIndex(ctiMode, entrys, option) {
 
@@ -424,7 +423,7 @@ const tsIndexWriter = new TypeScritIndexWriter();
  * 
  * @param {string} dirPath 
  * @param {"create"|"entrypoint"} mode
- * @param {import("./libs/cti/options/ICreateTsIndexOption").ICreateTsIndexOption} option
+ * @param {import("./cti/options/ICreateTsIndexOption").ICreateTsIndexOption} option
  */
 async function createIndex(dirPath, mode, option) {
     if (!option) {
