@@ -1,6 +1,7 @@
 {
   "name": "egf-ccc3-full",
   "type": "3d",
+  "private": "true",
   "uuid": "aff0f106-e839-4c9e-b988-26a3df304a67",
   "version": "1.2.2",
   "creator": {
