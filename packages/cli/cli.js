@@ -5,6 +5,7 @@ const rollupDo = require("./libs/rollupdo");
 const path = require("path");
 const fs = require("fs-extra");
 const genDts = require('./libs/genDts');
+const { camelizePkgName } = require('./libs/utils');
 
 
 
@@ -92,13 +93,17 @@ program
         if (!path.isAbsolute(projRoot)) {
             projRoot = path.join(process.cwd(), projRoot);
         }
-        let out = option.out ? option.out : './dist/index.d.ts';
+        let isGlobal = !!option.global;
+        let moduleName = option.moduleName ? option.moduleName : process.env.npm_package_name;
+        if(isGlobal){
+            moduleName = camelizePkgName(moduleName);
+        }
+        let out = option.out ? option.out : isGlobal ? `./dist/${moduleName}.d.ts` : './dist/index.d.ts';
         if (!path.isAbsolute(out)) {
             out = path.join(projRoot, out);
         }
-        let moduleName = option.moduleName ? option.moduleName : process.env.npm_package_name;
+
         let exclude = option.exclude ? option.exclude : [];
-        let isGlobal = !!option.global
         genDts(projRoot, out, moduleName, exclude, isGlobal, !!option.log);
     });
 program.parse(process.argv);

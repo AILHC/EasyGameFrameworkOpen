@@ -18,8 +18,6 @@ function genDts(projRoot, out, moduleName, exclude, isGlobal, log) {
      * @type {dtsGenerator}
      */
     const dtsGen = dtsg.default;
-
-
     let dtsGenExclude = ["node_modules/**/*.d.ts"].concat(exclude ? exclude : []);
     const logPrint = (msg) => {
         log && console.log(`[EGF-CLI] ${msg}`);
@@ -65,6 +63,7 @@ function genDts(projRoot, out, moduleName, exclude, isGlobal, log) {
             //去掉export 
 
             // dtsFileStr = dtsFileStr.replace(/export \* from /g, "");
+
             const source = ts.createSourceFile(`${moduleName}.d.ts`, dtsFileStr, ts.ScriptTarget.ESNext, true);
             const statements = source.statements;
             /**
@@ -129,6 +128,7 @@ function genDts(projRoot, out, moduleName, exclude, isGlobal, log) {
 
 
             dtsFileStr += namespacesStr;
+
             // dtsFileStr = dtsFileStr.replace(new RegExp(`${moduleName}`,"g"),"");
             dtsFileStr += `\ndeclare const ${moduleName}:typeof import("${moduleName}");`;
             fs.writeFileSync(dtsGOpt.out, dtsFileStr);
