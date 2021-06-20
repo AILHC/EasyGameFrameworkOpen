@@ -7,7 +7,7 @@
 	},
 	"dependencies": {
 		"@ailhc/enet": "^1.1.0",
-		"@ailhc/enet-pinus-pb": "^0.0.2",
+		"@ailhc/enet-pinus-pb": "^0.2.9",
 		"express": "3.4.0"
 	}
 }
