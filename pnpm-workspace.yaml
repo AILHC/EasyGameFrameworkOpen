@@ -1,0 +1,8 @@
+packages:
+  # all packages in subdirs of packages/ and components/
+  - 'packages/**'
+  - 'tool-packages/**'
+  - 'transed-packages/**'
+  - 'examples/**'
+  # exclude packages that are inside test directories
+  - '!**/test/**'
