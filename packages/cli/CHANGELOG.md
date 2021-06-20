@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.4](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.3...@ailhc/egf-cli@3.0.4) (2021-06-20)
+
+
+### Bug Fixes
+
+* 修复tsconfig中的exclude无效的问题(支持合并tsconfig的exclude),增加排除测试 ([616b9ee](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/616b9eeb0ddb30b0ece10c03370d90e02060e23c))
+
+
+
+
+
 ## [3.0.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.2...@ailhc/egf-cli@3.0.3) (2021-06-20)
 
 **Note:** Version bump only for package @ailhc/egf-cli
