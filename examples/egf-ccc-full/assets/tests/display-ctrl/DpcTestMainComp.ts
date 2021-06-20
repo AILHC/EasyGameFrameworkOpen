@@ -4,10 +4,10 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-import { DpcMgr } from "@ailhc/display-ctrl";
+import { DpcMgr } from "@ailhc/dpctrl-ccc";
 import { Layer, NodeCtrl } from "@ailhc/dpctrl-ccc";
 import { App } from "@ailhc/egf-core";
-import { LayerMgr } from "@ailhc/layer";
+import { LayerMgr } from "@ailhc/dpctrl-ccc";
 import { getChild, getComp, getSomeRandomInt } from "../../src/Utils";
 import { DpcTestLayerType } from "./DpcTestLayerType";
 import { dtM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
@@ -16,7 +16,6 @@ import { DepResView } from "./view-ctrls/DepResView";
 import { LoadingView } from "./view-ctrls/LoadingView";
 import { ObjPoolMgr } from "@ailhc/obj-pool";
 import { AnimView } from "./view-ctrls/AnimView";
-import { error } from "console";
 import { MutiInsView } from "./view-ctrls/MutiInsView";
 
 const { ccclass, property } = cc._decorator;

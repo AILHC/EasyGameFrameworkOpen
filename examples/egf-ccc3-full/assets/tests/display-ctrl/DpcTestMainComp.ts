@@ -8,11 +8,9 @@
 import { _decorator, Node, Component, Label } from "cc";
 import * as cc from "cc";
 const { ccclass, property } = _decorator;
+import { DpcMgr, Layer, LayerMgr, NodeCtrl } from "@ailhc/dpctrl-c3d";
 
-import { DpcMgr } from "@ailhc/display-ctrl";
-import { Layer, NodeCtrl } from "@ailhc/dpctrl-c3d";
 import { App } from "@ailhc/egf-core";
-import { LayerMgr } from "@ailhc/layer";
 import { getChild, getComp, getSomeRandomInt } from "../../src/Utils";
 import { DpcTestLayerType } from "./DpcTestLayerType";
 import { dtM, setDpcTestModuleMap } from "./setDpcTestModuleMap";
@@ -99,7 +97,7 @@ export default class DpcTestMainComp extends Component {
             }
         });
         const layerMgr = new LayerMgr<cc.Node>();
-        const canvas = (cc.director.getScene().getChildByName("Canvas") as unknown) as cc.Node;
+        const canvas = cc.director.getScene().getChildByName("Canvas") as unknown as cc.Node;
 
         layerMgr.init(DpcTestLayerType, Layer, null, canvas);
         app.loadModule(layerMgr, "layerMgr");

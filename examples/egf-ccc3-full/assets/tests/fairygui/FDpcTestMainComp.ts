@@ -7,16 +7,14 @@
 
 import { _decorator, Node, Component } from "cc";
 import * as cc from "cc";
-import * as fgui from "fairygui-cc";
+import * as fgui from "@ailhc/dpctrl-fguicc";
 const { ccclass, property } = _decorator;
-import { DpcMgr } from "@ailhc/display-ctrl";
-import { FDpctrl, FLayer } from "@ailhc/dpctrl-fguicc";
 import { App } from "@ailhc/egf-core";
-import { LayerMgr } from "@ailhc/layer";
 import { FDpcTestLayerType } from "./FDpcTestLayerType";
 import { fdtM, setFDpcTestModuleMap } from "./setFDpcTestModuleMap";
 import { BagView } from "./views/BagView";
 import { LoadingView } from "./views/CCLoadingView";
+import { DpcMgr, FLayer, LayerMgr } from "@ailhc/dpctrl-fguicc";
 declare global {
     interface IFDpcTestViewKeyMap {}
     interface IFDpcTestViewShowDataMap {}

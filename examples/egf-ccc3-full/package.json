@@ -3,18 +3,14 @@
   "type": "3d",
   "private": "true",
   "uuid": "aff0f106-e839-4c9e-b988-26a3df304a67",
-  "version": "1.2.2",
   "creator": {
-    "version": "3.1.0"
+    "version": "3.2.0"
   },
   "dependencies": {
     "@ailhc/broadcast": "^1.1.9",
-    "@ailhc/display-ctrl": "^1.1.9",
     "@ailhc/dpctrl-c3d": "^1.1.9",
     "@ailhc/dpctrl-fguicc": "^0.3.1",
     "@ailhc/egf-core": "^1.2.6",
-    "@ailhc/layer": "^0.1.9",
-    "@ailhc/obj-pool": "^3.0.8",
-    "fairygui-cc": "^1.0.1"
+    "@ailhc/obj-pool": "^3.0.8"
   }
 }
