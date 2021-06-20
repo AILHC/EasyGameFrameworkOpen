@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.1...@ailhc/egf-cli@3.0.2) (2021-06-16)
+
+
+### Bug Fixes
+
+* 修复dts、cti命令报错的问题 ([14cab79](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/14cab7935d59ccbbb40aba6f3ac806aaf57eb3c4))
+
+
+
+
+
+## [3.0.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.0...@ailhc/egf-cli@3.0.1) (2021-06-15)
+
+**Note:** Version bump only for package @ailhc/egf-cli
+
+
+
+
+
 # [3.0.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.7...@ailhc/egf-cli@3.0.0) (2021-06-10)
 
 
