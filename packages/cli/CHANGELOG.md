@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.2...@ailhc/egf-cli@3.0.3) (2021-06-20)
+
+**Note:** Version bump only for package @ailhc/egf-cli
+
+
+
+
+
 ## [3.0.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.1...@ailhc/egf-cli@3.0.2) (2021-06-16)
 
 
