@@ -22,7 +22,8 @@
       "removeComments": false
     },
     "exclude": [
-      "dist"
+      "dist",
+      "testExclude2/**/*"
     ]
 
   }

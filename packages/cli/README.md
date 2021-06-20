@@ -68,6 +68,12 @@ npm install -D @ailhc/egf-cli
 * '-g, --global [global]', '是否为全局声明，默认否'
 * '-l, --log [log]', '是否输出log，默认否'
 
+ps: 可以在`tsconfig.json`里配置`ts`文件忽略列表
+
+但路径需要符合`glob`匹配规则，可以百度一下。
+
+ts编译器处理：`exclude`里配置只能忽略的`.d.ts`文件
+
 ### 自定义配置文件接口
 
 ```ts
