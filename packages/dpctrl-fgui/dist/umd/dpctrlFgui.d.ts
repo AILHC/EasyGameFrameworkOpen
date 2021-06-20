@@ -179,6 +179,8 @@ declare module 'dpctrlFgui' {
 	
 	
 	
+	* from '@ailhc/display-ctrl';
+	* from '@ailhc/layer';
 
 }
 

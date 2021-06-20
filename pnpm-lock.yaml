@@ -58,35 +58,27 @@ importers:
       '@ailhc/dpctrl-ccc': ^1.1.9
       '@ailhc/dpctrl-fgui': ^0.10.5
       '@ailhc/egf-core': ^1.2.6
-      '@ailhc/layer': ^0.1.9
       '@ailhc/obj-pool': ^3.0.8
     dependencies:
       '@ailhc/broadcast': link:../../packages/broadcast
       '@ailhc/dpctrl-ccc': link:../../packages/dpctrl-ccc
       '@ailhc/dpctrl-fgui': link:../../packages/dpctrl-fgui
       '@ailhc/egf-core': link:../../packages/core
-      '@ailhc/layer': link:../../packages/layer
       '@ailhc/obj-pool': link:../../packages/obj-pool
 
   examples/egf-ccc3-full:
     specifiers:
       '@ailhc/broadcast': ^1.1.9
-      '@ailhc/display-ctrl': ^1.1.9
       '@ailhc/dpctrl-c3d': ^1.1.9
       '@ailhc/dpctrl-fguicc': ^0.3.1
       '@ailhc/egf-core': ^1.2.6
-      '@ailhc/layer': ^0.1.9
       '@ailhc/obj-pool': ^3.0.8
-      fairygui-cc: ^1.0.1
     dependencies:
       '@ailhc/broadcast': link:../../packages/broadcast
-      '@ailhc/display-ctrl': link:../../packages/display-ctrl
       '@ailhc/dpctrl-c3d': link:../../packages/dpctrl-c3d
       '@ailhc/dpctrl-fguicc': link:../../packages/dpctrl-fguicc
       '@ailhc/egf-core': link:../../packages/core
-      '@ailhc/layer': link:../../packages/layer
       '@ailhc/obj-pool': link:../../packages/obj-pool
-      fairygui-cc: registry.nlark.com/fairygui-cc/1.0.1
 
   examples/egf-net-ws:
     specifiers:
@@ -235,27 +227,36 @@ importers:
     specifiers:
       '@ailhc/display-ctrl': ^1.1.9
       '@ailhc/layer': ^0.1.9
+      tslib: ^2.3.0
     dependencies:
       '@ailhc/display-ctrl': link:../display-ctrl
       '@ailhc/layer': link:../layer
+    devDependencies:
+      tslib: registry.nlark.com/tslib/2.3.0
 
   packages/dpctrl-fgui:
     specifiers:
       '@ailhc/display-ctrl': ^1.1.9
       '@ailhc/layer': ^0.1.9
+      tslib: ^2.3.0
     dependencies:
       '@ailhc/display-ctrl': link:../display-ctrl
       '@ailhc/layer': link:../layer
+    devDependencies:
+      tslib: registry.nlark.com/tslib/2.3.0
 
   packages/dpctrl-fguicc:
     specifiers:
       '@ailhc/display-ctrl': ^1.1.9
       '@ailhc/layer': ^0.1.9
       fairygui-cc: ^1.0.1
+      tslib: ^2.3.0
     dependencies:
       '@ailhc/display-ctrl': link:../display-ctrl
       '@ailhc/layer': link:../layer
       fairygui-cc: registry.nlark.com/fairygui-cc/1.0.1
+    devDependencies:
+      tslib: registry.nlark.com/tslib/2.3.0
 
   packages/egf-protobuf-cli:
     specifiers:
@@ -3747,6 +3748,9 @@ packages:
     engines: {node: '>=6'}
     peerDependencies:
       jest-resolve: '*'
+    peerDependenciesMeta:
+      jest-resolve:
+        optional: true
     dependencies:
       jest-resolve: registry.nlark.com/jest-resolve/25.5.1
     dev: true
@@ -6777,6 +6781,8 @@ packages:
       json5: 2.2.0
       semver: 6.3.0
       source-map: 0.5.7
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/@babel/generator/7.14.5:
@@ -7395,6 +7401,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -7590,6 +7597,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -8622,6 +8630,8 @@ packages:
       debug: registry.nlark.com/debug/4.3.1
       import-from: registry.nlark.com/import-from/3.0.0
       lodash: 4.17.21
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/@strictsoftware/typedoc-plugin-monorepo/0.3.1_typedoc@0.19.2:
@@ -9606,6 +9616,7 @@ packages:
       shelljs: 0.7.0
     transitivePeerDependencies:
       - semantic-release
+      - supports-color
     dev: true
 
   registry.nlark.com/dargs/4.1.0:
@@ -9667,6 +9678,11 @@ packages:
     name: debug
     version: 4.3.1
     engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.2
 
@@ -10370,6 +10386,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -10426,6 +10443,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -10682,6 +10700,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -10900,6 +10919,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -10971,6 +10991,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -11190,6 +11211,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - canvas
+      - supports-color
       - utf-8-validate
     dev: true
 
@@ -11250,6 +11272,9 @@ packages:
     engines: {node: '>=8'}
     peerDependencies:
       canvas: ^2.5.0
+    peerDependenciesMeta:
+      canvas:
+        optional: true
     dependencies:
       abab: 2.0.5
       acorn: registry.nlark.com/acorn/7.4.1
@@ -11309,6 +11334,8 @@ packages:
       please-upgrade-node: 3.2.0
       string-argv: 0.3.1
       stringify-object: 3.3.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/listr2/3.10.0_enquirer@2.3.6:
@@ -11574,7 +11601,7 @@ packages:
   registry.nlark.com/node-bignumber/1.2.1:
     resolution: {integrity: sha1-JmyVUzUoOFOfZhyS5YYxvpeRfqU=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/node-bignumber/download/node-bignumber-1.2.1.tgz}
     name: node-bignumber
-    version: 1.2.1
+    version: v1.2.1
     engines: {node: '>=0.4.0'}
     dev: false
 
@@ -12488,7 +12515,6 @@ packages:
     resolution: {integrity: sha1-gDuM2rPhK6WBpMpByIObuw2ssJ4=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/tslib/download/tslib-2.3.0.tgz}
     name: tslib
     version: 2.3.0
-    dev: false
 
   registry.nlark.com/type-fest/0.18.1:
     resolution: {integrity: sha1-20vBUaSiz07r+a3V23VQjbbMhB8=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/type-fest/download/type-fest-0.18.1.tgz}
@@ -12563,7 +12589,7 @@ packages:
     dev: true
 
   registry.nlark.com/typescript/3.7.3:
-    resolution: {integrity: sha1-s2hAZooWRYpwJbnqv60Rtmq4XGk=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/typescript/download/typescript-3.7.3.tgz?cache=0&sync_timestamp=1624087794271&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftypescript%2Fdownload%2Ftypescript-3.7.3.tgz}
+    resolution: {integrity: sha1-s2hAZooWRYpwJbnqv60Rtmq4XGk=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/typescript/download/typescript-3.7.3.tgz}
     name: typescript
     version: 3.7.3
     engines: {node: '>=4.2.0'}
@@ -12571,7 +12597,7 @@ packages:
     dev: false
 
   registry.nlark.com/typescript/3.9.10:
-    resolution: {integrity: sha1-cPORCselHta+952ngAaQsZv3eLg=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/typescript/download/typescript-3.9.10.tgz?cache=0&sync_timestamp=1624087794271&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftypescript%2Fdownload%2Ftypescript-3.9.10.tgz}
+    resolution: {integrity: sha1-cPORCselHta+952ngAaQsZv3eLg=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/typescript/download/typescript-3.9.10.tgz}
     name: typescript
     version: 3.9.10
     engines: {node: '>=4.2.0'}
@@ -12579,7 +12605,7 @@ packages:
     dev: true
 
   registry.nlark.com/typescript/4.3.4:
-    resolution: {integrity: sha1-P4W5hpRbzzEHHezdls+L+mX53Lw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/typescript/download/typescript-4.3.4.tgz?cache=0&sync_timestamp=1624087794271&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftypescript%2Fdownload%2Ftypescript-4.3.4.tgz}
+    resolution: {integrity: sha1-P4W5hpRbzzEHHezdls+L+mX53Lw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/typescript/download/typescript-4.3.4.tgz}
     name: typescript
     version: 4.3.4
     engines: {node: '>=4.2.0'}
@@ -12687,6 +12713,11 @@ packages:
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dev: false
 
   registry.nlark.com/ws/7.5.0:
@@ -12697,6 +12728,11 @@ packages:
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
 
   registry.nlark.com/xlsx/0.16.9:
     resolution: {integrity: sha1-2s1btGvabdN0OUDJw9weIXGCYlY=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/xlsx/download/xlsx-0.16.9.tgz}

@@ -34,16 +34,19 @@
   ],
   "scripts": {
     "cti": "egf cti -d ./src",
-    "watch:cjs": "egf build -w true -f cjs -s inline",
-    "build:cjs": "egf build -f cjs -m true -s inline",
+    "watch:cjs": "egf build -w true -f es -s inline",
     "build:es": "egf build -f es -m true -s inline",
+    "build:cjs": "egf build -f cjs -m true -s inline",
     "clean-dist": "rimraf dist",
-    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es",
+    "build:all": "npm run clean-dist && npm run build:cjs && npm run build:es",
     "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
   },
   "dependencies": {
     "@ailhc/display-ctrl": "^1.1.9",
     "@ailhc/layer": "^0.1.9",
     "fairygui-cc": "^1.0.1"
+  },
+  "devDependencies": {
+    "tslib": "^2.3.0"
   }
 }

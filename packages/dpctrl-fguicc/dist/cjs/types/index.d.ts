@@ -187,5 +187,8 @@ declare module '@ailhc/dpctrl-fguicc' {
 	export * from '@ailhc/dpctrl-fguicc';
 	export * from '@ailhc/dpctrl-fguicc';
 	export * from '@ailhc/dpctrl-fguicc';
+	export * from '@ailhc/layer';
+	export * from '@ailhc/display-ctrl';
+	export * from 'fairygui-cc';
 
 }

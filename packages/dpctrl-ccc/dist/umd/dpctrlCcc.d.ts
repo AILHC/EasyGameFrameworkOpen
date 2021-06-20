@@ -45,6 +45,8 @@ declare module 'dpctrlCcc' {
 declare module 'dpctrlCcc' {
 	
 	
+	* from '@ailhc/display-ctrl';
+	* from '@ailhc/layer';
 
 }
 
