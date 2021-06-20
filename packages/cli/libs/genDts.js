@@ -18,7 +18,16 @@ function genDts(projRoot, out, moduleName, exclude, isGlobal, log) {
      * @type {dtsGenerator}
      */
     const dtsGen = dtsg.default;
-    let dtsGenExclude = ["node_modules/**/*.d.ts"].concat(exclude ? exclude : []);
+    const tsconfigFile = path.join(projRoot, "tsconfig.json");
+    let tsconfigExclude;
+
+    try {
+        const tsconfig = require(tsconfigFile);
+        tsconfigExclude = tsconfig.exclude;
+    } catch (error) {
+
+    }
+    let dtsGenExclude = ["node_modules/**/*.d.ts"].concat(exclude ? exclude : []).concat(tsconfigExclude ? tsconfigExclude : []);
     const logPrint = (msg) => {
         log && console.log(`[EGF-CLI] ${msg}`);
     };
