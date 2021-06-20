@@ -6,8 +6,6 @@ const config = {
         "__tests__/**/*",
         "libs/**/*"
     ],
-    "externalTag": [
-        "@ailhc"
-    ]
+    "externalTag":["@ailhc"]
 }
 module.exports = config;

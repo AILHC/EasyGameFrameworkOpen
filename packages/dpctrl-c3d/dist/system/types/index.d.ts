@@ -47,5 +47,7 @@ declare module '@ailhc/dpctrl-c3d' {
 declare module '@ailhc/dpctrl-c3d' {
 	export * from '@ailhc/dpctrl-c3d';
 	export * from '@ailhc/dpctrl-c3d';
+	export * from '@ailhc/layer';
+	export * from '@ailhc/display-ctrl';
 
 }

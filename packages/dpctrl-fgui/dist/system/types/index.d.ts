@@ -179,5 +179,7 @@ declare module '@ailhc/dpctrl-fgui' {
 	export * from '@ailhc/dpctrl-fgui';
 	export * from '@ailhc/dpctrl-fgui';
 	export * from '@ailhc/dpctrl-fgui';
+	export * from '@ailhc/display-ctrl';
+	export * from '@ailhc/layer';
 
 }

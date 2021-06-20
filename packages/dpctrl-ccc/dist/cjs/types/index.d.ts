@@ -45,5 +45,7 @@ declare module '@ailhc/dpctrl-ccc' {
 declare module '@ailhc/dpctrl-ccc' {
 	export * from '@ailhc/dpctrl-ccc';
 	export * from '@ailhc/dpctrl-ccc';
+	export * from '@ailhc/display-ctrl';
+	export * from '@ailhc/layer';
 
 }

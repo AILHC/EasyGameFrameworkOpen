@@ -6,3 +6,6 @@ export * from "./FBinderTool";
 export * from "./fix-some-fgui";
 export * from "./fgui-dpctrl";
 export * from "./fgui-layer";
+export * from "@ailhc/layer";
+export * from "@ailhc/display-ctrl";
+export * from "fairygui-cc";
