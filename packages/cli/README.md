@@ -54,18 +54,19 @@ npm install -D @ailhc/egf-cli
 ### 入口文件生成命令行参数(egf cti)
 `基于create-ts-index库创建入口文件,一般用于生成库的index.ts比如fairygui`
 
+* '-m, --mode [mode]', '创建模式，默认create,可选create、entrypoint'
+* '-d, --dir [dir]', '文件夹路径，可以相对也可以绝对，相对路径相对于process.cwd()执行命令处'
+
+### dts声明文件生成命令行参数(egf dts)
+`声明文件生成`
+
+
 * '-p, --proj [proj]', '根目录，可以是相对路径(相对于 process.cwd())要构建生成dts的基本目录,将排除在此目录之外发现的任何依赖项，默认process.cwd()'
 * '-o, --out [out]', '输出文件路径,可以是相对路径(相对于 proj),默认dist/index.d.ts'
 * '-n, --module-name [moduleName]', '模块名,默认读package.name'
 * '-e, --exclude [exclude...]', '忽略列表'
 * '-g, --global [global]', '是否为全局声明，默认否'
 * '-l, --log [log]', '是否输出log，默认否'
-
-### dts声明文件生成命令行参数(egf dts)
-`声明文件生成`
-
-* '-m, --mode [mode]', '创建模式，默认create,可选create、entrypoint'
-* '-d, --dir [dir]', '文件夹路径，可以相对也可以绝对，相对路径相对于process.cwd()执行命令处'
 
 ### 自定义配置文件接口
 
