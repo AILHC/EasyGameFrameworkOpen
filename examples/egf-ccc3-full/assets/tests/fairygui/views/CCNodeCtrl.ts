@@ -1,5 +1,4 @@
 import { _decorator, Node } from "cc";
-import {} from "@ailhc/display-ctrl";
 import * as cc from "cc";
 export class CCNodeCtrl implements displayCtrl.ICtrl<cc.Node> {
     key?: string | any;

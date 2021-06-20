@@ -40,7 +40,7 @@ export class LoadingView extends CCNodeCtrl {
     }
     onDestroy(destroyRes?: boolean) {
         if (destroyRes) {
-            cc.assetManager.releaseAsset(cc.resources.get<cc.Prefab>(LoadingView.prefabUrl, cc.Prefab));
+            cc.assetManager.releaseAsset(cc.resources.get(LoadingView.prefabUrl, cc.Prefab));
         }
     }
 }

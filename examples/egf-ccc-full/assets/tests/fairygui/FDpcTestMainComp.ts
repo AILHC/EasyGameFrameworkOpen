@@ -4,13 +4,12 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-import { DpcMgr } from "@ailhc/display-ctrl";
+import { DpcMgr } from "@ailhc/dpctrl-fgui";
 import { FDpctrl, FLayer } from "@ailhc/dpctrl-fgui";
 import { App } from "@ailhc/egf-core";
-import { LayerMgr } from "@ailhc/layer";
+import { LayerMgr } from "@ailhc/dpctrl-fgui";
 import { FDpcTestLayerType } from "./FDpcTestLayerType";
 import { fdtM, setFDpcTestModuleMap } from "./setFDpcTestModuleMap";
-import { error } from "console";
 import { BagView } from "./views/BagView";
 import { LoadingView } from "./views/CCLoadingView";
 

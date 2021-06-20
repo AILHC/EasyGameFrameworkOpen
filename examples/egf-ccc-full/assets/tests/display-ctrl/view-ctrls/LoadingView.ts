@@ -4,32 +4,27 @@ import { DpcTestLayerType } from "../DpcTestLayerType";
 import { dtM } from "../setDpcTestModuleMap";
 declare global {
     interface IDpcTestViewKeyMap {
-        LoadingView: "LoadingView"
+        LoadingView: "LoadingView";
     }
     interface IDpcTestUpdateDataMap {
-        LoadingView: { finished: number, total: number }
+        LoadingView: { finished: number; total: number };
     }
 }
 export class LoadingView extends NodeCtrl {
     static typeKey: string = "LoadingView";
-    private static _ress: { path: string, type: any }[];
+    private static _ress: { path: string; type: any }[];
     public static prefabUrl = "display-ctrl-test-views/LoadingView";
     getRess() {
         if (!LoadingView._ress) {
-            LoadingView._ress = [
-                { path: LoadingView.prefabUrl, type: cc.Prefab }
-            ]
+            LoadingView._ress = [{ path: LoadingView.prefabUrl, type: cc.Prefab }];
         }
         return LoadingView._ress;
-
-
     }
     private _tipsLabel: cc.Label;
     onInit() {
-        super.onInit()
+        super.onInit();
         this.node = getPrefabNodeByPath(LoadingView.prefabUrl);
         this._tipsLabel = this.node.getChildByName("loadingTips").getComponent(cc.Label);
-
     }
     onShow(config: displayCtrl.IShowConfig) {
         super.onShow(config);
@@ -41,11 +36,10 @@ export class LoadingView extends NodeCtrl {
     }
     onHide() {
         super.onHide();
-
     }
     onDestroy(destroyRes?: boolean) {
         if (destroyRes) {
-            cc.assetManager.releaseAsset(cc.resources.get<cc.Prefab>(LoadingView.prefabUrl, cc.Prefab));
+            cc.assetManager.releaseAsset(cc.resources.get(LoadingView.prefabUrl, cc.Prefab));
         }
     }
 }

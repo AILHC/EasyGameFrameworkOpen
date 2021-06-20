@@ -3,11 +3,6 @@
 // poolMgr: objPool.IPoolMgr;
 
 import { _decorator } from "cc";
-import { DpcMgr } from "@ailhc/display-ctrl";
-import { Layer } from "@ailhc/dpctrl-ccc";
-import { LayerMgr } from "@ailhc/layer";
-import { LayerType } from "./LayerType";
-import { ObjPoolMgr } from "@ailhc/obj-pool";
 declare global {
     interface IModuleMap {}
 }

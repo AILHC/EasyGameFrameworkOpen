@@ -1,17 +1,15 @@
 import { _decorator } from "cc";
 import * as cc from "cc";
-import { FDpctrl } from "@ailhc/dpctrl-fguicc";
-
+import * as fgui from "@ailhc/dpctrl-fguicc";
 import { FDpcTestLayerType } from "../FDpcTestLayerType";
 import { fdtM } from "../setFDpcTestModuleMap";
-import * as fgui from "fairygui-cc";
 declare global {
     interface IFDpcTestViewKeyMap {
         BagView: string;
     }
 }
 
-export class BagView extends FDpctrl {
+export class BagView extends fgui.FDpctrl {
     static typeKey = "BagView";
     onLoadData: IDpcTestOnLoadData = { showLoading: true };
     getRess() {
