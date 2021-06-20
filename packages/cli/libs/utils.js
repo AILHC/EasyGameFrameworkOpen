@@ -13,6 +13,24 @@ function getIPAdress() {
         }
     }
 }
+/**
+ * 驼峰化模块名  
+ * example:  @ailhc/egf-cli => egfCli
+ * @param {string} moduleName 
+ */
+function camelizePkgName(moduleName) {
+    if (moduleName.includes("/")) {
+        moduleName = moduleName.split("/")[1];
+    }
+    if (moduleName.includes("-")) {
+        let camelizeRE = /-(\w)/g;
+        moduleName = moduleName.replace(camelizeRE, function (_, c) {
+            return c ? c.toUpperCase() : '';
+        })
+    }
+    return moduleName;
+}
 module.exports = {
-    getIPAdress: getIPAdress
+    getIPAdress: getIPAdress,
+    camelizePkgName: camelizePkgName
 }

@@ -37,15 +37,23 @@
   "dependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@types/dts-generator": "^2.1.5",
+    "chalk": "^4.1.1",
     "commander": "^7.2.0",
-    "create-ts-index": "^1.13.6",
+    "dayjs": "^1.10.5",
+    "debug": "^4.3.1",
+    "deepmerge": "^4.2.2",
     "dts-generator": "^3.0.0",
     "fs-extra": "^9.1.0",
+    "glob": "^7.1.7",
+    "json5": "^2.2.0",
+    "minimatch": "^3.0.4",
+    "my-easy-fp": "^0.9.0",
     "rollup": "^2.26.11",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
+    "tslib": "^2.3.0",
     "typescript": "^4.3.2"
   },
   "devDependencies": {
@@ -69,6 +77,7 @@
     "test:gen-dts:error": "egf dts -p ./__tests__/gen-dts/src",
     "test:gen-dts:global": "egf dts -p ./__tests__/gen-dts -g -n genDts -o dist/genDts.d.ts",
     "test:gen-dts": "egf dts -p ./__tests__/gen-dts -l",
+    "test:gen-dts:subproj": "egf dts -p ./__tests__/gen-dts/subproj -l -g",
     "test:auto_create_index:build:cjs": "egf build -p ./__tests__/auto_create_index -f cjs -acti -e ./src/index.ts",
     "test:owinput-output:build": "egf build -p ./__tests__/owinput-output -f cjs -e ./src/index.ts -c"
   }
