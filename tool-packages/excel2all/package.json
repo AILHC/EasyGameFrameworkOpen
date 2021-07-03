@@ -34,6 +34,7 @@
     "build:cjs": "egf build -f cjs -m true",
     "build:es": "egf build -f es -m true",
     "build:iife": "egf build -f iife -m true",
+    "build:all":"npm run build:cjs && npm run build:es && npm run build:iife",
     "clean-dist": "rimraf dist"
   },
   "dependencies": {

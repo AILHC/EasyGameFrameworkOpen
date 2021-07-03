@@ -14,7 +14,7 @@ program
 
 program
     .command("convert")
-    .description("")
+    .description("匹配指定目录的excel文件进行解析转化")
     .option('-p, --projRoot [projRoot]', '项目根目录，默认执行命令处\n-------------------------')
     .option('-c, --config [config]', '配置文件路径，相对于projRoot\n-------------------------')
     .option('-t, --tableFileDir [tableFileDir]', "excel文件夹路径,如果没有则使用项目根目录\n-------------------------")

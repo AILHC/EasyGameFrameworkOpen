@@ -1,6 +1,6 @@
 `excel2all`
 
-excel配置表转换工具
+excel配置表转换库
 
 ## 简介
 
