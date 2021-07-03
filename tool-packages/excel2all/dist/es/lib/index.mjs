@@ -1,15 +1,11 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var os = require('os');
-var xlsx = require('xlsx');
-var path = require('path');
-var zlib = require('zlib');
-var fs = require('fs-extra');
-var crypto = require('crypto');
-var mmatch = require('micromatch');
-var worker_threads = require('worker_threads');
+import { platform as platform$1 } from 'os';
+import { readFile } from 'xlsx';
+import { join, isAbsolute, dirname, parse } from 'path';
+import { deflateSync } from 'zlib';
+import { statSync, readdirSync, existsSync, unlinkSync, ensureFileSync, writeFile, writeFileSync, readFileSync } from 'fs-extra';
+import { createHash } from 'crypto';
+import { all } from 'micromatch';
+import { Worker } from 'worker_threads';
 
 const valueTransFuncMap = {};
 valueTransFuncMap["int"] = strToInt;
@@ -89,7 +85,7 @@ function anyToStr(fieldItem, cellValue) {
     return result;
 }
 
-const platform = os.platform();
+const platform = platform$1();
 const osEol = platform === "win32" ? "\n" : "\r\n";
 
 var LogLevelEnum;
@@ -265,17 +261,18 @@ function getCharCodeSum(colKey) {
     return sum;
 }
 function readTableFile(fileInfo) {
-    const workBook = xlsx.readFile(fileInfo.filePath, { type: isCSV(fileInfo.fileExtName) ? "string" : "file" });
+    const workBook = readFile(fileInfo.filePath, { type: isCSV(fileInfo.fileExtName) ? "string" : "file" });
     return workBook;
 }
 function isCSV(fileExtName) {
     return fileExtName === "csv";
 }
 
+var TableType;
 (function (TableType) {
     TableType["vertical"] = "vertical";
     TableType["horizontal"] = "horizontal";
-})(exports.TableType || (exports.TableType = {}));
+})(TableType || (TableType = {}));
 class DefaultParseHandler {
     constructor() {
         this._valueTransFuncMap = valueTransFuncMap;
@@ -306,7 +303,7 @@ class DefaultParseHandler {
             return null;
         }
         tableDefine.tableType = firstCellValue.tableType;
-        if (tableDefine.tableType === exports.TableType.vertical) {
+        if (tableDefine.tableType === TableType.vertical) {
             tableDefine.verticalFieldDefine = {};
             const verticalFieldDefine = tableDefine.verticalFieldDefine;
             verticalFieldDefine.textRow = 1;
@@ -327,7 +324,7 @@ class DefaultParseHandler {
             }
             tableDefine.startCol = "B";
         }
-        else if (tableDefine.tableType === exports.TableType.horizontal) {
+        else if (tableDefine.tableType === TableType.horizontal) {
             tableDefine.horizontalFieldDefine = {};
             const horizontalFieldDefine = tableDefine.horizontalFieldDefine;
             horizontalFieldDefine.textCol = "A";
@@ -346,11 +343,11 @@ class DefaultParseHandler {
         let tableType;
         if (cellValues.length > 1) {
             tableNameInSheet = cellValues[1];
-            tableType = cellValues[0] === "H" ? exports.TableType.horizontal : exports.TableType.vertical;
+            tableType = cellValues[0] === "H" ? TableType.horizontal : TableType.vertical;
         }
         else {
             tableNameInSheet = cellValues[0];
-            tableType = exports.TableType.vertical;
+            tableType = TableType.vertical;
         }
         return { tableNameInSheet: tableNameInSheet, tableType: tableType };
     }
@@ -582,7 +579,7 @@ class DefaultParseHandler {
         return field;
     }
     checkColNeedParse(tableDefine, sheet, colKey) {
-        if (tableDefine.tableType === exports.TableType.vertical) {
+        if (tableDefine.tableType === TableType.vertical) {
             const verticalFieldDefine = tableDefine.verticalFieldDefine;
             const typeCellObj = sheet[colKey + verticalFieldDefine.typeRow];
             const fieldCellObj = sheet[colKey + verticalFieldDefine.fieldRow];
@@ -593,7 +590,7 @@ class DefaultParseHandler {
                 return true;
             }
         }
-        else if (tableDefine.tableType === exports.TableType.horizontal) {
+        else if (tableDefine.tableType === TableType.horizontal) {
             const cellObj = sheet[colKey + 1];
             if (isEmptyCell(cellObj)) {
                 return false;
@@ -642,7 +639,7 @@ class DefaultParseHandler {
             }
             parseResult.curSheetName = sheetName;
             Logger.log(`|=[parseSheet|解析分表]=> ${sheetName}`);
-            if (tableDefine.tableType === exports.TableType.vertical) {
+            if (tableDefine.tableType === TableType.vertical) {
                 let lastRowIndex;
                 verticalForEachSheet(sheet, tableDefine.startRow, tableDefine.startCol, (sheet, colKey, rowIndex) => {
                     let isNewRowOrCol = false;
@@ -656,7 +653,7 @@ class DefaultParseHandler {
                     }
                 }, isSheetRowEnd, isSheetColEnd, isSkipSheetRow, isSkipSheetCol);
             }
-            else if (tableDefine.tableType === exports.TableType.horizontal) {
+            else if (tableDefine.tableType === TableType.horizontal) {
                 let lastColKey;
                 horizontalForEachSheet(sheet, tableDefine.startRow, tableDefine.startCol, (sheet, colKey, rowIndex) => {
                     let isNewRowOrCol = false;
@@ -725,8 +722,8 @@ class DefaultOutPutTransformer {
             }
             tableObjMap[tableName] = tableObj;
             if (outputConfig.isGenDts && objTypeTableMap[tableName] === undefined) {
-                objTypeTableMap[tableName] = parseResult.tableDefine.tableType === exports.TableType.horizontal;
-                if (parseResult.tableDefine.tableType === exports.TableType.horizontal) {
+                objTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.horizontal;
+                if (parseResult.tableDefine.tableType === TableType.horizontal) {
                     tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
                 }
                 else {
@@ -750,14 +747,14 @@ class DefaultOutPutTransformer {
             tableTypeMapDtsStr = itBaseStr + "interface IT_TableMap {" + osEol + tableTypeMapDtsStr + "}" + osEol;
             if (outputConfig.isBundleDts) {
                 const dtsFileName = outputConfig.bundleDtsFileName ? outputConfig.bundleDtsFileName : "tableMap";
-                const bundleDtsFilePath = path.join(outputConfig.clientDtsOutDir, `${dtsFileName}.d.ts`);
+                const bundleDtsFilePath = join(outputConfig.clientDtsOutDir, `${dtsFileName}.d.ts`);
                 outputFileMap[bundleDtsFilePath] = {
                     filePath: bundleDtsFilePath,
                     data: tableTypeMapDtsStr + tableTypeDtsStrs
                 };
             }
             else {
-                const tableTypeMapDtsFilePath = path.join(outputConfig.clientDtsOutDir, "tableMap.d.ts");
+                const tableTypeMapDtsFilePath = join(outputConfig.clientDtsOutDir, "tableMap.d.ts");
                 outputFileMap[tableTypeMapDtsFilePath] = {
                     filePath: tableTypeMapDtsFilePath,
                     data: tableTypeMapDtsStr
@@ -792,7 +789,7 @@ class DefaultOutPutTransformer {
                 outputData = JSON.stringify(tableObjMap);
             }
             if (outputConfig.isZip) {
-                outputData = zlib.deflateSync(outputData);
+                outputData = deflateSync(outputData);
             }
             outputFileMap[jsonBundleFilePath] = {
                 filePath: jsonBundleFilePath,
@@ -813,7 +810,7 @@ class DefaultOutPutTransformer {
     _addSingleTableDtsOutputFile(config, parseResult, outputFileMap) {
         if (!parseResult.tableObj)
             return;
-        let dtsFilePath = path.join(config.clientDtsOutDir, `${parseResult.tableDefine.tableName}.d.ts`);
+        let dtsFilePath = join(config.clientDtsOutDir, `${parseResult.tableDefine.tableName}.d.ts`);
         if (!outputFileMap[dtsFilePath]) {
             const dtsStr = this._getSingleTableDts(parseResult);
             if (dtsStr) {
@@ -868,7 +865,7 @@ class DefaultOutPutTransformer {
         if (!tableObj)
             return;
         const tableName = parseResult.tableDefine.tableName;
-        let singleJsonFilePath = path.join(config.clientSingleTableJsonDir, `${tableName}.json`);
+        let singleJsonFilePath = join(config.clientSingleTableJsonDir, `${tableName}.json`);
         let singleJsonData = JSON.stringify(tableObj, null, "\t");
         let singleOutputFileInfo = outputFileMap[singleJsonFilePath];
         if (singleOutputFileInfo) {
@@ -929,11 +926,11 @@ function __awaiter(thisArg, _arguments, P, generator) {
 }
 
 function forEachFile(fileOrDirPath, eachCallback) {
-    if (fs.statSync(fileOrDirPath).isDirectory()) {
-        const fileNames = fs.readdirSync(fileOrDirPath);
+    if (statSync(fileOrDirPath).isDirectory()) {
+        const fileNames = readdirSync(fileOrDirPath);
         let childFilePath;
         for (var i = 0; i < fileNames.length; i++) {
-            childFilePath = path.join(fileOrDirPath, fileNames[i]);
+            childFilePath = join(fileOrDirPath, fileNames[i]);
             forEachFile(childFilePath, eachCallback);
         }
     }
@@ -958,19 +955,19 @@ function writeOrDeleteOutPutFiles(outputFileInfos, onProgress, complete) {
         };
         for (let i = outputFileInfos.length - 1; i >= 0; i--) {
             fileInfo = outputFileInfos[i];
-            if (fileInfo.isDelete && fs.existsSync(fileInfo.filePath)) {
-                fs.unlinkSync(fileInfo.filePath);
+            if (fileInfo.isDelete && existsSync(fileInfo.filePath)) {
+                unlinkSync(fileInfo.filePath);
             }
             else {
-                if (fs.existsSync(fileInfo.filePath) && fs.statSync(fileInfo.filePath).isDirectory()) {
+                if (existsSync(fileInfo.filePath) && statSync(fileInfo.filePath).isDirectory()) {
                     Logger.log(`路径为文件夹:${fileInfo.filePath}`, "error");
                     continue;
                 }
                 if (!fileInfo.encoding && typeof fileInfo.data === "string") {
                     fileInfo.encoding = "utf8";
                 }
-                fs.ensureFileSync(fileInfo.filePath);
-                fs.writeFile(fileInfo.filePath, fileInfo.data, fileInfo.encoding ? { encoding: fileInfo.encoding } : undefined, onWriteEnd);
+                ensureFileSync(fileInfo.filePath);
+                writeFile(fileInfo.filePath, fileInfo.data, fileInfo.encoding ? { encoding: fileInfo.encoding } : undefined, onWriteEnd);
             }
         }
     }
@@ -996,31 +993,31 @@ function forEachChangedFile(dir, cacheFilePath, eachCallback) {
         delete gcfCache[oldFilePaths[i]];
         eachCallback(oldFilePaths[i], true);
     }
-    fs.writeFileSync(cacheFilePath, JSON.stringify(gcfCache), { encoding: "utf-8" });
+    writeFileSync(cacheFilePath, JSON.stringify(gcfCache), { encoding: "utf-8" });
 }
 function writeCacheData(cacheFilePath, cacheData) {
     if (!cacheFilePath) {
         Logger.log(`cacheFilePath is null`, "error");
         return;
     }
-    fs.writeFileSync(cacheFilePath, JSON.stringify(cacheData), { encoding: "utf-8" });
+    writeFileSync(cacheFilePath, JSON.stringify(cacheData), { encoding: "utf-8" });
 }
 function getCacheData(cacheFilePath) {
     if (!cacheFilePath) {
         Logger.log(`cacheFilePath is null`, "error");
         return;
     }
-    if (!fs.existsSync(cacheFilePath)) {
-        fs.ensureFileSync(cacheFilePath);
-        fs.writeFileSync(cacheFilePath, "{}", { encoding: "utf-8" });
+    if (!existsSync(cacheFilePath)) {
+        ensureFileSync(cacheFilePath);
+        writeFileSync(cacheFilePath, "{}", { encoding: "utf-8" });
     }
-    const gcfCacheFile = fs.readFileSync(cacheFilePath, "utf-8");
+    const gcfCacheFile = readFileSync(cacheFilePath, "utf-8");
     const gcfCache = JSON.parse(gcfCacheFile);
     return gcfCache;
 }
 function getFileMd5Sync(filePath) {
-    const file = fs.readFileSync(filePath, "utf-8");
-    var md5um = crypto.createHash("md5");
+    const file = readFileSync(filePath, "utf-8");
+    var md5um = createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
 }
@@ -1057,7 +1054,7 @@ function convert(converConfig) {
             Logger.log(`配置表目录：tableFileDir为空`, "error");
             return;
         }
-        if (!fs.existsSync(tableFileDir)) {
+        if (!existsSync(tableFileDir)) {
             Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
             return;
         }
@@ -1079,7 +1076,7 @@ function convert(converConfig) {
         let changedFileInfos = [];
         let deleteFileInfos = [];
         const getFileInfo = (filePath) => {
-            const filePathParse = path.parse(filePath);
+            const filePathParse = parse(filePath);
             const fileInfo = {
                 filePath: filePath,
                 fileName: filePathParse.name,
@@ -1096,7 +1093,7 @@ function convert(converConfig) {
                 deleteFileInfos.push(fileInfo);
             }
             else {
-                canRead = mmatch.all(fileInfo.filePath, matchPattern);
+                canRead = all(fileInfo.filePath, matchPattern);
                 if (canRead) {
                     changedFileInfos.push(fileInfo);
                 }
@@ -1112,10 +1109,10 @@ function convert(converConfig) {
         else {
             if (!cacheFileDirPath)
                 cacheFileDirPath = defaultDir;
-            if (!path.isAbsolute(cacheFileDirPath)) {
-                cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
+            if (!isAbsolute(cacheFileDirPath)) {
+                cacheFileDirPath = join(converConfig.projRoot, cacheFileDirPath);
             }
-            parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
+            parseResultMapCacheFilePath = join(cacheFileDirPath, cacheFileName);
             parseResultMap = getCacheData(parseResultMapCacheFilePath);
             if (!parseResultMap) {
                 parseResultMap = {};
@@ -1196,7 +1193,7 @@ function convert(converConfig) {
             for (let i = 0; i < count; i++) {
                 subFileInfos = changedFileInfos.splice(0, converConfig.threadParseFileMaxNum);
                 Logger.log(`----------------线程开始:${i}-----------------`);
-                worker = new worker_threads.Worker(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
+                worker = new Worker(join(dirname(__filename), "../../../worker_scripts/worker.js"), {
                     workerData: {
                         threadId: i,
                         fileInfos: subFileInfos,
@@ -1250,11 +1247,11 @@ function onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr) {
             let logFileDirPath = context.convertConfig.outputLogDirPath;
             if (!logFileDirPath)
                 logFileDirPath = defaultDir;
-            if (!path.isAbsolute(logFileDirPath)) {
-                logFileDirPath = path.join(context.convertConfig.projRoot, logFileDirPath);
+            if (!isAbsolute(logFileDirPath)) {
+                logFileDirPath = join(context.convertConfig.projRoot, logFileDirPath);
             }
             const outputLogFileInfo = {
-                filePath: path.join(logFileDirPath, logFileName),
+                filePath: join(logFileDirPath, logFileName),
                 data: logStr
             };
             writeOrDeleteOutPutFiles([outputLogFileInfo]);
@@ -1274,7 +1271,7 @@ function testFileMatch(converConfig) {
         Logger.log(`配置表目录：tableFileDir为空`, "error");
         return;
     }
-    if (!fs.existsSync(tableFileDir)) {
+    if (!existsSync(tableFileDir)) {
         Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
         return;
     }
@@ -1291,7 +1288,7 @@ function testFileMatch(converConfig) {
         let canRead;
         if (isDelete) ;
         else {
-            canRead = mmatch.all(filePath, matchPattern);
+            canRead = all(filePath, matchPattern);
             if (canRead) {
                 changedFilePaths.push(filePath);
             }
@@ -1307,10 +1304,10 @@ function testFileMatch(converConfig) {
     else {
         if (!cacheFileDirPath)
             cacheFileDirPath = ".cache";
-        if (!path.isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
+        if (!isAbsolute(cacheFileDirPath)) {
+            cacheFileDirPath = join(converConfig.projRoot, cacheFileDirPath);
         }
-        parseResultMapCacheFilePath = path.join(cacheFileDirPath, ".egfprmc");
+        parseResultMapCacheFilePath = join(cacheFileDirPath, ".egfprmc");
         parseResultMap = getCacheData(parseResultMapCacheFilePath);
         if (!parseResultMap) {
             parseResultMap = {};
@@ -1352,31 +1349,7 @@ function testFileMatch(converConfig) {
     console.log(changedFilePaths);
 }
 
-exports.ACharCode = ACharCode;
-exports.DefaultConvertHook = DefaultConvertHook;
-exports.DefaultOutPutTransformer = DefaultOutPutTransformer;
-exports.DefaultParseHandler = DefaultParseHandler;
-exports.Logger = Logger;
-exports.ZCharCode = ZCharCode;
-exports.charCodesToString = charCodesToString;
-exports.convert = convert;
-exports.doParse = doParse;
-exports.forEachChangedFile = forEachChangedFile;
-exports.forEachFile = forEachFile;
-exports.getCacheData = getCacheData;
-exports.getFileMd5 = getFileMd5;
-exports.getFileMd5Sync = getFileMd5Sync;
-exports.getNextColKey = getNextColKey;
-exports.horizontalForEachSheet = horizontalForEachSheet;
-exports.isCSV = isCSV;
-exports.isEmptyCell = isEmptyCell;
-exports.readTableFile = readTableFile;
-exports.stringToCharCodes = stringToCharCodes;
-exports.testFileMatch = testFileMatch;
-exports.valueTransFuncMap = valueTransFuncMap;
-exports.verticalForEachSheet = verticalForEachSheet;
-exports.writeCacheData = writeCacheData;
-exports.writeOrDeleteOutPutFiles = writeOrDeleteOutPutFiles;
+export { ACharCode, DefaultConvertHook, DefaultOutPutTransformer, DefaultParseHandler, Logger, TableType, ZCharCode, charCodesToString, convert, doParse, forEachChangedFile, forEachFile, getCacheData, getFileMd5, getFileMd5Sync, getNextColKey, horizontalForEachSheet, isCSV, isEmptyCell, readTableFile, stringToCharCodes, testFileMatch, valueTransFuncMap, verticalForEachSheet, writeCacheData, writeOrDeleteOutPutFiles };
 
     
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.mjs.map

@@ -1,6 +1,7 @@
 {
   "packages": [
-    "packages/*"
+    "packages/*",
+    "tool-packages/*"
   ],
   "publish": {
     "allowBranch": "main"
