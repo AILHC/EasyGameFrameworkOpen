@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all-cli@0.1.3...@ailhc/excel2all-cli@0.1.4) (2021-07-05)
+
+
+### Bug Fixes
+
+* 命令行参数解析bug修复 ([b8e1a1b](https://github.com/AILHC/EasyGameFrameworkOpen/commit/b8e1a1bb6bcbfae3fc5c8c1c4380b463d22dd6f9))
+
+
+
+
+
 ## [0.1.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all-cli@0.1.1...@ailhc/excel2all-cli@0.1.3) (2021-06-10)
 
 **Note:** Version bump only for package @ailhc/excel2all-cli
