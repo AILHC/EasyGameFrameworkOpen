@@ -3,7 +3,8 @@ import { Logger } from "./loger";
 
 export class DefaultConvertHook implements IConvertHook {
     onStart?(context: IConvertContext, cb: VoidFunction): void {
-        Logger.systemLog(`convert-hook onStart`);
+        Logger.systemLog(`[excel2all] convert-hook onStart`);
+        Logger.systemLog(`[excel2all] 开始表转换`);
         cb();
     }
     onParseBefore?(context: IConvertContext, cb: VoidFunction): void {

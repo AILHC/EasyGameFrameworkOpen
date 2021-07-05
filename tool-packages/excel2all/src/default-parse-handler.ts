@@ -133,35 +133,34 @@ export class DefaultParseHandler implements ITableParseHandler {
         this._valueTransFuncMap = valueTransFuncMap;
     }
     getTableDefine(fileInfo: IFileInfo, workBook: xlsx.WorkBook): ITableDefine {
-        //取表格文件名为表格名
-        const tableName = fileInfo.fileName;
-
-        const tableDefine: Partial<ITableDefine> = {
-            tableName: tableName
-        };
-
         let cellKey: string;
         let cellObj: xlsx.CellObject;
-        //取第一个表
+
         const sheetNames = workBook.SheetNames;
         let sheet: xlsx.Sheet;
         let firstCellValue: { tableNameInSheet: string; tableType: string };
         let firstCellObj: xlsx.CellObject;
+
+        const tableDefine: Partial<ITableDefine> = {};
+
         for (let i = 0; i < sheetNames.length; i++) {
             sheet = workBook.Sheets[sheetNames[i]];
             firstCellObj = sheet["A" + 1];
             if (!isEmptyCell(firstCellObj)) {
                 firstCellValue = this._getFirstCellValue(firstCellObj);
-                if (firstCellValue && firstCellValue.tableNameInSheet === tableName) {
+                if (!tableDefine.tableName) {
+                    tableDefine.tableName = firstCellValue.tableNameInSheet;
+                    tableDefine.tableType = firstCellValue.tableType;
+                }
+                if (firstCellValue && firstCellValue.tableNameInSheet === tableDefine.tableName) {
                     break;
                 }
             }
         }
-        if (!firstCellValue || firstCellValue.tableNameInSheet !== tableName) {
-            Logger.log(`表格不规范,跳过解析,路径:${fileInfo.filePath}`, "error");
+        if (!tableDefine.tableName || !tableDefine.tableType) {
+            Logger.log(`表格不规范,跳过解析,路径:${fileInfo.filePath}`, "warn");
             return null;
         }
-        tableDefine.tableType = firstCellValue.tableType;
         if (tableDefine.tableType === TableType.vertical) {
             tableDefine.verticalFieldDefine = {} as any;
             const verticalFieldDefine: IVerticalFieldDefine = tableDefine.verticalFieldDefine;

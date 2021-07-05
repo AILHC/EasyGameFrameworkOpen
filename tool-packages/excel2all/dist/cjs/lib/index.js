@@ -17,6 +17,7 @@ valueTransFuncMap["string"] = anyToStr;
 valueTransFuncMap["[int]"] = strToIntArr;
 valueTransFuncMap["[string]"] = strToStrArr;
 valueTransFuncMap["json"] = strToJsonObj;
+valueTransFuncMap["json"] = anyToAny;
 function strToIntArr(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
     cellValue = cellValue.trim();
@@ -87,6 +88,21 @@ function anyToStr(fieldItem, cellValue) {
         result.value = cellValue + "";
     }
     return result;
+}
+function anyToAny(fieldItem, cellValue) {
+    cellValue = (cellValue + "").replace(/，/g, ",");
+    cellValue = cellValue.trim();
+    let obj;
+    let error;
+    if (cellValue !== "") {
+        try {
+            obj = JSON.parse(cellValue);
+        }
+        catch (err) {
+            obj = cellValue;
+        }
+    }
+    return { error: error, value: obj };
 }
 
 const platform = os.platform();
@@ -281,31 +297,31 @@ class DefaultParseHandler {
         this._valueTransFuncMap = valueTransFuncMap;
     }
     getTableDefine(fileInfo, workBook) {
-        const tableName = fileInfo.fileName;
-        const tableDefine = {
-            tableName: tableName
-        };
         let cellKey;
         let cellObj;
         const sheetNames = workBook.SheetNames;
         let sheet;
         let firstCellValue;
         let firstCellObj;
+        const tableDefine = {};
         for (let i = 0; i < sheetNames.length; i++) {
             sheet = workBook.Sheets[sheetNames[i]];
             firstCellObj = sheet["A" + 1];
             if (!isEmptyCell(firstCellObj)) {
                 firstCellValue = this._getFirstCellValue(firstCellObj);
-                if (firstCellValue && firstCellValue.tableNameInSheet === tableName) {
+                if (!tableDefine.tableName) {
+                    tableDefine.tableName = firstCellValue.tableNameInSheet;
+                    tableDefine.tableType = firstCellValue.tableType;
+                }
+                if (firstCellValue && firstCellValue.tableNameInSheet === tableDefine.tableName) {
                     break;
                 }
             }
         }
-        if (!firstCellValue || firstCellValue.tableNameInSheet !== tableName) {
-            Logger.log(`表格不规范,跳过解析,路径:${fileInfo.filePath}`, "error");
+        if (!tableDefine.tableName || !tableDefine.tableType) {
+            Logger.log(`表格不规范,跳过解析,路径:${fileInfo.filePath}`, "warn");
             return null;
         }
-        tableDefine.tableType = firstCellValue.tableType;
         if (tableDefine.tableType === exports.TableType.vertical) {
             tableDefine.verticalFieldDefine = {};
             const verticalFieldDefine = tableDefine.verticalFieldDefine;
@@ -677,7 +693,8 @@ class DefaultParseHandler {
 
 class DefaultConvertHook {
     onStart(context, cb) {
-        Logger.systemLog(`convert-hook onStart`);
+        Logger.systemLog(`[excel2all] convert-hook onStart`);
+        Logger.systemLog(`[excel2all] 开始表转换`);
         cb();
     }
     onParseBefore(context, cb) {
@@ -711,6 +728,7 @@ class DefaultOutPutTransformer {
         let tableName;
         let tableObj;
         let objTypeTableMap = {};
+        Logger.log(`[outputTransform |转换解析结果]请稍等...`);
         for (let filePath in parseResultMap) {
             parseResult = parseResultMap[filePath];
             if (!parseResult.tableDefine)
@@ -1033,8 +1051,10 @@ function getFileMd5(filePath) {
 const defaultDir = ".excel2all";
 const cacheFileName = ".e2aprmc";
 const logFileName = "excel2all.log";
+let startTime = 0;
 function convert(converConfig) {
     return __awaiter(this, void 0, void 0, function* () {
+        startTime = new Date().getTime();
         if (!converConfig.projRoot) {
             converConfig.projRoot = process.cwd();
         }
@@ -1052,6 +1072,7 @@ function convert(converConfig) {
         else {
             outputTransformer = new DefaultOutPutTransformer();
         }
+        Logger.init(converConfig);
         const tableFileDir = converConfig.tableFileDir;
         if (!tableFileDir) {
             Logger.log(`配置表目录：tableFileDir为空`, "error");
@@ -1068,7 +1089,6 @@ function convert(converConfig) {
         if (converConfig.useMultiThread && isNaN(converConfig.threadParseFileMaxNum)) {
             converConfig.threadParseFileMaxNum = 5;
         }
-        Logger.init(converConfig);
         const context = {
             convertConfig: converConfig,
             outputTransformer: outputTransformer
@@ -1110,6 +1130,7 @@ function convert(converConfig) {
             forEachFile(tableFileDir, eachFileCallback);
         }
         else {
+            Logger.systemLog(`开始缓存模式处理...`);
             if (!cacheFileDirPath)
                 cacheFileDirPath = defaultDir;
             if (!path.isAbsolute(cacheFileDirPath)) {
@@ -1126,13 +1147,11 @@ function convert(converConfig) {
             forEachFile(tableFileDir, (filePath) => {
                 var md5str = getFileMd5Sync(filePath);
                 parseResult = parseResultMap[filePath];
-                if (!parseResult) {
+                if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
                     parseResult = {
                         filePath: filePath
                     };
                     parseResultMap[filePath] = parseResult;
-                }
-                if (parseResult && parseResult.md5hash !== md5str) {
                     const { fileInfo, canRead } = eachFileCallback(filePath, false);
                     if (canRead) {
                         parseResult.md5hash = md5str;
@@ -1149,6 +1168,7 @@ function convert(converConfig) {
                 delete parseResultMap[oldFilePaths[i]];
                 eachFileCallback(oldFilePaths[i], true);
             }
+            Logger.systemLog(`缓存模式处理结束`);
         }
         let parseHandler;
         if (converConfig.customParseHandlerPath) {
@@ -1168,6 +1188,7 @@ function convert(converConfig) {
             convertHook.onParseBefore(context, res);
         });
         if (changedFileInfos.length > converConfig.threadParseFileMaxNum && converConfig.useMultiThread) {
+            Logger.systemLog(`开始多线程解析:数量[${changedFileInfos.length}]`);
             let logStr = "";
             const count = Math.floor(changedFileInfos.length / converConfig.threadParseFileMaxNum) + 1;
             let worker;
@@ -1208,10 +1229,13 @@ function convert(converConfig) {
             }
         }
         else {
-            const t1 = new Date().getTime();
-            doParse(converConfig, changedFileInfos, parseResultMap, parseHandler);
-            const t2 = new Date().getTime();
-            Logger.systemLog(`[单线程导表时间]:${t2 - t1}`);
+            if (changedFileInfos.length > 0) {
+                const t1 = new Date().getTime();
+                Logger.systemLog(`开始单线程解析:数量[${changedFileInfos.length}]`);
+                doParse(converConfig, changedFileInfos, parseResultMap, parseHandler);
+                const t2 = new Date().getTime();
+                Logger.systemLog(`[单线程导表时间]:${t2 - t1}`);
+            }
             context.hasError = Logger.hasError;
             onParseEnd(context, parseResultMapCacheFilePath, convertHook);
         }
@@ -1260,6 +1284,9 @@ function onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr) {
             writeOrDeleteOutPutFiles([outputLogFileInfo]);
         }
         convertHook.onWriteFileEnd(context);
+        const endTime = new Date().getTime();
+        const useTime = endTime - startTime;
+        Logger.log(`导表总时间:[${useTime}ms],[${useTime / 1000}s]`);
     });
 }
 function testFileMatch(converConfig) {
@@ -1330,6 +1357,7 @@ function testFileMatch(converConfig) {
             if (parseResult && parseResult.md5hash !== md5str) {
                 const { canRead } = eachFileCallback(filePath, false);
                 if (canRead) {
+                    parseResult.tableObj = undefined;
                     parseResult.md5hash = md5str;
                 }
             }
