@@ -11,11 +11,15 @@ import { DefaultOutPutTransformer } from "./default-output-transformer";
 const defaultDir = ".excel2all";
 const cacheFileName = ".e2aprmc";
 const logFileName = "excel2all.log";
+let startTime = 0;
 /**
  * 转换
  * @param converConfig 解析配置
  */
 export async function convert(converConfig: ITableConvertConfig) {
+    //开始时间
+    startTime = new Date().getTime();
+
     if (!converConfig.projRoot) {
         converConfig.projRoot = process.cwd();
     }
@@ -31,6 +35,7 @@ export async function convert(converConfig: ITableConvertConfig) {
     } else {
         outputTransformer = new DefaultOutPutTransformer();
     }
+    Logger.init(converConfig);
     const tableFileDir = converConfig.tableFileDir;
     if (!tableFileDir) {
         Logger.log(`配置表目录：tableFileDir为空`, "error");
@@ -47,7 +52,6 @@ export async function convert(converConfig: ITableConvertConfig) {
     if (converConfig.useMultiThread && isNaN(converConfig.threadParseFileMaxNum)) {
         converConfig.threadParseFileMaxNum = 5;
     }
-    Logger.init(converConfig);
     const context: IConvertContext = {
         convertConfig: converConfig,
         outputTransformer: outputTransformer
@@ -92,6 +96,7 @@ export async function convert(converConfig: ITableConvertConfig) {
     if (!converConfig.useCache) {
         forEachFile(tableFileDir, eachFileCallback);
     } else {
+        Logger.systemLog(`开始缓存模式处理...`);
         if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
         if (!path.isAbsolute(cacheFileDirPath)) {
             cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
@@ -107,18 +112,17 @@ export async function convert(converConfig: ITableConvertConfig) {
         forEachFile(tableFileDir, (filePath) => {
             var md5str = getFileMd5Sync(filePath);
             parseResult = parseResultMap[filePath];
-            if (!parseResult) {
+            if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
                 parseResult = {
                     filePath: filePath
                 };
                 parseResultMap[filePath] = parseResult;
-            }
-            if (parseResult && parseResult.md5hash !== md5str) {
                 const { fileInfo, canRead } = eachFileCallback(filePath, false);
                 if (canRead) {
                     parseResult.md5hash = md5str;
                 }
             }
+
             oldFilePathIndex = oldFilePaths.indexOf(filePath);
             if (oldFilePathIndex > -1) {
                 const endFilePath = oldFilePaths[oldFilePaths.length - 1];
@@ -130,6 +134,7 @@ export async function convert(converConfig: ITableConvertConfig) {
             delete parseResultMap[oldFilePaths[i]];
             eachFileCallback(oldFilePaths[i], true);
         }
+        Logger.systemLog(`缓存模式处理结束`);
     }
 
     let parseHandler: ITableParseHandler;
@@ -151,6 +156,7 @@ export async function convert(converConfig: ITableConvertConfig) {
     });
 
     if (changedFileInfos.length > converConfig.threadParseFileMaxNum && converConfig.useMultiThread) {
+        Logger.systemLog(`开始多线程解析:数量[${changedFileInfos.length}]`);
         let logStr: string = "";
         const count = Math.floor(changedFileInfos.length / converConfig.threadParseFileMaxNum) + 1;
         let worker: Worker;
@@ -192,11 +198,13 @@ export async function convert(converConfig: ITableConvertConfig) {
             worker.on("message", onWorkerParseEnd);
         }
     } else {
-        const t1 = new Date().getTime();
-
-        doParse(converConfig, changedFileInfos, parseResultMap, parseHandler);
-        const t2 = new Date().getTime();
-        Logger.systemLog(`[单线程导表时间]:${t2 - t1}`);
+        if (changedFileInfos.length > 0) {
+            const t1 = new Date().getTime();
+            Logger.systemLog(`开始单线程解析:数量[${changedFileInfos.length}]`);
+            doParse(converConfig, changedFileInfos, parseResultMap, parseHandler);
+            const t2 = new Date().getTime();
+            Logger.systemLog(`[单线程导表时间]:${t2 - t1}`);
+        }
         context.hasError = Logger.hasError;
         onParseEnd(context, parseResultMapCacheFilePath, convertHook);
     }
@@ -224,6 +232,7 @@ async function onParseEnd(
     if (convertConfig.useCache && !context.hasError) {
         writeCacheData(parseResultMapCacheFilePath, parseResultMap);
     }
+
     //解析结束，做导出处理
     await new Promise<void>((res) => {
         convertHook.onParseAfter(context, res);
@@ -271,6 +280,10 @@ async function onParseEnd(
     }
     //写入结束
     convertHook.onWriteFileEnd(context);
+    //结束时间
+    const endTime = new Date().getTime();
+    const useTime = endTime - startTime;
+    Logger.log(`导表总时间:[${useTime}ms],[${useTime / 1000}s]`);
 }
 /**
  * 测试文件匹配
@@ -347,6 +360,7 @@ export function testFileMatch(converConfig: ITableConvertConfig) {
             if (parseResult && parseResult.md5hash !== md5str) {
                 const { canRead } = eachFileCallback(filePath, false);
                 if (canRead) {
+                    parseResult.tableObj = undefined;
                     parseResult.md5hash = md5str;
                 }
             }

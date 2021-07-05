@@ -8,6 +8,7 @@ valueTransFuncMap["string"] = anyToStr;
 valueTransFuncMap["[int]"] = strToIntArr;
 valueTransFuncMap["[string]"] = strToStrArr;
 valueTransFuncMap["json"] = strToJsonObj;
+valueTransFuncMap["json"] = anyToAny;
 function strToIntArr(fieldItem: ITableField, cellValue: string): ITransValueResult {
     cellValue = (cellValue + "").replace(/，/g, ","); //为了防止策划误填，先进行转换
     cellValue = cellValue.trim();
@@ -74,4 +75,24 @@ function anyToStr(fieldItem: ITableField, cellValue: any): ITransValueResult {
         result.value = cellValue + "";
     }
     return result;
+}
+/**
+ * 先尝试转换未对象，不行再使用原值
+ * @param fieldItem
+ * @param cellValue
+ * @returns
+ */
+function anyToAny(fieldItem: ITableField, cellValue: string): ITransValueResult {
+    cellValue = (cellValue + "").replace(/，/g, ","); //为了防止策划误填，先进行转换
+    cellValue = cellValue.trim();
+    let obj;
+    let error;
+    if (cellValue !== "") {
+        try {
+            obj = JSON.parse(cellValue);
+        } catch (err) {
+            obj = cellValue;
+        }
+    }
+    return { error: error, value: obj };
 }

@@ -31,10 +31,9 @@
     "testFileMatch": "node ./__test__/test-test-file-match.js",
     "testWorker": "ts-node --transpile-only __test__/worker_test.ts",
     "//构建命令": "",
-    "build:cjs": "egf build -f cjs -m true",
-    "build:es": "egf build -f es -m true",
-    "build:iife": "egf build -f iife -m true",
-    "build:all":"npm run build:cjs && npm run build:es && npm run build:iife",
+    "build:cjs": "egf build -f cjs",
+    "build:es": "egf build -f es",
+    "build:all":"npm run build:cjs && npm run build:es",
     "clean-dist": "rimraf dist"
   },
   "dependencies": {

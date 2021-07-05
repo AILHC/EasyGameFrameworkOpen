@@ -2,6 +2,7 @@ import * as path from "path";
 import { TableType } from "./default-parse-handler";
 import { deflateSync } from "zlib";
 import { osEol } from "./get-os-eol";
+import { Logger } from "./loger";
 declare global {
     /**
      * 输出配置
@@ -53,6 +54,7 @@ export class DefaultOutPutTransformer {
         let tableName: string;
         let tableObj: any;
         let objTypeTableMap: { [key: string]: boolean } = {};
+        Logger.log(`[outputTransform |转换解析结果]请稍等...`);
         for (let filePath in parseResultMap) {
             parseResult = parseResultMap[filePath];
             if (!parseResult.tableDefine) continue;
