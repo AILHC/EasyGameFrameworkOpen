@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/excel2all",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "将excel转换成任意文件格式工具",
   "keywords": [
     "excel",
@@ -33,7 +33,7 @@
     "//构建命令": "",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
-    "build:all":"npm run build:cjs && npm run build:es",
+    "build:all": "npm run build:cjs && npm run build:es",
     "clean-dist": "rimraf dist"
   },
   "dependencies": {
