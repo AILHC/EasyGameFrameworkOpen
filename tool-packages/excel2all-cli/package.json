@@ -12,16 +12,20 @@
     "typescript",
     "javascript"
   ],
+  "files": [
+    "bin",
+    "CHANGELOG.md"
+  ],
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameClientFramework/issues"
   },
   "bin": {
-    "e2a": "./cli.js"
+    "e2a": "./bin/cli.js"
   },
-  "main": "cli.js",
+  "main": "bin/cli.js",
   "scripts": {
-    "test1": "node ./cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -uc cf ./.cache",
-    "test2": "node ./cli.js convert -c ./__tests__/testConfig"
+    "test1": "node ./bin/cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -uc cf ./.cache -j __tests__/bundle.json",
+    "test2": "node ./bin/cli.js convert -c ./__tests__/testConfig"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -32,6 +36,6 @@
   },
   "dependencies": {
     "@ailhc/excel2all": "^0.2.2",
-    "commander": "^7.1.0"
+    "commander": "^7.2.0"
   }
 }
