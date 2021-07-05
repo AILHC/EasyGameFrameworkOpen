@@ -4,7 +4,7 @@ const program = require('commander');
 const path = require("path");
 const excel2all = require("@ailhc/excel2all");
 
-const package = require("./package.json");
+const package = require("../package.json");
 const getParseConfig = require("./get-parse-config")
 program
     .version(package.version)
@@ -24,14 +24,14 @@ program
     .option('-mt, --useMultiThread', '是否使用多线程，默认不')
     .option('-tn, --threadParseFileMaxNum [threadParseFileMaxNum]', '单个线程解析文件的最大数量\n-------------------------')
 
-    .option('-l --logLevel [logLevel]', '日志等级,只是限制了控制台输出，但不限制日志记录,"no" | "info" | "warn" | "error"\n-------------------------')
-    .option('-olf --outputLogDirPath', '日志文件夹路径,默认输出到.excel2all/excel2all.log，\n可以是绝对或相对路径，相对路径相对于projRoot\n填false则不生成log文件\n-------------------------')
+    .option('-l, --logLevel [logLevel]', '日志等级,只是限制了控制台输出，但不限制日志记录,"no" | "info" | "warn" | "error"\n-------------------------')
+    .option('-olf, --outputLogDirPath [outputLogDirPath]', '日志文件夹路径,默认输出到.excel2all/excel2all.log，\n可以是绝对或相对路径，相对路径相对于projRoot\n填false则不生成log文件\n-------------------------')
 
-    .option('-cphp --customParseHandlerPath [customParseHandlerPath]', '自定义解析处理器实现路径，\n需要返回一个实现了ITableParseHandler的对象,\n可以直接调用parseTableFile方法\n-------------------------')
-    .option('-cthp --customTrans2FileHandlerPath [customTrans2FileHandlerPath]', '自定义文件导出处理器路径，\n需要返回一个实现了ITransResult2AnyFileHandler的对象,\n可以直接调用trans2Files\n-------------------------')
+    .option('-cphp, --customParseHandlerPath [customParseHandlerPath]', '自定义解析处理器实现路径，\n需要返回一个实现了ITableParseHandler的对象,\n可以直接调用parseTableFile方法\n-------------------------')
+    .option('-cthp, --customTrans2FileHandlerPath [customTrans2FileHandlerPath]', '自定义文件导出处理器路径，\n需要返回一个实现了ITransResult2AnyFileHandler的对象,\n可以直接调用trans2Files\n-------------------------')
 
 
-    .option('-cstj, --clientSingleTableJsonDir', '单个配置表json输出目录路径，每个配置表输出一个json\n-------------------------')
+    .option('-cstj, --clientSingleTableJsonDir [clientSingleTableJsonDir]', '单个配置表json输出目录路径，每个配置表输出一个json\n-------------------------')
 
     .option('-j, --clientBundleJsonOutPath [clientBundleJsonOutPath]', '合并配置表json文件路径(包含文件名,比如 ./out/bundle.json)\n-------------------------')
     .option('-fbj, --isFormatBundleJson', '是否格式化合并后的json，默认不\n-------------------------')
@@ -47,8 +47,8 @@ program
         if (config) {
             excel2all.convert(config)
         }
-    })
-    .command("tfm")
+    });
+program.command("tfm")
     .option('-p, --projRoot [projRoot]', '项目根目录，默认执行命令处\n-------------------------')
     .option('-c, --config [config]', '导表配置文件路径，如果没有则使用默认的\n-------------------------')
     .option('-t, --tableFileDir [tableFileDir]', "excel文件夹路径,如果没有则使用项目根目录\n-------------------------")
@@ -60,8 +60,8 @@ program
         if (config) {
             excel2all.testFileMatch(config)
         }
-    })
-    .parse(process.argv);
+    });
+program.parse(process.argv);
 // 未知命令会报错
 program.on('command:*', function () {
     console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
