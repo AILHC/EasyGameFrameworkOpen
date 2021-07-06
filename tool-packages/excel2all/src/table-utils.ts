@@ -190,6 +190,14 @@ export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook {
     return workBook;
 }
 /**
+ * 读取配置表文件 同步的
+ * @param fileInfo
+ */
+export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook {
+    const workBook = xlsx.read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "file" });
+    return workBook;
+}
+/**
  * 根据文件名后缀判断是否为csv文件
  * @param fileExtName
  */

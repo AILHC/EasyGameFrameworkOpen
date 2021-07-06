@@ -32,7 +32,8 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
-	 global {
+	/// <reference types="node" />
+	import { BinaryLike } from 'node:crypto'; global {
 	    interface IOutPutFileInfo {
 	        filePath: string;
 	        /**写入编码，字符串默认utf8 */
@@ -78,12 +79,18 @@ declare module '@ailhc/excel2all' {
 	 * 获取文件md5 (同步)
 	 * @param filePath
 	 */
-	export function getFileMd5Sync(filePath: string): string;
+	export function getFileMd5Sync(filePath: string, encoding?: BufferEncoding): string;
+	/**
+	 * 获取文件md5
+	 * @param file 文件对象
+	 * @returns
+	 */
+	export function getFileMd5(file: BinaryLike): string;
 	/**
 	 * 获取文件 md5
 	 * @param filePath
 	 */
-	export function getFileMd5(filePath: string): Promise<string>;
+	export function getFileMd5ByPath(filePath: string): Promise<string>;
 
 }
 declare module '@ailhc/excel2all' {
@@ -156,6 +163,11 @@ declare module '@ailhc/excel2all' {
 	 * @param fileInfo
 	 */
 	export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook;
+	/**
+	 * 读取配置表文件 同步的
+	 * @param fileInfo
+	 */
+	export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook;
 	/**
 	 * 根据文件名后缀判断是否为csv文件
 	 * @param fileExtName

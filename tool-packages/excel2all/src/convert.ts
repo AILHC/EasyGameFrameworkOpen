@@ -2,7 +2,6 @@ import * as path from "path";
 import * as fs from "fs-extra";
 import * as mmatch from "micromatch";
 import { forEachFile, getCacheData, getFileMd5Sync, writeCacheData, writeOrDeleteOutPutFiles } from "./file-utils";
-import { Worker } from "worker_threads";
 import { doParse } from "./do-parse";
 import { DefaultParseHandler } from "./default-parse-handler";
 import { Logger } from "./loger";
@@ -96,16 +95,21 @@ export async function convert(converConfig: ITableConvertConfig) {
     if (!converConfig.useCache) {
         forEachFile(tableFileDir, eachFileCallback);
     } else {
-        Logger.systemLog(`开始缓存模式处理...`);
+        let t1 = new Date().getTime();
         if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
         if (!path.isAbsolute(cacheFileDirPath)) {
             cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
         }
         parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
+        Logger.systemLog(`读取缓存数据`);
+        let rcacheT1 = new Date().getTime();
         parseResultMap = getCacheData(parseResultMapCacheFilePath);
         if (!parseResultMap) {
             parseResultMap = {};
         }
+        let rcacheT2 = new Date().getTime();
+        Logger.systemLog(`读取缓存数据时间:${rcacheT2 - rcacheT1}ms,${(rcacheT2 - rcacheT1) / 1000}`);
+        Logger.systemLog(`开始缓存处理...`);
         const oldFilePaths = Object.keys(parseResultMap);
         let oldFilePathIndex: number;
         let parseResult: ITableParseResult;
@@ -122,7 +126,7 @@ export async function convert(converConfig: ITableConvertConfig) {
                     parseResult.md5hash = md5str;
                 }
             }
-
+            //删除不存在的旧文件
             oldFilePathIndex = oldFilePaths.indexOf(filePath);
             if (oldFilePathIndex > -1) {
                 const endFilePath = oldFilePaths[oldFilePaths.length - 1];
@@ -134,7 +138,8 @@ export async function convert(converConfig: ITableConvertConfig) {
             delete parseResultMap[oldFilePaths[i]];
             eachFileCallback(oldFilePaths[i], true);
         }
-        Logger.systemLog(`缓存模式处理结束`);
+        let t2 = new Date().getTime();
+        Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
     }
 
     let parseHandler: ITableParseHandler;
@@ -155,12 +160,28 @@ export async function convert(converConfig: ITableConvertConfig) {
         convertHook.onParseBefore(context, res);
     });
 
+    /**
+     * @type {import("worker_threads").Worker};
+     */
+    let WorkerClass;
+    try {
+        WorkerClass = require("worker_threads");
+    } catch (error) {
+        converConfig.useMultiThread && Logger.systemLog(`node版本不支持Worker多线程，切换为单线程模式`);
+        converConfig.useMultiThread = false;
+    }
     if (changedFileInfos.length > converConfig.threadParseFileMaxNum && converConfig.useMultiThread) {
         Logger.systemLog(`开始多线程解析:数量[${changedFileInfos.length}]`);
         let logStr: string = "";
         const count = Math.floor(changedFileInfos.length / converConfig.threadParseFileMaxNum) + 1;
-        let worker: Worker;
+        /**
+         * @type {import("worker_threads").Worker}
+         */
+        let worker;
         let subFileInfos: IFileInfo[];
+        /**
+         * @type {import("worker_threads").Worker}
+         */
         let workerMap: { [key: number]: Worker } = {};
         let completeCount: number = 0;
         const t1 = new Date().getTime();
@@ -186,7 +207,8 @@ export async function convert(converConfig: ITableConvertConfig) {
         for (let i = 0; i < count; i++) {
             subFileInfos = changedFileInfos.splice(0, converConfig.threadParseFileMaxNum);
             Logger.log(`----------------线程开始:${i}-----------------`);
-            worker = new Worker(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
+
+            worker = new WorkerClass(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
                 workerData: {
                     threadId: i,
                     fileInfos: subFileInfos,
@@ -234,9 +256,13 @@ async function onParseEnd(
     }
 
     //解析结束，做导出处理
+    Logger.systemLog(`开始进行转换解析结果`);
+    const parseAfterT1 = new Date().getTime();
     await new Promise<void>((res) => {
         convertHook.onParseAfter(context, res);
     });
+    const parseAfterT2 = new Date().getTime();
+    Logger.systemLog(`转换解析结果结束:${parseAfterT2 - parseAfterT1}ms,${(parseAfterT2 - parseAfterT1) / 1000}s`);
 
     if (context.outPutFileMap) {
         const outputFileMap = context.outPutFileMap;
@@ -364,6 +390,7 @@ export function testFileMatch(converConfig: ITableConvertConfig) {
                     parseResult.md5hash = md5str;
                 }
             }
+            //删除不存在的旧文件
             oldFilePathIndex = oldFilePaths.indexOf(filePath);
             if (oldFilePathIndex > -1) {
                 const endFilePath = oldFilePaths[oldFilePaths.length - 1];

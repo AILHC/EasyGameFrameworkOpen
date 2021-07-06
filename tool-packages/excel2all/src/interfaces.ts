@@ -35,6 +35,7 @@ declare global {
         fileData?: any;
         isDelete?: boolean;
     }
+
     interface ITableParseResult {
         /**文件路径 */
         filePath: string;
