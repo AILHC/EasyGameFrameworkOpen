@@ -9,7 +9,6 @@ var zlib = require('zlib');
 var fs = require('fs-extra');
 var crypto = require('crypto');
 var mmatch = require('micromatch');
-var worker_threads = require('worker_threads');
 
 const valueTransFuncMap = {};
 valueTransFuncMap["int"] = strToInt;
@@ -282,6 +281,10 @@ function getCharCodeSum(colKey) {
 }
 function readTableFile(fileInfo) {
     const workBook = xlsx.readFile(fileInfo.filePath, { type: isCSV(fileInfo.fileExtName) ? "string" : "file" });
+    return workBook;
+}
+function readTableData(fileInfo) {
+    const workBook = xlsx.read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "file" });
     return workBook;
 }
 function isCSV(fileExtName) {
@@ -1036,13 +1039,18 @@ function getCacheData(cacheFilePath) {
     const gcfCache = JSON.parse(gcfCacheFile);
     return gcfCache;
 }
-function getFileMd5Sync(filePath) {
-    const file = fs.readFileSync(filePath, "utf-8");
+function getFileMd5Sync(filePath, encoding) {
+    const file = fs.readFileSync(filePath, encoding);
     var md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
 }
-function getFileMd5(filePath) {
+function getFileMd5(file) {
+    const md5um = crypto.createHash("md5");
+    md5um.update(file);
+    return md5um.digest("hex");
+}
+function getFileMd5ByPath(filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         return getFileMd5Sync(filePath);
     });
@@ -1130,17 +1138,22 @@ function convert(converConfig) {
             forEachFile(tableFileDir, eachFileCallback);
         }
         else {
-            Logger.systemLog(`开始缓存模式处理...`);
+            let t1 = (new Date()).getTime();
             if (!cacheFileDirPath)
                 cacheFileDirPath = defaultDir;
             if (!path.isAbsolute(cacheFileDirPath)) {
                 cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
             }
             parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
+            Logger.systemLog(`读取缓存数据`);
+            let rcacheT1 = (new Date()).getTime();
             parseResultMap = getCacheData(parseResultMapCacheFilePath);
             if (!parseResultMap) {
                 parseResultMap = {};
             }
+            let rcacheT2 = (new Date()).getTime();
+            Logger.systemLog(`读取缓存数据时间:${rcacheT2 - rcacheT1}ms,${(rcacheT2 - rcacheT1) / 1000}`);
+            Logger.systemLog(`开始缓存处理...`);
             const oldFilePaths = Object.keys(parseResultMap);
             let oldFilePathIndex;
             let parseResult;
@@ -1168,7 +1181,8 @@ function convert(converConfig) {
                 delete parseResultMap[oldFilePaths[i]];
                 eachFileCallback(oldFilePaths[i], true);
             }
-            Logger.systemLog(`缓存模式处理结束`);
+            let t2 = (new Date()).getTime();
+            Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
         }
         let parseHandler;
         if (converConfig.customParseHandlerPath) {
@@ -1187,6 +1201,14 @@ function convert(converConfig) {
         yield new Promise((res) => {
             convertHook.onParseBefore(context, res);
         });
+        let WorkerClass;
+        try {
+            WorkerClass = require("worker_threads");
+        }
+        catch (error) {
+            converConfig.useMultiThread && Logger.systemLog(`node版本不支持Worker多线程，切换为单线程模式`);
+            converConfig.useMultiThread = false;
+        }
         if (changedFileInfos.length > converConfig.threadParseFileMaxNum && converConfig.useMultiThread) {
             Logger.systemLog(`开始多线程解析:数量[${changedFileInfos.length}]`);
             let logStr = "";
@@ -1217,7 +1239,7 @@ function convert(converConfig) {
             for (let i = 0; i < count; i++) {
                 subFileInfos = changedFileInfos.splice(0, converConfig.threadParseFileMaxNum);
                 Logger.log(`----------------线程开始:${i}-----------------`);
-                worker = new worker_threads.Worker(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
+                worker = new WorkerClass(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
                     workerData: {
                         threadId: i,
                         fileInfos: subFileInfos,
@@ -1248,9 +1270,13 @@ function onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr) {
         if (convertConfig.useCache && !context.hasError) {
             writeCacheData(parseResultMapCacheFilePath, parseResultMap);
         }
+        Logger.systemLog(`开始进行转换解析结果`);
+        const parseAfterT1 = new Date().getTime();
         yield new Promise((res) => {
             convertHook.onParseAfter(context, res);
         });
+        const parseAfterT2 = new Date().getTime();
+        Logger.systemLog(`转换解析结果结束:${parseAfterT2 - parseAfterT1},${(parseAfterT2 - parseAfterT1) / 1000}`);
         if (context.outPutFileMap) {
             const outputFileMap = context.outPutFileMap;
             const outputFiles = Object.values(outputFileMap);
@@ -1393,11 +1419,13 @@ exports.forEachChangedFile = forEachChangedFile;
 exports.forEachFile = forEachFile;
 exports.getCacheData = getCacheData;
 exports.getFileMd5 = getFileMd5;
+exports.getFileMd5ByPath = getFileMd5ByPath;
 exports.getFileMd5Sync = getFileMd5Sync;
 exports.getNextColKey = getNextColKey;
 exports.horizontalForEachSheet = horizontalForEachSheet;
 exports.isCSV = isCSV;
 exports.isEmptyCell = isEmptyCell;
+exports.readTableData = readTableData;
 exports.readTableFile = readTableFile;
 exports.stringToCharCodes = stringToCharCodes;
 exports.testFileMatch = testFileMatch;

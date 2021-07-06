@@ -2,6 +2,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import * as crypto from "crypto";
 import { Logger } from "./loger";
+import { BinaryLike } from "node:crypto";
 
 declare global {
     interface IOutPutFileInfo {
@@ -147,9 +148,19 @@ export function getCacheData(cacheFilePath: string): any {
  * 获取文件md5 (同步)
  * @param filePath
  */
-export function getFileMd5Sync(filePath: string): string {
-    const file = fs.readFileSync(filePath, "utf-8");
+export function getFileMd5Sync(filePath: string, encoding?: BufferEncoding): string {
+    const file = fs.readFileSync(filePath, encoding);
     var md5um = crypto.createHash("md5");
+    md5um.update(file);
+    return md5um.digest("hex");
+}
+/**
+ * 获取文件md5
+ * @param file 文件对象
+ * @returns
+ */
+export function getFileMd5(file: BinaryLike) {
+    const md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
 }
@@ -157,6 +168,6 @@ export function getFileMd5Sync(filePath: string): string {
  * 获取文件 md5
  * @param filePath
  */
-export async function getFileMd5(filePath: string) {
+export async function getFileMd5ByPath(filePath: string) {
     return getFileMd5Sync(filePath);
 }
