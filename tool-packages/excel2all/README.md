@@ -14,6 +14,7 @@ excel配置表转换库
 5. 支持自定义解析和转换逻辑
 6. 提供丰富的生命周期钩子，可以接入自动上传，自动svn提交之类的逻辑
 
+## [CHANGELOG](packages/cli/CHANGELOG.md)
 ## 自定义Excel解析器
 
 ## 生命周期钩子

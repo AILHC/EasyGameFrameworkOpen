@@ -32,7 +32,8 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
-	 global {
+	/// <reference types="node" />
+	import { BinaryLike } from 'node:crypto'; global {
 	    interface IOutPutFileInfo {
 	        filePath: string;
 	        /**写入编码，字符串默认utf8 */
@@ -78,12 +79,23 @@ declare module '@ailhc/excel2all' {
 	 * 获取文件md5 (同步)
 	 * @param filePath
 	 */
-	export function getFileMd5Sync(filePath: string): string;
+	export function getFileMd5Sync(filePath: string, encoding?: BufferEncoding): string;
+	/**
+	 * 获取文件md5 (异步)
+	 * @param filePath
+	 */
+	export function getFileMd5Async(filePath: string, cb: (md5Str: string) => void, encoding?: BufferEncoding): void;
+	/**
+	 * 获取文件md5
+	 * @param file 文件对象
+	 * @returns
+	 */
+	export function getFileMd5(file: BinaryLike): string;
 	/**
 	 * 获取文件 md5
 	 * @param filePath
 	 */
-	export function getFileMd5(filePath: string): Promise<string>;
+	export function getFileMd5ByPath(filePath: string): Promise<string>;
 
 }
 declare module '@ailhc/excel2all' {
@@ -156,6 +168,17 @@ declare module '@ailhc/excel2all' {
 	 * @param fileInfo
 	 */
 	export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook;
+	/**
+	 * 读取配置表文件 同步的
+	 * @param fileInfo
+	 */
+	export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook;
+	/**
+	 * 获取配置文件类型
+	 * @param fileInfo
+	 * @returns
+	 */
+	export function getTableFileType(fileInfo: IFileInfo): "string" | "file";
 	/**
 	 * 根据文件名后缀判断是否为csv文件
 	 * @param fileExtName
@@ -443,9 +466,9 @@ declare module '@ailhc/excel2all' {
 	export function convert(converConfig: ITableConvertConfig): Promise<void>;
 	/**
 	 * 测试文件匹配
-	 * @param converConfig
+	 * @param convertConfig
 	 */
-	export function testFileMatch(converConfig: ITableConvertConfig): void;
+	export function testFileMatch(convertConfig: ITableConvertConfig): void;
 
 }
 declare module '@ailhc/excel2all' {
@@ -531,10 +554,10 @@ declare module '@ailhc/excel2all' {
 	         */
 	        cacheFileDirPath?: string;
 	        /**
-	         * 文件名匹配规则 ,默认匹配规则["\\**\\*.{xlsx,csv}", "!~$*.*"]
-	         * 匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除
-	         * 参考：https://github.com/micromatch/micromatch
-	         * 使用了.all去匹配
+	         * 文件名匹配规则 ,默认匹配规则 [".\\**\\*.xlsx", ".\\**\\*.csv", "!**\\~$*.*", "!**\\~.*.*", "!.git\\**\\*", "!.svn\\**\\*"]
+	         * 匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除(那个是excel文件的临时文件)
+	         * 匹配规则第一个必须带 ./ 否则匹配会出问题
+	         * 具体匹配规则参考：https://github.com/mrmlnc/fast-glob#pattern-syntax
 	         */
 	        pattern?: string[];
 	        /**
@@ -646,6 +669,10 @@ declare module '@ailhc/excel2all' {
 	         * 是否出错
 	         */
 	        hasError?: boolean;
+	        /**
+	         * 缓存文件路径
+	         */
+	        parseResultMapCacheFilePath: string;
 	    }
 	    interface IConvertHook {
 	        /**

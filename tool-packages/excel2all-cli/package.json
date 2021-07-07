@@ -26,7 +26,8 @@
   "scripts": {
     "test1": "node ./bin/cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -uc cf ./.cache -j __tests__/bundle.json",
     "test2": "node ./bin/cli.js convert -c ./__tests__/testConfig",
-    "test3": "node ./bin/cli.js convert -t E:\\WorkingSpace\\afk_dev\\afk_number -uc cf ./.cache -j __tests__/tbundle.json"
+    "test3": "node ./bin/cli.js convert -t E:/WorkingSpace/afk_dev/afk_number -uc cf ./.cache -j E:\\WorkingSpace\\afk_dev\\afk_client\\bin\\res\\zip\\lo\\tbundle.json",
+    "testFileMatch": "node ./bin/cli.js tfm -t E:/WorkingSpace/afk_dev/afk_number"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -37,6 +38,7 @@
   },
   "dependencies": {
     "@ailhc/excel2all": "^0.2.3",
-    "commander": "^7.2.0"
+    "commander": "^7.2.0",
+    "glob": "^7.1.7"
   }
 }

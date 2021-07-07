@@ -84,10 +84,10 @@ declare global {
         cacheFileDirPath?: string;
 
         /**
-         * 文件名匹配规则 ,默认匹配规则["\\**\\*.{xlsx,csv}", "!~$*.*"]
-         * 匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除
-         * 参考：https://github.com/micromatch/micromatch
-         * 使用了.all去匹配
+         * 文件名匹配规则 ,默认匹配规则 [".\\**\\*.xlsx", ".\\**\\*.csv", "!**\\~$*.*", "!**\\~.*.*", "!.git\\**\\*", "!.svn\\**\\*"]
+         * 匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除(那个是excel文件的临时文件)
+         * 匹配规则第一个必须带 ./ 否则匹配会出问题
+         * 具体匹配规则参考：https://github.com/mrmlnc/fast-glob#pattern-syntax
          */
         pattern?: string[];
         /**
@@ -199,6 +199,10 @@ declare global {
          * 是否出错
          */
         hasError?: boolean;
+        /**
+         * 缓存文件路径
+         */
+        parseResultMapCacheFilePath: string;
     }
     interface IConvertHook {
         /**

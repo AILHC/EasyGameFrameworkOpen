@@ -186,7 +186,7 @@ function getCharCodeSum(colKey: string): number {
  * @param fileInfo
  */
 export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook {
-    const workBook = xlsx.readFile(fileInfo.filePath, { type: isCSV(fileInfo.fileExtName) ? "string" : "file" });
+    const workBook = xlsx.readFile(fileInfo.filePath, { type: getTableFileType(fileInfo) });
     return workBook;
 }
 /**
@@ -194,8 +194,16 @@ export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook {
  * @param fileInfo
  */
 export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook {
-    const workBook = xlsx.read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "file" });
+    const workBook = xlsx.read(fileInfo.fileData);
     return workBook;
+}
+/**
+ * 获取配置文件类型
+ * @param fileInfo
+ * @returns
+ */
+export function getTableFileType(fileInfo: IFileInfo) {
+    return isCSV(fileInfo.fileExtName) ? "string" : "file";
 }
 /**
  * 根据文件名后缀判断是否为csv文件
