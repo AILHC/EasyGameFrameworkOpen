@@ -6,8 +6,8 @@ const config = {
         "__test__/**/*"
     ],
     externalTag: [
+        "fast-glob",
         "fs-extra",
-        "micromatch",
         "zlib",
         "crypto",
         "xlsx"]

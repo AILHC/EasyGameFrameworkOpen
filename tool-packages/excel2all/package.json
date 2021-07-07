@@ -40,9 +40,8 @@
     "@types/fs-extra": "^9.0.2",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^14.0.13",
+    "fast-glob": "^3.2.6",
     "fs-extra": "^9.0.1",
-    "js-base64": "^3.6.0",
-    "micromatch": "^4.0.2",
     "xlsx": "^0.16.2"
   },
   "devDependencies": {

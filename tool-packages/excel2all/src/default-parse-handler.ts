@@ -575,7 +575,7 @@ export class DefaultParseHandler implements ITableParseHandler {
         fileInfo: IFileInfo,
         parseResult: ITableParseResult
     ): ITableParseResult {
-        const workbook = readTableFile(fileInfo);
+        const workbook = fileInfo.fileData ? readTableData(fileInfo) : readTableFile(fileInfo);
         if (!workbook.SheetNames.length) return;
 
         const sheetNames = workbook.SheetNames;

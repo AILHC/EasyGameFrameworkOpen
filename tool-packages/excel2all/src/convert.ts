@@ -1,16 +1,27 @@
 import * as path from "path";
 import * as fs from "fs-extra";
 import * as mmatch from "micromatch";
-import { forEachFile, getCacheData, getFileMd5Sync, writeCacheData, writeOrDeleteOutPutFiles } from "./file-utils";
+import {
+    forEachFile,
+    getCacheData,
+    getFileMd5,
+    getFileMd5Sync,
+    writeCacheData,
+    writeOrDeleteOutPutFiles
+} from "./file-utils";
 import { doParse } from "./do-parse";
 import { DefaultParseHandler } from "./default-parse-handler";
 import { Logger } from "./loger";
 import { DefaultConvertHook } from "./default-convert-hook";
 import { DefaultOutPutTransformer } from "./default-output-transformer";
+import { isCSV } from "./table-utils";
+import fg from "fast-glob";
+
 const defaultDir = ".excel2all";
 const cacheFileName = ".e2aprmc";
 const logFileName = "excel2all.log";
 let startTime = 0;
+const defaultPattern = ["./**/*.xlsx", "./**/*.csv", "!**/~$*.*", "!**/~.*.*", "!.git/**/*", "!.svn/**/*"];
 /**
  * 转换
  * @param converConfig 解析配置
@@ -22,6 +33,25 @@ export async function convert(converConfig: ITableConvertConfig) {
     if (!converConfig.projRoot) {
         converConfig.projRoot = process.cwd();
     }
+
+    Logger.init(converConfig);
+    const tableFileDir = converConfig.tableFileDir;
+    if (!tableFileDir) {
+        Logger.log(`配置表目录：tableFileDir为空`, "error");
+        return;
+    }
+    if (!fs.existsSync(tableFileDir)) {
+        Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
+        return;
+    }
+
+    if (!converConfig.pattern) {
+        converConfig.pattern = defaultPattern;
+    }
+    if (converConfig.useMultiThread && isNaN(converConfig.threadParseFileMaxNum)) {
+        converConfig.threadParseFileMaxNum = 5;
+    }
+
     let convertHook: IConvertHook;
     if (converConfig.customConvertHookPath) {
         convertHook = require(converConfig.customConvertHookPath);
@@ -34,23 +64,6 @@ export async function convert(converConfig: ITableConvertConfig) {
     } else {
         outputTransformer = new DefaultOutPutTransformer();
     }
-    Logger.init(converConfig);
-    const tableFileDir = converConfig.tableFileDir;
-    if (!tableFileDir) {
-        Logger.log(`配置表目录：tableFileDir为空`, "error");
-        return;
-    }
-    if (!fs.existsSync(tableFileDir)) {
-        Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
-        return;
-    }
-    const defaultPattern = ["**/*.{xlsx,csv}", "!**/~$*.*", "!**/~.*.*"];
-    if (!converConfig.pattern) {
-        converConfig.pattern = defaultPattern;
-    }
-    if (converConfig.useMultiThread && isNaN(converConfig.threadParseFileMaxNum)) {
-        converConfig.threadParseFileMaxNum = 5;
-    }
     const context: IConvertContext = {
         convertConfig: converConfig,
         outputTransformer: outputTransformer
@@ -59,88 +72,6 @@ export async function convert(converConfig: ITableConvertConfig) {
     await new Promise<void>((res) => {
         convertHook.onStart(context, res);
     });
-
-    let changedFileInfos: IFileInfo[] = [];
-    let deleteFileInfos: IFileInfo[] = [];
-    const getFileInfo = (filePath: string) => {
-        const filePathParse = path.parse(filePath);
-        const fileInfo: IFileInfo = {
-            filePath: filePath,
-            fileName: filePathParse.name,
-            fileExtName: filePathParse.ext,
-            isDelete: false
-        };
-        return fileInfo;
-    };
-    const matchPattern = converConfig.pattern;
-    const eachFileCallback = (filePath: string, isDelete?: boolean) => {
-        const fileInfo = getFileInfo(filePath);
-        let canRead: boolean;
-        if (isDelete) {
-            deleteFileInfos.push(fileInfo);
-        } else {
-            canRead = mmatch.all(fileInfo.filePath, matchPattern);
-            if (canRead) {
-                changedFileInfos.push(fileInfo);
-            }
-        }
-        return { fileInfo, canRead };
-    };
-    let parseResultMap: TableParseResultMap = {};
-
-    //缓存处理
-    let cacheFileDirPath: string = converConfig.cacheFileDirPath;
-    let parseResultMapCacheFilePath: string;
-
-    if (!converConfig.useCache) {
-        forEachFile(tableFileDir, eachFileCallback);
-    } else {
-        let t1 = new Date().getTime();
-        if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
-        if (!path.isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
-        }
-        parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
-        Logger.systemLog(`读取缓存数据`);
-        let rcacheT1 = new Date().getTime();
-        parseResultMap = getCacheData(parseResultMapCacheFilePath);
-        if (!parseResultMap) {
-            parseResultMap = {};
-        }
-        let rcacheT2 = new Date().getTime();
-        Logger.systemLog(`读取缓存数据时间:${rcacheT2 - rcacheT1}ms,${(rcacheT2 - rcacheT1) / 1000}`);
-        Logger.systemLog(`开始缓存处理...`);
-        const oldFilePaths = Object.keys(parseResultMap);
-        let oldFilePathIndex: number;
-        let parseResult: ITableParseResult;
-        forEachFile(tableFileDir, (filePath) => {
-            var md5str = getFileMd5Sync(filePath);
-            parseResult = parseResultMap[filePath];
-            if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
-                parseResult = {
-                    filePath: filePath
-                };
-                parseResultMap[filePath] = parseResult;
-                const { fileInfo, canRead } = eachFileCallback(filePath, false);
-                if (canRead) {
-                    parseResult.md5hash = md5str;
-                }
-            }
-            //删除不存在的旧文件
-            oldFilePathIndex = oldFilePaths.indexOf(filePath);
-            if (oldFilePathIndex > -1) {
-                const endFilePath = oldFilePaths[oldFilePaths.length - 1];
-                oldFilePaths[oldFilePathIndex] = endFilePath;
-                oldFilePaths.pop();
-            }
-        });
-        for (let i = 0; i < oldFilePaths.length; i++) {
-            delete parseResultMap[oldFilePaths[i]];
-            eachFileCallback(oldFilePaths[i], true);
-        }
-        let t2 = new Date().getTime();
-        Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
-    }
 
     let parseHandler: ITableParseHandler;
     if (converConfig.customParseHandlerPath) {
@@ -152,14 +83,15 @@ export async function convert(converConfig: ITableConvertConfig) {
     } else {
         parseHandler = new DefaultParseHandler();
     }
-    //解析开始之前
-    context.parseResultMap = parseResultMap;
-    context.deleteFileInfos = deleteFileInfos;
-    context.changedFileInfos = changedFileInfos;
+    const predoT1 = new Date().getTime();
+    getFileInfos(context);
+    const { parseResultMap, parseResultMapCacheFilePath, changedFileInfos } = context;
+    const predoT2 = new Date().getTime();
+    Logger.systemLog(`[预处理数据时间:${predoT2 - predoT1}ms,${(predoT2 - predoT1) / 1000}]`);
     await new Promise<void>((res) => {
         convertHook.onParseBefore(context, res);
     });
-
+    Logger.systemLog(`[开始解析]:数量[${changedFileInfos.length}]`);
     /**
      * @type {import("worker_threads").Worker};
      */
@@ -171,7 +103,7 @@ export async function convert(converConfig: ITableConvertConfig) {
         converConfig.useMultiThread = false;
     }
     if (changedFileInfos.length > converConfig.threadParseFileMaxNum && converConfig.useMultiThread) {
-        Logger.systemLog(`开始多线程解析:数量[${changedFileInfos.length}]`);
+        Logger.systemLog(`[多线程解析]`);
         let logStr: string = "";
         const count = Math.floor(changedFileInfos.length / converConfig.threadParseFileMaxNum) + 1;
         /**
@@ -200,7 +132,7 @@ export async function convert(converConfig: ITableConvertConfig) {
             }
             if (completeCount >= count) {
                 const t2 = new Date().getTime();
-                Logger.log(`[多线程导表时间]:${t2 - t1}`);
+                Logger.log(`[多线程解析时间]:${t2 - t1}`);
                 onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr);
             }
         };
@@ -220,16 +152,205 @@ export async function convert(converConfig: ITableConvertConfig) {
             worker.on("message", onWorkerParseEnd);
         }
     } else {
+        Logger.systemLog(`[单线程解析]`);
         if (changedFileInfos.length > 0) {
             const t1 = new Date().getTime();
-            Logger.systemLog(`开始单线程解析:数量[${changedFileInfos.length}]`);
             doParse(converConfig, changedFileInfos, parseResultMap, parseHandler);
             const t2 = new Date().getTime();
-            Logger.systemLog(`[单线程导表时间]:${t2 - t1}`);
+            Logger.systemLog(`[单线程解析时间]:${t2 - t1}`);
         }
         context.hasError = Logger.hasError;
         onParseEnd(context, parseResultMapCacheFilePath, convertHook);
     }
+}
+/**
+ * 使用fast-glob作为文件遍历
+ * 获取需要解析的文件信息
+ * @param context
+ */
+function getFileInfos(context: IConvertContext) {
+    const converConfig = context.convertConfig;
+    let changedFileInfos: IFileInfo[] = [];
+    let deleteFileInfos: IFileInfo[] = [];
+    const tableFileDir = converConfig.tableFileDir;
+    const getFileInfo = (filePath: string) => {
+        const filePathParse = path.parse(filePath);
+        const fileInfo: IFileInfo = {
+            filePath: filePath,
+            fileName: filePathParse.name,
+            fileExtName: filePathParse.ext,
+            isDelete: false
+        };
+        return fileInfo;
+    };
+    const matchPattern = converConfig.pattern;
+
+    const filePaths: string[] = fg.sync(matchPattern, {
+        absolute: true,
+        onlyFiles: true,
+        caseSensitiveMatch: false,
+        cwd: tableFileDir
+    });
+    let parseResultMap: TableParseResultMap = {};
+    //缓存处理
+    let cacheFileDirPath: string = converConfig.cacheFileDirPath;
+    let parseResultMapCacheFilePath: string;
+
+    if (!converConfig.useCache) {
+        for (let i = 0; i < filePaths.length; i++) {
+            changedFileInfos.push(getFileInfo(filePaths[i]));
+        }
+    } else {
+        let t1 = new Date().getTime();
+        if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
+        if (!path.isAbsolute(cacheFileDirPath)) {
+            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
+        }
+        parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
+        Logger.systemLog(`读取缓存数据`);
+
+        parseResultMap = getCacheData(parseResultMapCacheFilePath);
+        if (!parseResultMap) {
+            parseResultMap = {};
+        }
+
+        Logger.systemLog(`开始缓存处理...`);
+        const oldFilePaths = Object.keys(parseResultMap);
+        let oldFilePathIndex: number;
+        let parseResult: ITableParseResult;
+        let filePath: string;
+        for (let i = 0; i < filePaths.length; i++) {
+            filePath = filePaths[i];
+            const fileInfo = getFileInfo(filePath);
+
+            const fileData = fs.readFileSync(filePath);
+            fileInfo.fileData = fileData;
+            parseResult = parseResultMap[filePath];
+            var md5str = getFileMd5(fileData);
+            if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
+                parseResult = {
+                    filePath: filePath
+                };
+                parseResultMap[filePath] = parseResult;
+                parseResult.md5hash = md5str;
+                changedFileInfos.push(fileInfo);
+            }
+            //删除不存在的旧文件
+            oldFilePathIndex = oldFilePaths.indexOf(filePath);
+            if (oldFilePathIndex > -1) {
+                const endFilePath = oldFilePaths[oldFilePaths.length - 1];
+                oldFilePaths[oldFilePathIndex] = endFilePath;
+                oldFilePaths.pop();
+            }
+        }
+        //删除旧文件
+        for (let i = 0; i < oldFilePaths.length; i++) {
+            delete parseResultMap[oldFilePaths[i]];
+            let deleteFileInfo = getFileInfo(oldFilePaths[i]);
+            deleteFileInfos.push(deleteFileInfo);
+        }
+        let t2 = new Date().getTime();
+        Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
+    }
+    context.deleteFileInfos = deleteFileInfos;
+    context.changedFileInfos = changedFileInfos;
+    context.parseResultMap = parseResultMap;
+    context.parseResultMapCacheFilePath = parseResultMapCacheFilePath;
+}
+/**
+ * 获取文件信息以及预处理
+ * @param context
+ */
+function getFileInfosAndPreDo(context: IConvertContext) {
+    const converConfig = context.convertConfig;
+    let changedFileInfos: IFileInfo[] = [];
+    let deleteFileInfos: IFileInfo[] = [];
+    const tableFileDir = converConfig.tableFileDir;
+    const getFileInfo = (filePath: string) => {
+        const filePathParse = path.parse(filePath);
+        const fileInfo: IFileInfo = {
+            filePath: filePath,
+            fileName: filePathParse.name,
+            fileExtName: filePathParse.ext,
+            isDelete: false
+        };
+        return fileInfo;
+    };
+    const matchPattern = converConfig.pattern;
+    const eachFileCallback = (filePath: string) => {
+        const fileInfo = getFileInfo(filePath);
+        let canRead: boolean;
+        canRead = mmatch.all(fileInfo.filePath, matchPattern);
+        return { fileInfo, canRead };
+    };
+    let parseResultMap: TableParseResultMap = {};
+
+    //缓存处理
+    let cacheFileDirPath: string = converConfig.cacheFileDirPath;
+    let parseResultMapCacheFilePath: string;
+
+    if (!converConfig.useCache) {
+        forEachFile(tableFileDir, (filePath) => {
+            const { fileInfo, canRead } = eachFileCallback(filePath);
+            if (canRead) {
+                changedFileInfos.push(fileInfo);
+            }
+        });
+    } else {
+        let t1 = new Date().getTime();
+        if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
+        if (!path.isAbsolute(cacheFileDirPath)) {
+            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
+        }
+        parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
+        Logger.systemLog(`读取缓存数据`);
+
+        parseResultMap = getCacheData(parseResultMapCacheFilePath);
+        if (!parseResultMap) {
+            parseResultMap = {};
+        }
+
+        Logger.systemLog(`开始缓存处理...`);
+        const oldFilePaths = Object.keys(parseResultMap);
+        let oldFilePathIndex: number;
+        let parseResult: ITableParseResult;
+        forEachFile(tableFileDir, (filePath) => {
+            const { fileInfo, canRead } = eachFileCallback(filePath);
+
+            const fileData = fs.readFileSync(filePath, isCSV(fileInfo.fileExtName) ? "utf-8" : undefined);
+            if (canRead) {
+                fileInfo.fileData = fileData;
+                parseResult = parseResultMap[filePath];
+                var md5str = getFileMd5(fileData);
+                if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
+                    parseResult = {
+                        filePath: filePath
+                    };
+                    parseResultMap[filePath] = parseResult;
+                    parseResult.md5hash = md5str;
+                    changedFileInfos.push(fileInfo);
+                }
+            }
+            //删除不存在的旧文件
+            oldFilePathIndex = oldFilePaths.indexOf(filePath);
+            if (oldFilePathIndex > -1) {
+                const endFilePath = oldFilePaths[oldFilePaths.length - 1];
+                oldFilePaths[oldFilePathIndex] = endFilePath;
+                oldFilePaths.pop();
+            }
+        });
+        for (let i = 0; i < oldFilePaths.length; i++) {
+            delete parseResultMap[oldFilePaths[i]];
+            let deleteFileInfo = getFileInfo(oldFilePaths[i]);
+            deleteFileInfos.push(deleteFileInfo);
+        }
+        let t2 = new Date().getTime();
+        Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
+    }
+    context.deleteFileInfos = deleteFileInfos;
+    context.changedFileInfos = changedFileInfos;
+    context.parseResultMap = parseResultMap;
+    context.parseResultMapCacheFilePath = parseResultMapCacheFilePath;
 }
 /**
  * 解析结束
@@ -313,19 +434,13 @@ async function onParseEnd(
 }
 /**
  * 测试文件匹配
- * @param converConfig
+ * @param convertConfig
  */
-export function testFileMatch(converConfig: ITableConvertConfig) {
-    if (!converConfig.projRoot) {
-        converConfig.projRoot = process.cwd();
+export function testFileMatch(convertConfig: ITableConvertConfig) {
+    if (!convertConfig.projRoot) {
+        convertConfig.projRoot = process.cwd();
     }
-    let convertHook: IConvertHook;
-    if (converConfig.customConvertHookPath) {
-        convertHook = require(converConfig.customConvertHookPath);
-    } else {
-        convertHook = new DefaultConvertHook();
-    }
-    const tableFileDir = converConfig.tableFileDir;
+    const tableFileDir = convertConfig.tableFileDir;
     if (!tableFileDir) {
         Logger.log(`配置表目录：tableFileDir为空`, "error");
         return;
@@ -334,78 +449,20 @@ export function testFileMatch(converConfig: ITableConvertConfig) {
         Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
         return;
     }
-    const defaultPattern = ["**/*.{xlsx,csv}", "!**/~$*.*", "!**/~.*.*"];
-    if (!converConfig.pattern) {
-        converConfig.pattern = defaultPattern;
+    if (!convertConfig.pattern) {
+        convertConfig.pattern = defaultPattern;
     }
-    if (converConfig.useMultiThread && isNaN(converConfig.threadParseFileMaxNum)) {
-        converConfig.threadParseFileMaxNum = 5;
+    if (convertConfig.useMultiThread && isNaN(convertConfig.threadParseFileMaxNum)) {
+        convertConfig.threadParseFileMaxNum = 5;
     }
-    const matchPattern = converConfig.pattern;
-    const deleteFilePaths: string[] = [];
-    const changedFilePaths: string[] = [];
-    const eachFileCallback = (filePath: string, isDelete?: boolean) => {
-        let canRead: boolean;
-        if (isDelete) {
-            deleteFilePaths.push(filePath);
-        } else {
-            canRead = mmatch.all(filePath, matchPattern);
-            if (canRead) {
-                changedFilePaths.push(filePath);
-            }
-        }
-        return { canRead };
-    };
-    let cacheFileDirPath: string = converConfig.cacheFileDirPath;
-    let parseResultMapCacheFilePath: string;
-    let parseResultMap: TableParseResultMap;
-    if (!converConfig.useCache) {
-        forEachFile(tableFileDir, eachFileCallback);
-    } else {
-        if (!cacheFileDirPath) cacheFileDirPath = ".cache";
-        if (!path.isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
-        }
-        parseResultMapCacheFilePath = path.join(cacheFileDirPath, ".egfprmc");
-        parseResultMap = getCacheData(parseResultMapCacheFilePath);
-        if (!parseResultMap) {
-            parseResultMap = {};
-        }
-        const oldFilePaths = Object.keys(parseResultMap);
-        let oldFilePathIndex: number;
-        let parseResult: ITableParseResult;
-        forEachFile(tableFileDir, (filePath) => {
-            var md5str = getFileMd5Sync(filePath);
-            parseResult = parseResultMap[filePath];
-            if (!parseResult) {
-                parseResult = {
-                    filePath: filePath
-                };
-                parseResultMap[filePath] = parseResult;
-            }
-            if (parseResult && parseResult.md5hash !== md5str) {
-                const { canRead } = eachFileCallback(filePath, false);
-                if (canRead) {
-                    parseResult.tableObj = undefined;
-                    parseResult.md5hash = md5str;
-                }
-            }
-            //删除不存在的旧文件
-            oldFilePathIndex = oldFilePaths.indexOf(filePath);
-            if (oldFilePathIndex > -1) {
-                const endFilePath = oldFilePaths[oldFilePaths.length - 1];
-                oldFilePaths[oldFilePathIndex] = endFilePath;
-                oldFilePaths.pop();
-            }
-        });
-        for (let i = 0; i < oldFilePaths.length; i++) {
-            delete parseResultMap[oldFilePaths[i]];
-            eachFileCallback(oldFilePaths[i], true);
-        }
-    }
-    if (converConfig.useCache) {
+    const context: IConvertContext = { convertConfig: convertConfig } as any;
+    let t1 = new Date().getTime();
+    getFileInfos(context);
+    let t2 = new Date().getTime();
+    console.log(`执行时间:${(t2 - t1) / 1000}s`);
+    if (convertConfig.useCache) {
         console.log(`----【缓存模式】----`);
     }
     console.log(`------------------------------匹配到的文件---------------------`);
-    console.log(changedFilePaths);
+    console.log(context.changedFileInfos);
 }

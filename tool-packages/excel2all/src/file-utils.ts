@@ -20,7 +20,7 @@ declare global {
  * @param eachCallback 遍历回调 (filePath: string) => void
  */
 export function forEachFile(fileOrDirPath: string, eachCallback?: (filePath: string) => void) {
-    if (fs.statSync(fileOrDirPath).isDirectory()) {
+    if (fs.statSync(fileOrDirPath).isDirectory() && fileOrDirPath !== ".git" && fileOrDirPath !== ".svn") {
         const fileNames = fs.readdirSync(fileOrDirPath);
         let childFilePath: string;
         for (var i = 0; i < fileNames.length; i++) {
@@ -153,6 +153,18 @@ export function getFileMd5Sync(filePath: string, encoding?: BufferEncoding): str
     var md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
+}
+/**
+ * 获取文件md5 (异步)
+ * @param filePath
+ */
+export function getFileMd5Async(filePath: string, cb: (md5Str: string) => void, encoding?: BufferEncoding) {
+    fs.readFile(filePath, encoding, (err, file) => {
+        var md5um = crypto.createHash("md5");
+        md5um.update(file);
+        const md5Str = md5um.digest("hex");
+        cb(md5Str);
+    });
 }
 /**
  * 获取文件md5

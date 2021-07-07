@@ -13,6 +13,7 @@ or
 npm install @ailhc/excel2all-cli -g
 
 ```
+## [CHANGELOG](packages/cli/CHANGELOG.md)
 
 ## 使用
 
@@ -28,7 +29,7 @@ npm install @ailhc/excel2all-cli -g
 
     .option('-t, --tableFileDir [tableFileDir]', "excel文件夹路径,如果没有则使用项目根目录\n-------------------------")
 
-    .option('-pt, --pattern [pattern...]', 'excel文件名匹配规则,多个以空格隔开 以 -- 结束,\n如: -pt "\\**\\*.{xlsx,csv}" "!~$*.*" -- \n默认匹配规则["\\**\\*.{xlsx,csv}", "!~$*.*"]\n匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除\n参考：https://github.com/micromatch/micromatch\n--------')
+    .option('-pt, --pattern [pattern...]', 'excel文件名匹配规则,多个以空格隔开 以 -- 结束,\n如: -pt ".\\**\\*.{xlsx,csv}" "!~$*.*" -- \n默认匹配规则 [".\\**\\*.xlsx", ".\\**\\*.csv", "!**\\~$*.*", "!**\\~.*.*", "!.git\\**\\*", "!.svn\\**\\*"]\n 匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除(那个是excel文件的临时文件)\n 匹配规则第一个必须带 ./ 否则匹配会出问题 \n 具体匹配规则参考：https://github.com/mrmlnc/fast-glob#pattern-syntax')
 
     .option('-uc, --useCache', '是否使用缓存，默认不\n-------------------------')
 
@@ -88,7 +89,7 @@ e2a convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -uc cf .
 
     .option('-t, --tableFileDir [tableFileDir]', "excel文件夹路径,如果没有则使用项目根目录\n-------------------------")
 
-    .option('-pt, --pattern [pattern...]', 'excel文件名匹配规则,多个以空格隔开 以 -- 结束,\n如: -pt "\\**\\*.{xlsx,csv}" "!~$*.*" -- \n默认匹配规则["\\**\\*.{xlsx,csv}", "!~$*.*"]\n匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除\n参考：https://github.com/micromatch/micromatch\n--------')
+    .option('-pt, --pattern [pattern...]', 'excel文件名匹配规则,多个以空格隔开 以 -- 结束,\n如: -pt ".\\**\\*.{xlsx,csv}" "!~$*.*" -- \n默认匹配规则 [".\\**\\*.xlsx", ".\\**\\*.csv", "!**\\~$*.*", "!**\\~.*.*", "!.git\\**\\*", "!.svn\\**\\*"]\n 匹配所有后缀为.xlsx和.csv的文件，如果符合~$*.* 或~.*.* 则排除(那个是excel文件的临时文件)\n 匹配规则第一个必须带 ./ 否则匹配会出问题 \n 具体匹配规则参考：https://github.com/mrmlnc/fast-glob#pattern-syntax')
 
     .option('-uc, --useCache', '是否使用缓存，默认不\n-------------------------')
 
