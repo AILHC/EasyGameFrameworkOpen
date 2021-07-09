@@ -1,10 +1,9 @@
-import { platform as platform$1 } from 'os';
-import { readFile, read } from 'xlsx';
-import path, { join, dirname, isAbsolute, parse } from 'path';
+import * as os from 'os';
+import * as xlsx from 'xlsx';
+import * as path from 'path';
 import { deflateSync } from 'zlib';
-import { statSync, readdirSync, existsSync, unlinkSync, ensureFileSync, writeFile, writeFileSync, readFileSync, readFile as readFile$1 } from 'fs-extra';
-import { createHash } from 'crypto';
-import 'util';
+import * as fs from 'fs-extra';
+import * as crypto from 'crypto';
 import fg from 'fast-glob';
 
 const valueTransFuncMap = {};
@@ -101,7 +100,7 @@ function anyToAny(fieldItem, cellValue) {
     return { error: error, value: obj };
 }
 
-const platform = platform$1();
+const platform = os.platform();
 const osEol = platform === "win32" ? "\n" : "\r\n";
 
 var LogLevelEnum;
@@ -165,7 +164,7 @@ function isEmptyCell(cell) {
             return isNaN(cell.v);
         }
         else {
-            return false;
+            return true;
         }
     }
     else {
@@ -200,6 +199,18 @@ function stringToCharCodes(colKey) {
         charCodes.push(colKey.charCodeAt(i));
     }
     return charCodes;
+}
+let colKeySumMap = {};
+function getCharCodeSum(colKey) {
+    let sum = colKeySumMap[colKey];
+    if (!sum) {
+        sum = 0;
+        for (let i = 0; i < colKey.length; i++) {
+            sum += colKey.charCodeAt(i) * (colKey.length - i - 1) * 100;
+        }
+        colKeySumMap[colKey] = sum;
+    }
+    return sum;
 }
 function verticalForEachSheet(sheet, startRow, startCol, callback, isSheetRowEnd, isSheetColEnd, isSkipSheetRow, isSkipSheetCol) {
     const sheetRef = sheet["!ref"];
@@ -264,24 +275,12 @@ function horizontalForEachSheet(sheet, startRow, startCol, callback, isSheetRowE
         }
     }
 }
-let colKeySumMap = {};
-function getCharCodeSum(colKey) {
-    let sum = colKeySumMap[colKey];
-    if (!sum) {
-        sum = 0;
-        for (let i = 0; i < colKey.length; i++) {
-            sum += colKey.charCodeAt(i);
-        }
-        colKeySumMap[colKey] = sum;
-    }
-    return sum;
-}
 function readTableFile(fileInfo) {
-    const workBook = readFile(fileInfo.filePath, { type: getTableFileType(fileInfo) });
+    const workBook = xlsx.readFile(fileInfo.filePath, { type: getTableFileType(fileInfo) });
     return workBook;
 }
 function readTableData(fileInfo) {
-    const workBook = read(fileInfo.fileData);
+    const workBook = xlsx.read(fileInfo.fileData);
     return workBook;
 }
 function getTableFileType(fileInfo) {
@@ -772,14 +771,14 @@ class DefaultOutPutTransformer {
             tableTypeMapDtsStr = itBaseStr + "interface IT_TableMap {" + osEol + tableTypeMapDtsStr + "}" + osEol;
             if (outputConfig.isBundleDts) {
                 const dtsFileName = outputConfig.bundleDtsFileName ? outputConfig.bundleDtsFileName : "tableMap";
-                const bundleDtsFilePath = join(outputConfig.clientDtsOutDir, `${dtsFileName}.d.ts`);
+                const bundleDtsFilePath = path.join(outputConfig.clientDtsOutDir, `${dtsFileName}.d.ts`);
                 outputFileMap[bundleDtsFilePath] = {
                     filePath: bundleDtsFilePath,
                     data: tableTypeMapDtsStr + tableTypeDtsStrs
                 };
             }
             else {
-                const tableTypeMapDtsFilePath = join(outputConfig.clientDtsOutDir, "tableMap.d.ts");
+                const tableTypeMapDtsFilePath = path.join(outputConfig.clientDtsOutDir, "tableMap.d.ts");
                 outputFileMap[tableTypeMapDtsFilePath] = {
                     filePath: tableTypeMapDtsFilePath,
                     data: tableTypeMapDtsStr
@@ -835,7 +834,7 @@ class DefaultOutPutTransformer {
     _addSingleTableDtsOutputFile(config, parseResult, outputFileMap) {
         if (!parseResult.tableObj)
             return;
-        let dtsFilePath = join(config.clientDtsOutDir, `${parseResult.tableDefine.tableName}.d.ts`);
+        let dtsFilePath = path.join(config.clientDtsOutDir, `${parseResult.tableDefine.tableName}.d.ts`);
         if (!outputFileMap[dtsFilePath]) {
             const dtsStr = this._getSingleTableDts(parseResult);
             if (dtsStr) {
@@ -890,7 +889,7 @@ class DefaultOutPutTransformer {
         if (!tableObj)
             return;
         const tableName = parseResult.tableDefine.tableName;
-        let singleJsonFilePath = join(config.clientSingleTableJsonDir, `${tableName}.json`);
+        let singleJsonFilePath = path.join(config.clientSingleTableJsonDir, `${tableName}.json`);
         let singleJsonData = JSON.stringify(tableObj, null, "\t");
         let singleOutputFileInfo = outputFileMap[singleJsonFilePath];
         if (singleOutputFileInfo) {
@@ -951,11 +950,11 @@ function __awaiter(thisArg, _arguments, P, generator) {
 }
 
 function forEachFile(fileOrDirPath, eachCallback) {
-    if (statSync(fileOrDirPath).isDirectory() && (fileOrDirPath !== ".git" && fileOrDirPath !== ".svn")) {
-        const fileNames = readdirSync(fileOrDirPath);
+    if (fs.statSync(fileOrDirPath).isDirectory() && fileOrDirPath !== ".git" && fileOrDirPath !== ".svn") {
+        const fileNames = fs.readdirSync(fileOrDirPath);
         let childFilePath;
         for (var i = 0; i < fileNames.length; i++) {
-            childFilePath = join(fileOrDirPath, fileNames[i]);
+            childFilePath = path.join(fileOrDirPath, fileNames[i]);
             forEachFile(childFilePath, eachCallback);
         }
     }
@@ -980,19 +979,19 @@ function writeOrDeleteOutPutFiles(outputFileInfos, onProgress, complete) {
         };
         for (let i = outputFileInfos.length - 1; i >= 0; i--) {
             fileInfo = outputFileInfos[i];
-            if (fileInfo.isDelete && existsSync(fileInfo.filePath)) {
-                unlinkSync(fileInfo.filePath);
+            if (fileInfo.isDelete && fs.existsSync(fileInfo.filePath)) {
+                fs.unlinkSync(fileInfo.filePath);
             }
             else {
-                if (existsSync(fileInfo.filePath) && statSync(fileInfo.filePath).isDirectory()) {
+                if (fs.existsSync(fileInfo.filePath) && fs.statSync(fileInfo.filePath).isDirectory()) {
                     Logger.log(`路径为文件夹:${fileInfo.filePath}`, "error");
                     continue;
                 }
                 if (!fileInfo.encoding && typeof fileInfo.data === "string") {
                     fileInfo.encoding = "utf8";
                 }
-                ensureFileSync(fileInfo.filePath);
-                writeFile(fileInfo.filePath, fileInfo.data, fileInfo.encoding ? { encoding: fileInfo.encoding } : undefined, onWriteEnd);
+                fs.ensureFileSync(fileInfo.filePath);
+                fs.writeFile(fileInfo.filePath, fileInfo.data, fileInfo.encoding ? { encoding: fileInfo.encoding } : undefined, onWriteEnd);
             }
         }
     }
@@ -1018,44 +1017,44 @@ function forEachChangedFile(dir, cacheFilePath, eachCallback) {
         delete gcfCache[oldFilePaths[i]];
         eachCallback(oldFilePaths[i], true);
     }
-    writeFileSync(cacheFilePath, JSON.stringify(gcfCache), { encoding: "utf-8" });
+    fs.writeFileSync(cacheFilePath, JSON.stringify(gcfCache), { encoding: "utf-8" });
 }
 function writeCacheData(cacheFilePath, cacheData) {
     if (!cacheFilePath) {
         Logger.log(`cacheFilePath is null`, "error");
         return;
     }
-    writeFileSync(cacheFilePath, JSON.stringify(cacheData), { encoding: "utf-8" });
+    fs.writeFileSync(cacheFilePath, JSON.stringify(cacheData), { encoding: "utf-8" });
 }
 function getCacheData(cacheFilePath) {
     if (!cacheFilePath) {
         Logger.log(`cacheFilePath is null`, "error");
         return;
     }
-    if (!existsSync(cacheFilePath)) {
-        ensureFileSync(cacheFilePath);
-        writeFileSync(cacheFilePath, "{}", { encoding: "utf-8" });
+    if (!fs.existsSync(cacheFilePath)) {
+        fs.ensureFileSync(cacheFilePath);
+        fs.writeFileSync(cacheFilePath, "{}", { encoding: "utf-8" });
     }
-    const gcfCacheFile = readFileSync(cacheFilePath, "utf-8");
+    const gcfCacheFile = fs.readFileSync(cacheFilePath, "utf-8");
     const gcfCache = JSON.parse(gcfCacheFile);
     return gcfCache;
 }
 function getFileMd5Sync(filePath, encoding) {
-    const file = readFileSync(filePath, encoding);
-    var md5um = createHash("md5");
+    const file = fs.readFileSync(filePath, encoding);
+    var md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
 }
 function getFileMd5Async(filePath, cb, encoding) {
-    readFile$1(filePath, encoding, (err, file) => {
-        var md5um = createHash("md5");
+    fs.readFile(filePath, encoding, (err, file) => {
+        var md5um = crypto.createHash("md5");
         md5um.update(file);
         const md5Str = md5um.digest("hex");
         cb(md5Str);
     });
 }
 function getFileMd5(file) {
-    const md5um = createHash("md5");
+    const md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
 }
@@ -1064,387 +1063,6 @@ function getFileMd5ByPath(filePath) {
         return getFileMd5Sync(filePath);
     });
 }
-
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-var utils = createCommonjsModule(function (module, exports) {
-
-exports.isInteger = num => {
-  if (typeof num === 'number') {
-    return Number.isInteger(num);
-  }
-  if (typeof num === 'string' && num.trim() !== '') {
-    return Number.isInteger(Number(num));
-  }
-  return false;
-};
-
-/**
- * Find a node of the given type
- */
-
-exports.find = (node, type) => node.nodes.find(node => node.type === type);
-
-/**
- * Find a node of the given type
- */
-
-exports.exceedsLimit = (min, max, step = 1, limit) => {
-  if (limit === false) return false;
-  if (!exports.isInteger(min) || !exports.isInteger(max)) return false;
-  return ((Number(max) - Number(min)) / Number(step)) >= limit;
-};
-
-/**
- * Escape the given node with '\\' before node.value
- */
-
-exports.escapeNode = (block, n = 0, type) => {
-  let node = block.nodes[n];
-  if (!node) return;
-
-  if ((type && node.type === type) || node.type === 'open' || node.type === 'close') {
-    if (node.escaped !== true) {
-      node.value = '\\' + node.value;
-      node.escaped = true;
-    }
-  }
-};
-
-/**
- * Returns true if the given brace node should be enclosed in literal braces
- */
-
-exports.encloseBrace = node => {
-  if (node.type !== 'brace') return false;
-  if ((node.commas >> 0 + node.ranges >> 0) === 0) {
-    node.invalid = true;
-    return true;
-  }
-  return false;
-};
-
-/**
- * Returns true if a brace node is invalid.
- */
-
-exports.isInvalidBrace = block => {
-  if (block.type !== 'brace') return false;
-  if (block.invalid === true || block.dollar) return true;
-  if ((block.commas >> 0 + block.ranges >> 0) === 0) {
-    block.invalid = true;
-    return true;
-  }
-  if (block.open !== true || block.close !== true) {
-    block.invalid = true;
-    return true;
-  }
-  return false;
-};
-
-/**
- * Returns true if a node is an open or close node
- */
-
-exports.isOpenOrClose = node => {
-  if (node.type === 'open' || node.type === 'close') {
-    return true;
-  }
-  return node.open === true || node.close === true;
-};
-
-/**
- * Reduce an array of text nodes.
- */
-
-exports.reduce = nodes => nodes.reduce((acc, node) => {
-  if (node.type === 'text') acc.push(node.value);
-  if (node.type === 'range') node.type = 'text';
-  return acc;
-}, []);
-
-/**
- * Flatten an array
- */
-
-exports.flatten = (...args) => {
-  const result = [];
-  const flat = arr => {
-    for (let i = 0; i < arr.length; i++) {
-      let ele = arr[i];
-      Array.isArray(ele) ? flat(ele) : ele !== void 0 && result.push(ele);
-    }
-    return result;
-  };
-  flat(args);
-  return result;
-};
-});
-var utils_1 = utils.isInteger;
-var utils_2 = utils.find;
-var utils_3 = utils.exceedsLimit;
-var utils_4 = utils.escapeNode;
-var utils_5 = utils.encloseBrace;
-var utils_6 = utils.isInvalidBrace;
-var utils_7 = utils.isOpenOrClose;
-var utils_8 = utils.reduce;
-var utils_9 = utils.flatten;
-
-const WIN_SLASH = '\\\\/';
-const WIN_NO_SLASH = `[^${WIN_SLASH}]`;
-
-/**
- * Posix glob regex
- */
-
-const DOT_LITERAL = '\\.';
-const PLUS_LITERAL = '\\+';
-const QMARK_LITERAL = '\\?';
-const SLASH_LITERAL = '\\/';
-const ONE_CHAR = '(?=.)';
-const QMARK = '[^/]';
-const END_ANCHOR = `(?:${SLASH_LITERAL}|$)`;
-const START_ANCHOR = `(?:^|${SLASH_LITERAL})`;
-const DOTS_SLASH = `${DOT_LITERAL}{1,2}${END_ANCHOR}`;
-const NO_DOT = `(?!${DOT_LITERAL})`;
-const NO_DOTS = `(?!${START_ANCHOR}${DOTS_SLASH})`;
-const NO_DOT_SLASH = `(?!${DOT_LITERAL}{0,1}${END_ANCHOR})`;
-const NO_DOTS_SLASH = `(?!${DOTS_SLASH})`;
-const QMARK_NO_DOT = `[^.${SLASH_LITERAL}]`;
-const STAR = `${QMARK}*?`;
-
-const POSIX_CHARS = {
-  DOT_LITERAL,
-  PLUS_LITERAL,
-  QMARK_LITERAL,
-  SLASH_LITERAL,
-  ONE_CHAR,
-  QMARK,
-  END_ANCHOR,
-  DOTS_SLASH,
-  NO_DOT,
-  NO_DOTS,
-  NO_DOT_SLASH,
-  NO_DOTS_SLASH,
-  QMARK_NO_DOT,
-  STAR,
-  START_ANCHOR
-};
-
-/**
- * Windows glob regex
- */
-
-const WINDOWS_CHARS = {
-  ...POSIX_CHARS,
-
-  SLASH_LITERAL: `[${WIN_SLASH}]`,
-  QMARK: WIN_NO_SLASH,
-  STAR: `${WIN_NO_SLASH}*?`,
-  DOTS_SLASH: `${DOT_LITERAL}{1,2}(?:[${WIN_SLASH}]|$)`,
-  NO_DOT: `(?!${DOT_LITERAL})`,
-  NO_DOTS: `(?!(?:^|[${WIN_SLASH}])${DOT_LITERAL}{1,2}(?:[${WIN_SLASH}]|$))`,
-  NO_DOT_SLASH: `(?!${DOT_LITERAL}{0,1}(?:[${WIN_SLASH}]|$))`,
-  NO_DOTS_SLASH: `(?!${DOT_LITERAL}{1,2}(?:[${WIN_SLASH}]|$))`,
-  QMARK_NO_DOT: `[^.${WIN_SLASH}]`,
-  START_ANCHOR: `(?:^|[${WIN_SLASH}])`,
-  END_ANCHOR: `(?:[${WIN_SLASH}]|$)`
-};
-
-/**
- * POSIX Bracket Regex
- */
-
-const POSIX_REGEX_SOURCE = {
-  alnum: 'a-zA-Z0-9',
-  alpha: 'a-zA-Z',
-  ascii: '\\x00-\\x7F',
-  blank: ' \\t',
-  cntrl: '\\x00-\\x1F\\x7F',
-  digit: '0-9',
-  graph: '\\x21-\\x7E',
-  lower: 'a-z',
-  print: '\\x20-\\x7E ',
-  punct: '\\-!"#$%&\'()\\*+,./:;<=>?@[\\]^_`{|}~',
-  space: ' \\t\\r\\n\\v\\f',
-  upper: 'A-Z',
-  word: 'A-Za-z0-9_',
-  xdigit: 'A-Fa-f0-9'
-};
-
-var constants = {
-  MAX_LENGTH: 1024 * 64,
-  POSIX_REGEX_SOURCE,
-
-  // regular expressions
-  REGEX_BACKSLASH: /\\(?![*+?^${}(|)[\]])/g,
-  REGEX_NON_SPECIAL_CHARS: /^[^@![\].,$*+?^{}()|\\/]+/,
-  REGEX_SPECIAL_CHARS: /[-*+?.^${}(|)[\]]/,
-  REGEX_SPECIAL_CHARS_BACKREF: /(\\?)((\W)(\3*))/g,
-  REGEX_SPECIAL_CHARS_GLOBAL: /([-*+?.^${}(|)[\]])/g,
-  REGEX_REMOVE_BACKSLASH: /(?:\[.*?[^\\]\]|\\(?=.))/g,
-
-  // Replace globs with equivalent patterns to reduce parsing time.
-  REPLACEMENTS: {
-    '***': '*',
-    '**/**': '**',
-    '**/**/**': '**'
-  },
-
-  // Digits
-  CHAR_0: 48, /* 0 */
-  CHAR_9: 57, /* 9 */
-
-  // Alphabet chars.
-  CHAR_UPPERCASE_A: 65, /* A */
-  CHAR_LOWERCASE_A: 97, /* a */
-  CHAR_UPPERCASE_Z: 90, /* Z */
-  CHAR_LOWERCASE_Z: 122, /* z */
-
-  CHAR_LEFT_PARENTHESES: 40, /* ( */
-  CHAR_RIGHT_PARENTHESES: 41, /* ) */
-
-  CHAR_ASTERISK: 42, /* * */
-
-  // Non-alphabetic chars.
-  CHAR_AMPERSAND: 38, /* & */
-  CHAR_AT: 64, /* @ */
-  CHAR_BACKWARD_SLASH: 92, /* \ */
-  CHAR_CARRIAGE_RETURN: 13, /* \r */
-  CHAR_CIRCUMFLEX_ACCENT: 94, /* ^ */
-  CHAR_COLON: 58, /* : */
-  CHAR_COMMA: 44, /* , */
-  CHAR_DOT: 46, /* . */
-  CHAR_DOUBLE_QUOTE: 34, /* " */
-  CHAR_EQUAL: 61, /* = */
-  CHAR_EXCLAMATION_MARK: 33, /* ! */
-  CHAR_FORM_FEED: 12, /* \f */
-  CHAR_FORWARD_SLASH: 47, /* / */
-  CHAR_GRAVE_ACCENT: 96, /* ` */
-  CHAR_HASH: 35, /* # */
-  CHAR_HYPHEN_MINUS: 45, /* - */
-  CHAR_LEFT_ANGLE_BRACKET: 60, /* < */
-  CHAR_LEFT_CURLY_BRACE: 123, /* { */
-  CHAR_LEFT_SQUARE_BRACKET: 91, /* [ */
-  CHAR_LINE_FEED: 10, /* \n */
-  CHAR_NO_BREAK_SPACE: 160, /* \u00A0 */
-  CHAR_PERCENT: 37, /* % */
-  CHAR_PLUS: 43, /* + */
-  CHAR_QUESTION_MARK: 63, /* ? */
-  CHAR_RIGHT_ANGLE_BRACKET: 62, /* > */
-  CHAR_RIGHT_CURLY_BRACE: 125, /* } */
-  CHAR_RIGHT_SQUARE_BRACKET: 93, /* ] */
-  CHAR_SEMICOLON: 59, /* ; */
-  CHAR_SINGLE_QUOTE: 39, /* ' */
-  CHAR_SPACE: 32, /*   */
-  CHAR_TAB: 9, /* \t */
-  CHAR_UNDERSCORE: 95, /* _ */
-  CHAR_VERTICAL_LINE: 124, /* | */
-  CHAR_ZERO_WIDTH_NOBREAK_SPACE: 65279, /* \uFEFF */
-
-  SEP: path.sep,
-
-  /**
-   * Create EXTGLOB_CHARS
-   */
-
-  extglobChars(chars) {
-    return {
-      '!': { type: 'negate', open: '(?:(?!(?:', close: `))${chars.STAR})` },
-      '?': { type: 'qmark', open: '(?:', close: ')?' },
-      '+': { type: 'plus', open: '(?:', close: ')+' },
-      '*': { type: 'star', open: '(?:', close: ')*' },
-      '@': { type: 'at', open: '(?:', close: ')' }
-    };
-  },
-
-  /**
-   * Create GLOB_CHARS
-   */
-
-  globChars(win32) {
-    return win32 === true ? WINDOWS_CHARS : POSIX_CHARS;
-  }
-};
-
-var utils$1 = createCommonjsModule(function (module, exports) {
-
-
-const win32 = process.platform === 'win32';
-const {
-  REGEX_BACKSLASH,
-  REGEX_REMOVE_BACKSLASH,
-  REGEX_SPECIAL_CHARS,
-  REGEX_SPECIAL_CHARS_GLOBAL
-} = constants;
-
-exports.isObject = val => val !== null && typeof val === 'object' && !Array.isArray(val);
-exports.hasRegexChars = str => REGEX_SPECIAL_CHARS.test(str);
-exports.isRegexChar = str => str.length === 1 && exports.hasRegexChars(str);
-exports.escapeRegex = str => str.replace(REGEX_SPECIAL_CHARS_GLOBAL, '\\$1');
-exports.toPosixSlashes = str => str.replace(REGEX_BACKSLASH, '/');
-
-exports.removeBackslashes = str => {
-  return str.replace(REGEX_REMOVE_BACKSLASH, match => {
-    return match === '\\' ? '' : match;
-  });
-};
-
-exports.supportsLookbehinds = () => {
-  const segs = process.version.slice(1).split('.').map(Number);
-  if (segs.length === 3 && segs[0] >= 9 || (segs[0] === 8 && segs[1] >= 10)) {
-    return true;
-  }
-  return false;
-};
-
-exports.isWindows = options => {
-  if (options && typeof options.windows === 'boolean') {
-    return options.windows;
-  }
-  return win32 === true || path.sep === '\\';
-};
-
-exports.escapeLast = (input, char, lastIdx) => {
-  const idx = input.lastIndexOf(char, lastIdx);
-  if (idx === -1) return input;
-  if (input[idx - 1] === '\\') return exports.escapeLast(input, char, idx - 1);
-  return `${input.slice(0, idx)}\\${input.slice(idx)}`;
-};
-
-exports.removePrefix = (input, state = {}) => {
-  let output = input;
-  if (output.startsWith('./')) {
-    output = output.slice(2);
-    state.prefix = './';
-  }
-  return output;
-};
-
-exports.wrapOutput = (input, state = {}, options = {}) => {
-  const prepend = options.contains ? '' : '^';
-  const append = options.contains ? '' : '$';
-
-  let output = `${prepend}(?:${input})${append}`;
-  if (state.negated === true) {
-    output = `(?:^(?!${output}).*$)`;
-  }
-  return output;
-};
-});
-var utils_1$1 = utils$1.isObject;
-var utils_2$1 = utils$1.hasRegexChars;
-var utils_3$1 = utils$1.isRegexChar;
-var utils_4$1 = utils$1.escapeRegex;
-var utils_5$1 = utils$1.toPosixSlashes;
-var utils_6$1 = utils$1.removeBackslashes;
-var utils_7$1 = utils$1.supportsLookbehinds;
-var utils_8$1 = utils$1.isWindows;
-var utils_9$1 = utils$1.escapeLast;
-var utils_10 = utils$1.removePrefix;
-var utils_11 = utils$1.wrapOutput;
 
 const defaultDir = ".excel2all";
 const cacheFileName = ".e2aprmc";
@@ -1463,7 +1081,7 @@ function convert(converConfig) {
             Logger.log(`配置表目录：tableFileDir为空`, "error");
             return;
         }
-        if (!existsSync(tableFileDir)) {
+        if (!fs.existsSync(tableFileDir)) {
             Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
             return;
         }
@@ -1505,10 +1123,10 @@ function convert(converConfig) {
         else {
             parseHandler = new DefaultParseHandler();
         }
-        const predoT1 = (new Date()).getTime();
+        const predoT1 = new Date().getTime();
         getFileInfos(context);
         const { parseResultMap, parseResultMapCacheFilePath, changedFileInfos } = context;
-        const predoT2 = (new Date()).getTime();
+        const predoT2 = new Date().getTime();
         Logger.systemLog(`[预处理数据时间:${predoT2 - predoT1}ms,${(predoT2 - predoT1) / 1000}]`);
         yield new Promise((res) => {
             convertHook.onParseBefore(context, res);
@@ -1528,6 +1146,7 @@ function convert(converConfig) {
             const count = Math.floor(changedFileInfos.length / converConfig.threadParseFileMaxNum) + 1;
             let worker;
             let subFileInfos;
+            let workerMap = {};
             let completeCount = 0;
             const t1 = new Date().getTime();
             const onWorkerParseEnd = (data) => {
@@ -1552,7 +1171,7 @@ function convert(converConfig) {
             for (let i = 0; i < count; i++) {
                 subFileInfos = changedFileInfos.splice(0, converConfig.threadParseFileMaxNum);
                 Logger.log(`----------------线程开始:${i}-----------------`);
-                worker = new WorkerClass(join(dirname(__filename), "../../../worker_scripts/worker.js"), {
+                worker = new WorkerClass(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
                     workerData: {
                         threadId: i,
                         fileInfos: subFileInfos,
@@ -1560,6 +1179,7 @@ function convert(converConfig) {
                         convertConfig: converConfig
                     }
                 });
+                workerMap[i] = worker;
                 worker.on("message", onWorkerParseEnd);
             }
         }
@@ -1582,7 +1202,7 @@ function getFileInfos(context) {
     let deleteFileInfos = [];
     const tableFileDir = converConfig.tableFileDir;
     const getFileInfo = (filePath) => {
-        const filePathParse = parse(filePath);
+        const filePathParse = path.parse(filePath);
         const fileInfo = {
             filePath: filePath,
             fileName: filePathParse.name,
@@ -1592,7 +1212,12 @@ function getFileInfos(context) {
         return fileInfo;
     };
     const matchPattern = converConfig.pattern;
-    const filePaths = fg.sync(matchPattern, { absolute: true, onlyFiles: true, caseSensitiveMatch: false, cwd: tableFileDir });
+    const filePaths = fg.sync(matchPattern, {
+        absolute: true,
+        onlyFiles: true,
+        caseSensitiveMatch: false,
+        cwd: tableFileDir
+    });
     let parseResultMap = {};
     let cacheFileDirPath = converConfig.cacheFileDirPath;
     let parseResultMapCacheFilePath;
@@ -1605,10 +1230,10 @@ function getFileInfos(context) {
         let t1 = new Date().getTime();
         if (!cacheFileDirPath)
             cacheFileDirPath = defaultDir;
-        if (!isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = join(converConfig.projRoot, cacheFileDirPath);
+        if (!path.isAbsolute(cacheFileDirPath)) {
+            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
         }
-        parseResultMapCacheFilePath = join(cacheFileDirPath, cacheFileName);
+        parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
         Logger.systemLog(`读取缓存数据`);
         parseResultMap = getCacheData(parseResultMapCacheFilePath);
         if (!parseResultMap) {
@@ -1622,7 +1247,7 @@ function getFileInfos(context) {
         for (let i = 0; i < filePaths.length; i++) {
             filePath = filePaths[i];
             const fileInfo = getFileInfo(filePath);
-            const fileData = readFileSync(filePath);
+            const fileData = fs.readFileSync(filePath);
             fileInfo.fileData = fileData;
             parseResult = parseResultMap[filePath];
             var md5str = getFileMd5(fileData);
@@ -1691,11 +1316,11 @@ function onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr) {
             let logFileDirPath = context.convertConfig.outputLogDirPath;
             if (!logFileDirPath)
                 logFileDirPath = defaultDir;
-            if (!isAbsolute(logFileDirPath)) {
-                logFileDirPath = join(context.convertConfig.projRoot, logFileDirPath);
+            if (!path.isAbsolute(logFileDirPath)) {
+                logFileDirPath = path.join(context.convertConfig.projRoot, logFileDirPath);
             }
             const outputLogFileInfo = {
-                filePath: join(logFileDirPath, logFileName),
+                filePath: path.join(logFileDirPath, logFileName),
                 data: logStr
             };
             writeOrDeleteOutPutFiles([outputLogFileInfo]);
@@ -1715,7 +1340,7 @@ function testFileMatch(convertConfig) {
         Logger.log(`配置表目录：tableFileDir为空`, "error");
         return;
     }
-    if (!existsSync(tableFileDir)) {
+    if (!fs.existsSync(tableFileDir)) {
         Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
         return;
     }
@@ -1726,9 +1351,9 @@ function testFileMatch(convertConfig) {
         convertConfig.threadParseFileMaxNum = 5;
     }
     const context = { convertConfig: convertConfig };
-    let t1 = (new Date()).getTime();
+    let t1 = new Date().getTime();
     getFileInfos(context);
-    let t2 = (new Date()).getTime();
+    let t2 = new Date().getTime();
     console.log(`执行时间:${(t2 - t1) / 1000}s`);
     if (convertConfig.useCache) {
         console.log(`----【缓存模式】----`);
@@ -1737,7 +1362,7 @@ function testFileMatch(convertConfig) {
     console.log(context.changedFileInfos);
 }
 
-export { ACharCode, DefaultConvertHook, DefaultOutPutTransformer, DefaultParseHandler, Logger, TableType, ZCharCode, charCodesToString, convert, doParse, forEachChangedFile, forEachFile, getCacheData, getFileMd5, getFileMd5Async, getFileMd5ByPath, getFileMd5Sync, getNextColKey, getTableFileType, horizontalForEachSheet, isCSV, isEmptyCell, readTableData, readTableFile, stringToCharCodes, testFileMatch, valueTransFuncMap, verticalForEachSheet, writeCacheData, writeOrDeleteOutPutFiles };
+export { ACharCode, DefaultConvertHook, DefaultOutPutTransformer, DefaultParseHandler, Logger, TableType, ZCharCode, charCodesToString, convert, doParse, forEachChangedFile, forEachFile, getCacheData, getCharCodeSum, getFileMd5, getFileMd5Async, getFileMd5ByPath, getFileMd5Sync, getNextColKey, getTableFileType, horizontalForEachSheet, isCSV, isEmptyCell, readTableData, readTableFile, stringToCharCodes, testFileMatch, valueTransFuncMap, verticalForEachSheet, writeCacheData, writeOrDeleteOutPutFiles };
 
     
 //# sourceMappingURL=index.mjs.map

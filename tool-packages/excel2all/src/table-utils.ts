@@ -65,6 +65,23 @@ export function stringToCharCodes(colKey: string) {
     }
     return charCodes;
 }
+let colKeySumMap = {};
+/**
+ * 获取列标签的大小 用于比较是否最大列 比如 最大列key: BD,当前列key: AF AF < BD
+ * @param colKey
+ * @returns
+ */
+export function getCharCodeSum(colKey: string): number {
+    let sum: number = colKeySumMap[colKey];
+    if (!sum) {
+        sum = 0;
+        for (let i = 0; i < colKey.length; i++) {
+            sum += colKey.charCodeAt(i) * (colKey.length - i - 1) * 100;
+        }
+        colKeySumMap[colKey] = sum;
+    }
+    return sum;
+}
 /**
  * 纵向遍历表格
  * @param sheet xlsx表格对象
@@ -169,18 +186,7 @@ export function horizontalForEachSheet(
         }
     }
 }
-let colKeySumMap = {};
-function getCharCodeSum(colKey: string): number {
-    let sum: number = colKeySumMap[colKey];
-    if (!sum) {
-        sum = 0;
-        for (let i = 0; i < colKey.length; i++) {
-            sum += colKey.charCodeAt(i) * (colKey.length - i);
-        }
-        colKeySumMap[colKey] = sum;
-    }
-    return sum;
-}
+
 /**
  * 读取配置表文件 同步的
  * @param fileInfo

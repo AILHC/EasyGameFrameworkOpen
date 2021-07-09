@@ -1,6 +1,5 @@
 import * as path from "path";
 import * as fs from "fs-extra";
-import * as mmatch from "micromatch";
 import {
     forEachFile,
     getCacheData,
@@ -257,101 +256,101 @@ function getFileInfos(context: IConvertContext) {
     context.parseResultMap = parseResultMap;
     context.parseResultMapCacheFilePath = parseResultMapCacheFilePath;
 }
-/**
- * 获取文件信息以及预处理
- * @param context
- */
-function getFileInfosAndPreDo(context: IConvertContext) {
-    const converConfig = context.convertConfig;
-    let changedFileInfos: IFileInfo[] = [];
-    let deleteFileInfos: IFileInfo[] = [];
-    const tableFileDir = converConfig.tableFileDir;
-    const getFileInfo = (filePath: string) => {
-        const filePathParse = path.parse(filePath);
-        const fileInfo: IFileInfo = {
-            filePath: filePath,
-            fileName: filePathParse.name,
-            fileExtName: filePathParse.ext,
-            isDelete: false
-        };
-        return fileInfo;
-    };
-    const matchPattern = converConfig.pattern;
-    const eachFileCallback = (filePath: string) => {
-        const fileInfo = getFileInfo(filePath);
-        let canRead: boolean;
-        canRead = mmatch.all(fileInfo.filePath, matchPattern);
-        return { fileInfo, canRead };
-    };
-    let parseResultMap: TableParseResultMap = {};
+// /**
+//  * 获取文件信息以及预处理
+//  * @param context
+//  */
+// function getFileInfosAndPreDo(context: IConvertContext) {
+//     const converConfig = context.convertConfig;
+//     let changedFileInfos: IFileInfo[] = [];
+//     let deleteFileInfos: IFileInfo[] = [];
+//     const tableFileDir = converConfig.tableFileDir;
+//     const getFileInfo = (filePath: string) => {
+//         const filePathParse = path.parse(filePath);
+//         const fileInfo: IFileInfo = {
+//             filePath: filePath,
+//             fileName: filePathParse.name,
+//             fileExtName: filePathParse.ext,
+//             isDelete: false
+//         };
+//         return fileInfo;
+//     };
+//     const matchPattern = converConfig.pattern;
+//     const eachFileCallback = (filePath: string) => {
+//         const fileInfo = getFileInfo(filePath);
+//         let canRead: boolean;
+//         canRead = mmatch.all(fileInfo.filePath, matchPattern);
+//         return { fileInfo, canRead };
+//     };
+//     let parseResultMap: TableParseResultMap = {};
 
-    //缓存处理
-    let cacheFileDirPath: string = converConfig.cacheFileDirPath;
-    let parseResultMapCacheFilePath: string;
+//     //缓存处理
+//     let cacheFileDirPath: string = converConfig.cacheFileDirPath;
+//     let parseResultMapCacheFilePath: string;
 
-    if (!converConfig.useCache) {
-        forEachFile(tableFileDir, (filePath) => {
-            const { fileInfo, canRead } = eachFileCallback(filePath);
-            if (canRead) {
-                changedFileInfos.push(fileInfo);
-            }
-        });
-    } else {
-        let t1 = new Date().getTime();
-        if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
-        if (!path.isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
-        }
-        parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
-        Logger.systemLog(`读取缓存数据`);
+//     if (!converConfig.useCache) {
+//         forEachFile(tableFileDir, (filePath) => {
+//             const { fileInfo, canRead } = eachFileCallback(filePath);
+//             if (canRead) {
+//                 changedFileInfos.push(fileInfo);
+//             }
+//         });
+//     } else {
+//         let t1 = new Date().getTime();
+//         if (!cacheFileDirPath) cacheFileDirPath = defaultDir;
+//         if (!path.isAbsolute(cacheFileDirPath)) {
+//             cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
+//         }
+//         parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
+//         Logger.systemLog(`读取缓存数据`);
 
-        parseResultMap = getCacheData(parseResultMapCacheFilePath);
-        if (!parseResultMap) {
-            parseResultMap = {};
-        }
+//         parseResultMap = getCacheData(parseResultMapCacheFilePath);
+//         if (!parseResultMap) {
+//             parseResultMap = {};
+//         }
 
-        Logger.systemLog(`开始缓存处理...`);
-        const oldFilePaths = Object.keys(parseResultMap);
-        let oldFilePathIndex: number;
-        let parseResult: ITableParseResult;
-        forEachFile(tableFileDir, (filePath) => {
-            const { fileInfo, canRead } = eachFileCallback(filePath);
+//         Logger.systemLog(`开始缓存处理...`);
+//         const oldFilePaths = Object.keys(parseResultMap);
+//         let oldFilePathIndex: number;
+//         let parseResult: ITableParseResult;
+//         forEachFile(tableFileDir, (filePath) => {
+//             const { fileInfo, canRead } = eachFileCallback(filePath);
 
-            const fileData = fs.readFileSync(filePath, isCSV(fileInfo.fileExtName) ? "utf-8" : undefined);
-            if (canRead) {
-                fileInfo.fileData = fileData;
-                parseResult = parseResultMap[filePath];
-                var md5str = getFileMd5(fileData);
-                if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
-                    parseResult = {
-                        filePath: filePath
-                    };
-                    parseResultMap[filePath] = parseResult;
-                    parseResult.md5hash = md5str;
-                    changedFileInfos.push(fileInfo);
-                }
-            }
-            //删除不存在的旧文件
-            oldFilePathIndex = oldFilePaths.indexOf(filePath);
-            if (oldFilePathIndex > -1) {
-                const endFilePath = oldFilePaths[oldFilePaths.length - 1];
-                oldFilePaths[oldFilePathIndex] = endFilePath;
-                oldFilePaths.pop();
-            }
-        });
-        for (let i = 0; i < oldFilePaths.length; i++) {
-            delete parseResultMap[oldFilePaths[i]];
-            let deleteFileInfo = getFileInfo(oldFilePaths[i]);
-            deleteFileInfos.push(deleteFileInfo);
-        }
-        let t2 = new Date().getTime();
-        Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
-    }
-    context.deleteFileInfos = deleteFileInfos;
-    context.changedFileInfos = changedFileInfos;
-    context.parseResultMap = parseResultMap;
-    context.parseResultMapCacheFilePath = parseResultMapCacheFilePath;
-}
+//             const fileData = fs.readFileSync(filePath, isCSV(fileInfo.fileExtName) ? "utf-8" : undefined);
+//             if (canRead) {
+//                 fileInfo.fileData = fileData;
+//                 parseResult = parseResultMap[filePath];
+//                 var md5str = getFileMd5(fileData);
+//                 if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
+//                     parseResult = {
+//                         filePath: filePath
+//                     };
+//                     parseResultMap[filePath] = parseResult;
+//                     parseResult.md5hash = md5str;
+//                     changedFileInfos.push(fileInfo);
+//                 }
+//             }
+//             //删除不存在的旧文件
+//             oldFilePathIndex = oldFilePaths.indexOf(filePath);
+//             if (oldFilePathIndex > -1) {
+//                 const endFilePath = oldFilePaths[oldFilePaths.length - 1];
+//                 oldFilePaths[oldFilePathIndex] = endFilePath;
+//                 oldFilePaths.pop();
+//             }
+//         });
+//         for (let i = 0; i < oldFilePaths.length; i++) {
+//             delete parseResultMap[oldFilePaths[i]];
+//             let deleteFileInfo = getFileInfo(oldFilePaths[i]);
+//             deleteFileInfos.push(deleteFileInfo);
+//         }
+//         let t2 = new Date().getTime();
+//         Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
+//     }
+//     context.deleteFileInfos = deleteFileInfos;
+//     context.changedFileInfos = changedFileInfos;
+//     context.parseResultMap = parseResultMap;
+//     context.parseResultMapCacheFilePath = parseResultMapCacheFilePath;
+// }
 /**
  * 解析结束
  * @param parseConfig
