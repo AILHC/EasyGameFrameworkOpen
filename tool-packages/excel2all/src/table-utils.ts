@@ -10,7 +10,7 @@ export function isEmptyCell(cell: xlsx.CellObject) {
         } else if (typeof cell.v === "number") {
             return isNaN(cell.v);
         } else {
-            return false;
+            return true;
         }
     } else {
         return true;
@@ -175,7 +175,7 @@ function getCharCodeSum(colKey: string): number {
     if (!sum) {
         sum = 0;
         for (let i = 0; i < colKey.length; i++) {
-            sum += colKey.charCodeAt(i);
+            sum += colKey.charCodeAt(i) * (colKey.length - i);
         }
         colKeySumMap[colKey] = sum;
     }

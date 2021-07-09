@@ -31,6 +31,8 @@
     "testFileMatch": "node ./__test__/test-test-file-match.js",
     "testWorker": "ts-node --transpile-only __test__/worker_test.ts",
     "//构建命令": "",
+    
+    "build:dev":"egf build -f cjs -s inline",
     "build:cjs": "egf build -f cjs",
     "build:es": "egf build -f es",
     "build:all": "npm run build:cjs && npm run build:es",
