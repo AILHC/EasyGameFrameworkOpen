@@ -32,8 +32,7 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
-	/// <reference types="node" />
-	import { BinaryLike } from 'node:crypto'; global {
+	 global {
 	    interface IOutPutFileInfo {
 	        filePath: string;
 	        /**写入编码，字符串默认utf8 */
@@ -90,7 +89,7 @@ declare module '@ailhc/excel2all' {
 	 * @param file 文件对象
 	 * @returns
 	 */
-	export function getFileMd5(file: BinaryLike): string;
+	export function getFileMd5(file: any): string;
 	/**
 	 * 获取文件 md5
 	 * @param filePath
@@ -139,6 +138,12 @@ declare module '@ailhc/excel2all' {
 	 * @param colKey
 	 */
 	export function stringToCharCodes(colKey: string): any[];
+	/**
+	 * 获取列标签的大小 用于比较是否最大列 比如 最大列key: BD,当前列key: AF AF < BD
+	 * @param colKey
+	 * @returns
+	 */
+	export function getCharCodeSum(colKey: string): number;
 	/**
 	 * 纵向遍历表格
 	 * @param sheet xlsx表格对象

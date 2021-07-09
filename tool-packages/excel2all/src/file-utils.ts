@@ -2,7 +2,6 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import * as crypto from "crypto";
 import { Logger } from "./loger";
-import { BinaryLike } from "node:crypto";
 
 declare global {
     interface IOutPutFileInfo {
@@ -171,7 +170,7 @@ export function getFileMd5Async(filePath: string, cb: (md5Str: string) => void, 
  * @param file 文件对象
  * @returns
  */
-export function getFileMd5(file: BinaryLike) {
+export function getFileMd5(file: any) {
     const md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
