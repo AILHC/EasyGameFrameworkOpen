@@ -280,7 +280,7 @@ function readTableFile(fileInfo) {
     return workBook;
 }
 function readTableData(fileInfo) {
-    const workBook = read(fileInfo.fileData, { type: getTableFileType(fileInfo) });
+    const workBook = read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "buffer" });
     return workBook;
 }
 function getTableFileType(fileInfo) {
