@@ -10,7 +10,7 @@ export function isEmptyCell(cell: xlsx.CellObject) {
         } else if (typeof cell.v === "number") {
             return isNaN(cell.v);
         } else {
-            return true;
+            return false;
         }
     } else {
         return true;
@@ -200,7 +200,7 @@ export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook {
  * @param fileInfo
  */
 export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook {
-    const workBook = xlsx.read(fileInfo.fileData);
+    const workBook = xlsx.read(fileInfo.fileData, { type: getTableFileType(fileInfo) });
     return workBook;
 }
 /**

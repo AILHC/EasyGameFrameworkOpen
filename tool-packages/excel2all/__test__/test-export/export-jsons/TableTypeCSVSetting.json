@@ -2,6 +2,7 @@
 	"21": {
 		"id": 21,
 		"field_int": 5,
+		"field_bool": true,
 		"field_int_array": [
 			1,
 			2,
@@ -30,6 +31,7 @@
 	"22": {
 		"id": 22,
 		"field_int": 8,
+		"field_bool": false,
 		"field_int_array": [
 			1,
 			2,
@@ -61,6 +63,7 @@
 	"23": {
 		"id": 23,
 		"field_int": 60000,
+		"field_bool": true,
 		"field_int_array": [
 			2,
 			2,
@@ -92,6 +95,7 @@
 	"25": {
 		"id": 25,
 		"field_int": 6,
+		"field_bool": true,
 		"field_int_array": [
 			1,
 			4,
@@ -123,6 +127,7 @@
 	"26": {
 		"id": 26,
 		"field_int": 0.5,
+		"field_bool": false,
 		"field_int_array": [
 			1,
 			2,

@@ -25,7 +25,7 @@
   "main": "bin/cli.js",
   "scripts": {
     "test": "node ./bin/cli.js convert -t ./test-excel-files -p ../excel2all/__test__ -uc cf ./.cache -j ./test-export/bundle.json -cstj ./test-export/export-jsons -gd",
-    "test:nocache": "node ./bin/cli.js convert -t ./test-excel-files -p ../../excel2all/__test__ -j ./test-export/bundle.json -cstj ./test-export/export-jsons -gd",
+    "test:nocache": "node ./bin/cli.js convert -t ./test-excel-files -p ../excel2all/__test__ -j ./test-export/bundle.json -cstj ./test-export/export-jsons -gd",
     "test:convertByConfig": "node ./bin/cli.js convert -c ./__tests__/testConfig",
     "testFileMatch": "node ./bin/cli.js tfm -t ../excel2all/__test__/test-excel-files"
   },

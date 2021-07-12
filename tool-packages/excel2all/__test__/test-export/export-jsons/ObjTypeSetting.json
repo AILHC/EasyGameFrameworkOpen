@@ -1,5 +1,6 @@
 {
 	"Prop1": 1,
+	"PropBool": true,
 	"Prop2": [
 		1,
 		2,

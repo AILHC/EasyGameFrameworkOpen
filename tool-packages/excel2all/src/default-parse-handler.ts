@@ -1,7 +1,15 @@
 import * as xlsx from "xlsx";
 import { valueTransFuncMap } from "./default-value-func-map";
 import { Logger } from "./loger";
-import { horizontalForEachSheet, isEmptyCell, readTableData, readTableFile, verticalForEachSheet } from "./table-utils";
+import * as fs from "fs-extra";
+import {
+    horizontalForEachSheet,
+    isCSV,
+    isEmptyCell,
+    readTableData,
+    readTableFile,
+    verticalForEachSheet
+} from "./table-utils";
 
 declare global {
     interface ITableField {
