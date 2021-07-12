@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.2.6...@ailhc/excel2all@0.2.7) (2021-07-12)
+
+
+### Bug Fixes
+
+* 修复excel文件数据判断bug ([ae4ce92](https://github.com/AILHC/EasyGameFrameworkOpen/commit/ae4ce92519718cf374294795c7a5b914eac02b13))
+
+
+
+
+
 ## [0.2.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.2.5...@ailhc/excel2all@0.2.6) (2021-07-12)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/excel2all",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "将excel转换成任意文件格式工具",
   "keywords": [
     "excel",
