@@ -13,7 +13,6 @@ import { DefaultParseHandler } from "./default-parse-handler";
 import { Logger } from "./loger";
 import { DefaultConvertHook } from "./default-convert-hook";
 import { DefaultOutPutTransformer } from "./default-output-transformer";
-import { isCSV } from "./table-utils";
 import fg from "fast-glob";
 
 const defaultDir = ".excel2all";
