@@ -288,7 +288,7 @@ function readTableFile(fileInfo) {
     return workBook;
 }
 function readTableData(fileInfo) {
-    const workBook = xlsx.read(fileInfo.fileData, { type: getTableFileType(fileInfo) });
+    const workBook = xlsx.read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "buffer" });
     return workBook;
 }
 function getTableFileType(fileInfo) {

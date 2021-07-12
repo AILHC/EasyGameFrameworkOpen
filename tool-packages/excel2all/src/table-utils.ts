@@ -200,7 +200,7 @@ export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook {
  * @param fileInfo
  */
 export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook {
-    const workBook = xlsx.read(fileInfo.fileData, { type: getTableFileType(fileInfo) });
+    const workBook = xlsx.read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "buffer" });
     return workBook;
 }
 /**
