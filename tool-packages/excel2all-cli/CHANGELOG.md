@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all-cli@0.1.6...@ailhc/excel2all-cli@0.1.7) (2021-07-12)
+
+
+### Bug Fixes
+
+* 修复table-utils-> isEmptyCell 判断bug,增加测试 ([c7b6049](https://github.com/AILHC/EasyGameFrameworkOpen/commit/c7b6049f80168ee95d1d4a618030e3ef183a4fd5))
+
+
+
+
+
 ## [0.1.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all-cli@0.1.5...@ailhc/excel2all-cli@0.1.6) (2021-07-12)
 
 
