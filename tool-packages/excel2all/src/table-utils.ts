@@ -197,10 +197,14 @@ export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook {
 }
 /**
  * 读取配置表文件 同步的
+ * 如果fileData typeof === string xlsx.read 的 type是string,否则是buffer
  * @param fileInfo
  */
 export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook {
-    const workBook = xlsx.read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "buffer" });
+    // const workBook = xlsx.read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "buffer" });
+    const workBook = xlsx.read(fileInfo.fileData, {
+        type: typeof fileInfo.fileData === "string" ? "string" : "buffer"
+    });
     return workBook;
 }
 /**
@@ -216,5 +220,5 @@ export function getTableFileType(fileInfo: IFileInfo) {
  * @param fileExtName
  */
 export function isCSV(fileExtName: string): boolean {
-    return fileExtName === "csv";
+    return fileExtName === ".csv";
 }

@@ -171,13 +171,17 @@ function getFileInfos(context: IConvertContext) {
     let changedFileInfos: IFileInfo[] = [];
     let deleteFileInfos: IFileInfo[] = [];
     const tableFileDir = converConfig.tableFileDir;
-    const getFileInfo = (filePath: string) => {
+    const getFileInfo = (filePath: string, isDelete?: boolean) => {
         const filePathParse = path.parse(filePath);
+
+        let fileData = !isDelete ? fs.readFileSync(filePath) : undefined;
+
         const fileInfo: IFileInfo = {
             filePath: filePath,
             fileName: filePathParse.name,
             fileExtName: filePathParse.ext,
-            isDelete: false
+            isDelete: isDelete,
+            fileData: fileData
         };
         return fileInfo;
     };
@@ -193,10 +197,11 @@ function getFileInfos(context: IConvertContext) {
     //缓存处理
     let cacheFileDirPath: string = converConfig.cacheFileDirPath;
     let parseResultMapCacheFilePath: string;
-
+    let fileInfo: IFileInfo;
     if (!converConfig.useCache) {
         for (let i = 0; i < filePaths.length; i++) {
-            changedFileInfos.push(getFileInfo(filePaths[i]));
+            fileInfo = getFileInfo(filePaths[i]);
+            changedFileInfos.push(fileInfo);
         }
     } else {
         let t1 = new Date().getTime();
@@ -219,10 +224,8 @@ function getFileInfos(context: IConvertContext) {
         let filePath: string;
         for (let i = 0; i < filePaths.length; i++) {
             filePath = filePaths[i];
-            const fileInfo = getFileInfo(filePath);
-
-            const fileData = fs.readFileSync(filePath);
-            fileInfo.fileData = fileData;
+            fileInfo = getFileInfo(filePath);
+            const fileData = fileInfo.fileData;
             parseResult = parseResultMap[filePath];
             var md5str = getFileMd5(fileData);
             if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
@@ -233,7 +236,7 @@ function getFileInfos(context: IConvertContext) {
                 parseResult.md5hash = md5str;
                 changedFileInfos.push(fileInfo);
             }
-            //删除不存在的旧文件
+            //判断文件是否还存在
             oldFilePathIndex = oldFilePaths.indexOf(filePath);
             if (oldFilePathIndex > -1) {
                 const endFilePath = oldFilePaths[oldFilePaths.length - 1];
@@ -244,9 +247,10 @@ function getFileInfos(context: IConvertContext) {
         //删除旧文件
         for (let i = 0; i < oldFilePaths.length; i++) {
             delete parseResultMap[oldFilePaths[i]];
-            let deleteFileInfo = getFileInfo(oldFilePaths[i]);
+            let deleteFileInfo = getFileInfo(oldFilePaths[i], true);
             deleteFileInfos.push(deleteFileInfo);
         }
+
         let t2 = new Date().getTime();
         Logger.systemLog(`缓存处理时间:${t2 - t1}ms,${(t2 - t1) / 1000}s`);
     }

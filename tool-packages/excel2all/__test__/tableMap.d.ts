@@ -63,30 +63,30 @@ interface IT_TableTypeSetting {
 	}
 }
 interface IT_TableTypeCSVSetting {
-	/** ä¸»é® */
+	/** 主键 */
 	readonly id?: number;
-	/** æ°å­ */
+	/** 数字 */
 	readonly field_int?: number;
-	/** å¸å°å¼ */
+	/** 布尔值 */
 	readonly field_bool?: boolean;
-	/** æ°å­æ°ç» */
+	/** 数字数组 */
 	readonly field_int_array?: number[];
-	/** å­ç¬¦ä¸² */
+	/** 字符串 */
 	readonly field_string?: string;
-	/** å­ç¬¦ä¸²æ°ç» */
+	/** 字符串数组 */
 	readonly field_string_array?: string[];
 	/** JSON */
 	readonly field_json?: any;
 	readonly obj?: {
-		/** å¤åå¯¹è±¡:æ°å­å­æ®µ */
+		/** 多列对象:数字字段 */
 		readonly obj_field_int?: number;
-		/** å­ç¬¦ä¸²å­æ®µ */
+		/** 字符串字段 */
 		readonly obj_field_string?: string;
-		/** æ°å­æ°ç»å­æ®µ */
+		/** 数字数组字段 */
 		readonly obj_field_int_array?: number[];
-		/** å­ç¬¦ä¸²æ°ç»å­æ®µ */
+		/** 字符串数组字段 */
 		readonly obj_field_string_array?: string[];
-		/** jsonå­æ®µ */
+		/** json字段 */
 		readonly obj_field_json?: any;
 	}
 }

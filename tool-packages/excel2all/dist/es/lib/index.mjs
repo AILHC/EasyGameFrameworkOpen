@@ -1,9 +1,9 @@
-import { platform as platform$1 } from 'os';
-import { readFile, read } from 'xlsx';
-import { join, dirname, isAbsolute, parse } from 'path';
+import * as os from 'os';
+import * as xlsx from 'xlsx';
+import * as path from 'path';
 import { deflateSync } from 'zlib';
-import { statSync, readdirSync, existsSync, unlinkSync, ensureFileSync, writeFile, writeFileSync, readFileSync, readFile as readFile$1 } from 'fs-extra';
-import { createHash } from 'crypto';
+import * as fs from 'fs-extra';
+import * as crypto from 'crypto';
 import fg from 'fast-glob';
 
 const valueTransFuncMap = {};
@@ -100,7 +100,7 @@ function anyToAny(fieldItem, cellValue) {
     return { error: error, value: obj };
 }
 
-const platform = platform$1();
+const platform = os.platform();
 const osEol = platform === "win32" ? "\n" : "\r\n";
 
 var LogLevelEnum;
@@ -276,18 +276,18 @@ function horizontalForEachSheet(sheet, startRow, startCol, callback, isSheetRowE
     }
 }
 function readTableFile(fileInfo) {
-    const workBook = readFile(fileInfo.filePath, { type: getTableFileType(fileInfo) });
+    const workBook = xlsx.readFile(fileInfo.filePath, { type: getTableFileType(fileInfo) });
     return workBook;
 }
 function readTableData(fileInfo) {
-    const workBook = read(fileInfo.fileData, { type: isCSV(fileInfo.fileExtName) ? "string" : "buffer" });
+    const workBook = xlsx.read(fileInfo.fileData, { type: typeof fileInfo.fileData === "string" ? "string" : "buffer" });
     return workBook;
 }
 function getTableFileType(fileInfo) {
     return isCSV(fileInfo.fileExtName) ? "string" : "file";
 }
 function isCSV(fileExtName) {
-    return fileExtName === "csv";
+    return fileExtName === ".csv";
 }
 
 var TableType;
@@ -632,7 +632,8 @@ class DefaultParseHandler {
         return transResult;
     }
     parseTableFile(parseConfig, fileInfo, parseResult) {
-        const workbook = fileInfo.fileData ? readTableData(fileInfo) : readTableFile(fileInfo);
+        fileInfo.fileData = isCSV(fileInfo.fileExtName) ? fileInfo.fileData.toString() : fileInfo.fileData;
+        const workbook = readTableData(fileInfo);
         if (!workbook.SheetNames.length)
             return;
         const sheetNames = workbook.SheetNames;
@@ -771,14 +772,14 @@ class DefaultOutPutTransformer {
             tableTypeMapDtsStr = itBaseStr + "interface IT_TableMap {" + osEol + tableTypeMapDtsStr + "}" + osEol;
             if (outputConfig.isBundleDts) {
                 const dtsFileName = outputConfig.bundleDtsFileName ? outputConfig.bundleDtsFileName : "tableMap";
-                const bundleDtsFilePath = join(outputConfig.clientDtsOutDir, `${dtsFileName}.d.ts`);
+                const bundleDtsFilePath = path.join(outputConfig.clientDtsOutDir, `${dtsFileName}.d.ts`);
                 outputFileMap[bundleDtsFilePath] = {
                     filePath: bundleDtsFilePath,
                     data: tableTypeMapDtsStr + tableTypeDtsStrs
                 };
             }
             else {
-                const tableTypeMapDtsFilePath = join(outputConfig.clientDtsOutDir, "tableMap.d.ts");
+                const tableTypeMapDtsFilePath = path.join(outputConfig.clientDtsOutDir, "tableMap.d.ts");
                 outputFileMap[tableTypeMapDtsFilePath] = {
                     filePath: tableTypeMapDtsFilePath,
                     data: tableTypeMapDtsStr
@@ -834,7 +835,7 @@ class DefaultOutPutTransformer {
     _addSingleTableDtsOutputFile(config, parseResult, outputFileMap) {
         if (!parseResult.tableObj)
             return;
-        let dtsFilePath = join(config.clientDtsOutDir, `${parseResult.tableDefine.tableName}.d.ts`);
+        let dtsFilePath = path.join(config.clientDtsOutDir, `${parseResult.tableDefine.tableName}.d.ts`);
         if (!outputFileMap[dtsFilePath]) {
             const dtsStr = this._getSingleTableDts(parseResult);
             if (dtsStr) {
@@ -889,7 +890,7 @@ class DefaultOutPutTransformer {
         if (!tableObj)
             return;
         const tableName = parseResult.tableDefine.tableName;
-        let singleJsonFilePath = join(config.clientSingleTableJsonDir, `${tableName}.json`);
+        let singleJsonFilePath = path.join(config.clientSingleTableJsonDir, `${tableName}.json`);
         let singleJsonData = JSON.stringify(tableObj, null, "\t");
         let singleOutputFileInfo = outputFileMap[singleJsonFilePath];
         if (singleOutputFileInfo) {
@@ -950,11 +951,11 @@ function __awaiter(thisArg, _arguments, P, generator) {
 }
 
 function forEachFile(fileOrDirPath, eachCallback) {
-    if (statSync(fileOrDirPath).isDirectory() && fileOrDirPath !== ".git" && fileOrDirPath !== ".svn") {
-        const fileNames = readdirSync(fileOrDirPath);
+    if (fs.statSync(fileOrDirPath).isDirectory() && fileOrDirPath !== ".git" && fileOrDirPath !== ".svn") {
+        const fileNames = fs.readdirSync(fileOrDirPath);
         let childFilePath;
         for (var i = 0; i < fileNames.length; i++) {
-            childFilePath = join(fileOrDirPath, fileNames[i]);
+            childFilePath = path.join(fileOrDirPath, fileNames[i]);
             forEachFile(childFilePath, eachCallback);
         }
     }
@@ -979,19 +980,19 @@ function writeOrDeleteOutPutFiles(outputFileInfos, onProgress, complete) {
         };
         for (let i = outputFileInfos.length - 1; i >= 0; i--) {
             fileInfo = outputFileInfos[i];
-            if (fileInfo.isDelete && existsSync(fileInfo.filePath)) {
-                unlinkSync(fileInfo.filePath);
+            if (fileInfo.isDelete && fs.existsSync(fileInfo.filePath)) {
+                fs.unlinkSync(fileInfo.filePath);
             }
             else {
-                if (existsSync(fileInfo.filePath) && statSync(fileInfo.filePath).isDirectory()) {
+                if (fs.existsSync(fileInfo.filePath) && fs.statSync(fileInfo.filePath).isDirectory()) {
                     Logger.log(`路径为文件夹:${fileInfo.filePath}`, "error");
                     continue;
                 }
                 if (!fileInfo.encoding && typeof fileInfo.data === "string") {
                     fileInfo.encoding = "utf8";
                 }
-                ensureFileSync(fileInfo.filePath);
-                writeFile(fileInfo.filePath, fileInfo.data, fileInfo.encoding ? { encoding: fileInfo.encoding } : undefined, onWriteEnd);
+                fs.ensureFileSync(fileInfo.filePath);
+                fs.writeFile(fileInfo.filePath, fileInfo.data, fileInfo.encoding ? { encoding: fileInfo.encoding } : undefined, onWriteEnd);
             }
         }
     }
@@ -1017,44 +1018,44 @@ function forEachChangedFile(dir, cacheFilePath, eachCallback) {
         delete gcfCache[oldFilePaths[i]];
         eachCallback(oldFilePaths[i], true);
     }
-    writeFileSync(cacheFilePath, JSON.stringify(gcfCache), { encoding: "utf-8" });
+    fs.writeFileSync(cacheFilePath, JSON.stringify(gcfCache), { encoding: "utf-8" });
 }
 function writeCacheData(cacheFilePath, cacheData) {
     if (!cacheFilePath) {
         Logger.log(`cacheFilePath is null`, "error");
         return;
     }
-    writeFileSync(cacheFilePath, JSON.stringify(cacheData), { encoding: "utf-8" });
+    fs.writeFileSync(cacheFilePath, JSON.stringify(cacheData), { encoding: "utf-8" });
 }
 function getCacheData(cacheFilePath) {
     if (!cacheFilePath) {
         Logger.log(`cacheFilePath is null`, "error");
         return;
     }
-    if (!existsSync(cacheFilePath)) {
-        ensureFileSync(cacheFilePath);
-        writeFileSync(cacheFilePath, "{}", { encoding: "utf-8" });
+    if (!fs.existsSync(cacheFilePath)) {
+        fs.ensureFileSync(cacheFilePath);
+        fs.writeFileSync(cacheFilePath, "{}", { encoding: "utf-8" });
     }
-    const gcfCacheFile = readFileSync(cacheFilePath, "utf-8");
+    const gcfCacheFile = fs.readFileSync(cacheFilePath, "utf-8");
     const gcfCache = JSON.parse(gcfCacheFile);
     return gcfCache;
 }
 function getFileMd5Sync(filePath, encoding) {
-    const file = readFileSync(filePath, encoding);
-    var md5um = createHash("md5");
+    const file = fs.readFileSync(filePath, encoding);
+    var md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
 }
 function getFileMd5Async(filePath, cb, encoding) {
-    readFile$1(filePath, encoding, (err, file) => {
-        var md5um = createHash("md5");
+    fs.readFile(filePath, encoding, (err, file) => {
+        var md5um = crypto.createHash("md5");
         md5um.update(file);
         const md5Str = md5um.digest("hex");
         cb(md5Str);
     });
 }
 function getFileMd5(file) {
-    const md5um = createHash("md5");
+    const md5um = crypto.createHash("md5");
     md5um.update(file);
     return md5um.digest("hex");
 }
@@ -1081,7 +1082,7 @@ function convert(converConfig) {
             Logger.log(`配置表目录：tableFileDir为空`, "error");
             return;
         }
-        if (!existsSync(tableFileDir)) {
+        if (!fs.existsSync(tableFileDir)) {
             Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
             return;
         }
@@ -1146,6 +1147,7 @@ function convert(converConfig) {
             const count = Math.floor(changedFileInfos.length / converConfig.threadParseFileMaxNum) + 1;
             let worker;
             let subFileInfos;
+            let workerMap = {};
             let completeCount = 0;
             const t1 = new Date().getTime();
             const onWorkerParseEnd = (data) => {
@@ -1170,7 +1172,7 @@ function convert(converConfig) {
             for (let i = 0; i < count; i++) {
                 subFileInfos = changedFileInfos.splice(0, converConfig.threadParseFileMaxNum);
                 Logger.log(`----------------线程开始:${i}-----------------`);
-                worker = new WorkerClass(join(dirname(__filename), "../../../worker_scripts/worker.js"), {
+                worker = new WorkerClass(path.join(path.dirname(__filename), "../../../worker_scripts/worker.js"), {
                     workerData: {
                         threadId: i,
                         fileInfos: subFileInfos,
@@ -1178,6 +1180,7 @@ function convert(converConfig) {
                         convertConfig: converConfig
                     }
                 });
+                workerMap[i] = worker;
                 worker.on("message", onWorkerParseEnd);
             }
         }
@@ -1199,13 +1202,15 @@ function getFileInfos(context) {
     let changedFileInfos = [];
     let deleteFileInfos = [];
     const tableFileDir = converConfig.tableFileDir;
-    const getFileInfo = (filePath) => {
-        const filePathParse = parse(filePath);
+    const getFileInfo = (filePath, isDelete) => {
+        const filePathParse = path.parse(filePath);
+        let fileData = !isDelete ? fs.readFileSync(filePath) : undefined;
         const fileInfo = {
             filePath: filePath,
             fileName: filePathParse.name,
             fileExtName: filePathParse.ext,
-            isDelete: false
+            isDelete: isDelete,
+            fileData: fileData
         };
         return fileInfo;
     };
@@ -1219,19 +1224,21 @@ function getFileInfos(context) {
     let parseResultMap = {};
     let cacheFileDirPath = converConfig.cacheFileDirPath;
     let parseResultMapCacheFilePath;
+    let fileInfo;
     if (!converConfig.useCache) {
         for (let i = 0; i < filePaths.length; i++) {
-            changedFileInfos.push(getFileInfo(filePaths[i]));
+            fileInfo = getFileInfo(filePaths[i]);
+            changedFileInfos.push(fileInfo);
         }
     }
     else {
         let t1 = new Date().getTime();
         if (!cacheFileDirPath)
             cacheFileDirPath = defaultDir;
-        if (!isAbsolute(cacheFileDirPath)) {
-            cacheFileDirPath = join(converConfig.projRoot, cacheFileDirPath);
+        if (!path.isAbsolute(cacheFileDirPath)) {
+            cacheFileDirPath = path.join(converConfig.projRoot, cacheFileDirPath);
         }
-        parseResultMapCacheFilePath = join(cacheFileDirPath, cacheFileName);
+        parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
         Logger.systemLog(`读取缓存数据`);
         parseResultMap = getCacheData(parseResultMapCacheFilePath);
         if (!parseResultMap) {
@@ -1244,9 +1251,8 @@ function getFileInfos(context) {
         let filePath;
         for (let i = 0; i < filePaths.length; i++) {
             filePath = filePaths[i];
-            const fileInfo = getFileInfo(filePath);
-            const fileData = readFileSync(filePath);
-            fileInfo.fileData = fileData;
+            fileInfo = getFileInfo(filePath);
+            const fileData = fileInfo.fileData;
             parseResult = parseResultMap[filePath];
             var md5str = getFileMd5(fileData);
             if (!parseResult || (parseResult && parseResult.md5hash !== md5str)) {
@@ -1266,7 +1272,7 @@ function getFileInfos(context) {
         }
         for (let i = 0; i < oldFilePaths.length; i++) {
             delete parseResultMap[oldFilePaths[i]];
-            let deleteFileInfo = getFileInfo(oldFilePaths[i]);
+            let deleteFileInfo = getFileInfo(oldFilePaths[i], true);
             deleteFileInfos.push(deleteFileInfo);
         }
         let t2 = new Date().getTime();
@@ -1314,11 +1320,11 @@ function onParseEnd(context, parseResultMapCacheFilePath, convertHook, logStr) {
             let logFileDirPath = context.convertConfig.outputLogDirPath;
             if (!logFileDirPath)
                 logFileDirPath = defaultDir;
-            if (!isAbsolute(logFileDirPath)) {
-                logFileDirPath = join(context.convertConfig.projRoot, logFileDirPath);
+            if (!path.isAbsolute(logFileDirPath)) {
+                logFileDirPath = path.join(context.convertConfig.projRoot, logFileDirPath);
             }
             const outputLogFileInfo = {
-                filePath: join(logFileDirPath, logFileName),
+                filePath: path.join(logFileDirPath, logFileName),
                 data: logStr
             };
             writeOrDeleteOutPutFiles([outputLogFileInfo]);
@@ -1338,7 +1344,7 @@ function testFileMatch(convertConfig) {
         Logger.log(`配置表目录：tableFileDir为空`, "error");
         return;
     }
-    if (!existsSync(tableFileDir)) {
+    if (!fs.existsSync(tableFileDir)) {
         Logger.log(`配置表文件夹不存在：${tableFileDir}`, "error");
         return;
     }

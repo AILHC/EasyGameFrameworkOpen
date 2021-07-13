@@ -175,6 +175,7 @@ declare module '@ailhc/excel2all' {
 	export function readTableFile(fileInfo: IFileInfo): xlsx.WorkBook;
 	/**
 	 * 读取配置表文件 同步的
+	 * 如果fileData typeof === string xlsx.read 的 type是string,否则是buffer
 	 * @param fileInfo
 	 */
 	export function readTableData(fileInfo: IFileInfo): xlsx.WorkBook;
