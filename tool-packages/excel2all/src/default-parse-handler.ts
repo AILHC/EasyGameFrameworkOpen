@@ -583,7 +583,8 @@ export class DefaultParseHandler implements ITableParseHandler {
         fileInfo: IFileInfo,
         parseResult: ITableParseResult
     ): ITableParseResult {
-        const workbook = fileInfo.fileData ? readTableData(fileInfo) : readTableFile(fileInfo);
+        fileInfo.fileData = isCSV(fileInfo.fileExtName) ? (fileInfo.fileData as Buffer).toString() : fileInfo.fileData;
+        const workbook = readTableData(fileInfo);
         if (!workbook.SheetNames.length) return;
 
         const sheetNames = workbook.SheetNames;
