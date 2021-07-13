@@ -8,7 +8,9 @@ declare module "@ailhc/egf-cli" {
         /**是否监听自动编译 ,默认为false*/
         watch: boolean,
         /**输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map */
-        sourcemap?: boolean | "inline"
+        sourcemap?: boolean | "inline",
+        /**特殊sourceMap路径 */
+        specialSourcemapPath?: boolean
         /**入口文件 默认src/index.ts,可以是数组,多个入口 */
         entry: string[],
         /**单入口输出文件名  默认dist/${format}/lib/index.js*/

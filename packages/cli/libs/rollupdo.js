@@ -277,6 +277,12 @@ async function rollupBuild(option) {
     };
 
     const pkgName = process.env.npm_package_name;
+    const isSpecialSourceMapPath = option.specialSourcemapPath;
+    const sourceMapPathTransform = isSpecialSourceMapPath && ((relativePath, sourcemapPath) => {
+        let sourceFilePath = require("path").join(sourcemapPath, "../", relativePath);
+        sourceFilePath = sourceFilePath.replace(projRoot, pkgName);
+        return sourceFilePath;
+    });
     /**
      * @type { import('rollup').OutputOptions }
      */
@@ -288,11 +294,7 @@ async function rollupBuild(option) {
         format: format,
         name: moduleName,
         sourcemap: option.sourcemap,
-        sourcemapPathTransform: (relativePath, sourcemapPath) => {
-            let sourceFilePath = require("path").join(sourcemapPath, "../", relativePath);
-            sourceFilePath = sourceFilePath.replace(projRoot, pkgName);
-            return sourceFilePath;
-        },
+        sourcemapPathTransform: sourceMapPathTransform,
         // globals: {
         //     fairygui: "fairygui",
         //     Laya: "Laya"
