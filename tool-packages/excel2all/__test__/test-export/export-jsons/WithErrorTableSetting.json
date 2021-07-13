@@ -1,6 +1,6 @@
 {
-	"1": {
-		"id": 1,
+	"21": {
+		"id": 21,
 		"field_int": 5,
 		"field_bool": true,
 		"field_int_array": [
@@ -12,9 +12,7 @@
 		"field_string_array": [
 			"玩转游戏开发"
 		],
-		"field_json": {
-			"公众号": "玩转游戏开发"
-		},
+		"field_json": "\"公众号\":\"玩转游戏开发\"}",
 		"obj": {
 			"obj_field_int": 5,
 			"obj_field_string": "玩转游戏开发",
@@ -31,8 +29,8 @@
 			}
 		}
 	},
-	"2": {
-		"id": 2,
+	"22": {
+		"id": 22,
 		"field_int": 8,
 		"field_bool": false,
 		"field_int_array": [
@@ -63,8 +61,8 @@
 			}
 		}
 	},
-	"3": {
-		"id": 3,
+	"23": {
+		"id": 23,
 		"field_int": 60000,
 		"field_bool": true,
 		"field_int_array": [
@@ -95,8 +93,8 @@
 			}
 		}
 	},
-	"5": {
-		"id": 5,
+	"25": {
+		"id": 25,
 		"field_int": 6,
 		"field_bool": true,
 		"field_int_array": [
@@ -127,8 +125,8 @@
 			}
 		}
 	},
-	"6": {
-		"id": 6,
+	"26": {
+		"id": 26,
 		"field_int": 0.5,
 		"field_bool": false,
 		"field_int_array": [
@@ -159,8 +157,8 @@
 			}
 		}
 	},
-	"7": {
-		"id": 7,
+	"27": {
+		"id": 27,
 		"field_int": 300,
 		"field_int_array": [
 			1,

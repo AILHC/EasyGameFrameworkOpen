@@ -31,6 +31,8 @@ function getParseConfig(option) {
     if (config.outputLogDirPath && typeof config.outputLogDirPath !== "string") {
         config.outputLogDirPath = config.projRoot;
     }
+
+    
     if (!config.outputConfig) {
         /**
          * @type {IOutputConfig}
@@ -39,10 +41,8 @@ function getParseConfig(option) {
             clientSingleTableJsonDir: option.clientSingleTableJsonDir,
             clientBundleJsonOutPath: option.clientBundleJsonOutPath,
             isFormatBundleJson: option.isFormatBundleJson,
-            isGenDts: option.isGenDts,
             clientDtsOutDir: option.clientDtsOutDir,
             isBundleDts: option.isBundleDts,
-
             bundleDtsFileName: option.bundleDtsFileName,
             isCompress: option.isCompress
         }
@@ -53,7 +53,7 @@ function getParseConfig(option) {
         if (outputConfig.clientSingleTableJsonDir) {
             outputConfig.clientSingleTableJsonDir = getAbsolutePath(outputConfig.clientSingleTableJsonDir, config.projRoot);
         }
-        if (outputConfig.isGenDts) {
+        if (outputConfig.clientDtsOutDir) {
             outputConfig.clientDtsOutDir = getAbsolutePath(outputConfig.clientDtsOutDir, config.projRoot);
             if (!outputConfig.bundleDtsFileName) {
                 outputConfig.bundleDtsFileName = "tableMap";

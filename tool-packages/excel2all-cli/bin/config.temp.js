@@ -10,8 +10,6 @@ const outConfig = {
     clientSingleTableJsonDir: path.join(process.cwd(), "__tests__/test-export/jsons"),
     /**合并配置表json文件路径(包含文件名,比如 ./out/bundle.json) */
     clientBundleJsonOutPath: path.join(process.cwd(), "__tests__/test-export/tbundle.json"),
-    /**是否生成声明文件，默认不输出 */
-    isGenDts: true,
     /**声明文件输出目录(每个配置表一个声明)，默认不输出 */
     clientDtsOutDir: path.join(process.cwd(), "__tests__/test-export/dts"),
     

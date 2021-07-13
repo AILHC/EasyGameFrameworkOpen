@@ -1,5 +1,5 @@
 import * as path from "path";
-import { TableType } from "./default-parse-handler";
+import { TableType } from "./default-table-parser";
 import { deflateSync } from "zlib";
 import { osEol } from "./get-os-eol";
 import { Logger } from "./loger";
@@ -14,8 +14,6 @@ declare global {
         clientBundleJsonOutPath?: string;
         /**是否格式化合并后的json，默认不 */
         isFormatBundleJson?: boolean;
-        /**是否生成声明文件，默认不输出 */
-        isGenDts?: boolean;
         /**声明文件输出目录(每个配置表一个声明)，默认不输出 */
         clientDtsOutDir?: string;
         /**是否合并所有声明为一个文件,默认true */
@@ -31,7 +29,7 @@ declare global {
 
 /**类型字符串映射字典 */
 const typeStrMap = { int: "number", json: "any", "[int]": "number[]", "[string]": "string[]" };
-export class DefaultOutPutTransformer {
+export class DefaultParseResultTransformer {
     /**
      * 转换
      * @param context
@@ -70,7 +68,7 @@ export class DefaultOutPutTransformer {
             }
             tableObjMap[tableName] = tableObj;
 
-            if (outputConfig.isGenDts && objTypeTableMap[tableName] === undefined) {
+            if (outputConfig.clientDtsOutDir && objTypeTableMap[tableName] === undefined) {
                 objTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.horizontal;
                 if (parseResult.tableDefine.tableType === TableType.horizontal) {
                     tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
@@ -91,7 +89,7 @@ export class DefaultOutPutTransformer {
                 this._addSingleTableJsonOutputFile(outputConfig, parseResult, outputFileMap);
             }
         }
-        if (outputConfig.isGenDts) {
+        if (outputConfig.clientDtsOutDir) {
             //输出声明文件
             let itBaseStr = "interface ITBase<T> { [key:string]:T}" + osEol;
 

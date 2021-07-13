@@ -8,7 +8,7 @@ valueTransFuncMap["string"] = anyToStr;
 valueTransFuncMap["[int]"] = strToIntArr;
 valueTransFuncMap["[string]"] = strToStrArr;
 valueTransFuncMap["json"] = strToJsonObj;
-valueTransFuncMap["json"] = anyToAny;
+valueTransFuncMap["any"] = anyToAny;
 function strToIntArr(fieldItem: ITableField, cellValue: string): ITransValueResult {
     cellValue = (cellValue + "").replace(/，/g, ","); //为了防止策划误填，先进行转换
     cellValue = cellValue.trim();

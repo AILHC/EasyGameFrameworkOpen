@@ -1,5 +1,7 @@
-import { type } from "os";
-import * as xlsx from "xlsx";
+import * as tableUtils from "./table-utils";
+import * as fileUtils from "./file-utils";
+import { Logger } from "./loger";
+
 declare global {
     /**
      * 多线程传递数据
@@ -37,6 +39,8 @@ declare global {
     }
 
     interface ITableParseResult {
+        /**解析出错，缓存无效 */
+        hasError?: boolean;
         /**文件路径 */
         filePath: string;
         /**文件哈希值 */
@@ -67,17 +71,6 @@ declare global {
          */
         useCache?: boolean;
         /**
-         * 是否启用多线程
-         * 建议配置表文件数大于200以上才开启，会更有效
-         * 测试数据（配置表文件数100）:
-         *
-         */
-        useMultiThread?: boolean;
-        /**
-         * 单个线程解析文件的最大数量,默认5
-         */
-        threadParseFileMaxNum?: number;
-        /**
          * 缓存文件的文件夹路径，可以是相对路径，相对于projRoot
          * 默认是项目根目录下的.excel2all文件夹
          */
@@ -91,59 +84,9 @@ declare global {
          */
         pattern?: string[];
         /**
-         * 自定义解析处理器，require(customParseHandlerPath)
-         *
-         * 需要返回一个
-         * @type {ITableParseHandler} 实现了ITableParseHandler的对象
-         *
-         * @example
-         *
-         * class CustomParseHandler  implements ITableParseHandler {
-         *      parseTableFile(parseConfig: ITableParseConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult {
-         *          //doSomething
-         *      }
-         * }
-         * module.exports = new CustomParseHandler();
-         *
+         * 自定义配置表解析器
          */
-        customParseHandlerPath?: string;
-        /**
-         * 自定义输出转换器，require(customOutPutTransformerPath)
-         *
-         * 需要返回一个
-         * @type {IOutPutTransformer} 实现了IOutPutTransformer的对象
-         *
-         * @example
-         *
-         * class CustomOutPutTransformer  implements IOutPutTransformer {
-         *      transform(context: IConvertContext, cb:VoidFunction): void {
-         *          //doSomething
-         *      }
-         * }
-         * module.exports = new CustomOutPutTransformer();
-         *
-         */
-        customOutPutTransformerPath?: string;
-        /**
-         * 自定义导出处理器，require(customTrans2FileHandlerPath)
-         *
-         * 需要返回一个
-         * @type {IConvertHook} 实现了ITransResult2AnyFileHandler的对象
-         *
-         * @example
-         * class CustomTrans2FileHandler  implements ITransResult2AnyFileHandler {
-         *  trans2Files(
-         *      parseConfig: ITableParseConfig,
-         *      changedFileInfos: IFileInfo[],
-         *      deleteFileInfos: IFileInfo[],
-         *      parseResultMap: TableParseResultMap): OutPutFileMap {
-         *      //doSomething
-         *
-         *  }
-         * }
-         * module.exports = new CustomTrans2FileHandler();
-         */
-        customConvertHookPath?: string;
+        customTableParser: ITableParser;
         /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
         logLevel?: LogLevel;
         /**
@@ -174,26 +117,23 @@ declare global {
     interface IConvertContext {
         /**配置 */
         convertConfig: ITableConvertConfig;
-        /**
-         * 导出转换器
-         */
-        outputTransformer: IOutPutTransformer;
+
         /**
          * 变动的文件信息数组
          */
-        changedFileInfos: IFileInfo[];
+        changedFileInfos?: IFileInfo[];
         /**
          * 删除了的文件信息数组
          */
-        deleteFileInfos: IFileInfo[];
+        deleteFileInfos?: IFileInfo[];
         /**
          * 解析结果字典
          */
-        parseResultMap: TableParseResultMap;
+        parseResultMap?: TableParseResultMap;
         /**
          * 转换结果字典
          */
-        outPutFileMap: OutPutFileMap;
+        outPutFileMap?: OutPutFileMap;
 
         /**
          * 是否出错
@@ -202,8 +142,19 @@ declare global {
         /**
          * 缓存文件路径
          */
-        parseResultMapCacheFilePath: string;
+        parseResultMapCacheFilePath?: string;
+        utils: {
+            /**
+             * 好用的第三方文件工具库
+             */
+            fs: typeof import("fs-extra");
+            /**
+             * excel表解析库
+             *  */
+            xlsx: typeof import("xlsx");
+        };
     }
+
     interface IConvertHook {
         /**
          * 开始转换
@@ -219,6 +170,12 @@ declare global {
          */
         onParseBefore?(context: IConvertContext, cb: VoidFunction): void;
         /**
+         * 配置表解析
+         * @param context
+         * @param cb
+         */
+        onParse?(context: IConvertContext, cb: VoidFunction): void;
+        /**
          * 解析结束
          * 可以转换解析结果为多个任意文件
          * @param context 上下文
@@ -229,12 +186,12 @@ declare global {
          * 写入文件结束
          * @param context 上下文
          */
-        onWriteFileEnd(context: IConvertContext): void;
+        onConvertEnd?(context: IConvertContext): void;
     }
     /**
      * 输出转换器
      */
-    interface IOutPutTransformer {
+    interface ITableParseResultTransformer {
         /**
          * 转换
          * 将结果文件输出路径为key,
@@ -245,7 +202,7 @@ declare global {
          */
         transform(context: IConvertContext, cb: VoidFunction): void;
     }
-    interface ITableParseHandler {
+    interface ITableParser {
         /**
          * 解析配置表文件
          * @param fileInfo 文件信息
@@ -257,7 +214,5 @@ declare global {
             parseResult: ITableParseResult
         ): ITableParseResult;
     }
-    /**文件导出函数 */
-    type ParseTableFileFunc = ITableParseHandler["parseTableFile"];
 }
 export interface Interfaces {}
