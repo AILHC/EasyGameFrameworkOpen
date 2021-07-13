@@ -1,7 +1,6 @@
 import * as xlsx from "xlsx";
 import { valueTransFuncMap } from "./default-value-func-map";
 import { Logger } from "./loger";
-import * as fs from "fs-extra";
 import {
     horizontalForEachSheet,
     isCSV,
@@ -135,7 +134,7 @@ export enum TableType {
     horizontal = "horizontal"
 }
 
-export class DefaultParseHandler implements ITableParseHandler {
+export class DefaultTableParser implements ITableParser {
     private _valueTransFuncMap: ValueTransFuncMap;
     constructor() {
         this._valueTransFuncMap = valueTransFuncMap;
@@ -300,6 +299,7 @@ export class DefaultParseHandler implements ITableParseHandler {
 
         const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
+            tableParseResult.hasError = true;
             Logger.log(
                 `!!!!!!!!!!!!!!!!!![-----解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
                     `[sheetName|分表名]=> ${tableParseResult.curSheetName}\n` +

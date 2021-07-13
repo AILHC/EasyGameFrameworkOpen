@@ -98,10 +98,6 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
-	export function doParse(parseConfig: ITableConvertConfig, fileInfos: IFileInfo[], parseResultMap: TableParseResultMap, parseHandler: ITableParseHandler): void;
-
-}
-declare module '@ailhc/excel2all' {
 	export const valueTransFuncMap: {
 	    [key: string]: ValueTransFunc;
 	};
@@ -323,7 +319,7 @@ declare module '@ailhc/excel2all' {
 	    vertical = "vertical",
 	    horizontal = "horizontal"
 	}
-	export class DefaultParseHandler implements ITableParseHandler {
+	export class DefaultTableParser implements ITableParser {
 	    private _valueTransFuncMap;
 	    constructor();
 	    getTableDefine(fileInfo: IFileInfo, workBook: xlsx.WorkBook): ITableDefine;
@@ -417,8 +413,6 @@ declare module '@ailhc/excel2all' {
 	        clientBundleJsonOutPath?: string;
 	        /**是否格式化合并后的json，默认不 */
 	        isFormatBundleJson?: boolean;
-	        /**是否生成声明文件，默认不输出 */
-	        isGenDts?: boolean;
 	        /**声明文件输出目录(每个配置表一个声明)，默认不输出 */
 	        clientDtsOutDir?: string;
 	        /**是否合并所有声明为一个文件,默认true */
@@ -431,7 +425,7 @@ declare module '@ailhc/excel2all' {
 	        isZip?: boolean;
 	    }
 	}
-	export class DefaultOutPutTransformer {
+	export class DefaultParseResultTransformer {
 	    /**
 	     * 转换
 	     * @param context
@@ -457,10 +451,14 @@ declare module '@ailhc/excel2all' {
 }
 declare module '@ailhc/excel2all' {
 	export class DefaultConvertHook implements IConvertHook {
+	    protected _tableParser: any;
+	    protected _tableResultTransformer: any;
+	    constructor();
 	    onStart?(context: IConvertContext, cb: VoidFunction): void;
 	    onParseBefore?(context: IConvertContext, cb: VoidFunction): void;
+	    onParse(context: IConvertContext, cb: VoidFunction): void;
 	    onParseAfter?(context: IConvertContext, cb: VoidFunction): void;
-	    onWriteFileEnd(context: IConvertContext): void;
+	    onConvertEnd(context: IConvertContext): void;
 	}
 
 }
@@ -469,7 +467,7 @@ declare module '@ailhc/excel2all' {
 	 * 转换
 	 * @param converConfig 解析配置
 	 */
-	export function convert(converConfig: ITableConvertConfig): Promise<void>;
+	export function convert(converConfig: ITableConvertConfig, customConvertHook?: IConvertHook): Promise<void>;
 	/**
 	 * 测试文件匹配
 	 * @param convertConfig
@@ -514,6 +512,8 @@ declare module '@ailhc/excel2all' {
 	        isDelete?: boolean;
 	    }
 	    interface ITableParseResult {
+	        /**解析出错，缓存无效 */
+	        hasError?: boolean;
 	        /**文件路径 */
 	        filePath: string;
 	        /**文件哈希值 */
@@ -544,17 +544,6 @@ declare module '@ailhc/excel2all' {
 	         */
 	        useCache?: boolean;
 	        /**
-	         * 是否启用多线程
-	         * 建议配置表文件数大于200以上才开启，会更有效
-	         * 测试数据（配置表文件数100）:
-	         *
-	         */
-	        useMultiThread?: boolean;
-	        /**
-	         * 单个线程解析文件的最大数量,默认5
-	         */
-	        threadParseFileMaxNum?: number;
-	        /**
 	         * 缓存文件的文件夹路径，可以是相对路径，相对于projRoot
 	         * 默认是项目根目录下的.excel2all文件夹
 	         */
@@ -567,59 +556,9 @@ declare module '@ailhc/excel2all' {
 	         */
 	        pattern?: string[];
 	        /**
-	         * 自定义解析处理器，require(customParseHandlerPath)
-	         *
-	         * 需要返回一个
-	         * @type {ITableParseHandler} 实现了ITableParseHandler的对象
-	         *
-	         * @example
-	         *
-	         * class CustomParseHandler  implements ITableParseHandler {
-	         *      parseTableFile(parseConfig: ITableParseConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult {
-	         *          //doSomething
-	         *      }
-	         * }
-	         * module.exports = new CustomParseHandler();
-	         *
+	         * 自定义配置表解析器
 	         */
-	        customParseHandlerPath?: string;
-	        /**
-	         * 自定义输出转换器，require(customOutPutTransformerPath)
-	         *
-	         * 需要返回一个
-	         * @type {IOutPutTransformer} 实现了IOutPutTransformer的对象
-	         *
-	         * @example
-	         *
-	         * class CustomOutPutTransformer  implements IOutPutTransformer {
-	         *      transform(context: IConvertContext, cb:VoidFunction): void {
-	         *          //doSomething
-	         *      }
-	         * }
-	         * module.exports = new CustomOutPutTransformer();
-	         *
-	         */
-	        customOutPutTransformerPath?: string;
-	        /**
-	         * 自定义导出处理器，require(customTrans2FileHandlerPath)
-	         *
-	         * 需要返回一个
-	         * @type {IConvertHook} 实现了ITransResult2AnyFileHandler的对象
-	         *
-	         * @example
-	         * class CustomTrans2FileHandler  implements ITransResult2AnyFileHandler {
-	         *  trans2Files(
-	         *      parseConfig: ITableParseConfig,
-	         *      changedFileInfos: IFileInfo[],
-	         *      deleteFileInfos: IFileInfo[],
-	         *      parseResultMap: TableParseResultMap): OutPutFileMap {
-	         *      //doSomething
-	         *
-	         *  }
-	         * }
-	         * module.exports = new CustomTrans2FileHandler();
-	         */
-	        customConvertHookPath?: string;
+	        customTableParser: ITableParser;
 	        /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
 	        logLevel?: LogLevel;
 	        /**
@@ -652,25 +591,21 @@ declare module '@ailhc/excel2all' {
 	        /**配置 */
 	        convertConfig: ITableConvertConfig;
 	        /**
-	         * 导出转换器
-	         */
-	        outputTransformer: IOutPutTransformer;
-	        /**
 	         * 变动的文件信息数组
 	         */
-	        changedFileInfos: IFileInfo[];
+	        changedFileInfos?: IFileInfo[];
 	        /**
 	         * 删除了的文件信息数组
 	         */
-	        deleteFileInfos: IFileInfo[];
+	        deleteFileInfos?: IFileInfo[];
 	        /**
 	         * 解析结果字典
 	         */
-	        parseResultMap: TableParseResultMap;
+	        parseResultMap?: TableParseResultMap;
 	        /**
 	         * 转换结果字典
 	         */
-	        outPutFileMap: OutPutFileMap;
+	        outPutFileMap?: OutPutFileMap;
 	        /**
 	         * 是否出错
 	         */
@@ -678,7 +613,17 @@ declare module '@ailhc/excel2all' {
 	        /**
 	         * 缓存文件路径
 	         */
-	        parseResultMapCacheFilePath: string;
+	        parseResultMapCacheFilePath?: string;
+	        utils: {
+	            /**
+	             * 好用的第三方文件工具库
+	             */
+	            fs: typeof import("fs-extra");
+	            /**
+	             * excel表解析库
+	             *  */
+	            xlsx: typeof import("xlsx");
+	        };
 	    }
 	    interface IConvertHook {
 	        /**
@@ -695,6 +640,12 @@ declare module '@ailhc/excel2all' {
 	         */
 	        onParseBefore?(context: IConvertContext, cb: VoidFunction): void;
 	        /**
+	         * 配置表解析
+	         * @param context
+	         * @param cb
+	         */
+	        onParse?(context: IConvertContext, cb: VoidFunction): void;
+	        /**
 	         * 解析结束
 	         * 可以转换解析结果为多个任意文件
 	         * @param context 上下文
@@ -705,12 +656,12 @@ declare module '@ailhc/excel2all' {
 	         * 写入文件结束
 	         * @param context 上下文
 	         */
-	        onWriteFileEnd(context: IConvertContext): void;
+	        onConvertEnd?(context: IConvertContext): void;
 	    }
 	    /**
 	     * 输出转换器
 	     */
-	    interface IOutPutTransformer {
+	    interface ITableParseResultTransformer {
 	        /**
 	         * 转换
 	         * 将结果文件输出路径为key,
@@ -721,7 +672,7 @@ declare module '@ailhc/excel2all' {
 	         */
 	        transform(context: IConvertContext, cb: VoidFunction): void;
 	    }
-	    interface ITableParseHandler {
+	    interface ITableParser {
 	        /**
 	         * 解析配置表文件
 	         * @param fileInfo 文件信息
@@ -729,15 +680,12 @@ declare module '@ailhc/excel2all' {
 	         */
 	        parseTableFile(parseConfig: ITableConvertConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult;
 	    }
-	    /**文件导出函数 */
-	    type ParseTableFileFunc = ITableParseHandler["parseTableFile"];
 	}
 	export interface Interfaces {
 	}
 
 }
 declare module '@ailhc/excel2all' {
-	export * from '@ailhc/excel2all';
 	export * from '@ailhc/excel2all';
 	export * from '@ailhc/excel2all';
 	export * from '@ailhc/excel2all';

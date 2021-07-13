@@ -1,8 +1,8 @@
 const path = require("path")
-const excel2all = require("@ailhc/excel2all")
-// import * as mm from "micromatch";
-// console.log(mm.any("foo.js",["*.js","!foo.js"]));
-// console.log(mm.)
+/**
+ * @type {typeof import("../src")}
+ */
+const excel2all = require("../dist/cjs/lib/index.js")
 const tableFileDir = path.join(process.cwd(), "__test__/test-excel-files");
 /**
  * @type {ITableConvertConfig}
@@ -10,26 +10,20 @@ const tableFileDir = path.join(process.cwd(), "__test__/test-excel-files");
 const convertConfig = {
     projRoot: "./__test__",
     tableFileDir: tableFileDir,
-    useCache: false,
-    useMultiThread: false,
-    threadParseFileMaxNum: 2, //多线程比单线程快一点
-    // cacheFileDirPath: "./__test__/test-export/.cache",
-    // customParseHandlerPath: path.join(process.cwd(), "./__test__/testCustomParseHandler.js")
-    customOutPutTransformerPath: path.join(process.cwd(), "./__test__/testCustomTransformer.js")
+    useCache: false
 };
 /**
  * @type {IOutputConfig}
  */
 const outputConfig = {
     /**单个配置表json输出目录路径 */
-    clientSingleTableJsonDir: path.join(process.cwd(), "__test__/test-export/jsons"),
+    clientSingleTableJsonDir: path.join(process.cwd(), "__test__/test-export/export-jsons"),
     /**合并配置表json文件路径(包含文件名,比如 ./out/bundle.json) */
     clientBundleJsonOutPath: path.join(process.cwd(), "__test__/test-export/tbundle.json"),
-    /**是否生成声明文件，默认不输出 */
-    isGenDts: true,
+
     /**声明文件输出目录(每个配置表一个声明)，默认不输出 */
     clientDtsOutDir: path.join(process.cwd(), "__test__/test-export/dts"),
-    
+
     /**是否格式化合并后的json，默认不 */
     // isFormatBundleJson: false,
     /**是否合并所有声明为一个文件,默认true */
