@@ -98,10 +98,6 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
-	export function doParse(parseConfig: ITableConvertConfig, fileInfos: IFileInfo[], parseResultMap: TableParseResultMap, parseHandler: ITableParseHandler): void;
-
-}
-declare module '@ailhc/excel2all' {
 	export const valueTransFuncMap: {
 	    [key: string]: ValueTransFunc;
 	};
@@ -145,7 +141,7 @@ declare module '@ailhc/excel2all' {
 	 */
 	export function getCharCodeSum(colKey: string): number;
 	/**
-	 * 纵向遍历表格
+	 * 遍历横向表格
 	 * @param sheet xlsx表格对象
 	 * @param startRow 开始行 从1开始
 	 * @param startCol 列字符 比如A B
@@ -155,9 +151,9 @@ declare module '@ailhc/excel2all' {
 	 * @param isSkipSheetRow 是否跳过行
 	 * @param isSkipSheetCol 是否跳过列
 	 */
-	export function verticalForEachSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
+	export function forEachHorizontalSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
 	/**
-	 * 横向遍历表格
+	 * 遍历纵向表格
 	 * @param sheet xlsx表格对象
 	 * @param startRow 开始行 从1开始
 	 * @param startCol 列字符 比如A B
@@ -167,7 +163,7 @@ declare module '@ailhc/excel2all' {
 	 * @param isSkipSheetRow 是否跳过行
 	 * @param isSkipSheetCol 是否跳过列
 	 */
-	export function horizontalForEachSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
+	export function forEachVerticalSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
 	/**
 	 * 读取配置表文件 同步的
 	 * @param fileInfo
@@ -210,21 +206,25 @@ declare module '@ailhc/excel2all' {
 	        /**多列对象 */
 	        isMutiColObj?: boolean;
 	    }
+	    interface ITableFirstCellValue {
+	        tableNameInSheet: string;
+	        tableType: TableType;
+	    }
 	    interface ITableDefine {
 	        /**配置表名 */
 	        tableName: string;
 	        /**配置表类型 默认两种: vertical 和 horizontal*/
 	        tableType: string;
-	        /**开始行从1开始 */
+	        /**遍历开始行 */
 	        startRow: number;
-	        /**开始列从A开始 */
+	        /**遍历开始列 */
 	        startCol: string;
-	        /**垂直解析字段定义 */
+	        /**垂直表字段定义 */
 	        verticalFieldDefine: IVerticalFieldDefine;
-	        /**横向解析字段定义 */
+	        /**横向表字段定义 */
 	        horizontalFieldDefine: IHorizontalFieldDefine;
 	    }
-	    interface IHorizontalFieldDefine {
+	    interface IVerticalFieldDefine {
 	        /**类型行 */
 	        typeCol: string;
 	        /**字段名行 */
@@ -232,7 +232,7 @@ declare module '@ailhc/excel2all' {
 	        /**注释行 */
 	        textCol: string;
 	    }
-	    interface IVerticalFieldDefine {
+	    interface IHorizontalFieldDefine {
 	        /**类型行 */
 	        typeRow: number;
 	        /**字段名行 */
@@ -303,6 +303,8 @@ declare module '@ailhc/excel2all' {
 	        curRowOrColObj?: any;
 	        /**主键值 */
 	        mainKeyFieldName?: string;
+	        /**解析错误 */
+	        hasError?: boolean;
 	    }
 	    /**值转换方法 */
 	    interface ITransValueResult {
@@ -319,11 +321,17 @@ declare module '@ailhc/excel2all' {
 	        [key: string]: ValueTransFunc;
 	    };
 	}
+	/**
+	 * 配置表类型
+	 * 按照字段扩展方向定
+	 */
 	export enum TableType {
+	    /**字段垂直扩展 */
 	    vertical = "vertical",
+	    /**字段横向扩展 */
 	    horizontal = "horizontal"
 	}
-	export class DefaultParseHandler implements ITableParseHandler {
+	export class DefaultTableParser implements ITableParser {
 	    private _valueTransFuncMap;
 	    constructor();
 	    getTableDefine(fileInfo: IFileInfo, workBook: xlsx.WorkBook): ITableDefine;
@@ -355,16 +363,7 @@ declare module '@ailhc/excel2all' {
 	     */
 	    checkRowNeedParse(tableDefine: ITableDefine, sheet: xlsx.Sheet, rowIndex: number): boolean;
 	    /**
-	     * 解析单个格子
-	     * @param tableParseResult
-	     * @param sheet
-	     * @param colKey
-	     * @param rowIndex
-	     * @param isNewRowOrCol 是否为新的一行或者一列
-	     */
-	    parseVerticalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
-	    /**
-	     * 解析横向单个格子
+	     * 解析横向表格的单个格子
 	     * @param tableParseResult
 	     * @param sheet
 	     * @param colKey
@@ -373,14 +372,31 @@ declare module '@ailhc/excel2all' {
 	     */
 	    parseHorizontalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
 	    /**
-	     * 解析出字段对象
+	     * 解析纵向表格的单个格子
+	     * @param tableParseResult
+	     * @param sheet
+	     * @param colKey
+	     * @param rowIndex
+	     * @param isNewRowOrCol 是否为新的一行或者一列
+	     */
+	    parseVerticalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
+	    /**
+	     * 解析出横向表的字段对象
 	     * @param tableParseResult
 	     * @param sheet
 	     * @param colKey
 	     * @param rowIndex
 	     */
-	    getVerticalTableField(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number): ITableField;
 	    getHorizontalTableField(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number): ITableField;
+	    /**
+	     * 解析出纵向表的字段类型对象
+	     * @param tableParseResult
+	     * @param sheet
+	     * @param colKey
+	     * @param rowIndex
+	     * @returns
+	     */
+	    getVerticalTableField(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number): ITableField;
 	    /**
 	     * 检查列是否需要解析
 	     * @param tableDefine
@@ -417,8 +433,6 @@ declare module '@ailhc/excel2all' {
 	        clientBundleJsonOutPath?: string;
 	        /**是否格式化合并后的json，默认不 */
 	        isFormatBundleJson?: boolean;
-	        /**是否生成声明文件，默认不输出 */
-	        isGenDts?: boolean;
 	        /**声明文件输出目录(每个配置表一个声明)，默认不输出 */
 	        clientDtsOutDir?: string;
 	        /**是否合并所有声明为一个文件,默认true */
@@ -431,7 +445,7 @@ declare module '@ailhc/excel2all' {
 	        isZip?: boolean;
 	    }
 	}
-	export class DefaultOutPutTransformer {
+	export class DefaultParseResultTransformer {
 	    /**
 	     * 转换
 	     * @param context
@@ -456,11 +470,31 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
+	 global {
+	    interface IConvertContext {
+	        /**配置表值字典，key是配置表名，value是 {行首字段的值为key，value是一行对象 }*/
+	        tableObjMap?: {
+	            [key: string]: {
+	                [key: string]: any;
+	            };
+	        };
+	        /**配置表字段类型字典， key是配置表名，value是整个表的字段类型字典*/
+	        tableFiledInfoMap?: {
+	            [key: string]: {
+	                [key: string]: ITableField;
+	            };
+	        };
+	    }
+	}
 	export class DefaultConvertHook implements IConvertHook {
+	    protected _tableParser: any;
+	    protected _tableResultTransformer: any;
+	    constructor();
 	    onStart?(context: IConvertContext, cb: VoidFunction): void;
 	    onParseBefore?(context: IConvertContext, cb: VoidFunction): void;
+	    onParse(context: IConvertContext, cb: VoidFunction): void;
 	    onParseAfter?(context: IConvertContext, cb: VoidFunction): void;
-	    onWriteFileEnd(context: IConvertContext): void;
+	    onConvertEnd(context: IConvertContext): void;
 	}
 
 }
@@ -469,7 +503,7 @@ declare module '@ailhc/excel2all' {
 	 * 转换
 	 * @param converConfig 解析配置
 	 */
-	export function convert(converConfig: ITableConvertConfig): Promise<void>;
+	export function convert(converConfig: ITableConvertConfig, customConvertHook?: IConvertHook): Promise<void>;
 	/**
 	 * 测试文件匹配
 	 * @param convertConfig
@@ -514,10 +548,18 @@ declare module '@ailhc/excel2all' {
 	        isDelete?: boolean;
 	    }
 	    interface ITableParseResult {
+	        /**解析出错，缓存无效 */
+	        hasError?: boolean;
 	        /**文件路径 */
 	        filePath: string;
 	        /**文件哈希值 */
 	        md5hash?: string;
+	    }
+	    interface ITableConvertCacheData {
+	        /**库版本，版本不一样缓存自动失效 */
+	        version: string;
+	        /**解析结果缓存 */
+	        parseResultMap: TableParseResultMap;
 	    }
 	    /**
 	     * 所有配置表解析结果字典
@@ -544,17 +586,6 @@ declare module '@ailhc/excel2all' {
 	         */
 	        useCache?: boolean;
 	        /**
-	         * 是否启用多线程
-	         * 建议配置表文件数大于200以上才开启，会更有效
-	         * 测试数据（配置表文件数100）:
-	         *
-	         */
-	        useMultiThread?: boolean;
-	        /**
-	         * 单个线程解析文件的最大数量,默认5
-	         */
-	        threadParseFileMaxNum?: number;
-	        /**
 	         * 缓存文件的文件夹路径，可以是相对路径，相对于projRoot
 	         * 默认是项目根目录下的.excel2all文件夹
 	         */
@@ -567,59 +598,9 @@ declare module '@ailhc/excel2all' {
 	         */
 	        pattern?: string[];
 	        /**
-	         * 自定义解析处理器，require(customParseHandlerPath)
-	         *
-	         * 需要返回一个
-	         * @type {ITableParseHandler} 实现了ITableParseHandler的对象
-	         *
-	         * @example
-	         *
-	         * class CustomParseHandler  implements ITableParseHandler {
-	         *      parseTableFile(parseConfig: ITableParseConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult {
-	         *          //doSomething
-	         *      }
-	         * }
-	         * module.exports = new CustomParseHandler();
-	         *
+	         * 自定义配置表解析器
 	         */
-	        customParseHandlerPath?: string;
-	        /**
-	         * 自定义输出转换器，require(customOutPutTransformerPath)
-	         *
-	         * 需要返回一个
-	         * @type {IOutPutTransformer} 实现了IOutPutTransformer的对象
-	         *
-	         * @example
-	         *
-	         * class CustomOutPutTransformer  implements IOutPutTransformer {
-	         *      transform(context: IConvertContext, cb:VoidFunction): void {
-	         *          //doSomething
-	         *      }
-	         * }
-	         * module.exports = new CustomOutPutTransformer();
-	         *
-	         */
-	        customOutPutTransformerPath?: string;
-	        /**
-	         * 自定义导出处理器，require(customTrans2FileHandlerPath)
-	         *
-	         * 需要返回一个
-	         * @type {IConvertHook} 实现了ITransResult2AnyFileHandler的对象
-	         *
-	         * @example
-	         * class CustomTrans2FileHandler  implements ITransResult2AnyFileHandler {
-	         *  trans2Files(
-	         *      parseConfig: ITableParseConfig,
-	         *      changedFileInfos: IFileInfo[],
-	         *      deleteFileInfos: IFileInfo[],
-	         *      parseResultMap: TableParseResultMap): OutPutFileMap {
-	         *      //doSomething
-	         *
-	         *  }
-	         * }
-	         * module.exports = new CustomTrans2FileHandler();
-	         */
-	        customConvertHookPath?: string;
+	        customTableParser: ITableParser;
 	        /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
 	        logLevel?: LogLevel;
 	        /**
@@ -652,25 +633,23 @@ declare module '@ailhc/excel2all' {
 	        /**配置 */
 	        convertConfig: ITableConvertConfig;
 	        /**
-	         * 导出转换器
-	         */
-	        outputTransformer: IOutPutTransformer;
-	        /**
 	         * 变动的文件信息数组
 	         */
-	        changedFileInfos: IFileInfo[];
+	        changedFileInfos?: IFileInfo[];
 	        /**
 	         * 删除了的文件信息数组
 	         */
-	        deleteFileInfos: IFileInfo[];
+	        deleteFileInfos?: IFileInfo[];
 	        /**
 	         * 解析结果字典
 	         */
-	        parseResultMap: TableParseResultMap;
+	        parseResultMap?: TableParseResultMap;
+	        /**解析缓存 */
+	        cacheData?: ITableConvertCacheData;
 	        /**
 	         * 转换结果字典
 	         */
-	        outPutFileMap: OutPutFileMap;
+	        outPutFileMap?: OutPutFileMap;
 	        /**
 	         * 是否出错
 	         */
@@ -678,7 +657,17 @@ declare module '@ailhc/excel2all' {
 	        /**
 	         * 缓存文件路径
 	         */
-	        parseResultMapCacheFilePath: string;
+	        parseResultMapCacheFilePath?: string;
+	        utils: {
+	            /**
+	             * 好用的第三方文件工具库
+	             */
+	            fs: typeof import("fs-extra");
+	            /**
+	             * excel表解析库
+	             *  */
+	            xlsx: typeof import("xlsx");
+	        };
 	    }
 	    interface IConvertHook {
 	        /**
@@ -695,6 +684,12 @@ declare module '@ailhc/excel2all' {
 	         */
 	        onParseBefore?(context: IConvertContext, cb: VoidFunction): void;
 	        /**
+	         * 配置表解析
+	         * @param context
+	         * @param cb
+	         */
+	        onParse?(context: IConvertContext, cb: VoidFunction): void;
+	        /**
 	         * 解析结束
 	         * 可以转换解析结果为多个任意文件
 	         * @param context 上下文
@@ -705,12 +700,12 @@ declare module '@ailhc/excel2all' {
 	         * 写入文件结束
 	         * @param context 上下文
 	         */
-	        onWriteFileEnd(context: IConvertContext): void;
+	        onConvertEnd?(context: IConvertContext): void;
 	    }
 	    /**
 	     * 输出转换器
 	     */
-	    interface IOutPutTransformer {
+	    interface ITableParseResultTransformer {
 	        /**
 	         * 转换
 	         * 将结果文件输出路径为key,
@@ -721,7 +716,7 @@ declare module '@ailhc/excel2all' {
 	         */
 	        transform(context: IConvertContext, cb: VoidFunction): void;
 	    }
-	    interface ITableParseHandler {
+	    interface ITableParser {
 	        /**
 	         * 解析配置表文件
 	         * @param fileInfo 文件信息
@@ -729,15 +724,12 @@ declare module '@ailhc/excel2all' {
 	         */
 	        parseTableFile(parseConfig: ITableConvertConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult;
 	    }
-	    /**文件导出函数 */
-	    type ParseTableFileFunc = ITableParseHandler["parseTableFile"];
 	}
 	export interface Interfaces {
 	}
 
 }
 declare module '@ailhc/excel2all' {
-	export * from '@ailhc/excel2all';
 	export * from '@ailhc/excel2all';
 	export * from '@ailhc/excel2all';
 	export * from '@ailhc/excel2all';

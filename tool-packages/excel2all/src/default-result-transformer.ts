@@ -45,52 +45,67 @@ export class DefaultParseResultTransformer {
         }
 
         let tableObjMap: { [key: string]: any } = {};
+        let tableFiledInfoMap: { [key: string]: { [key: string]: ITableField } } = {};
+        let filedInfoMap: { [key: string]: ITableField };
         let outputFileMap: OutPutFileMap = {};
         let tableTypeMapDtsStr = "";
         let tableTypeDtsStrs = "";
         let parseResult: ITableParseResult;
         let tableName: string;
         let tableObj: any;
-        let objTypeTableMap: { [key: string]: boolean } = {};
+        let isObjTypeTableMap: { [key: string]: boolean } = {};
         Logger.log(`[outputTransform |转换解析结果]请稍等...`);
         for (let filePath in parseResultMap) {
             parseResult = parseResultMap[filePath];
-            if (!parseResult.tableDefine) continue;
+            //没有定义，没有值，就跳过输出处理
+            if (!parseResult.tableDefine || !parseResult.tableObj) continue;
 
             tableName = parseResult.tableDefine.tableName;
 
             //合并多个同名表
             tableObj = tableObjMap[tableName];
+            //合并表值
             if (tableObj) {
                 tableObj = Object.assign(tableObj, parseResult.tableObj);
             } else {
                 tableObj = parseResult.tableObj;
             }
             tableObjMap[tableName] = tableObj;
+            //合并表类型数据
+            filedInfoMap = tableFiledInfoMap[tableName];
+            if (filedInfoMap) {
+                filedInfoMap = Object.assign(filedInfoMap, parseResult.filedMap);
+            } else {
+                filedInfoMap = parseResult.filedMap;
+            }
+            tableFiledInfoMap[tableName] = filedInfoMap;
 
-            if (outputConfig.clientDtsOutDir && objTypeTableMap[tableName] === undefined) {
-                objTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.horizontal;
-                if (parseResult.tableDefine.tableType === TableType.horizontal) {
+            if (outputConfig.clientDtsOutDir && isObjTypeTableMap[tableName] === undefined) {
+                isObjTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.vertical;
+                if (parseResult.tableDefine.tableType === TableType.vertical) {
                     tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
                 } else {
                     tableTypeMapDtsStr += this._getOneTableTypeStr(tableName);
                 }
-                //输出单个文件
-                if (outputConfig.isBundleDts === undefined) outputConfig.isBundleDts = true;
-                if (!outputConfig.isBundleDts) {
-                    this._addSingleTableDtsOutputFile(outputConfig, parseResult, outputFileMap);
-                } else {
-                    tableTypeDtsStrs += this._getSingleTableDts(parseResult);
-                }
             }
-
+        }
+        for (let tableName in tableObjMap) {
             //生成单个表json
             if (outputConfig.clientSingleTableJsonDir) {
-                this._addSingleTableJsonOutputFile(outputConfig, parseResult, outputFileMap);
+                this._addSingleTableJsonOutputFile(outputConfig, tableName, tableObjMap[tableName], outputFileMap);
+            }
+            if (outputConfig.isBundleDts === undefined) outputConfig.isBundleDts = true;
+            if (!outputConfig.isBundleDts) {
+                //输出当个声明文件
+                this._addSingleTableDtsOutputFile(outputConfig, tableName, tableFiledInfoMap[tableName], outputFileMap);
+            } else {
+                //合并声明文件
+                tableTypeDtsStrs += this._getSingleTableDts(tableName, tableFiledInfoMap[tableName]);
             }
         }
         if (outputConfig.clientDtsOutDir) {
             //输出声明文件
+
             let itBaseStr = "interface ITBase<T> { [key:string]:T}" + osEol;
 
             tableTypeMapDtsStr = itBaseStr + "interface IT_TableMap {" + osEol + tableTypeMapDtsStr + "}" + osEol;
@@ -104,7 +119,7 @@ export class DefaultParseResultTransformer {
                     data: tableTypeMapDtsStr + tableTypeDtsStrs
                 };
             } else {
-                //拆分文件输出
+                //拆分文件输出，但也会有一个map文件
                 const tableTypeMapDtsFilePath = path.join(outputConfig.clientDtsOutDir, "tableMap.d.ts");
                 outputFileMap[tableTypeMapDtsFilePath] = {
                     filePath: tableTypeMapDtsFilePath,
@@ -113,7 +128,7 @@ export class DefaultParseResultTransformer {
             }
         }
 
-        //jsonBundleFile
+        //输出合并后的json
         if (outputConfig.clientBundleJsonOutPath) {
             let jsonBundleFilePath = outputConfig.clientBundleJsonOutPath;
             let outputData: any;
@@ -123,7 +138,7 @@ export class DefaultParseResultTransformer {
                 let tableObj: any;
                 let newTableObj: any;
                 for (let tableName in tableObjMap) {
-                    if (objTypeTableMap[tableName]) {
+                    if (isObjTypeTableMap[tableName]) {
                         newTableObjMap[tableName] = tableObjMap[tableName];
                         continue;
                     }
@@ -172,16 +187,15 @@ export class DefaultParseResultTransformer {
     }
     private _addSingleTableDtsOutputFile(
         config: IOutputConfig,
-        parseResult: ITableParseResult,
+        tableName: string,
+        colKeyTableFieldMap: { [key: string]: ITableField },
         outputFileMap: OutPutFileMap
     ): void {
-        //如果值没有就不输出类型信息了
-        if (!parseResult.tableObj) return;
-        let dtsFilePath: string = path.join(config.clientDtsOutDir, `${parseResult.tableDefine.tableName}.d.ts`);
+        let dtsFilePath: string = path.join(config.clientDtsOutDir, `${tableName}.d.ts`);
 
         if (!outputFileMap[dtsFilePath]) {
             //
-            const dtsStr = this._getSingleTableDts(parseResult);
+            const dtsStr = this._getSingleTableDts(tableName, colKeyTableFieldMap);
             if (dtsStr) {
                 outputFileMap[dtsFilePath] = { filePath: dtsFilePath, data: dtsStr } as any;
             }
@@ -191,10 +205,7 @@ export class DefaultParseResultTransformer {
      * 解析出单个配置表类型数据
      * @param parseResult
      */
-    private _getSingleTableDts(parseResult: ITableParseResult): string {
-        const tableName = parseResult.tableDefine.tableName;
-
-        const colKeyTableFieldMap: ColKeyTableFieldMap = parseResult.filedMap;
+    private _getSingleTableDts(tableName: string, colKeyTableFieldMap: ColKeyTableFieldMap): string {
         let itemInterface = "interface IT_" + tableName + " {" + osEol;
         let tableField: ITableField;
         let typeStr: string;
@@ -251,12 +262,11 @@ export class DefaultParseResultTransformer {
      */
     private _addSingleTableJsonOutputFile(
         config: IOutputConfig,
-        parseResult: ITableParseResult,
+        tableName: string,
+        tableObj: any,
         outputFileMap: OutPutFileMap
     ) {
-        const tableObj = parseResult.tableObj;
         if (!tableObj) return;
-        const tableName = parseResult.tableDefine.tableName;
         let singleJsonFilePath = path.join(config.clientSingleTableJsonDir, `${tableName}.json`);
         let singleJsonData = JSON.stringify(tableObj, null, "\t");
 

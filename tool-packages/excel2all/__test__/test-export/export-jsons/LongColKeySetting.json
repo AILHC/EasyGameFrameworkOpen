@@ -26,7 +26,9 @@
 			"obj_field_string_array": [
 				"玩转游戏开发"
 			],
-			"obj_field_json": "{'公众号\":\"玩转游戏开发\"}"
+			"obj_field_json": {
+				"公众号": "玩转游戏开发"
+			}
 		},
 		"test_array3": [
 			"玩转游戏开发"

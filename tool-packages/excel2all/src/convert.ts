@@ -10,6 +10,7 @@ const cacheFileName = ".e2aprmc";
 const logFileName = "excel2all.log";
 let startTime = 0;
 const defaultPattern = ["./**/*.xlsx", "./**/*.csv", "!**/~$*.*", "!**/~.*.*", "!.git/**/*", "!.svn/**/*"];
+
 /**
  * 转换
  * @param converConfig 解析配置
@@ -94,10 +95,9 @@ async function onParseEnd(
     logStr?: string
 ) {
     const convertConfig = context.convertConfig;
-    const parseResultMap = context.parseResultMap;
     //写入解析缓存
     if (convertConfig.useCache) {
-        writeCacheData(parseResultMapCacheFilePath, parseResultMap);
+        writeCacheData(parseResultMapCacheFilePath, context.cacheData);
     }
 
     //解析结束，做导出处理
@@ -222,6 +222,7 @@ function getFileInfos(context: IConvertContext) {
         cwd: tableFileDir
     });
     let parseResultMap: TableParseResultMap = {};
+    let cacheData: ITableConvertCacheData;
     //缓存处理
     let cacheFileDirPath: string = converConfig.cacheFileDirPath;
     let parseResultMapCacheFilePath: string;
@@ -240,10 +241,23 @@ function getFileInfos(context: IConvertContext) {
         parseResultMapCacheFilePath = path.join(cacheFileDirPath, cacheFileName);
         Logger.systemLog(`读取缓存数据`);
 
-        parseResultMap = getCacheData(parseResultMapCacheFilePath);
+        cacheData = getCacheData(parseResultMapCacheFilePath);
+        console.log(__dirname);
+        const packageJson = getCacheData(path.join(__dirname, "../../../package.json"));
+        if (!cacheData.version || cacheData.version !== packageJson.version) {
+            Logger.systemLog(
+                `工具版本不一致，缓存失效 => cacheVersion:${cacheData.version},toolVersion:${packageJson.version}`
+            );
+
+            parseResultMap = {};
+        } else {
+            parseResultMap = cacheData.parseResultMap;
+        }
         if (!parseResultMap) {
             parseResultMap = {};
         }
+        cacheData.parseResultMap = parseResultMap;
+        cacheData.version = packageJson.version;
 
         Logger.systemLog(`开始缓存处理...`);
         const oldFilePaths = Object.keys(parseResultMap);
@@ -285,5 +299,6 @@ function getFileInfos(context: IConvertContext) {
     context.deleteFileInfos = deleteFileInfos;
     context.changedFileInfos = changedFileInfos;
     context.parseResultMap = parseResultMap;
+    context.cacheData = cacheData;
     context.parseResultMapCacheFilePath = parseResultMapCacheFilePath;
 }

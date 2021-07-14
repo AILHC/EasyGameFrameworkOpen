@@ -1,7 +1,6 @@
 import { DefaultParseResultTransformer } from "./default-result-transformer";
 import { DefaultTableParser } from "./default-table-parser";
 import { Logger } from "./loger";
-
 export class DefaultConvertHook implements IConvertHook {
     protected _tableParser;
     protected _tableResultTransformer;
@@ -22,7 +21,7 @@ export class DefaultConvertHook implements IConvertHook {
     onParse(context: IConvertContext, cb: VoidFunction): void {
         const { changedFileInfos, parseResultMap, convertConfig } = context;
         const tableParser = this._tableParser;
-        let parseResult;
+        let parseResult: ITableParseResult;
         let fileNum = changedFileInfos.length;
         let fileInfo: IFileInfo;
         for (let i = 0; i < fileNum; i++) {
@@ -31,9 +30,7 @@ export class DefaultConvertHook implements IConvertHook {
             if (!parseResult) {
                 parseResult = { filePath: fileInfo.filePath };
             }
-            if (!parseResult.tableObj) {
-                parseResult = tableParser.parseTableFile(convertConfig, fileInfo, parseResult);
-            }
+            parseResult = tableParser.parseTableFile(convertConfig, fileInfo, parseResult);
             if (parseResult) {
                 parseResultMap[fileInfo.filePath] = parseResult;
             }
