@@ -65,6 +65,7 @@ program
     .option('-bn, --banner [banner]', "自定义输出文件顶部文本")
     .option('-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入")
     .option('-s, --no-sourcemap [sourcemap]', '默认true,输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map')
+    .option('-spsmp, --special-sourcemap-path [special-sourcemap-path]', '默认false,输出sourcemap里的路径类型，true则可以在cocoscreator项目中调试')
     .action(function (option) {
         rollupDo.build(option);
     });
