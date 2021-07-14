@@ -5,7 +5,8 @@ const path = require("path");
 const excel2all = require("@ailhc/excel2all");
 
 const package = require("../package.json");
-const getParseConfig = require("./get-parse-config")
+const { getAbsolutePath, getParseConfig } = require('./get-parse-config');
+
 program
     .version(package.version)
     .description(`一个将excel文件转换为typescript声明文件和json工具
@@ -42,11 +43,11 @@ program
         if (config) {
             let customConvertHook;
             if (option.customConvertHookPath) {
-                const customConvertHookPath = getAbsolutePath(customConvertHookPath, config.projRoot);
+                const customConvertHookPath = getAbsolutePath(option.customConvertHookPath, config.projRoot);
                 try {
                     customConvertHook = require(customConvertHookPath);
                 } catch (error) {
-                    console.error(error);
+                    console.error(`自定义ConvertHook读取出错`,error);
                 }
             }
             excel2all.convert(config, customConvertHook)

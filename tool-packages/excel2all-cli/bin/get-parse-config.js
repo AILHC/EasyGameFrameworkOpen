@@ -12,16 +12,16 @@ function getParseConfig(option) {
         if (!path.isAbsolute(option.config)) {
             option.config = path.join(option.projRoot, option.config);
         }
-        config = require(option.config);
+        try {
+            config = require(option.config);
+        } catch (error) {
+            console.error(`配置文件无法读取:${option.config}`);
+        }
+    }
+    if (config) {
+        config = Object.assign(config, option);
     } else {
         config = option;
-    }
-    if (!config) {
-        console.error(`配置文件不存在:${option.config}`);
-        return;
-    }
-    if (!config.projRoot) {
-        config.projRoot = option.projRoot;
     }
     if (!config.tableFileDir) {
         config.tableFileDir = config.projRoot;
@@ -31,13 +31,15 @@ function getParseConfig(option) {
     if (config.outputLogDirPath && typeof config.outputLogDirPath !== "string") {
         config.outputLogDirPath = config.projRoot;
     }
-
-    
-    if (!config.outputConfig) {
+    /**
+     * @type {IOutputConfig}
+     */
+    let outputConfig = config.outputConfig;
+    if (!outputConfig) {
         /**
          * @type {IOutputConfig}
          */
-        const outputConfig = {
+        outputConfig = {
             clientSingleTableJsonDir: option.clientSingleTableJsonDir,
             clientBundleJsonOutPath: option.clientBundleJsonOutPath,
             isFormatBundleJson: option.isFormatBundleJson,
@@ -47,23 +49,26 @@ function getParseConfig(option) {
             isCompress: option.isCompress
         }
 
-        for (let key in outputConfig) {
-            delete config[key];
+    }
+    for (let key in outputConfig) {
+        if (config[key] !== null && config[key] !== undefined) {
+            outputConfig[key] = config[key];
         }
-        if (outputConfig.clientSingleTableJsonDir) {
-            outputConfig.clientSingleTableJsonDir = getAbsolutePath(outputConfig.clientSingleTableJsonDir, config.projRoot);
-        }
-        if (outputConfig.clientDtsOutDir) {
-            outputConfig.clientDtsOutDir = getAbsolutePath(outputConfig.clientDtsOutDir, config.projRoot);
-            if (!outputConfig.bundleDtsFileName) {
-                outputConfig.bundleDtsFileName = "tableMap";
-            }
-        }
-        if (outputConfig.clientBundleJsonOutPath) {
-            outputConfig.clientBundleJsonOutPath = getAbsolutePath(outputConfig.clientBundleJsonOutPath, config.projRoot);
-        }
+        delete config[key];
+    }
+    config.outputConfig = outputConfig;
 
-        config.outputConfig = outputConfig;
+    if (outputConfig.clientSingleTableJsonDir) {
+        outputConfig.clientSingleTableJsonDir = getAbsolutePath(outputConfig.clientSingleTableJsonDir, config.projRoot);
+    }
+    if (outputConfig.clientDtsOutDir) {
+        outputConfig.clientDtsOutDir = getAbsolutePath(outputConfig.clientDtsOutDir, config.projRoot);
+        if (!outputConfig.bundleDtsFileName) {
+            outputConfig.bundleDtsFileName = "tableMap";
+        }
+    }
+    if (outputConfig.clientBundleJsonOutPath) {
+        outputConfig.clientBundleJsonOutPath = getAbsolutePath(outputConfig.clientBundleJsonOutPath, config.projRoot);
     }
 
     return config;
@@ -88,4 +93,7 @@ function getAbsolutePath(originPath, root, defaultPath) {
         return originPath;
     }
 }
-module.exports = getParseConfig;
+module.exports = {
+    getParseConfig,
+    getAbsolutePath
+}
