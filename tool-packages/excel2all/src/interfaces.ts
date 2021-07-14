@@ -1,7 +1,3 @@
-import * as tableUtils from "./table-utils";
-import * as fileUtils from "./file-utils";
-import { Logger } from "./loger";
-
 declare global {
     /**
      * 多线程传递数据
@@ -46,6 +42,12 @@ declare global {
         /**文件哈希值 */
         md5hash?: string;
     }
+    interface ITableConvertCacheData {
+        /**库版本，版本不一样缓存自动失效 */
+        version: string;
+        /**解析结果缓存 */
+        parseResultMap: TableParseResultMap;
+    }
     /**
      * 所有配置表解析结果字典
      * key为表的文件路径，value为解析结果
@@ -83,10 +85,7 @@ declare global {
          * 具体匹配规则参考：https://github.com/mrmlnc/fast-glob#pattern-syntax
          */
         pattern?: string[];
-        /**
-         * 自定义配置表解析器
-         */
-        customTableParser: ITableParser;
+
         /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
         logLevel?: LogLevel;
         /**
@@ -130,6 +129,8 @@ declare global {
          * 解析结果字典
          */
         parseResultMap?: TableParseResultMap;
+        /**解析缓存 */
+        cacheData?: ITableConvertCacheData;
         /**
          * 转换结果字典
          */

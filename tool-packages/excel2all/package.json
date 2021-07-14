@@ -26,8 +26,11 @@
   ],
   "scripts": {
     "watch:cjs": "egf build -w true -f cjs",
+    
     "test:nocache": "node ./__test__/convert_test.js",
     "test:usecache": "node ./__test__/convert_useCache_test.js",
+    "test:mutiDtsFile": "node ./__test__/convert_mutiDtsFile_test.js",
+
     "testFileMatch": "node ./__test__/testFileMatch_test.js",
     "testWorker": "ts-node --transpile-only __test__/worker_test.ts",
     "//构建命令": "",

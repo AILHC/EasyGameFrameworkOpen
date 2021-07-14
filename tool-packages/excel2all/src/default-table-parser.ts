@@ -2,12 +2,12 @@ import * as xlsx from "xlsx";
 import { valueTransFuncMap } from "./default-value-func-map";
 import { Logger } from "./loger";
 import {
-    horizontalForEachSheet,
+    forEachHorizontalSheet,
+    forEachVerticalSheet,
     isCSV,
     isEmptyCell,
     readTableData,
-    readTableFile,
-    verticalForEachSheet
+    readTableFile
 } from "./table-utils";
 
 declare global {
@@ -27,22 +27,26 @@ declare global {
         /**多列对象 */
         isMutiColObj?: boolean;
     }
+    interface ITableFirstCellValue {
+        tableNameInSheet: string;
+        tableType: TableType;
+    }
     interface ITableDefine {
         /**配置表名 */
         tableName: string;
         /**配置表类型 默认两种: vertical 和 horizontal*/
         tableType: string;
 
-        /**开始行从1开始 */
+        /**遍历开始行 */
         startRow: number;
-        /**开始列从A开始 */
+        /**遍历开始列 */
         startCol: string;
-        /**垂直解析字段定义 */
+        /**垂直表字段定义 */
         verticalFieldDefine: IVerticalFieldDefine;
-        /**横向解析字段定义 */
+        /**横向表字段定义 */
         horizontalFieldDefine: IHorizontalFieldDefine;
     }
-    interface IHorizontalFieldDefine {
+    interface IVerticalFieldDefine {
         /**类型行 */
         typeCol: string;
         /**字段名行 */
@@ -50,7 +54,7 @@ declare global {
         /**注释行 */
         textCol: string;
     }
-    interface IVerticalFieldDefine {
+    interface IHorizontalFieldDefine {
         /**类型行 */
         typeRow: number;
         /**字段名行 */
@@ -114,6 +118,8 @@ declare global {
         curRowOrColObj?: any;
         /**主键值 */
         mainKeyFieldName?: string;
+        /**解析错误 */
+        hasError?: boolean;
     }
 
     /**值转换方法 */
@@ -129,8 +135,14 @@ declare global {
      */
     type ValueTransFuncMap = { [key: string]: ValueTransFunc };
 }
+/**
+ * 配置表类型
+ * 按照字段扩展方向定
+ */
 export enum TableType {
+    /**字段垂直扩展 */
     vertical = "vertical",
+    /**字段横向扩展 */
     horizontal = "horizontal"
 }
 
@@ -145,7 +157,8 @@ export class DefaultTableParser implements ITableParser {
 
         const sheetNames = workBook.SheetNames;
         let sheet: xlsx.Sheet;
-        let firstCellValue: { tableNameInSheet: string; tableType: string };
+        //第一个格子的值tableNameInSheet(表名),tableType:表格类型
+        let firstCellValue: ITableFirstCellValue;
         let firstCellObj: xlsx.CellObject;
 
         const tableDefine: Partial<ITableDefine> = {};
@@ -165,50 +178,49 @@ export class DefaultTableParser implements ITableParser {
             }
         }
         if (!tableDefine.tableName || !tableDefine.tableType) {
-            Logger.log(`表格不规范,跳过解析,路径:${fileInfo.filePath}`, "warn");
             return null;
         }
         if (tableDefine.tableType === TableType.vertical) {
             tableDefine.verticalFieldDefine = {} as any;
-            const verticalFieldDefine: IVerticalFieldDefine = tableDefine.verticalFieldDefine;
-            verticalFieldDefine.textRow = 1;
+            const verticalFieldDefine = tableDefine.verticalFieldDefine;
+            verticalFieldDefine.textCol = "A";
+            verticalFieldDefine.typeCol = "B";
+            verticalFieldDefine.fieldCol = "C";
+            tableDefine.startCol = "E";
+            tableDefine.startRow = 2;
+        } else if (tableDefine.tableType === TableType.horizontal) {
+            tableDefine.horizontalFieldDefine = {} as any;
+            const horizontalFieldDefine: IHorizontalFieldDefine = tableDefine.horizontalFieldDefine;
+            horizontalFieldDefine.textRow = 1;
             for (let i = 1; i < 100; i++) {
                 cellKey = "A" + i;
                 cellObj = sheet[cellKey];
                 if (isEmptyCell(cellObj) || cellObj.v === "NO" || cellObj.v === "END" || cellObj.v === "START") {
                     tableDefine.startRow = i;
                 } else if (cellObj.v === "CLIENT") {
-                    verticalFieldDefine.fieldRow = i;
+                    horizontalFieldDefine.fieldRow = i;
                 } else if (cellObj.v === "TYPE") {
-                    verticalFieldDefine.typeRow = i;
+                    horizontalFieldDefine.typeRow = i;
                 }
-                if (tableDefine.startRow && verticalFieldDefine.fieldRow && verticalFieldDefine.typeRow) break;
+                if (tableDefine.startRow && horizontalFieldDefine.fieldRow && horizontalFieldDefine.typeRow) break;
             }
 
             tableDefine.startCol = "B";
-        } else if (tableDefine.tableType === TableType.horizontal) {
-            tableDefine.horizontalFieldDefine = {} as any;
-            const horizontalFieldDefine = tableDefine.horizontalFieldDefine;
-            horizontalFieldDefine.textCol = "A";
-            horizontalFieldDefine.typeCol = "B";
-            horizontalFieldDefine.fieldCol = "C";
-            tableDefine.startCol = "E";
-            tableDefine.startRow = 2;
         }
 
         return tableDefine as any;
     }
-    private _getFirstCellValue(firstCellObj: xlsx.CellObject) {
+    private _getFirstCellValue(firstCellObj: xlsx.CellObject): ITableFirstCellValue {
         if (!firstCellObj) return;
         const cellValues = (firstCellObj.v as string).split(":");
         let tableNameInSheet: string;
-        let tableType: string;
+        let tableType: TableType;
         if (cellValues.length > 1) {
             tableNameInSheet = cellValues[1];
-            tableType = cellValues[0] === "H" ? TableType.horizontal : TableType.vertical;
+            tableType = cellValues[0] === "V" ? TableType.vertical : TableType.horizontal;
         } else {
             tableNameInSheet = cellValues[0];
-            tableType = TableType.vertical;
+            tableType = TableType.horizontal;
         }
         return { tableNameInSheet: tableNameInSheet, tableType: tableType };
     }
@@ -276,21 +288,21 @@ export class DefaultTableParser implements ITableParser {
         return true;
     }
     /**
-     * 解析单个格子
+     * 解析横向表格的单个格子
      * @param tableParseResult
      * @param sheet
      * @param colKey
      * @param rowIndex
      * @param isNewRowOrCol 是否为新的一行或者一列
      */
-    parseVerticalCell(
+    parseHorizontalCell(
         tableParseResult: ITableParseResult,
         sheet: xlsx.Sheet,
         colKey: string,
         rowIndex: number,
         isNewRowOrCol: boolean
     ): void {
-        const fieldInfo = this.getVerticalTableField(tableParseResult, sheet, colKey, rowIndex);
+        const fieldInfo = this.getHorizontalTableField(tableParseResult, sheet, colKey, rowIndex);
         if (!fieldInfo) return;
         const cell: xlsx.CellObject = sheet[colKey + rowIndex];
         if (isEmptyCell(cell)) {
@@ -341,21 +353,21 @@ export class DefaultTableParser implements ITableParser {
         }
     }
     /**
-     * 解析横向单个格子
+     * 解析纵向表格的单个格子
      * @param tableParseResult
      * @param sheet
      * @param colKey
      * @param rowIndex
      * @param isNewRowOrCol 是否为新的一行或者一列
      */
-    parseHorizontalCell(
+    parseVerticalCell(
         tableParseResult: ITableParseResult,
         sheet: xlsx.Sheet,
         colKey: string,
         rowIndex: number,
         isNewRowOrCol: boolean
     ): void {
-        const fieldInfo = this.getHorizontalTableField(tableParseResult, sheet, colKey, rowIndex);
+        const fieldInfo = this.getVerticalTableField(tableParseResult, sheet, colKey, rowIndex);
         if (!fieldInfo) return;
         const cell: xlsx.CellObject = sheet[colKey + rowIndex];
         if (isEmptyCell(cell)) {
@@ -394,13 +406,13 @@ export class DefaultTableParser implements ITableParser {
         }
     }
     /**
-     * 解析出字段对象
+     * 解析出横向表的字段对象
      * @param tableParseResult
      * @param sheet
      * @param colKey
      * @param rowIndex
      */
-    getVerticalTableField(
+    getHorizontalTableField(
         tableParseResult: ITableParseResult,
         sheet: xlsx.Sheet,
         colKey: string,
@@ -412,8 +424,8 @@ export class DefaultTableParser implements ITableParser {
             tableFiledMap = {};
             tableParseResult.filedMap = tableFiledMap;
         }
-        const verticalFieldDefine = tableDefine.verticalFieldDefine;
-        const filedCell = sheet[colKey + verticalFieldDefine.fieldRow];
+        const horizontalFieldDefine = tableDefine.horizontalFieldDefine;
+        const filedCell = sheet[colKey + horizontalFieldDefine.fieldRow];
         let originFieldName: string;
         if (!isEmptyCell(filedCell)) {
             originFieldName = filedCell.v as string;
@@ -425,13 +437,13 @@ export class DefaultTableParser implements ITableParser {
             return tableFiledMap[originFieldName];
         }
         //注释
-        const textCell: xlsx.CellObject = sheet[colKey + verticalFieldDefine.textRow];
+        const textCell: xlsx.CellObject = sheet[colKey + horizontalFieldDefine.textRow];
         if (!isEmptyCell(textCell)) {
             field.text = textCell.v as string;
         }
         //类型
         let isObjType: boolean = false;
-        const typeCell = sheet[colKey + verticalFieldDefine.typeRow];
+        const typeCell = sheet[colKey + horizontalFieldDefine.typeRow];
 
         if (isEmptyCell(typeCell)) {
             return null;
@@ -465,7 +477,15 @@ export class DefaultTableParser implements ITableParser {
         tableFiledMap[colKey] = field;
         return field;
     }
-    getHorizontalTableField(
+    /**
+     * 解析出纵向表的字段类型对象
+     * @param tableParseResult
+     * @param sheet
+     * @param colKey
+     * @param rowIndex
+     * @returns
+     */
+    getVerticalTableField(
         tableParseResult: ITableParseResult,
         sheet: xlsx.Sheet,
         colKey: string,
@@ -477,8 +497,8 @@ export class DefaultTableParser implements ITableParser {
             tableFiledMap = {};
             tableParseResult.filedMap = tableFiledMap;
         }
-        const hFieldDefine = tableDefine.horizontalFieldDefine;
-        const fieldNameCell: xlsx.CellObject = sheet[hFieldDefine.fieldCol + rowIndex];
+        const verticalFieldDefine = tableDefine.verticalFieldDefine;
+        const fieldNameCell: xlsx.CellObject = sheet[verticalFieldDefine.fieldCol + rowIndex];
         let originFieldName: string;
         if (!isEmptyCell(fieldNameCell)) {
             originFieldName = fieldNameCell.v as string;
@@ -489,14 +509,14 @@ export class DefaultTableParser implements ITableParser {
         }
         let field: ITableField = {} as any;
 
-        const textCell: xlsx.CellObject = sheet[hFieldDefine.textCol + rowIndex];
+        const textCell: xlsx.CellObject = sheet[verticalFieldDefine.textCol + rowIndex];
         //注释
         if (!isEmptyCell(textCell)) {
             field.text = textCell.v as string;
         }
         let isObjType: boolean = false;
         //类型
-        const typeCell: xlsx.CellObject = sheet[hFieldDefine.typeCol + rowIndex];
+        const typeCell: xlsx.CellObject = sheet[verticalFieldDefine.typeCol + rowIndex];
 
         if (isEmptyCell(typeCell)) {
             return null;
@@ -538,17 +558,17 @@ export class DefaultTableParser implements ITableParser {
     checkColNeedParse(tableDefine: ITableDefine, sheet: xlsx.Sheet, colKey: string): boolean {
         // 如果类型或者则不需要解析
         if (tableDefine.tableType === TableType.vertical) {
-            const verticalFieldDefine = tableDefine.verticalFieldDefine;
-            const typeCellObj: xlsx.CellObject = sheet[colKey + verticalFieldDefine.typeRow];
-            const fieldCellObj: xlsx.CellObject = sheet[colKey + verticalFieldDefine.fieldRow];
-            if (isEmptyCell(typeCellObj) || isEmptyCell(fieldCellObj)) {
+            const cellObj: xlsx.CellObject = sheet[colKey + 1];
+            if (isEmptyCell(cellObj)) {
                 return false;
             } else {
                 return true;
             }
         } else if (tableDefine.tableType === TableType.horizontal) {
-            const cellObj: xlsx.CellObject = sheet[colKey + 1];
-            if (isEmptyCell(cellObj)) {
+            const horizontalFieldDefine = tableDefine.horizontalFieldDefine;
+            const typeCellObj: xlsx.CellObject = sheet[colKey + horizontalFieldDefine.typeRow];
+            const fieldCellObj: xlsx.CellObject = sheet[colKey + horizontalFieldDefine.fieldRow];
+            if (isEmptyCell(typeCellObj) || isEmptyCell(fieldCellObj)) {
                 return false;
             } else {
                 return true;
@@ -589,8 +609,11 @@ export class DefaultTableParser implements ITableParser {
 
         const sheetNames = workbook.SheetNames;
         const tableDefine: ITableDefine = this.getTableDefine(fileInfo, workbook);
-        for (let i = 0; i < sheetNames.length; i++) {}
-        if (!tableDefine) return null;
+
+        if (!tableDefine) {
+            Logger.log(`表格不规范,跳过解析,路径:${fileInfo.filePath}`, "warn");
+            return;
+        }
         let sheetName: string;
         let sheet: xlsx.Sheet;
         const isSheetRowEnd = this.isSheetRowEnd.bind(null, tableDefine);
@@ -612,10 +635,10 @@ export class DefaultTableParser implements ITableParser {
             }
             parseResult.curSheetName = sheetName;
             Logger.log(`|=[parseSheet|解析分表]=> ${sheetName}`);
-            if (tableDefine.tableType === TableType.vertical) {
+            if (tableDefine.tableType === TableType.horizontal) {
                 let lastRowIndex: number;
 
-                verticalForEachSheet(
+                forEachHorizontalSheet(
                     sheet,
                     tableDefine.startRow,
                     tableDefine.startCol,
@@ -627,7 +650,7 @@ export class DefaultTableParser implements ITableParser {
                         }
                         cellObj = sheet[colKey + rowIndex];
                         if (!isEmptyCell(cellObj)) {
-                            this.parseVerticalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
+                            this.parseHorizontalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
                         }
                     },
                     isSheetRowEnd,
@@ -635,10 +658,10 @@ export class DefaultTableParser implements ITableParser {
                     isSkipSheetRow,
                     isSkipSheetCol
                 );
-            } else if (tableDefine.tableType === TableType.horizontal) {
+            } else if (tableDefine.tableType === TableType.vertical) {
                 let lastColKey: string;
 
-                horizontalForEachSheet(
+                forEachVerticalSheet(
                     sheet,
                     tableDefine.startRow,
                     tableDefine.startCol,
@@ -651,7 +674,7 @@ export class DefaultTableParser implements ITableParser {
 
                         cellObj = sheet[colKey + rowIndex];
                         if (!isEmptyCell(cellObj)) {
-                            this.parseHorizontalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
+                            this.parseVerticalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
                         }
                     },
                     isSheetRowEnd,

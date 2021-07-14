@@ -83,7 +83,7 @@ export function getCharCodeSum(colKey: string): number {
     return sum;
 }
 /**
- * 纵向遍历表格
+ * 遍历横向表格
  * @param sheet xlsx表格对象
  * @param startRow 开始行 从1开始
  * @param startCol 列字符 比如A B
@@ -93,7 +93,7 @@ export function getCharCodeSum(colKey: string): number {
  * @param isSkipSheetRow 是否跳过行
  * @param isSkipSheetCol 是否跳过列
  */
-export function verticalForEachSheet(
+export function forEachHorizontalSheet(
     sheet: xlsx.Sheet,
     startRow: number,
     startCol: string,
@@ -137,7 +137,7 @@ export function verticalForEachSheet(
 }
 
 /**
- * 横向遍历表格
+ * 遍历纵向表格
  * @param sheet xlsx表格对象
  * @param startRow 开始行 从1开始
  * @param startCol 列字符 比如A B
@@ -147,7 +147,7 @@ export function verticalForEachSheet(
  * @param isSkipSheetRow 是否跳过行
  * @param isSkipSheetCol 是否跳过列
  */
-export function horizontalForEachSheet(
+export function forEachVerticalSheet(
     sheet: xlsx.Sheet,
     startRow: number,
     startCol: string,

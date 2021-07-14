@@ -141,7 +141,7 @@ declare module '@ailhc/excel2all' {
 	 */
 	export function getCharCodeSum(colKey: string): number;
 	/**
-	 * 纵向遍历表格
+	 * 遍历横向表格
 	 * @param sheet xlsx表格对象
 	 * @param startRow 开始行 从1开始
 	 * @param startCol 列字符 比如A B
@@ -151,9 +151,9 @@ declare module '@ailhc/excel2all' {
 	 * @param isSkipSheetRow 是否跳过行
 	 * @param isSkipSheetCol 是否跳过列
 	 */
-	export function verticalForEachSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
+	export function forEachHorizontalSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
 	/**
-	 * 横向遍历表格
+	 * 遍历纵向表格
 	 * @param sheet xlsx表格对象
 	 * @param startRow 开始行 从1开始
 	 * @param startCol 列字符 比如A B
@@ -163,7 +163,7 @@ declare module '@ailhc/excel2all' {
 	 * @param isSkipSheetRow 是否跳过行
 	 * @param isSkipSheetCol 是否跳过列
 	 */
-	export function horizontalForEachSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
+	export function forEachVerticalSheet(sheet: xlsx.Sheet, startRow: number, startCol: string, callback: (sheet: xlsx.Sheet, colKey: string, rowIndex: number) => void, isSheetRowEnd?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSheetColEnd?: (sheet: xlsx.Sheet, colkey: string) => boolean, isSkipSheetRow?: (sheet: xlsx.Sheet, rowIndex: number) => boolean, isSkipSheetCol?: (sheet: xlsx.Sheet, colKey: string) => boolean): void;
 	/**
 	 * 读取配置表文件 同步的
 	 * @param fileInfo
@@ -206,21 +206,25 @@ declare module '@ailhc/excel2all' {
 	        /**多列对象 */
 	        isMutiColObj?: boolean;
 	    }
+	    interface ITableFirstCellValue {
+	        tableNameInSheet: string;
+	        tableType: TableType;
+	    }
 	    interface ITableDefine {
 	        /**配置表名 */
 	        tableName: string;
 	        /**配置表类型 默认两种: vertical 和 horizontal*/
 	        tableType: string;
-	        /**开始行从1开始 */
+	        /**遍历开始行 */
 	        startRow: number;
-	        /**开始列从A开始 */
+	        /**遍历开始列 */
 	        startCol: string;
-	        /**垂直解析字段定义 */
+	        /**垂直表字段定义 */
 	        verticalFieldDefine: IVerticalFieldDefine;
-	        /**横向解析字段定义 */
+	        /**横向表字段定义 */
 	        horizontalFieldDefine: IHorizontalFieldDefine;
 	    }
-	    interface IHorizontalFieldDefine {
+	    interface IVerticalFieldDefine {
 	        /**类型行 */
 	        typeCol: string;
 	        /**字段名行 */
@@ -228,7 +232,7 @@ declare module '@ailhc/excel2all' {
 	        /**注释行 */
 	        textCol: string;
 	    }
-	    interface IVerticalFieldDefine {
+	    interface IHorizontalFieldDefine {
 	        /**类型行 */
 	        typeRow: number;
 	        /**字段名行 */
@@ -299,6 +303,8 @@ declare module '@ailhc/excel2all' {
 	        curRowOrColObj?: any;
 	        /**主键值 */
 	        mainKeyFieldName?: string;
+	        /**解析错误 */
+	        hasError?: boolean;
 	    }
 	    /**值转换方法 */
 	    interface ITransValueResult {
@@ -315,8 +321,14 @@ declare module '@ailhc/excel2all' {
 	        [key: string]: ValueTransFunc;
 	    };
 	}
+	/**
+	 * 配置表类型
+	 * 按照字段扩展方向定
+	 */
 	export enum TableType {
+	    /**字段垂直扩展 */
 	    vertical = "vertical",
+	    /**字段横向扩展 */
 	    horizontal = "horizontal"
 	}
 	export class DefaultTableParser implements ITableParser {
@@ -351,16 +363,7 @@ declare module '@ailhc/excel2all' {
 	     */
 	    checkRowNeedParse(tableDefine: ITableDefine, sheet: xlsx.Sheet, rowIndex: number): boolean;
 	    /**
-	     * 解析单个格子
-	     * @param tableParseResult
-	     * @param sheet
-	     * @param colKey
-	     * @param rowIndex
-	     * @param isNewRowOrCol 是否为新的一行或者一列
-	     */
-	    parseVerticalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
-	    /**
-	     * 解析横向单个格子
+	     * 解析横向表格的单个格子
 	     * @param tableParseResult
 	     * @param sheet
 	     * @param colKey
@@ -369,14 +372,31 @@ declare module '@ailhc/excel2all' {
 	     */
 	    parseHorizontalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
 	    /**
-	     * 解析出字段对象
+	     * 解析纵向表格的单个格子
+	     * @param tableParseResult
+	     * @param sheet
+	     * @param colKey
+	     * @param rowIndex
+	     * @param isNewRowOrCol 是否为新的一行或者一列
+	     */
+	    parseVerticalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
+	    /**
+	     * 解析出横向表的字段对象
 	     * @param tableParseResult
 	     * @param sheet
 	     * @param colKey
 	     * @param rowIndex
 	     */
-	    getVerticalTableField(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number): ITableField;
 	    getHorizontalTableField(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number): ITableField;
+	    /**
+	     * 解析出纵向表的字段类型对象
+	     * @param tableParseResult
+	     * @param sheet
+	     * @param colKey
+	     * @param rowIndex
+	     * @returns
+	     */
+	    getVerticalTableField(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number): ITableField;
 	    /**
 	     * 检查列是否需要解析
 	     * @param tableDefine
@@ -450,6 +470,22 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
+	 global {
+	    interface IConvertContext {
+	        /**配置表值字典，key是配置表名，value是 {行首字段的值为key，value是一行对象 }*/
+	        tableObjMap?: {
+	            [key: string]: {
+	                [key: string]: any;
+	            };
+	        };
+	        /**配置表字段类型字典， key是配置表名，value是整个表的字段类型字典*/
+	        tableFiledInfoMap?: {
+	            [key: string]: {
+	                [key: string]: ITableField;
+	            };
+	        };
+	    }
+	}
 	export class DefaultConvertHook implements IConvertHook {
 	    protected _tableParser: any;
 	    protected _tableResultTransformer: any;
@@ -518,6 +554,12 @@ declare module '@ailhc/excel2all' {
 	        filePath: string;
 	        /**文件哈希值 */
 	        md5hash?: string;
+	    }
+	    interface ITableConvertCacheData {
+	        /**库版本，版本不一样缓存自动失效 */
+	        version: string;
+	        /**解析结果缓存 */
+	        parseResultMap: TableParseResultMap;
 	    }
 	    /**
 	     * 所有配置表解析结果字典
@@ -602,6 +644,8 @@ declare module '@ailhc/excel2all' {
 	         * 解析结果字典
 	         */
 	        parseResultMap?: TableParseResultMap;
+	        /**解析缓存 */
+	        cacheData?: ITableConvertCacheData;
 	        /**
 	         * 转换结果字典
 	         */
