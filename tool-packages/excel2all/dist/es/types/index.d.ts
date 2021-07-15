@@ -98,7 +98,7 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
-	export const valueTransFuncMap: {
+	export const defaultValueTransFuncMap: {
 	    [key: string]: ValueTransFunc;
 	};
 
@@ -190,6 +190,10 @@ declare module '@ailhc/excel2all' {
 }
 declare module '@ailhc/excel2all' {
 	import * as xlsx from 'xlsx'; global {
+	    interface ITableConvertConfig {
+	        /**自定义值转换方法字典 */
+	        customValueTransFuncMap?: ValueTransFuncMap;
+	    }
 	    interface ITableField {
 	        /**配置表中注释值 */
 	        text: string;
@@ -242,10 +246,10 @@ declare module '@ailhc/excel2all' {
 	    }
 	    /**
 	     * 字段字典
-	     * key是列colKey
+	     * key是列originFieldName
 	     * value是字段对象
 	     */
-	    type ColKeyTableFieldMap = {
+	    type TableFieldMap = {
 	        [key: string]: ITableField;
 	    };
 	    /**
@@ -260,7 +264,7 @@ declare module '@ailhc/excel2all' {
 	     */
 	    interface ITableCell {
 	        /**字段对象 */
-	        filed: ITableField;
+	        field: ITableField;
 	        /**值 */
 	        value: any;
 	    }
@@ -293,7 +297,7 @@ declare module '@ailhc/excel2all' {
 	        /**当前分表名 */
 	        curSheetName?: string;
 	        /**字段字典 */
-	        filedMap?: ColKeyTableFieldMap;
+	        fieldMap?: TableFieldMap;
 	        /**单个表格对象 */
 	        /**key是主键值，value是一行对象 */
 	        tableObj?: {
@@ -306,11 +310,12 @@ declare module '@ailhc/excel2all' {
 	        /**解析错误 */
 	        hasError?: boolean;
 	    }
-	    /**值转换方法 */
+	    /**值转换结果 */
 	    interface ITransValueResult {
 	        error?: any;
 	        value?: any;
 	    }
+	    /**值转换方法 */
 	    type ValueTransFunc = (fieldItem: ITableField, cellValue: any) => ITransValueResult;
 	    /**
 	     * 值转换方法字典
@@ -332,8 +337,6 @@ declare module '@ailhc/excel2all' {
 	    horizontal = "horizontal"
 	}
 	export class DefaultTableParser implements ITableParser {
-	    private _valueTransFuncMap;
-	    constructor();
 	    getTableDefine(fileInfo: IFileInfo, workBook: xlsx.WorkBook): ITableDefine;
 	    private _getFirstCellValue;
 	    /**
@@ -370,16 +373,17 @@ declare module '@ailhc/excel2all' {
 	     * @param rowIndex
 	     * @param isNewRowOrCol 是否为新的一行或者一列
 	     */
-	    parseHorizontalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
+	    parseHorizontalCell(valueTransFuncMap: ValueTransFuncMap, tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
 	    /**
 	     * 解析纵向表格的单个格子
+	     * @param valueTransFuncMap
 	     * @param tableParseResult
 	     * @param sheet
 	     * @param colKey
 	     * @param rowIndex
 	     * @param isNewRowOrCol 是否为新的一行或者一列
 	     */
-	    parseVerticalCell(tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
+	    parseVerticalCell(valueTransFuncMap: ValueTransFuncMap, tableParseResult: ITableParseResult, sheet: xlsx.Sheet, colKey: string, rowIndex: number, isNewRowOrCol: boolean): void;
 	    /**
 	     * 解析出横向表的字段对象
 	     * @param tableParseResult
@@ -407,17 +411,17 @@ declare module '@ailhc/excel2all' {
 	    /**
 	     * 转换表格的值
 	     * @param parseResult
-	     * @param filedItem
+	     * @param fieldItem
 	     * @param cellValue
 	     */
-	    transValue(parseResult: ITableParseResult, filedItem: ITableField, cellValue: any): ITransValueResult;
+	    transValue(valueTransFuncMap: ValueTransFuncMap, parseResult: ITableParseResult, fieldItem: ITableField, cellValue: any): ITransValueResult;
 	    /**
 	     * 解析配置表文件
-	     * @param parseConfig 解析配置
+	     * @param convertConfig 解析配置
 	     * @param fileInfo 文件信息
 	     * @param parseResult 解析结果
 	     */
-	    parseTableFile(parseConfig: ITableConvertConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult;
+	    parseTableFile(convertConfig: ITableConvertConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult;
 	}
 
 }
@@ -427,6 +431,10 @@ declare module '@ailhc/excel2all' {
 	     * 输出配置
 	     */
 	    interface IOutputConfig {
+	        /**自定义 配置字段类型和ts声明类型字符串映射字典 */
+	        customTypeStrMap?: {
+	            [key: string]: string;
+	        };
 	        /**单个配置表json输出目录路径 */
 	        clientSingleTableJsonDir?: string;
 	        /**合并配置表json文件路径(包含文件名,比如 ./out/bundle.json) */
@@ -470,22 +478,6 @@ declare module '@ailhc/excel2all' {
 
 }
 declare module '@ailhc/excel2all' {
-	 global {
-	    interface IConvertContext {
-	        /**配置表值字典，key是配置表名，value是 {行首字段的值为key，value是一行对象 }*/
-	        tableObjMap?: {
-	            [key: string]: {
-	                [key: string]: any;
-	            };
-	        };
-	        /**配置表字段类型字典， key是配置表名，value是整个表的字段类型字典*/
-	        tableFiledInfoMap?: {
-	            [key: string]: {
-	                [key: string]: ITableField;
-	            };
-	        };
-	    }
-	}
 	export class DefaultConvertHook implements IConvertHook {
 	    protected _tableParser: any;
 	    protected _tableResultTransformer: any;
@@ -503,7 +495,7 @@ declare module '@ailhc/excel2all' {
 	 * 转换
 	 * @param converConfig 解析配置
 	 */
-	export function convert(converConfig: ITableConvertConfig, customConvertHook?: IConvertHook): Promise<void>;
+	export function convert(converConfig: ITableConvertConfig): Promise<void>;
 	/**
 	 * 测试文件匹配
 	 * @param convertConfig
@@ -597,10 +589,6 @@ declare module '@ailhc/excel2all' {
 	         * 具体匹配规则参考：https://github.com/mrmlnc/fast-glob#pattern-syntax
 	         */
 	        pattern?: string[];
-	        /**
-	         * 自定义配置表解析器
-	         */
-	        customTableParser: ITableParser;
 	        /**日志等级 ,只是限制了控制台输出，但不限制日志记录*/
 	        logLevel?: LogLevel;
 	        /**
@@ -609,6 +597,8 @@ declare module '@ailhc/excel2all' {
 	         * 填false则不生成log文件
 	         */
 	        outputLogDirPath?: string | boolean;
+	        /**自定义转换周期处理函数 */
+	        customConvertHook?: IConvertHook;
 	        /**输出配置 */
 	        outputConfig?: any;
 	    }
@@ -624,10 +614,10 @@ declare module '@ailhc/excel2all' {
 	    interface ICellValueTransHandler {
 	        /**
 	         * 转换表格的值
-	         * @param filed
+	         * @param field
 	         * @param cellValue
 	         */
-	        transCellValue(filed: ITableField, cellValue: string): any;
+	        transCellValue(field: ITableField, cellValue: string): any;
 	    }
 	    interface IConvertContext {
 	        /**配置 */

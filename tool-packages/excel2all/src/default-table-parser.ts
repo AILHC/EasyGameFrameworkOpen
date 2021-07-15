@@ -1,5 +1,5 @@
 import * as xlsx from "xlsx";
-import { valueTransFuncMap } from "./default-value-func-map";
+import { defaultValueTransFuncMap } from "./default-value-func-map";
 import { Logger } from "./loger";
 import {
     forEachHorizontalSheet,
@@ -11,6 +11,10 @@ import {
 } from "./table-utils";
 
 declare global {
+    interface ITableConvertConfig {
+        /**自定义值转换方法字典 */
+        customValueTransFuncMap?: ValueTransFuncMap;
+    }
     interface ITableField {
         /**配置表中注释值 */
         text: string;
@@ -64,10 +68,10 @@ declare global {
     }
     /**
      * 字段字典
-     * key是列colKey
+     * key是列originFieldName
      * value是字段对象
      */
-    type ColKeyTableFieldMap = { [key: string]: ITableField };
+    type TableFieldMap = { [key: string]: ITableField };
 
     /**
      * 表格的一行或者一列
@@ -79,7 +83,7 @@ declare global {
      */
     interface ITableCell {
         /**字段对象 */
-        filed: ITableField;
+        field: ITableField;
         /**值 */
         value: any;
     }
@@ -108,7 +112,7 @@ declare global {
         /**当前分表名 */
         curSheetName?: string;
         /**字段字典 */
-        filedMap?: ColKeyTableFieldMap;
+        fieldMap?: TableFieldMap;
         // /**表格行或列的字典 */
         // rowOrColMap: TableRowOrColMap
         /**单个表格对象 */
@@ -122,11 +126,12 @@ declare global {
         hasError?: boolean;
     }
 
-    /**值转换方法 */
+    /**值转换结果 */
     interface ITransValueResult {
         error?: any;
         value?: any;
     }
+    /**值转换方法 */
     type ValueTransFunc = (fieldItem: ITableField, cellValue: any) => ITransValueResult;
     /**
      * 值转换方法字典
@@ -147,10 +152,6 @@ export enum TableType {
 }
 
 export class DefaultTableParser implements ITableParser {
-    private _valueTransFuncMap: ValueTransFuncMap;
-    constructor() {
-        this._valueTransFuncMap = valueTransFuncMap;
-    }
     getTableDefine(fileInfo: IFileInfo, workBook: xlsx.WorkBook): ITableDefine {
         let cellKey: string;
         let cellObj: xlsx.CellObject;
@@ -186,7 +187,7 @@ export class DefaultTableParser implements ITableParser {
             verticalFieldDefine.textCol = "A";
             verticalFieldDefine.typeCol = "B";
             verticalFieldDefine.fieldCol = "C";
-            tableDefine.startCol = "E";
+            tableDefine.startCol = "D";
             tableDefine.startRow = 2;
         } else if (tableDefine.tableType === TableType.horizontal) {
             tableDefine.horizontalFieldDefine = {} as any;
@@ -296,6 +297,7 @@ export class DefaultTableParser implements ITableParser {
      * @param isNewRowOrCol 是否为新的一行或者一列
      */
     parseHorizontalCell(
+        valueTransFuncMap: ValueTransFuncMap,
         tableParseResult: ITableParseResult,
         sheet: xlsx.Sheet,
         colKey: string,
@@ -309,7 +311,7 @@ export class DefaultTableParser implements ITableParser {
             return;
         }
 
-        const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
+        const transResult = this.transValue(valueTransFuncMap, tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
             tableParseResult.hasError = true;
             Logger.log(
@@ -354,6 +356,7 @@ export class DefaultTableParser implements ITableParser {
     }
     /**
      * 解析纵向表格的单个格子
+     * @param valueTransFuncMap
      * @param tableParseResult
      * @param sheet
      * @param colKey
@@ -361,6 +364,7 @@ export class DefaultTableParser implements ITableParser {
      * @param isNewRowOrCol 是否为新的一行或者一列
      */
     parseVerticalCell(
+        valueTransFuncMap: ValueTransFuncMap,
         tableParseResult: ITableParseResult,
         sheet: xlsx.Sheet,
         colKey: string,
@@ -373,7 +377,7 @@ export class DefaultTableParser implements ITableParser {
         if (isEmptyCell(cell)) {
             return;
         }
-        const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
+        const transResult = this.transValue(valueTransFuncMap, tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
             Logger.log(
                 `!!!!!!!!!!!!!!!!!![-----ParseError|解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
@@ -419,22 +423,22 @@ export class DefaultTableParser implements ITableParser {
         rowIndex: number
     ): ITableField {
         const tableDefine = tableParseResult.tableDefine;
-        let tableFiledMap = tableParseResult.filedMap;
-        if (!tableFiledMap) {
-            tableFiledMap = {};
-            tableParseResult.filedMap = tableFiledMap;
+        let tableFieldMap = tableParseResult.fieldMap;
+        if (!tableFieldMap) {
+            tableFieldMap = {};
+            tableParseResult.fieldMap = tableFieldMap;
         }
         const horizontalFieldDefine = tableDefine.horizontalFieldDefine;
-        const filedCell = sheet[colKey + horizontalFieldDefine.fieldRow];
+        const fieldCell = sheet[colKey + horizontalFieldDefine.fieldRow];
         let originFieldName: string;
-        if (!isEmptyCell(filedCell)) {
-            originFieldName = filedCell.v as string;
+        if (!isEmptyCell(fieldCell)) {
+            originFieldName = fieldCell.v as string;
         }
         if (!originFieldName) return null;
         let field: ITableField = {} as any;
         //缓存
-        if (tableFiledMap[originFieldName] !== undefined) {
-            return tableFiledMap[originFieldName];
+        if (tableFieldMap[originFieldName] !== undefined) {
+            return tableFieldMap[originFieldName];
         }
         //注释
         const textCell: xlsx.CellObject = sheet[colKey + horizontalFieldDefine.textRow];
@@ -474,7 +478,7 @@ export class DefaultTableParser implements ITableParser {
             field.fieldName = field.originFieldName;
         }
 
-        tableFiledMap[colKey] = field;
+        tableFieldMap[originFieldName] = field;
         return field;
     }
     /**
@@ -492,10 +496,10 @@ export class DefaultTableParser implements ITableParser {
         rowIndex: number
     ): ITableField {
         const tableDefine = tableParseResult.tableDefine;
-        let tableFiledMap = tableParseResult.filedMap;
-        if (!tableFiledMap) {
-            tableFiledMap = {};
-            tableParseResult.filedMap = tableFiledMap;
+        let tableFieldMap = tableParseResult.fieldMap;
+        if (!tableFieldMap) {
+            tableFieldMap = {};
+            tableParseResult.fieldMap = tableFieldMap;
         }
         const verticalFieldDefine = tableDefine.verticalFieldDefine;
         const fieldNameCell: xlsx.CellObject = sheet[verticalFieldDefine.fieldCol + rowIndex];
@@ -504,8 +508,8 @@ export class DefaultTableParser implements ITableParser {
             originFieldName = fieldNameCell.v as string;
         }
         if (!originFieldName) return null;
-        if (tableFiledMap[originFieldName] !== undefined) {
-            return tableFiledMap[originFieldName];
+        if (tableFieldMap[originFieldName] !== undefined) {
+            return tableFieldMap[originFieldName];
         }
         let field: ITableField = {} as any;
 
@@ -546,7 +550,7 @@ export class DefaultTableParser implements ITableParser {
         } else {
             field.fieldName = field.originFieldName;
         }
-        tableFiledMap[originFieldName] = field;
+        tableFieldMap[originFieldName] = field;
         return field;
     }
     /**
@@ -578,34 +582,46 @@ export class DefaultTableParser implements ITableParser {
     /**
      * 转换表格的值
      * @param parseResult
-     * @param filedItem
+     * @param fieldItem
      * @param cellValue
      */
-    public transValue(parseResult: ITableParseResult, filedItem: ITableField, cellValue: any): ITransValueResult {
+    public transValue(
+        valueTransFuncMap: ValueTransFuncMap,
+        parseResult: ITableParseResult,
+        fieldItem: ITableField,
+        cellValue: any
+    ): ITransValueResult {
         let transResult: ITransValueResult;
 
-        let transFunc = this._valueTransFuncMap[filedItem.type];
+        let transFunc = valueTransFuncMap[fieldItem.type];
         if (!transFunc) {
-            transFunc = this._valueTransFuncMap["json"];
+            transFunc = valueTransFuncMap["json"];
         }
-        transResult = transFunc(filedItem, cellValue);
+        transResult = transFunc(fieldItem, cellValue);
         return transResult;
     }
 
     /**
      * 解析配置表文件
-     * @param parseConfig 解析配置
+     * @param convertConfig 解析配置
      * @param fileInfo 文件信息
      * @param parseResult 解析结果
      */
     public parseTableFile(
-        parseConfig: ITableConvertConfig,
+        convertConfig: ITableConvertConfig,
         fileInfo: IFileInfo,
         parseResult: ITableParseResult
     ): ITableParseResult {
         fileInfo.fileData = isCSV(fileInfo.fileExtName) ? (fileInfo.fileData as Buffer).toString() : fileInfo.fileData;
         const workbook = readTableData(fileInfo);
         if (!workbook.SheetNames.length) return;
+        let valueTransFuncMap = convertConfig.customValueTransFuncMap;
+
+        if (!valueTransFuncMap) {
+            valueTransFuncMap = defaultValueTransFuncMap;
+        } else {
+            valueTransFuncMap = Object.assign(valueTransFuncMap, defaultValueTransFuncMap);
+        }
 
         const sheetNames = workbook.SheetNames;
         const tableDefine: ITableDefine = this.getTableDefine(fileInfo, workbook);
@@ -650,7 +666,14 @@ export class DefaultTableParser implements ITableParser {
                         }
                         cellObj = sheet[colKey + rowIndex];
                         if (!isEmptyCell(cellObj)) {
-                            this.parseHorizontalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
+                            this.parseHorizontalCell(
+                                valueTransFuncMap,
+                                parseResult,
+                                sheet,
+                                colKey,
+                                rowIndex,
+                                isNewRowOrCol
+                            );
                         }
                     },
                     isSheetRowEnd,
@@ -674,7 +697,14 @@ export class DefaultTableParser implements ITableParser {
 
                         cellObj = sheet[colKey + rowIndex];
                         if (!isEmptyCell(cellObj)) {
-                            this.parseVerticalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
+                            this.parseVerticalCell(
+                                valueTransFuncMap,
+                                parseResult,
+                                sheet,
+                                colKey,
+                                rowIndex,
+                                isNewRowOrCol
+                            );
                         }
                     },
                     isSheetRowEnd,

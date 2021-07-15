@@ -1,14 +1,12 @@
-import { Logger } from "./loger";
-
-export const valueTransFuncMap: {
+export const defaultValueTransFuncMap: {
     [key: string]: ValueTransFunc;
 } = {};
-valueTransFuncMap["int"] = strToInt;
-valueTransFuncMap["string"] = anyToStr;
-valueTransFuncMap["[int]"] = strToIntArr;
-valueTransFuncMap["[string]"] = strToStrArr;
-valueTransFuncMap["json"] = strToJsonObj;
-valueTransFuncMap["any"] = anyToAny;
+defaultValueTransFuncMap["int"] = strToInt;
+defaultValueTransFuncMap["string"] = anyToStr;
+defaultValueTransFuncMap["[int]"] = strToIntArr;
+defaultValueTransFuncMap["[string]"] = strToStrArr;
+defaultValueTransFuncMap["json"] = strToJsonObj;
+defaultValueTransFuncMap["any"] = anyToAny;
 function strToIntArr(fieldItem: ITableField, cellValue: string): ITransValueResult {
     cellValue = (cellValue + "").replace(/，/g, ","); //为了防止策划误填，先进行转换
     cellValue = cellValue.trim();
