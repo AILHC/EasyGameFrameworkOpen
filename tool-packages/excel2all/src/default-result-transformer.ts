@@ -8,6 +8,8 @@ declare global {
      * 输出配置
      */
     interface IOutputConfig {
+        /**自定义 配置字段类型和ts声明类型字符串映射字典 */
+        customTypeStrMap?: { [key: string]: string };
         /**单个配置表json输出目录路径 */
         clientSingleTableJsonDir?: string;
         /**合并配置表json文件路径(包含文件名,比如 ./out/bundle.json) */
@@ -28,7 +30,7 @@ declare global {
 }
 
 /**类型字符串映射字典 */
-const typeStrMap = { int: "number", json: "any", "[int]": "number[]", "[string]": "string[]" };
+const defaultTypeStrMap = { int: "number", json: "any", "[int]": "number[]", "[string]": "string[]" };
 export class DefaultParseResultTransformer {
     /**
      * 转换
@@ -40,13 +42,16 @@ export class DefaultParseResultTransformer {
         const parseResultMap = context.parseResultMap;
         let outputConfig: IOutputConfig = convertConfig.outputConfig;
         if (!outputConfig) {
-            console.error(`parseConfig.outputConfig is undefind`);
+            console.error(`导出配置outputConfig is undefind`);
             return;
         }
-
+        let typeStrMap = defaultTypeStrMap;
+        if (outputConfig.customTypeStrMap) {
+            typeStrMap = Object.assign(defaultTypeStrMap, outputConfig.customTypeStrMap);
+        }
         let tableObjMap: { [key: string]: any } = {};
-        let tableFiledInfoMap: { [key: string]: { [key: string]: ITableField } } = {};
-        let filedInfoMap: { [key: string]: ITableField };
+        let tableFieldInfoMap: { [key: string]: { [key: string]: ITableField } } = {};
+        let fieldInfoMap: { [key: string]: ITableField };
         let outputFileMap: OutPutFileMap = {};
         let tableTypeMapDtsStr = "";
         let tableTypeDtsStrs = "";
@@ -72,13 +77,13 @@ export class DefaultParseResultTransformer {
             }
             tableObjMap[tableName] = tableObj;
             //合并表类型数据
-            filedInfoMap = tableFiledInfoMap[tableName];
-            if (filedInfoMap) {
-                filedInfoMap = Object.assign(filedInfoMap, parseResult.filedMap);
+            fieldInfoMap = tableFieldInfoMap[tableName];
+            if (fieldInfoMap) {
+                fieldInfoMap = Object.assign(fieldInfoMap, parseResult.fieldMap);
             } else {
-                filedInfoMap = parseResult.filedMap;
+                fieldInfoMap = parseResult.fieldMap;
             }
-            tableFiledInfoMap[tableName] = filedInfoMap;
+            tableFieldInfoMap[tableName] = fieldInfoMap;
 
             if (outputConfig.clientDtsOutDir && isObjTypeTableMap[tableName] === undefined) {
                 isObjTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.vertical;
@@ -96,11 +101,11 @@ export class DefaultParseResultTransformer {
             }
             if (outputConfig.isBundleDts === undefined) outputConfig.isBundleDts = true;
             if (!outputConfig.isBundleDts) {
-                //输出当个声明文件
-                this._addSingleTableDtsOutputFile(outputConfig, tableName, tableFiledInfoMap[tableName], outputFileMap);
+                //输出单个声明文件
+                this._addSingleTableDtsOutputFile(outputConfig, tableName, tableFieldInfoMap[tableName], outputFileMap);
             } else {
                 //合并声明文件
-                tableTypeDtsStrs += this._getSingleTableDts(tableName, tableFiledInfoMap[tableName]);
+                tableTypeDtsStrs += this._getSingleTableDts(typeStrMap, tableName, tableFieldInfoMap[tableName]);
             }
         }
         if (outputConfig.clientDtsOutDir) {
@@ -192,10 +197,13 @@ export class DefaultParseResultTransformer {
         outputFileMap: OutPutFileMap
     ): void {
         let dtsFilePath: string = path.join(config.clientDtsOutDir, `${tableName}.d.ts`);
-
+        let typeStrMap = defaultTypeStrMap;
+        if (config.customTypeStrMap) {
+            typeStrMap = Object.assign(defaultTypeStrMap, config.customTypeStrMap);
+        }
         if (!outputFileMap[dtsFilePath]) {
             //
-            const dtsStr = this._getSingleTableDts(tableName, colKeyTableFieldMap);
+            const dtsStr = this._getSingleTableDts(typeStrMap, tableName, colKeyTableFieldMap);
             if (dtsStr) {
                 outputFileMap[dtsFilePath] = { filePath: dtsFilePath, data: dtsStr } as any;
             }
@@ -205,14 +213,18 @@ export class DefaultParseResultTransformer {
      * 解析出单个配置表类型数据
      * @param parseResult
      */
-    private _getSingleTableDts(tableName: string, colKeyTableFieldMap: ColKeyTableFieldMap): string {
+    private _getSingleTableDts(
+        typeStrMap: { [key: string]: string },
+        tableName: string,
+        tableFieldMap: TableFieldMap
+    ): string {
         let itemInterface = "interface IT_" + tableName + " {" + osEol;
         let tableField: ITableField;
         let typeStr: string;
         let objTypeStrMap: { [key: string]: string } = {};
 
-        for (let colKey in colKeyTableFieldMap) {
-            tableField = colKeyTableFieldMap[colKey];
+        for (let originFieldName in tableFieldMap) {
+            tableField = tableFieldMap[originFieldName];
             if (!tableField) continue;
             if (!tableField.isMutiColObj) {
                 //注释行

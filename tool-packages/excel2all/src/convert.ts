@@ -9,13 +9,13 @@ const defaultDir = ".excel2all";
 const cacheFileName = ".e2aprmc";
 const logFileName = "excel2all.log";
 let startTime = 0;
-const defaultPattern = ["./**/*.xlsx", "./**/*.csv", "!**/~$*.*", "!**/~.*.*", "!.git/**/*", "!.svn/**/*"];
-
+const defaultPattern = ["./**/*.xlsx", "./**/*.csv"];
+const needIgnorePattern = ["!**/~$*.*", "!**/~.*.*", "!.git/**/*", "!.svn/**/*"];
 /**
  * 转换
  * @param converConfig 解析配置
  */
-export async function convert(converConfig: ITableConvertConfig, customConvertHook?: IConvertHook) {
+export async function convert(converConfig: ITableConvertConfig) {
     //开始时间
     startTime = new Date().getTime();
 
@@ -37,6 +37,8 @@ export async function convert(converConfig: ITableConvertConfig, customConvertHo
     if (!converConfig.pattern) {
         converConfig.pattern = defaultPattern;
     }
+    converConfig.pattern = converConfig.pattern.concat(needIgnorePattern);
+
     let convertHook = new DefaultConvertHook();
     const context: IConvertContext = {
         convertConfig: converConfig,
@@ -45,6 +47,7 @@ export async function convert(converConfig: ITableConvertConfig, customConvertHo
             xlsx: require("xlsx")
         }
     };
+    const customConvertHook = converConfig.customConvertHook;
     //开始
     await new Promise<void>((res) => {
         customConvertHook && customConvertHook.onStart
@@ -152,7 +155,9 @@ async function onParseEnd(
         writeOrDeleteOutPutFiles([outputLogFileInfo]);
     }
     //写入结束
-    convertHook.onConvertEnd(context);
+    customConvertHook && customConvertHook.onConvertEnd
+        ? customConvertHook.onConvertEnd(context)
+        : convertHook.onConvertEnd(context);
     //结束时间
     const endTime = new Date().getTime();
     const useTime = endTime - startTime;
@@ -187,7 +192,10 @@ export function testFileMatch(convertConfig: ITableConvertConfig) {
         console.log(`----【缓存模式】----`);
     }
     console.log(`------------------------------匹配到的文件---------------------`);
-    console.log(context.changedFileInfos);
+    const filePaths = context.changedFileInfos.map((value) => {
+        return value.filePath;
+    });
+    console.log(filePaths);
 }
 /**
  * 使用fast-glob作为文件遍历

@@ -25,12 +25,15 @@
     "worker_scripts"
   ],
   "scripts": {
-    "watch:cjs": "egf build -w true -f cjs",
+    "watch:cjs": "egf build -w true -f cjs -s inline",
     
     "test:nocache": "node ./__test__/convert_test.js",
     "test:usecache": "node ./__test__/convert_useCache_test.js",
     "test:mutiDtsFile": "node ./__test__/convert_mutiDtsFile_test.js",
-
+    
+    "test:customConvertHook":"node ./__test__/convert_customHook_test.js",
+    "test:customValueTrans":"node ./__test__/convert_customValueTrans_test.js",
+    
     "testFileMatch": "node ./__test__/testFileMatch_test.js",
     "testWorker": "ts-node --transpile-only __test__/worker_test.ts",
     "//构建命令": "",

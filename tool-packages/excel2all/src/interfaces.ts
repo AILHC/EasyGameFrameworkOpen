@@ -94,6 +94,8 @@ declare global {
          * 填false则不生成log文件
          */
         outputLogDirPath?: string | boolean;
+        /**自定义转换周期处理函数 */
+        customConvertHook?: IConvertHook;
         /**输出配置 */
         outputConfig?: any;
     }
@@ -108,10 +110,10 @@ declare global {
     interface ICellValueTransHandler {
         /**
          * 转换表格的值
-         * @param filed
+         * @param field
          * @param cellValue
          */
-        transCellValue(filed: ITableField, cellValue: string): any;
+        transCellValue(field: ITableField, cellValue: string): any;
     }
     interface IConvertContext {
         /**配置 */

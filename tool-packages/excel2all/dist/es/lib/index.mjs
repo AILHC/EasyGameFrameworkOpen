@@ -6,13 +6,13 @@ import * as fs from 'fs-extra';
 import * as crypto from 'crypto';
 import fg from 'fast-glob';
 
-const valueTransFuncMap = {};
-valueTransFuncMap["int"] = strToInt;
-valueTransFuncMap["string"] = anyToStr;
-valueTransFuncMap["[int]"] = strToIntArr;
-valueTransFuncMap["[string]"] = strToStrArr;
-valueTransFuncMap["json"] = strToJsonObj;
-valueTransFuncMap["any"] = anyToAny;
+const defaultValueTransFuncMap = {};
+defaultValueTransFuncMap["int"] = strToInt;
+defaultValueTransFuncMap["string"] = anyToStr;
+defaultValueTransFuncMap["[int]"] = strToIntArr;
+defaultValueTransFuncMap["[string]"] = strToStrArr;
+defaultValueTransFuncMap["json"] = strToJsonObj;
+defaultValueTransFuncMap["any"] = anyToAny;
 function strToIntArr(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
     cellValue = cellValue.trim();
@@ -298,9 +298,6 @@ var TableType;
     TableType["horizontal"] = "horizontal";
 })(TableType || (TableType = {}));
 class DefaultTableParser {
-    constructor() {
-        this._valueTransFuncMap = valueTransFuncMap;
-    }
     getTableDefine(fileInfo, workBook) {
         let cellKey;
         let cellObj;
@@ -332,7 +329,7 @@ class DefaultTableParser {
             verticalFieldDefine.textCol = "A";
             verticalFieldDefine.typeCol = "B";
             verticalFieldDefine.fieldCol = "C";
-            tableDefine.startCol = "E";
+            tableDefine.startCol = "D";
             tableDefine.startRow = 2;
         }
         else if (tableDefine.tableType === TableType.horizontal) {
@@ -408,7 +405,7 @@ class DefaultTableParser {
         }
         return true;
     }
-    parseHorizontalCell(tableParseResult, sheet, colKey, rowIndex, isNewRowOrCol) {
+    parseHorizontalCell(valueTransFuncMap, tableParseResult, sheet, colKey, rowIndex, isNewRowOrCol) {
         const fieldInfo = this.getHorizontalTableField(tableParseResult, sheet, colKey, rowIndex);
         if (!fieldInfo)
             return;
@@ -416,7 +413,7 @@ class DefaultTableParser {
         if (isEmptyCell(cell)) {
             return;
         }
-        const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
+        const transResult = this.transValue(valueTransFuncMap, tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
             tableParseResult.hasError = true;
             Logger.log(`!!!!!!!!!!!!!!!!!![-----解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
@@ -451,7 +448,7 @@ class DefaultTableParser {
             rowOrColObj[fieldInfo.fieldName] = transedValue;
         }
     }
-    parseVerticalCell(tableParseResult, sheet, colKey, rowIndex, isNewRowOrCol) {
+    parseVerticalCell(valueTransFuncMap, tableParseResult, sheet, colKey, rowIndex, isNewRowOrCol) {
         const fieldInfo = this.getVerticalTableField(tableParseResult, sheet, colKey, rowIndex);
         if (!fieldInfo)
             return;
@@ -459,7 +456,7 @@ class DefaultTableParser {
         if (isEmptyCell(cell)) {
             return;
         }
-        const transResult = this.transValue(tableParseResult, fieldInfo, cell.v);
+        const transResult = this.transValue(valueTransFuncMap, tableParseResult, fieldInfo, cell.v);
         if (transResult.error) {
             Logger.log(`!!!!!!!!!!!!!!!!!![-----ParseError|解析错误-----]!!!!!!!!!!!!!!!!!!!!!!!!!\n` +
                 `[sheetName|分表名]=> ${tableParseResult.curSheetName}\n` +
@@ -488,22 +485,22 @@ class DefaultTableParser {
     }
     getHorizontalTableField(tableParseResult, sheet, colKey, rowIndex) {
         const tableDefine = tableParseResult.tableDefine;
-        let tableFiledMap = tableParseResult.filedMap;
-        if (!tableFiledMap) {
-            tableFiledMap = {};
-            tableParseResult.filedMap = tableFiledMap;
+        let tableFieldMap = tableParseResult.fieldMap;
+        if (!tableFieldMap) {
+            tableFieldMap = {};
+            tableParseResult.fieldMap = tableFieldMap;
         }
         const horizontalFieldDefine = tableDefine.horizontalFieldDefine;
-        const filedCell = sheet[colKey + horizontalFieldDefine.fieldRow];
+        const fieldCell = sheet[colKey + horizontalFieldDefine.fieldRow];
         let originFieldName;
-        if (!isEmptyCell(filedCell)) {
-            originFieldName = filedCell.v;
+        if (!isEmptyCell(fieldCell)) {
+            originFieldName = fieldCell.v;
         }
         if (!originFieldName)
             return null;
         let field = {};
-        if (tableFiledMap[originFieldName] !== undefined) {
-            return tableFiledMap[originFieldName];
+        if (tableFieldMap[originFieldName] !== undefined) {
+            return tableFieldMap[originFieldName];
         }
         const textCell = sheet[colKey + horizontalFieldDefine.textRow];
         if (!isEmptyCell(textCell)) {
@@ -541,15 +538,15 @@ class DefaultTableParser {
         else {
             field.fieldName = field.originFieldName;
         }
-        tableFiledMap[colKey] = field;
+        tableFieldMap[originFieldName] = field;
         return field;
     }
     getVerticalTableField(tableParseResult, sheet, colKey, rowIndex) {
         const tableDefine = tableParseResult.tableDefine;
-        let tableFiledMap = tableParseResult.filedMap;
-        if (!tableFiledMap) {
-            tableFiledMap = {};
-            tableParseResult.filedMap = tableFiledMap;
+        let tableFieldMap = tableParseResult.fieldMap;
+        if (!tableFieldMap) {
+            tableFieldMap = {};
+            tableParseResult.fieldMap = tableFieldMap;
         }
         const verticalFieldDefine = tableDefine.verticalFieldDefine;
         const fieldNameCell = sheet[verticalFieldDefine.fieldCol + rowIndex];
@@ -559,8 +556,8 @@ class DefaultTableParser {
         }
         if (!originFieldName)
             return null;
-        if (tableFiledMap[originFieldName] !== undefined) {
-            return tableFiledMap[originFieldName];
+        if (tableFieldMap[originFieldName] !== undefined) {
+            return tableFieldMap[originFieldName];
         }
         let field = {};
         const textCell = sheet[verticalFieldDefine.textCol + rowIndex];
@@ -599,7 +596,7 @@ class DefaultTableParser {
         else {
             field.fieldName = field.originFieldName;
         }
-        tableFiledMap[originFieldName] = field;
+        tableFieldMap[originFieldName] = field;
         return field;
     }
     checkColNeedParse(tableDefine, sheet, colKey) {
@@ -624,20 +621,27 @@ class DefaultTableParser {
             }
         }
     }
-    transValue(parseResult, filedItem, cellValue) {
+    transValue(valueTransFuncMap, parseResult, fieldItem, cellValue) {
         let transResult;
-        let transFunc = this._valueTransFuncMap[filedItem.type];
+        let transFunc = valueTransFuncMap[fieldItem.type];
         if (!transFunc) {
-            transFunc = this._valueTransFuncMap["json"];
+            transFunc = valueTransFuncMap["json"];
         }
-        transResult = transFunc(filedItem, cellValue);
+        transResult = transFunc(fieldItem, cellValue);
         return transResult;
     }
-    parseTableFile(parseConfig, fileInfo, parseResult) {
+    parseTableFile(convertConfig, fileInfo, parseResult) {
         fileInfo.fileData = isCSV(fileInfo.fileExtName) ? fileInfo.fileData.toString() : fileInfo.fileData;
         const workbook = readTableData(fileInfo);
         if (!workbook.SheetNames.length)
             return;
+        let valueTransFuncMap = convertConfig.customValueTransFuncMap;
+        if (!valueTransFuncMap) {
+            valueTransFuncMap = defaultValueTransFuncMap;
+        }
+        else {
+            valueTransFuncMap = Object.assign(valueTransFuncMap, defaultValueTransFuncMap);
+        }
         const sheetNames = workbook.SheetNames;
         const tableDefine = this.getTableDefine(fileInfo, workbook);
         if (!tableDefine) {
@@ -675,7 +679,7 @@ class DefaultTableParser {
                     }
                     cellObj = sheet[colKey + rowIndex];
                     if (!isEmptyCell(cellObj)) {
-                        this.parseHorizontalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
+                        this.parseHorizontalCell(valueTransFuncMap, parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
                     }
                 }, isSheetRowEnd, isSheetColEnd, isSkipSheetRow, isSkipSheetCol);
             }
@@ -689,7 +693,7 @@ class DefaultTableParser {
                     }
                     cellObj = sheet[colKey + rowIndex];
                     if (!isEmptyCell(cellObj)) {
-                        this.parseVerticalCell(parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
+                        this.parseVerticalCell(valueTransFuncMap, parseResult, sheet, colKey, rowIndex, isNewRowOrCol);
                     }
                 }, isSheetRowEnd, isSheetColEnd, isSkipSheetRow, isSkipSheetCol);
             }
@@ -698,19 +702,23 @@ class DefaultTableParser {
     }
 }
 
-const typeStrMap = { int: "number", json: "any", "[int]": "number[]", "[string]": "string[]" };
+const defaultTypeStrMap = { int: "number", json: "any", "[int]": "number[]", "[string]": "string[]" };
 class DefaultParseResultTransformer {
     transform(context, cb) {
         const convertConfig = context.convertConfig;
         const parseResultMap = context.parseResultMap;
         let outputConfig = convertConfig.outputConfig;
         if (!outputConfig) {
-            console.error(`parseConfig.outputConfig is undefind`);
+            console.error(`导出配置outputConfig is undefind`);
             return;
         }
+        let typeStrMap = defaultTypeStrMap;
+        if (outputConfig.customTypeStrMap) {
+            typeStrMap = Object.assign(defaultTypeStrMap, outputConfig.customTypeStrMap);
+        }
         let tableObjMap = {};
-        let tableFiledInfoMap = {};
-        let filedInfoMap;
+        let tableFieldInfoMap = {};
+        let fieldInfoMap;
         let outputFileMap = {};
         let tableTypeMapDtsStr = "";
         let tableTypeDtsStrs = "";
@@ -732,14 +740,14 @@ class DefaultParseResultTransformer {
                 tableObj = parseResult.tableObj;
             }
             tableObjMap[tableName] = tableObj;
-            filedInfoMap = tableFiledInfoMap[tableName];
-            if (filedInfoMap) {
-                filedInfoMap = Object.assign(filedInfoMap, parseResult.filedMap);
+            fieldInfoMap = tableFieldInfoMap[tableName];
+            if (fieldInfoMap) {
+                fieldInfoMap = Object.assign(fieldInfoMap, parseResult.fieldMap);
             }
             else {
-                filedInfoMap = parseResult.filedMap;
+                fieldInfoMap = parseResult.fieldMap;
             }
-            tableFiledInfoMap[tableName] = filedInfoMap;
+            tableFieldInfoMap[tableName] = fieldInfoMap;
             if (outputConfig.clientDtsOutDir && isObjTypeTableMap[tableName] === undefined) {
                 isObjTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.vertical;
                 if (parseResult.tableDefine.tableType === TableType.vertical) {
@@ -757,10 +765,10 @@ class DefaultParseResultTransformer {
             if (outputConfig.isBundleDts === undefined)
                 outputConfig.isBundleDts = true;
             if (!outputConfig.isBundleDts) {
-                this._addSingleTableDtsOutputFile(outputConfig, tableName, tableFiledInfoMap[tableName], outputFileMap);
+                this._addSingleTableDtsOutputFile(outputConfig, tableName, tableFieldInfoMap[tableName], outputFileMap);
             }
             else {
-                tableTypeDtsStrs += this._getSingleTableDts(tableName, tableFiledInfoMap[tableName]);
+                tableTypeDtsStrs += this._getSingleTableDts(typeStrMap, tableName, tableFieldInfoMap[tableName]);
             }
         }
         if (outputConfig.clientDtsOutDir) {
@@ -830,19 +838,23 @@ class DefaultParseResultTransformer {
     }
     _addSingleTableDtsOutputFile(config, tableName, colKeyTableFieldMap, outputFileMap) {
         let dtsFilePath = path.join(config.clientDtsOutDir, `${tableName}.d.ts`);
+        let typeStrMap = defaultTypeStrMap;
+        if (config.customTypeStrMap) {
+            typeStrMap = Object.assign(defaultTypeStrMap, config.customTypeStrMap);
+        }
         if (!outputFileMap[dtsFilePath]) {
-            const dtsStr = this._getSingleTableDts(tableName, colKeyTableFieldMap);
+            const dtsStr = this._getSingleTableDts(typeStrMap, tableName, colKeyTableFieldMap);
             if (dtsStr) {
                 outputFileMap[dtsFilePath] = { filePath: dtsFilePath, data: dtsStr };
             }
         }
     }
-    _getSingleTableDts(tableName, colKeyTableFieldMap) {
+    _getSingleTableDts(typeStrMap, tableName, tableFieldMap) {
         let itemInterface = "interface IT_" + tableName + " {" + osEol;
         let tableField;
         let objTypeStrMap = {};
-        for (let colKey in colKeyTableFieldMap) {
-            tableField = colKeyTableFieldMap[colKey];
+        for (let originFieldName in tableFieldMap) {
+            tableField = tableFieldMap[originFieldName];
             if (!tableField)
                 continue;
             if (!tableField.isMutiColObj) {
@@ -914,10 +926,6 @@ class DefaultConvertHook {
         cb();
     }
     onParse(context, cb) {
-        if (!context.tableObjMap)
-            context.tableObjMap = {};
-        if (!context.tableFiledInfoMap)
-            context.tableFiledInfoMap = {};
         const { changedFileInfos, parseResultMap, convertConfig } = context;
         const tableParser = this._tableParser;
         let parseResult;
@@ -1089,8 +1097,9 @@ const defaultDir = ".excel2all";
 const cacheFileName = ".e2aprmc";
 const logFileName = "excel2all.log";
 let startTime = 0;
-const defaultPattern = ["./**/*.xlsx", "./**/*.csv", "!**/~$*.*", "!**/~.*.*", "!.git/**/*", "!.svn/**/*"];
-function convert(converConfig, customConvertHook) {
+const defaultPattern = ["./**/*.xlsx", "./**/*.csv"];
+const needIgnorePattern = ["!**/~$*.*", "!**/~.*.*", "!.git/**/*", "!.svn/**/*"];
+function convert(converConfig) {
     return __awaiter(this, void 0, void 0, function* () {
         startTime = new Date().getTime();
         if (!converConfig.projRoot) {
@@ -1109,6 +1118,7 @@ function convert(converConfig, customConvertHook) {
         if (!converConfig.pattern) {
             converConfig.pattern = defaultPattern;
         }
+        converConfig.pattern = converConfig.pattern.concat(needIgnorePattern);
         let convertHook = new DefaultConvertHook();
         const context = {
             convertConfig: converConfig,
@@ -1117,6 +1127,7 @@ function convert(converConfig, customConvertHook) {
                 xlsx: require("xlsx")
             }
         };
+        const customConvertHook = converConfig.customConvertHook;
         yield new Promise((res) => {
             customConvertHook && customConvertHook.onStart
                 ? customConvertHook.onStart(context, res)
@@ -1194,7 +1205,9 @@ function onParseEnd(context, parseResultMapCacheFilePath, customConvertHook, con
             };
             writeOrDeleteOutPutFiles([outputLogFileInfo]);
         }
-        convertHook.onConvertEnd(context);
+        customConvertHook && customConvertHook.onConvertEnd
+            ? customConvertHook.onConvertEnd(context)
+            : convertHook.onConvertEnd(context);
         const endTime = new Date().getTime();
         const useTime = endTime - startTime;
         Logger.log(`导表总时间:[${useTime}ms],[${useTime / 1000}s]`);
@@ -1225,7 +1238,8 @@ function testFileMatch(convertConfig) {
         console.log(`----【缓存模式】----`);
     }
     console.log(`------------------------------匹配到的文件---------------------`);
-    console.log(context.changedFileInfos);
+    const filePaths = context.changedFileInfos.map((value) => { return value.filePath; });
+    console.log(filePaths);
 }
 function getFileInfos(context) {
     const converConfig = context.convertConfig;
@@ -1327,7 +1341,7 @@ function getFileInfos(context) {
     context.parseResultMapCacheFilePath = parseResultMapCacheFilePath;
 }
 
-export { ACharCode, DefaultConvertHook, DefaultParseResultTransformer, DefaultTableParser, Logger, TableType, ZCharCode, charCodesToString, convert, forEachChangedFile, forEachFile, forEachHorizontalSheet, forEachVerticalSheet, getCacheData, getCharCodeSum, getFileMd5, getFileMd5Async, getFileMd5ByPath, getFileMd5Sync, getNextColKey, getTableFileType, isCSV, isEmptyCell, readTableData, readTableFile, stringToCharCodes, testFileMatch, valueTransFuncMap, writeCacheData, writeOrDeleteOutPutFiles };
+export { ACharCode, DefaultConvertHook, DefaultParseResultTransformer, DefaultTableParser, Logger, TableType, ZCharCode, charCodesToString, convert, defaultValueTransFuncMap, forEachChangedFile, forEachFile, forEachHorizontalSheet, forEachVerticalSheet, getCacheData, getCharCodeSum, getFileMd5, getFileMd5Async, getFileMd5ByPath, getFileMd5Sync, getNextColKey, getTableFileType, isCSV, isEmptyCell, readTableData, readTableFile, stringToCharCodes, testFileMatch, writeCacheData, writeOrDeleteOutPutFiles };
 
     
 //# sourceMappingURL=index.mjs.map
