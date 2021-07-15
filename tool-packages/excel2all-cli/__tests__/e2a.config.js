@@ -29,7 +29,7 @@ const outConfig = {
  */
 const config = {
     // customValueTransFuncMap:{"customTypeTrans":function(){return}},
-    // 自定义转换hook
+    //
     // customConvertHook: require("./testCustomHook"),
     useCache: false,
     projRoot: "./__tests__",

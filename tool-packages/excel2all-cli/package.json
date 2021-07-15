@@ -27,6 +27,7 @@
     "test:customCacheDir": "node ./bin/cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -uc cf ./.cache -j ./test-export/bundle.json -cstj ./test-export/export-jsons",
     "test:nocache": "node ./bin/cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -j ./test-export/bundle.json -cstj ./test-export/export-jsons",
     "test:convertByConfig": "node ./bin/cli.js convert -p ./__tests__ -c ./testConfig",
+    "test:convertByDefaultConfig": "node ./bin/cli.js convert -p ./__tests__ -c",
     "test:convertByConfigAndOption": "node ./bin/cli.js convert -p ./__tests__ -c ./testConfig -uc",
     "test:convertHook":"node ./bin/cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -j ./test-export/bundle.json -cstj ./test-export/export-jsons -cchkp ./testCustomHook.js",
     "testFileMatch": "node ./bin/cli.js tfm -t ../excel2all/__test__/test-excel-files"

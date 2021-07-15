@@ -1,6 +1,6 @@
 const path = require("path");
 /**
- * @param {ITableConvertConfig & IOutputConfig &{ config:string }} option 
+ * @param {ITableConvertConfig & IOutputConfig & { config:string }} option 
  */
 function getParseConfig(option) {
     /**
@@ -8,21 +8,27 @@ function getParseConfig(option) {
      */
     let config = {};
     option.projRoot = getAbsolutePath(option.projRoot, process.cwd());
-    if (typeof option.config === "string") {
-        if (!path.isAbsolute(option.config)) {
-            option.config = path.join(option.projRoot, option.config);
+    if(option.config){
+        let configPath = option.config;
+        if(typeof configPath !== "string"){
+            configPath = "e2a.config.js"
+        }
+        if (!path.isAbsolute(configPath)) {
+            configPath = path.join(option.projRoot, configPath);
         }
         try {
-            config = require(option.config);
+            config = require(configPath);
         } catch (error) {
-            console.error(`配置文件无法读取:${option.config}`);
+            console.error(`配置文件无法读取:${configPath}`);
         }
     }
+    
     if (config) {
         config = Object.assign(config, option);
     } else {
         config = option;
     }
+
     if (!config.tableFileDir) {
         config.tableFileDir = config.projRoot;
     } else if (!path.isAbsolute(config.tableFileDir)) {
