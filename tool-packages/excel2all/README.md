@@ -107,13 +107,6 @@ excel配置表转换库
 比如: `Array<Object>` => `field: Array<Object>`
 
 
-
-### 主键列 `B` 
-
-**针对字段横向扩展的表**
-
-每一行的这一列的值作为这一行在Table对象的key
-
 ### 字段横向扩展类型
 
 1. 标志 `TYPE`

@@ -1,6 +1,6 @@
 # `excel2all-cli`
 
-[excell2all](https://www.npmjs.com/package/@ailhc/excel2all) 库的命令行工具
+[excel2all](https://www.npmjs.com/package/@ailhc/excel2all) 库的命令行工具
 
 ## 安装
 
