@@ -21,6 +21,7 @@ const convertConfig = {
     tableFileDir: tableFileDir,
     useCache: false
 };
+
 /**
  * @type {IOutputConfig}
  */

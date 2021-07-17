@@ -363,12 +363,10 @@ const outputConfig = {
     /**自定义 配置字段类型和ts声明类型字符串映射字典 */
     customTypeStrMap: { "nums": "number[]" }
 }
-
 /**
- * @type {ITableConvertConfig}
+ * @type {ITableParserConfig}
  */
-const config = {
-    
+const parserConfig = {
     customValueTransFuncMap: {
         'nums': function (field, cellValue) {
             /**
@@ -389,12 +387,16 @@ const config = {
             }
             return transResult;
         }
-    },
-
-    
+    }
+}
+/**
+ * @type {ITableConvertConfig}
+ */
+const config = {
     projRoot: "./__test__",
     tableFileDir: tableFileDir,
     useCache: false,
+    parserConfig:parserConfig
     outputConfig: outputConfig;
 }
 module.exports = config;

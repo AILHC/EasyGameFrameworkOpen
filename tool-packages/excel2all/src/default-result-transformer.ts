@@ -4,6 +4,10 @@ import { deflateSync } from "zlib";
 import { osEol } from "./get-os-eol";
 import { Logger } from "./loger";
 declare global {
+    interface ITableConvertConfig {
+        /**输出配置 */
+        outputConfig?: IOutputConfig;
+    }
     /**
      * 输出配置
      */

@@ -27,13 +27,30 @@ declare global {
      * 文件信息对象
      */
     interface IFileInfo {
+        /**
+         * 文件绝对路径
+         */
         filePath: string;
+        /**
+         * 文件名，不带后缀的
+         */
         fileName: string;
+        /**
+         * 文件后缀 如 .csv .xlsx
+         */
         fileExtName: string;
+        /**
+         * 文件数据
+         */
         fileData?: any;
+        /**
+         * 是否需要删除
+         */
         isDelete?: boolean;
     }
-
+    /**
+     * 配置解析结果
+     */
     interface ITableParseResult {
         /**解析出错，缓存无效 */
         hasError?: boolean;
@@ -54,9 +71,8 @@ declare global {
      */
     type TableParseResultMap = { [key: string]: ITableParseResult };
     /**
-     * 配置
+     * 转换配置
      */
-
     interface ITableConvertConfig {
         /**
          * 项目根目录，是其他相对路径的根据
@@ -96,8 +112,6 @@ declare global {
         outputLogDirPath?: string | boolean;
         /**自定义转换周期处理函数 */
         customConvertHook?: IConvertHook;
-        /**输出配置 */
-        outputConfig?: any;
     }
     type LogLevel = "no" | "info" | "warn" | "error";
     /**
@@ -106,15 +120,9 @@ declare global {
      * value为文件信息
      */
     type OutPutFileMap = { [key: string]: IOutPutFileInfo };
-
-    interface ICellValueTransHandler {
-        /**
-         * 转换表格的值
-         * @param field
-         * @param cellValue
-         */
-        transCellValue(field: ITableField, cellValue: string): any;
-    }
+    /**
+     * 转换上下文
+     */
     interface IConvertContext {
         /**配置 */
         convertConfig: ITableConvertConfig;

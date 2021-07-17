@@ -11,9 +11,13 @@ import {
 } from "./table-utils";
 
 declare global {
-    interface ITableConvertConfig {
+    interface ITableParserConfig {
         /**自定义值转换方法字典 */
         customValueTransFuncMap?: ValueTransFuncMap;
+    }
+    interface ITableConvertConfig {
+        /**解析配置 */
+        parserConfig?: ITableParserConfig;
     }
     interface ITableField {
         /**配置表中注释值 */
@@ -122,8 +126,6 @@ declare global {
         curRowOrColObj?: any;
         /**主键值 */
         mainKeyFieldName?: string;
-        /**解析错误 */
-        hasError?: boolean;
     }
 
     /**值转换结果 */
@@ -615,7 +617,7 @@ export class DefaultTableParser implements ITableParser {
         fileInfo.fileData = isCSV(fileInfo.fileExtName) ? (fileInfo.fileData as Buffer).toString() : fileInfo.fileData;
         const workbook = readTableData(fileInfo);
         if (!workbook.SheetNames.length) return;
-        let valueTransFuncMap = convertConfig.customValueTransFuncMap;
+        let valueTransFuncMap = convertConfig?.parserConfig?.customValueTransFuncMap;
 
         if (!valueTransFuncMap) {
             valueTransFuncMap = defaultValueTransFuncMap;
