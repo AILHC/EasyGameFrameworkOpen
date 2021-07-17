@@ -66,7 +66,7 @@ export async function convert(converConfig: ITableConvertConfig) {
     });
     Logger.systemLog(`[开始解析]:数量[${changedFileInfos.length}]`);
 
-    Logger.systemLog(`[单线程解析]`);
+    Logger.systemLog(`[解析]`);
     if (changedFileInfos.length > 0) {
         const t1 = new Date().getTime();
         await new Promise<void>((res) => {
@@ -75,7 +75,7 @@ export async function convert(converConfig: ITableConvertConfig) {
                 : convertHook.onParse(context, res);
         });
         const t2 = new Date().getTime();
-        Logger.systemLog(`[单线程解析时间]:${t2 - t1}`);
+        Logger.systemLog(`[解析时间]:${t2 - t1}`);
     }
     onParseEnd(context, parseResultMapCacheFilePath, customConvertHook, convertHook);
 }

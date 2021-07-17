@@ -664,11 +664,12 @@ class DefaultTableParser {
         return transResult;
     }
     parseTableFile(convertConfig, fileInfo, parseResult) {
+        var _a;
         fileInfo.fileData = isCSV(fileInfo.fileExtName) ? fileInfo.fileData.toString() : fileInfo.fileData;
         const workbook = readTableData(fileInfo);
         if (!workbook.SheetNames.length)
             return;
-        let valueTransFuncMap = convertConfig.customValueTransFuncMap;
+        let valueTransFuncMap = (_a = convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.parserConfig) === null || _a === void 0 ? void 0 : _a.customValueTransFuncMap;
         if (!valueTransFuncMap) {
             valueTransFuncMap = defaultValueTransFuncMap;
         }
@@ -1271,7 +1272,9 @@ function testFileMatch(convertConfig) {
         console.log(`----【缓存模式】----`);
     }
     console.log(`------------------------------匹配到的文件---------------------`);
-    const filePaths = context.changedFileInfos.map((value) => { return value.filePath; });
+    const filePaths = context.changedFileInfos.map((value) => {
+        return value.filePath;
+    });
     console.log(filePaths);
 }
 function getFileInfos(context) {

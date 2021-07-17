@@ -190,9 +190,13 @@ declare module '@ailhc/excel2all' {
 }
 declare module '@ailhc/excel2all' {
 	import * as xlsx from 'xlsx'; global {
-	    interface ITableConvertConfig {
+	    interface ITableParserConfig {
 	        /**自定义值转换方法字典 */
 	        customValueTransFuncMap?: ValueTransFuncMap;
+	    }
+	    interface ITableConvertConfig {
+	        /**解析配置 */
+	        parserConfig?: ITableParserConfig;
 	    }
 	    interface ITableField {
 	        /**配置表中注释值 */
@@ -307,8 +311,6 @@ declare module '@ailhc/excel2all' {
 	        curRowOrColObj?: any;
 	        /**主键值 */
 	        mainKeyFieldName?: string;
-	        /**解析错误 */
-	        hasError?: boolean;
 	    }
 	    /**值转换结果 */
 	    interface ITransValueResult {
@@ -427,6 +429,10 @@ declare module '@ailhc/excel2all' {
 }
 declare module '@ailhc/excel2all' {
 	 global {
+	    interface ITableConvertConfig {
+	        /**输出配置 */
+	        outputConfig?: IOutputConfig;
+	    }
 	    /**
 	     * 输出配置
 	     */
@@ -533,12 +539,30 @@ declare module '@ailhc/excel2all' {
 	     * 文件信息对象
 	     */
 	    interface IFileInfo {
+	        /**
+	         * 文件绝对路径
+	         */
 	        filePath: string;
+	        /**
+	         * 文件名，不带后缀的
+	         */
 	        fileName: string;
+	        /**
+	         * 文件后缀 如 .csv .xlsx
+	         */
 	        fileExtName: string;
+	        /**
+	         * 文件数据
+	         */
 	        fileData?: any;
+	        /**
+	         * 是否需要删除
+	         */
 	        isDelete?: boolean;
 	    }
+	    /**
+	     * 配置解析结果
+	     */
 	    interface ITableParseResult {
 	        /**解析出错，缓存无效 */
 	        hasError?: boolean;
@@ -561,7 +585,7 @@ declare module '@ailhc/excel2all' {
 	        [key: string]: ITableParseResult;
 	    };
 	    /**
-	     * 配置
+	     * 转换配置
 	     */
 	    interface ITableConvertConfig {
 	        /**
@@ -599,8 +623,6 @@ declare module '@ailhc/excel2all' {
 	        outputLogDirPath?: string | boolean;
 	        /**自定义转换周期处理函数 */
 	        customConvertHook?: IConvertHook;
-	        /**输出配置 */
-	        outputConfig?: any;
 	    }
 	    type LogLevel = "no" | "info" | "warn" | "error";
 	    /**
@@ -611,14 +633,9 @@ declare module '@ailhc/excel2all' {
 	    type OutPutFileMap = {
 	        [key: string]: IOutPutFileInfo;
 	    };
-	    interface ICellValueTransHandler {
-	        /**
-	         * 转换表格的值
-	         * @param field
-	         * @param cellValue
-	         */
-	        transCellValue(field: ITableField, cellValue: string): any;
-	    }
+	    /**
+	     * 转换上下文
+	     */
 	    interface IConvertContext {
 	        /**配置 */
 	        convertConfig: ITableConvertConfig;

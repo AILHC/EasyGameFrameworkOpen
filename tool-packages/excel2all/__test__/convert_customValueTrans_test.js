@@ -8,6 +8,14 @@ const tableFileDir = path.join(process.cwd(), "__test__/test-excel-files");
  * @type {ITableConvertConfig}
  */
 const convertConfig = {
+    projRoot: "./__test__",
+    tableFileDir: tableFileDir,
+    useCache: false
+};
+/**
+ * @type {ITableParserConfig}
+ */
+const parserConfig = {
     customValueTransFuncMap: {
         'nums': function (field, cellValue) {
             /**
@@ -28,11 +36,8 @@ const convertConfig = {
             }
             return transResult;
         }
-    },
-    projRoot: "./__test__",
-    tableFileDir: tableFileDir,
-    useCache: false
-};
+    }
+}
 /**
  * @type {IOutputConfig}
  */
@@ -58,5 +63,5 @@ const outputConfig = {
     // isZip: false
 };
 convertConfig.outputConfig = outputConfig;
-
+convertConfig.parserConfig = parserConfig;
 excel2all.convert(convertConfig);
