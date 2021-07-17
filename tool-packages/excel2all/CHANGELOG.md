@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.8](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.2.7...@ailhc/excel2all@0.2.8) (2021-07-17)
+
+
+### Bug Fixes
+
+* 修复 csv 类型 的Excel文件导出乱码的问题 ([d65ae9d](https://github.com/AILHC/EasyGameFrameworkOpen/commit/d65ae9d4412f6a334d72975fbb3639b57f16d21f))
+
+
+
+
+
 ## [0.2.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.2.6...@ailhc/excel2all@0.2.7) (2021-07-12)
 
 
