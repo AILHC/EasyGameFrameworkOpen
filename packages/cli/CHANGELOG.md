@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.5](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.4...@ailhc/egf-cli@3.0.5) (2021-07-17)
+
+
+### Bug Fixes
+
+* 修复ts入口文件创建命令执行bug ([62dd89f](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/62dd89fc7e127e93a0b6ad5239344047b3b01301))
+* 增加specialSourcemapPath来控制是否启用sourcemap路径转换功能。路径转换后导致vscode ts调试出问题 ([5fff98c](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/5fff98cb6a8b12f5eadb5b12b0ad2d9fccc89c28))
+
+
+
+
+
 ## [3.0.4](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.3...@ailhc/egf-cli@3.0.4) (2021-06-20)
 
 
