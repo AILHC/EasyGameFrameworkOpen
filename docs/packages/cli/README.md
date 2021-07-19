@@ -49,10 +49,19 @@ npm install -D @ailhc/egf-cli
 * '-ngd, --no-gen-dts [genDts]', "是否生成声明文件，默认生成"
 * '-bn, --banner [banner]', "自定义输出文件顶部文本"
 * '-ft, --footer [footer]', "自定义输出文件尾部文本，在iife规范和umd规范输出中，会有默认全局变量脚本插入"
-* '-s, --no-sourcemap [sourcemap]','默认true,输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map'
+* '-s, --no-sourcemap [sourcemap]','默认true,输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就
+生成单独的xxx.js.map'
+* '-spsmp, --special-sourcemap-path [special-sourcemap-path]', '默认false,输出sourcemap里的路径类型，true则可以输出在cocoscreator项目中调试的sourcemap'
 
 ### 入口文件生成命令行参数(egf cti)
 `基于create-ts-index库创建入口文件,一般用于生成库的index.ts比如fairygui`
+
+* '-m, --mode [mode]', '创建模式，默认create,可选create、entrypoint'
+* '-d, --dir [dir]', '文件夹路径，可以相对也可以绝对，相对路径相对于process.cwd()执行命令处'
+
+### dts声明文件生成命令行参数(egf dts)
+`声明文件生成`
+
 
 * '-p, --proj [proj]', '根目录，可以是相对路径(相对于 process.cwd())要构建生成dts的基本目录,将排除在此目录之外发现的任何依赖项，默认process.cwd()'
 * '-o, --out [out]', '输出文件路径,可以是相对路径(相对于 proj),默认dist/index.d.ts'
@@ -61,15 +70,16 @@ npm install -D @ailhc/egf-cli
 * '-g, --global [global]', '是否为全局声明，默认否'
 * '-l, --log [log]', '是否输出log，默认否'
 
-### dts声明文件生成命令行参数(egf dts)
-`声明文件生成`
+ps: 可以在`tsconfig.json`里配置`ts`文件忽略列表
 
-* '-m, --mode [mode]', '创建模式，默认create,可选create、entrypoint'
-* '-d, --dir [dir]', '文件夹路径，可以相对也可以绝对，相对路径相对于process.cwd()执行命令处'
+但路径需要符合`glob`匹配规则，可以百度一下。
+
+ts编译器处理：`exclude`里配置只能忽略的`.d.ts`文件
 
 ### 自定义配置文件接口
 
 ```ts
+
 
 declare module "@ailhc/egf-cli" {
     interface IEgfCompileOption {
@@ -80,7 +90,9 @@ declare module "@ailhc/egf-cli" {
         /**是否监听自动编译 ,默认为false*/
         watch: boolean,
         /**输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map */
-        sourcemap?: boolean | "inline"
+        sourcemap?: boolean | "inline",
+        /**是否进行特殊sourceMap路径处理，默认false,输出sourcemap里的路径类型，true则可以输出在cocoscreator项目中调试的sourcemap */
+        specialSourcemapPath?: boolean
         /**入口文件 默认src/index.ts,可以是数组,多个入口 */
         entry: string[],
         /**单入口输出文件名  默认dist/${format}/lib/index.js*/
@@ -161,6 +173,7 @@ declare module "@ailhc/egf-cli" {
         owOutput: import("rollup").OutputOptions | import("rollup").OutputOptions[]
     }
 }
+
 //使用声明
 /**
  * @type {import("@ailhc/egf-cli").IEgfCompileOption}

@@ -3,6 +3,64 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.6](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.5...@ailhc/egf-cli@3.0.6) (2021-07-19)
+
+**Note:** Version bump only for package @ailhc/egf-cli
+
+
+
+
+
+## [3.0.5](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.4...@ailhc/egf-cli@3.0.5) (2021-07-17)
+
+
+### Bug Fixes
+
+* 修复ts入口文件创建命令执行bug ([62dd89f](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/62dd89fc7e127e93a0b6ad5239344047b3b01301))
+* 增加specialSourcemapPath来控制是否启用sourcemap路径转换功能。路径转换后导致vscode ts调试出问题 ([5fff98c](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/5fff98cb6a8b12f5eadb5b12b0ad2d9fccc89c28))
+
+
+
+
+
+## [3.0.4](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.3...@ailhc/egf-cli@3.0.4) (2021-06-20)
+
+
+### Bug Fixes
+
+* 修复tsconfig中的exclude无效的问题(支持合并tsconfig的exclude),增加排除测试 ([616b9ee](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/616b9eeb0ddb30b0ece10c03370d90e02060e23c))
+
+
+
+
+
+## [3.0.3](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.2...@ailhc/egf-cli@3.0.3) (2021-06-20)
+
+**Note:** Version bump only for package @ailhc/egf-cli
+
+
+
+
+
+## [3.0.2](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.1...@ailhc/egf-cli@3.0.2) (2021-06-16)
+
+
+### Bug Fixes
+
+* 修复dts、cti命令报错的问题 ([14cab79](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/14cab7935d59ccbbb40aba6f3ac806aaf57eb3c4))
+
+
+
+
+
+## [3.0.1](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.0...@ailhc/egf-cli@3.0.1) (2021-06-15)
+
+**Note:** Version bump only for package @ailhc/egf-cli
+
+
+
+
+
 # [3.0.0](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@1.6.7...@ailhc/egf-cli@3.0.0) (2021-06-10)
 
 
