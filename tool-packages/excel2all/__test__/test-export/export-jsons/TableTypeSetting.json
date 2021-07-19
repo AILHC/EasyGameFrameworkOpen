@@ -14,6 +14,12 @@
 		"field_json": {
 			"公众号": "玩转游戏开发"
 		},
+		"field_custom_type": [
+			1,
+			2,
+			3,
+			4
+		],
 		"obj": {
 			"obj_field_int": 5,
 			"obj_field_string": "玩转游戏开发",
@@ -45,6 +51,13 @@
 		"field_json": {
 			"公众号": "玩转游戏开发"
 		},
+		"field_custom_type": [
+			1,
+			2,
+			3,
+			4,
+			5
+		],
 		"obj": {
 			"obj_field_int": 8,
 			"obj_field_string": "关注公众号",
@@ -76,6 +89,13 @@
 		"field_json": {
 			"公众号": "玩转游戏开发"
 		},
+		"field_custom_type": [
+			1,
+			2,
+			3,
+			4,
+			5
+		],
 		"obj": {
 			"obj_field_int": 60000,
 			"obj_field_string": "玩转游戏开发",
@@ -107,6 +127,12 @@
 		"field_json": {
 			"公众号": "玩转游戏开发"
 		},
+		"field_custom_type": [
+			1,
+			2,
+			3,
+			4
+		],
 		"obj": {
 			"obj_field_int": 6,
 			"obj_field_string": "玩转游戏开发",
@@ -138,6 +164,12 @@
 		"field_json": {
 			"公众号": "玩转游戏开发"
 		},
+		"field_custom_type": [
+			1,
+			2,
+			3,
+			4
+		],
 		"obj": {
 			"obj_field_int": 0.5,
 			"obj_field_string": "玩转游戏开发",
@@ -169,6 +201,12 @@
 		"field_json": {
 			"公众号": "玩转游戏开发"
 		},
+		"field_custom_type": [
+			1,
+			2,
+			3,
+			4
+		],
 		"obj": {
 			"obj_field_int": 300,
 			"obj_field_string": "玩转游戏开发",
@@ -212,7 +250,9 @@
 			"obj_field_string_array": [
 				"玩转游戏开发"
 			],
-			"obj_field_json": "{'公众号\":\"玩转游戏开发\"}"
+			"obj_field_json": {
+				"公众号": "玩转游戏开发"
+			}
 		}
 	},
 	"22": {
