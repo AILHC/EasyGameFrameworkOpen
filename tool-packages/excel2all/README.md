@@ -13,7 +13,8 @@ excel配置表转换库
 4. 支持自定义解析和转换逻辑
 5. 提供完善生命周期钩子，可以接入自动上传，自动svn提交之类的逻辑
 6. 支持不同Excel文件同名表合并(方便多分支版本管理)
-## [CHANGELOG](packages/cli/CHANGELOG.md)
+
+## [CHANGELOG](tool-packages/excel2all/CHANGELOG.md)
 
 
 ## 默认表格规范
