@@ -22,7 +22,7 @@
   "typings": "dist/cjs/types",
   "files": [
     "dist",
-    "worker_scripts"
+    "__test__"
   ],
   "scripts": {
     "watch:cjs": "egf build -w true -f cjs -s inline",
