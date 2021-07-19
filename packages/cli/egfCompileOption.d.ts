@@ -9,7 +9,7 @@ declare module "@ailhc/egf-cli" {
         watch: boolean,
         /**输出sourcemap的形式，inline就是在js里以base64编码存在，false就不生成sourcemap，true就生成单独的xxx.js.map */
         sourcemap?: boolean | "inline",
-        /**特殊sourceMap路径 */
+        /**是否进行特殊sourceMap路径处理，默认false,输出sourcemap里的路径类型，true则可以输出在cocoscreator项目中调试的sourcemap */
         specialSourcemapPath?: boolean
         /**入口文件 默认src/index.ts,可以是数组,多个入口 */
         entry: string[],
