@@ -5,6 +5,8 @@
 * 框架工具
   * [自定义模块构建](packages/cli/README.md)
   * [protobuf一键导出](packages/egf-protobuf-cli/README.md)
+  * [Excel文件处理库](tool-packages/excel2all/README.md)
+  * [Excel导出工具](tool-packages/excel2all-cli/README.md)
 * 框架模块使用
   * [模块管理](packages/core/README.md)
   * 显示管理
@@ -25,3 +27,5 @@
   * [通用对象池](packages/obj-pool/README.md)
   
   * [消息通讯:broadcast](packages/broadcast/README.md)
+
+  

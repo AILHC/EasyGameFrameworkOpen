@@ -13,7 +13,8 @@ or
 npm install @ailhc/excel2all-cli -g
 
 ```
-## [CHANGELOG](packages/cli/CHANGELOG.md)
+
+## [CHANGELOG](tool-packages/excel2all-cli/CHANGELOG.md)
 
 ## 使用
 
