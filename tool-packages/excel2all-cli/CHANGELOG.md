@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all-cli@0.1.9...@ailhc/excel2all-cli@0.2.0) (2021-07-19)
+
+
+### Features
+
+* 增加默认读取e2a.config.js为配置的处理、 ([04aa94d](https://github.com/AILHC/EasyGameFrameworkOpen/commit/04aa94de21f38d4bc699e8d88d4db1656af69405))
+
+
+
+
+
 ## [0.1.9](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all-cli@0.1.8...@ailhc/excel2all-cli@0.1.9) (2021-07-17)
 
 **Note:** Version bump only for package @ailhc/excel2all-cli

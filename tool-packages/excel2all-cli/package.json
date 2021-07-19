@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/excel2all-cli",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "一个将excel文件转换为typescript声明文件和json工具\nA tool to convert Excel files to TypeScript declaration files and JSON",
   "author": "AILHC",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "test:convertByConfig": "node ./bin/cli.js convert -p ./__tests__ -c ./testConfig",
     "test:convertByDefaultConfig": "node ./bin/cli.js convert -p ./__tests__ -c",
     "test:convertByConfigAndOption": "node ./bin/cli.js convert -p ./__tests__ -c ./testConfig -uc",
-    "test:convertHook":"node ./bin/cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -j ./test-export/bundle.json -cstj ./test-export/export-jsons -cchkp ./testCustomHook.js",
+    "test:convertHook": "node ./bin/cli.js convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -j ./test-export/bundle.json -cstj ./test-export/export-jsons -cchkp ./testCustomHook.js",
     "testFileMatch": "node ./bin/cli.js tfm -t ../excel2all/__test__/test-excel-files"
   },
   "publishConfig": {
@@ -40,7 +40,7 @@
     "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
   },
   "dependencies": {
-    "@ailhc/excel2all": "^0.2.8",
+    "@ailhc/excel2all": "^0.3.0",
     "commander": "^7.2.0",
     "glob": "^7.1.7"
   }
