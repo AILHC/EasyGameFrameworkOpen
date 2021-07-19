@@ -1,6 +1,6 @@
 const path = require("path");
 /**
- * @param {ITableConvertConfig & IOutputConfig &{ config:string }} option 
+ * @param {ITableConvertConfig & IOutputConfig & { config:string }} option 
  */
 function getParseConfig(option) {
     /**
@@ -8,21 +8,27 @@ function getParseConfig(option) {
      */
     let config = {};
     option.projRoot = getAbsolutePath(option.projRoot, process.cwd());
-    if (typeof option.config === "string") {
-        if (!path.isAbsolute(option.config)) {
-            option.config = path.join(option.projRoot, option.config);
+    if(option.config){
+        let configPath = option.config;
+        if(typeof configPath !== "string"){
+            configPath = "e2a.config.js"
         }
-        config = require(option.config);
+        if (!path.isAbsolute(configPath)) {
+            configPath = path.join(option.projRoot, configPath);
+        }
+        try {
+            config = require(configPath);
+        } catch (error) {
+            console.error(`配置文件无法读取:${configPath}`);
+        }
+    }
+    
+    if (config) {
+        config = Object.assign(config, option);
     } else {
         config = option;
     }
-    if (!config) {
-        console.error(`配置文件不存在:${option.config}`);
-        return;
-    }
-    if (!config.projRoot) {
-        config.projRoot = option.projRoot;
-    }
+
     if (!config.tableFileDir) {
         config.tableFileDir = config.projRoot;
     } else if (!path.isAbsolute(config.tableFileDir)) {
@@ -31,39 +37,44 @@ function getParseConfig(option) {
     if (config.outputLogDirPath && typeof config.outputLogDirPath !== "string") {
         config.outputLogDirPath = config.projRoot;
     }
-    if (!config.outputConfig) {
+    /**
+     * @type {IOutputConfig}
+     */
+    let outputConfig = config.outputConfig;
+    if (!outputConfig) {
         /**
          * @type {IOutputConfig}
          */
-        const outputConfig = {
+        outputConfig = {
             clientSingleTableJsonDir: option.clientSingleTableJsonDir,
             clientBundleJsonOutPath: option.clientBundleJsonOutPath,
             isFormatBundleJson: option.isFormatBundleJson,
-            isGenDts: option.isGenDts,
             clientDtsOutDir: option.clientDtsOutDir,
             isBundleDts: option.isBundleDts,
-
             bundleDtsFileName: option.bundleDtsFileName,
             isCompress: option.isCompress
         }
 
-        for (let key in outputConfig) {
-            delete config[key];
+    }
+    for (let key in outputConfig) {
+        if (config[key] !== null && config[key] !== undefined) {
+            outputConfig[key] = config[key];
         }
-        if (outputConfig.clientSingleTableJsonDir) {
-            outputConfig.clientSingleTableJsonDir = getAbsolutePath(outputConfig.clientSingleTableJsonDir, config.projRoot);
-        }
-        if (outputConfig.isGenDts) {
-            outputConfig.clientDtsOutDir = getAbsolutePath(outputConfig.clientDtsOutDir, config.projRoot);
-            if (!outputConfig.bundleDtsFileName) {
-                outputConfig.bundleDtsFileName = "tableMap";
-            }
-        }
-        if (outputConfig.clientBundleJsonOutPath) {
-            outputConfig.clientBundleJsonOutPath = getAbsolutePath(outputConfig.clientBundleJsonOutPath, config.projRoot);
-        }
+        delete config[key];
+    }
+    config.outputConfig = outputConfig;
 
-        config.outputConfig = outputConfig;
+    if (outputConfig.clientSingleTableJsonDir) {
+        outputConfig.clientSingleTableJsonDir = getAbsolutePath(outputConfig.clientSingleTableJsonDir, config.projRoot);
+    }
+    if (outputConfig.clientDtsOutDir) {
+        outputConfig.clientDtsOutDir = getAbsolutePath(outputConfig.clientDtsOutDir, config.projRoot);
+        if (!outputConfig.bundleDtsFileName) {
+            outputConfig.bundleDtsFileName = "tableMap";
+        }
+    }
+    if (outputConfig.clientBundleJsonOutPath) {
+        outputConfig.clientBundleJsonOutPath = getAbsolutePath(outputConfig.clientBundleJsonOutPath, config.projRoot);
     }
 
     return config;
@@ -88,4 +99,7 @@ function getAbsolutePath(originPath, root, defaultPath) {
         return originPath;
     }
 }
-module.exports = getParseConfig;
+module.exports = {
+    getParseConfig,
+    getAbsolutePath
+}

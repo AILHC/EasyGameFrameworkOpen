@@ -7,13 +7,12 @@ const path = require("path")
  */
 const outConfig = {
     /**单个配置表json输出目录路径 */
-    clientSingleTableJsonDir: path.join(process.cwd(), "__tests__/test-export/jsons"),
+    clientSingleTableJsonDir: "test-export/export-jsons",
     /**合并配置表json文件路径(包含文件名,比如 ./out/bundle.json) */
-    clientBundleJsonOutPath: path.join(process.cwd(), "__tests__/test-export/tbundle.json"),
-    /**是否生成声明文件，默认不输出 */
-    isGenDts: true,
+    clientBundleJsonOutPath: "test-export/tbundle.json",
+
     /**声明文件输出目录(每个配置表一个声明)，默认不输出 */
-    clientDtsOutDir: path.join(process.cwd(), "__tests__/test-export/dts"),
+    clientDtsOutDir: "test-export/dts",
     
     /**是否格式化合并后的json，默认不 */
     // isFormatBundleJson: false,
@@ -30,7 +29,6 @@ const outConfig = {
  */
 const config = {
     useCache: false,
-    useMultiThread: false,
     projRoot: "./__tests__",
     outputConfig: outConfig,
     tableFileDir:"../../excel2all/__test__/test-excel-files"
