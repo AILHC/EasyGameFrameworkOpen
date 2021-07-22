@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.0...@ailhc/excel2all@0.3.1) (2021-07-22)
+
+
+### Bug Fixes
+
+* 修复默认解析中跳过空格子不生成类型信息的问题 ([3acb954](https://github.com/AILHC/EasyGameFrameworkOpen/commit/3acb954d3971bb016f6613b35dbc8869f3f9a41e))
+
+
+
+
+
 # [0.3.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.2.8...@ailhc/excel2all@0.3.0) (2021-07-19)
 
 
