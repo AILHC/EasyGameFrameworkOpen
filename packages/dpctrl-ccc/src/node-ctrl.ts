@@ -1,4 +1,4 @@
-import { } from "@ailhc/display-ctrl";
+import {} from "@ailhc/display-ctrl";
 export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
     key?: string | any;
 
@@ -8,23 +8,23 @@ export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
     isShowed?: boolean;
     needShow?: boolean;
     needLoad?: boolean;
-    isShowing?: boolean;
-    visible: boolean;
+    isShowEnd?: boolean;
+
     onLoadData: any;
     protected node: cc.Node;
     protected _mgr: displayCtrl.IMgr;
-    constructor(dpcMgr?: displayCtrl.IMgr) {
+    constructor(dpcMgr: displayCtrl.IMgr) {
         this._mgr = dpcMgr;
     }
 
-
-    onInit(config?: displayCtrl.IInitConfig<any, any>): void {
-
+    onInit(config?: displayCtrl.IInitConfig<any, any>): void {}
+    setVisible(visible: boolean) {
+        if (this.node && this.node.active !== !!visible) {
+            this.node.active = !!visible;
+        }
     }
     onShow(config?: displayCtrl.IShowConfig<any, any, any>): void {
-        if (this.node) {
-            this.node.active = true;
-        }
+        this.setVisible(true);
     }
     getRess(): any[] | string[] {
         return undefined;
@@ -32,8 +32,7 @@ export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
     getNode(): cc.Node {
         return this.node;
     }
-    onUpdate(updateData: any): void {
-    }
+    onUpdate(updateData: any): void {}
     getFace<T = any>(): T {
         return this as any;
     }
@@ -44,14 +43,7 @@ export class NodeCtrl implements displayCtrl.ICtrl<cc.Node> {
     }
 
     onHide() {
-        if (this.node) {
-            this.node.active = false;
-        }
+        this.setVisible(false);
     }
-    forceHide() {
-        this.node && (this.node.active = false);
-        this.isShowed = false;
-    }
-    onResize() {
-    }
+    onResize() {}
 }
