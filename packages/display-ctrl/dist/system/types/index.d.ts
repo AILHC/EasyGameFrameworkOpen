@@ -71,8 +71,8 @@ declare module '@ailhc/display-ctrl' {
 	            createCb?: CtrlInsCb;
 	        }
 	        /**
-	        * 将索引类型转换为任意类型的索引类型
-	        */
+	         * 将索引类型转换为任意类型的索引类型
+	         */
 	        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
 	        interface IInitConfig<TypeKey extends keyof any = any, InitDataTypeMapType = any> {
 	            typeKey?: TypeKey;
@@ -117,12 +117,12 @@ declare module '@ailhc/display-ctrl' {
 	            isInited?: boolean;
 	            /**已经显示 */
 	            isShowed?: boolean;
+	            /**显示结束，由业务去控制这个状态，用于动画等异步状态 */
+	            isShowEnd?: boolean;
 	            /**需要显示 */
 	            needShow?: boolean;
 	            /**需要加载 */
 	            needLoad?: boolean;
-	            /**正在显示 */
-	            isShowing?: boolean;
 	            /**
 	             * 透传给加载处理的数据,
 	             * 会和调用显示接口showDpc中传来的onLoadData合并,
@@ -156,10 +156,6 @@ declare module '@ailhc/display-ctrl' {
 	             * 当隐藏时
 	             */
 	            onHide(): void;
-	            /**
-	             * 强制隐藏
-	             */
-	            forceHide(): void;
 	            /**
 	             * 当销毁时
 	             * @param destroyRes
@@ -308,6 +304,11 @@ declare module '@ailhc/display-ctrl' {
 	             */
 	            isShowed<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
 	            /**
+	             * 获取单例控制器是否显示完成
+	             * @param key
+	             */
+	            isShowEnd<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
+	            /**
 	             * 获取控制器类
 	             * @param typeKey
 	             */
@@ -358,6 +359,7 @@ declare module '@ailhc/display-ctrl' {
 	    isLoaded<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
 	    isInited<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
 	    isShowed<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
+	    isShowEnd<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean;
 	    insDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T>;
 	    loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
 	    initDpcByIns<keyType extends keyof CtrlKeyMapType>(ins: displayCtrl.ICtrl, initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): void;
