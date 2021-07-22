@@ -25,12 +25,7 @@
 			"f"
 		]
 	},
-	"field_custom_type": [
-		1,
-		2,
-		3,
-		4
-	],
+	"field_custom_type": "1,2,3,4",
 	"MyObject": {
 		"id": 12,
 		"name": "你么"
