@@ -21,8 +21,7 @@
   "module": "dist/es/lib/index.mjs",
   "typings": "dist/cjs/types",
   "files": [
-    "dist",
-    "__test__"
+    "dist"
   ],
   "scripts": {
     "watch:cjs": "egf build -w true -f cjs -s inline",
