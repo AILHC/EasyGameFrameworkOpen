@@ -667,16 +667,14 @@ export class DefaultTableParser implements ITableParser {
                             isNewRowOrCol = true;
                         }
                         cellObj = sheet[colKey + rowIndex];
-                        if (!isEmptyCell(cellObj)) {
-                            this.parseHorizontalCell(
-                                valueTransFuncMap,
-                                parseResult,
-                                sheet,
-                                colKey,
-                                rowIndex,
-                                isNewRowOrCol
-                            );
-                        }
+                        this.parseHorizontalCell(
+                            valueTransFuncMap,
+                            parseResult,
+                            sheet,
+                            colKey,
+                            rowIndex,
+                            isNewRowOrCol
+                        );
                     },
                     isSheetRowEnd,
                     isSheetColEnd,
