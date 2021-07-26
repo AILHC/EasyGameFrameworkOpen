@@ -1,0 +1,40 @@
+{
+  "name": "@ailhc/display-ctrl-next",
+  "version": "1.1.9",
+  "description": "General purpose display controller module, simple and high scalability",
+  "author": "AILHC <505126057@qq.com>",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/display-ctrl-next#readme",
+  "license": "MIT",
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
+  "typings": "dist/cjs/types",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "require": "./dist/cjs/lib/index.js",
+    "import": "./dist/es/lib/index.mjs"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AILHC/EasyGameFrameworkOpen.git"
+  },
+  "scripts": {
+    "watch:cjs": "egf build -w true -f cjs -s inline",
+    "build:cjs": "egf build -f cjs -m true -s inline",
+    "build:es": "egf build -f es -m true -s inline",
+    "build:umd": "egf build -f umd:displayCtrl -m true -s inline",
+    "build:iife": "egf build -f iife:displayCtrl -m true -s inline",
+    "build:system": "egf build -f system:@ailhc/display-ctrl -m true -s inline",
+    "clean-dist": "rimraf dist",
+    "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife&&npm run build:system",
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $INIT_CWD"
+  },
+  "bugs": {
+    "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
+  }
+}
