@@ -199,7 +199,7 @@ test("测试传参显示 显示控制器 test transfer param show display ctrl",
     const ctrlIns: OnShowDpc = dpcMgr.getSigDpcIns(OnShowDpc.typeKey as any);
     const ctrlOnShowSpy = jest.spyOn(ctrlIns, "onShow");
     dpcMgr.showDpc({
-        typeKey: "OnShowDpc",
+        key: "OnShowDpc",
         onShowData: 2,
         showedCb: (ctrlIns: OnShowDpc) => {
             console.log("hahhaha");
@@ -281,7 +281,7 @@ test("测试显示控制器 isShowed 接口 test display-ctrl isShowed func", fu
     });
     dpcMgr.regist(WithResDpCtrl);
     const firstShowCfg: displayCtrl.IShowConfig = {
-        typeKey: WithResDpCtrl.typeKey,
+        key: WithResDpCtrl.typeKey,
         showedCb: (ctrlIns) => {
             expect(dpcMgr.isShowed(ctrlIns.key)).toBeTruthy();
             done();

@@ -134,7 +134,7 @@ export class DpcMgr<
         let showCfg: displayCtrl.IShowConfig<keyType>;
         if (typeof typeKey == "string") {
             showCfg = {
-                typeKey: typeKey,
+                key: typeKey,
                 onShowData: onShowData,
                 showedCb: showedCb,
                 onInitData: onInitData,
@@ -158,19 +158,19 @@ export class DpcMgr<
             console.warn(`unknown showDpc`, typeKey);
             return;
         }
-        const ins = this.getSigDpcIns(showCfg.typeKey as any);
+        const ins = this.getSigDpcIns(showCfg.key as any);
         if (!ins) {
-            console.error(`There is no registration :typeKey:${showCfg.typeKey}`);
+            console.error(`There is no registration :typeKey:${showCfg.key}`);
             return null;
         }
         ins.needShow = true;
         const sigCtrlShowCfgMap = this._sigCtrlShowCfgMap;
-        const oldShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
+        const oldShowCfg = sigCtrlShowCfgMap[showCfg.key];
         if (oldShowCfg && showCfg) {
             oldShowCfg.onCancel && oldShowCfg.onCancel();
             Object.assign(oldShowCfg, showCfg);
         } else {
-            sigCtrlShowCfgMap[showCfg.typeKey] = showCfg;
+            sigCtrlShowCfgMap[showCfg.key] = showCfg;
         }
         if (ins.needLoad || showCfg.forceLoad) {
             ins.isLoaded = false;
@@ -185,14 +185,14 @@ export class DpcMgr<
             preloadCfg.loadCb = (loadedIns: displayCtrl.ICtrl) => {
                 loadCb && loadCb(loadedIns);
                 if (loadedIns) {
-                    const loadedShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
+                    const loadedShowCfg = sigCtrlShowCfgMap[showCfg.key];
                     if (loadedIns.needShow) {
                         this.initDpcByIns(loadedIns, loadedShowCfg);
                         this.showDpcByIns(loadedIns, loadedShowCfg);
                         loadedIns.needShow = false;
                     }
                 }
-                delete sigCtrlShowCfgMap[showCfg.typeKey];
+                delete sigCtrlShowCfgMap[showCfg.key];
             };
             ins.needLoad = false;
             this._loadRess(ins, preloadCfg);
