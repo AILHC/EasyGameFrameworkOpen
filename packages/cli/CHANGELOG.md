@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.7](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.6...@ailhc/egf-cli@3.0.7) (2021-07-28)
+
+
+### Bug Fixes
+
+* 修复ctim-mode参数读取不到的bug ([20d75e9](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/20d75e98dd2eb975b615a2dea1ec979e04d20a13))
+
+
+
+
+
 ## [3.0.6](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.5...@ailhc/egf-cli@3.0.6) (2021-07-19)
 
 **Note:** Version bump only for package @ailhc/egf-cli
