@@ -41,23 +41,49 @@ export class DpcMgr<
         if (!template) return;
         this._templateMap[template.createType] = template;
     }
-    isRegisted(templateKey: keyof CtrlKeyType): boolean {
-        return !!this._templateMap[templateKey];
+    isRegisted(key: keyof CtrlKeyType): boolean {
+        return !!this._templateMap[key];
     }
-    getTemplate(templateKey: keyof CtrlKeyType): displayCtrl.ICtrlTemplate<any, any> {
-        return this._templateMap[templateKey];
+    getTemplate(key: keyof CtrlKeyType): displayCtrl.ICtrlTemplate<any, any> {
+        return this._templateMap[key];
     }
-    getDpcRess<GetParams = any>(templateKey: keyof CtrlKeyType, getParams?: GetParams): displayCtrl.ICtrlRes[] {
-        const template = this._templateMap[templateKey];
+    getDpcRess<GetParams = any>(key: keyof CtrlKeyType, getParams?: GetParams): displayCtrl.ICtrlRes[] {
+        const template = this._templateMap[key];
         if (!template) {
-            console.error(`template not registed:${templateKey}`);
+            console.error(`template not registed:${key}`);
             return undefined;
         } else {
             return template.getRess && template.getRess(getParams);
         }
     }
-    loadSigDpcRess(templateKey: keyof CtrlKeyType, loadCfg?: displayCtrl.ILoadConfig): void {}
-    loadDpcRess(templateKey: keyof CtrlKeyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ILoadTask {}
+    insDpc<T extends displayCtrl.ICtrl<any>>(key: keyof CtrlKeyType): displayCtrl.ReturnCtrlType<T> {
+        const template = this.getTemplate(key);
+        if (!template) return undefined;
+        return this._insDpcByTemplate(template);
+    }
+    loadDpcRess(
+        key: keyof CtrlKeyType,
+        complete: displayCtrl.LoadResComplete,
+        loadParam?: displayCtrl.ILoadParam
+    ): void {
+        const template = this.getTemplate(key);
+
+        if (template.loadRes) {
+            template.loadRes(complete);
+        } else if (template.getRess) {
+            const ress = template.getRess(loadParam?.getRessParam);
+            if (ress && ress.length > 0) {
+                this._resHandler.loadRes({
+                    key: key as any,
+                    ress: ress,
+                    loadParam: loadParam?.loadParam,
+                    complete: complete
+                });
+            }
+        } else {
+            complete();
+        }
+    }
     showDpc<T, keyType extends keyof CtrlKeyType = any>(
         key: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
         onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>],
@@ -79,7 +105,7 @@ export class DpcMgr<
     isInited<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
     isShowed<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
     isShowEnd<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
-    insDpc<T extends displayCtrl.ICtrl<any>>(teamplateKey: keyof CtrlKeyType): displayCtrl.ReturnCtrlType<T> {}
+
     initDpc<T extends displayCtrl.ICtrl<any> = any>(
         ins: T,
         initCfg?: displayCtrl.IInitConfig<keyof CtrlKeyType, InitDataTypeMapType>
@@ -90,62 +116,18 @@ export class DpcMgr<
     ): void {}
     hideDpcByIns<T extends displayCtrl.ICtrl<any>>(ins: T): void {}
     destroyDpcByIns<T extends displayCtrl.ICtrl<any>>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void {}
-
-    protected _loadRess(loadCfg?: displayCtrl.ILoadConfig) {
-        const template = this._templateMap[loadCfg.key];
-        const task = this._getLoadTask();
-        task.isLoading = true;
-        const complete = () => {
-            task.isLoading = false;
-            task.isLoaded = true;
-            if (!task.isCancel) {
-                const ctrlIns = this._createHandlerMap[template.createType].create(template);
-                loadCfg.loadCb(ctrlIns);
-            }
-            this._recoverLoadTask(task);
-        };
-        const error = () => {
-            task.isLoading = false;
-            task.isLoaded = true;
-            if (!task.isCancel) {
-                loadCfg.loadCb(undefined);
-            }
-            this._recoverLoadTask(task);
-        };
-        if (template.loadRess) {
-            template.loadRess(complete, error);
-        } else if (template.getRess) {
-            const ress = template.getRess(loadCfg.getRessParams);
-            if (ress && ress.length > 0) {
-                this._resHandler.loadRes({
-                    key: loadCfg.key,
-                    ress: ress,
-                    onLoadData: loadCfg.onLoadData,
-                    complete: complete,
-                    error: error
-                });
-            }
-        } else {
-            complete();
+    protected _insDpcByTemplate<T extends displayCtrl.ICtrl<any> = any>(template: displayCtrl.ICtrlTemplate): T {
+        const createHandler = this._createHandlerMap[template.createType];
+        if (!createHandler) {
+            console.error(`The template:${template.key} createType:${template.createType} has no handler`);
+            return undefined;
         }
-
-        return task;
+        return createHandler.create(template);
     }
-    protected _loadTasks: displayCtrl.ILoadTask[] = [];
-    protected _getLoadTask(): displayCtrl.ILoadTask {
-        let task: displayCtrl.ILoadTask =
-            this._loadTasks.length > 0
-                ? this._loadTasks.pop()
-                : {
-                      cancel() {
-                          task.isCancel = true;
-                      }
-                  };
-        return task;
-    }
-    protected _recoverLoadTask(task: displayCtrl.ILoadTask) {
-        task.isLoading = false;
-        task.isLoaded = false;
-        task.isCancel = false;
+    protected _loadRess(loadCfg?: displayCtrl.ILoadConfig) {}
+    protected _cancelLoadFunc(task: displayCtrl.ILoadTask) {
+        return () => {
+            task.isCancel = true;
+        };
     }
 }

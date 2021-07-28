@@ -393,7 +393,7 @@ export class DpcMgr<
                         key: ctrlIns.key,
                         complete: onComplete,
                         error: onError,
-                        onLoadData: onLoadData
+                        loadParam: onLoadData
                     });
                 } else if (this._resHandler) {
                     const ress = ctrlIns.getRess ? ctrlIns.getRess() : null;
@@ -406,7 +406,7 @@ export class DpcMgr<
                         ress: ress,
                         complete: onComplete,
                         error: onError,
-                        onLoadData: onLoadData
+                        loadParam: onLoadData
                     });
                 } else {
                     ctrlIns.isLoaded = false;
