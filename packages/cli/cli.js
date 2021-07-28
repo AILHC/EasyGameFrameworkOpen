@@ -51,7 +51,7 @@ program
     .option('-c, --config [config]', '配置文件路径，做更多的自定义处理,默认egf.compile.js')
     .option('-w, --watch [watch]', '是否监听自动编译')
     .option('-acti, --auto-cti [autoCti]', '是否自动生成入口文件，默认否')
-    .option('-ctim, -cti-mode [ctiMode]', '自动生成入口文件模式，默认create,可选:create,entrypoint,两种模式差异可见文档')
+    .option('-ctim, --cti-mode [ctiMode]', '自动生成入口文件模式，默认create,可选:create,entrypoint,两种模式差异可见文档')
     .option('-e, --entry [entry...]', '入口文件 默认src/index.ts,可以是数组,多个入口')
     .option('-o, --output [output]', '输出文件 默认dist/index.js')
     .option('-od, --output-dir [outputDir]', '多入口编译输出文件夹 默认dist/${format}')
