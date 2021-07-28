@@ -14,18 +14,18 @@ export class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
     public isShowEnd: boolean = false;
     public needShow: boolean = false;
 
-    public onInit(config?: displayCtrl.IInitConfig): void {}
-    public onShow(config?: displayCtrl.IShowConfig): void {}
-    public onUpdate(updateData?: any): void {}
+    public onDpcInit(config?: displayCtrl.IInitConfig): void {}
+    public onDpcShow(config?: displayCtrl.IShowConfig): void {}
+    public onDpcUpdate(updateData?: any): void {}
     public getFace<T>(): T {
         return this as any;
     }
-    public onHide(): void {}
+    public onDpcHide(): void {}
     public forceHide(): void {}
     public getNode() {
         return this._node;
     }
-    public onDestroy(destroyRes?: boolean): void {}
+    public onDpcDestroy(destroyRes?: boolean): void {}
     public getRess(): string[] {
         return null;
     }

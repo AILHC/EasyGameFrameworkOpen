@@ -218,7 +218,7 @@ export class DpcMgr<
         }
         const ctrlIns = this._sigCtrlCache[key];
         if (ctrlIns && ctrlIns.isInited) {
-            ctrlIns.onUpdate(updateData);
+            ctrlIns.onDpcUpdate(updateData);
         } else {
             console.warn(` updateDpc key:${key}, The instance is not initialized`);
         }
@@ -319,7 +319,7 @@ export class DpcMgr<
         if (ins) {
             if (!ins.isInited) {
                 ins.isInited = true;
-                ins.onInit && ins.onInit(initCfg);
+                ins.onDpcInit && ins.onDpcInit(initCfg);
             }
         }
     }
@@ -327,14 +327,14 @@ export class DpcMgr<
         ins: displayCtrl.ICtrl,
         showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
     ): void {
-        ins.onShow && ins.onShow(showCfg);
+        ins.onDpcShow && ins.onDpcShow(showCfg);
         ins.isShowed = true;
         showCfg.showedCb && showCfg.showedCb(ins);
     }
     public hideDpcByIns<T extends displayCtrl.ICtrl = any>(dpcIns: T) {
         if (!dpcIns) return;
         dpcIns.needShow = false;
-        dpcIns.onHide && dpcIns.onHide();
+        dpcIns.onDpcHide && dpcIns.onDpcHide();
         dpcIns.isShowed = false;
     }
     public destroyDpcByIns(dpcIns: displayCtrl.ICtrl, destroyRes?: boolean) {
@@ -347,7 +347,7 @@ export class DpcMgr<
         if (dpcIns.isShowed) {
             this.hideDpcByIns(dpcIns);
         }
-        dpcIns.onDestroy && dpcIns.onDestroy(destroyRes);
+        dpcIns.onDpcDestroy && dpcIns.onDpcDestroy(destroyRes);
         if (destroyRes) {
             const customResHandler = dpcIns as unknown as displayCtrl.IResHandler;
             if (customResHandler.releaseRes) {

@@ -22,7 +22,7 @@ export class OnUpdateDpc extends BaseDpCtrl {
     constructor() {
         super();
     }
-    onUpdate(updateData: number) {
+    onDpcUpdate(updateData: number) {
         this.updateData = updateData;
     }
 }
@@ -33,9 +33,9 @@ export class OnShowDpc extends BaseDpCtrl {
     constructor() {
         super();
     }
-    onShow(config: displayCtrl.IShowConfig<"OnShowDpc", ITestCtrlShowDataMap>) {
+    onDpcShow(config: displayCtrl.IShowConfig<"OnShowDpc", ITestCtrlShowDataMap>) {
         this.showData = config.onShowData;
-        super.onShow(config);
+        super.onDpcShow(config);
     }
 }
 export class OnInitDpc extends BaseDpCtrl {
@@ -45,7 +45,7 @@ export class OnInitDpc extends BaseDpCtrl {
     constructor() {
         super();
     }
-    onInit(config: displayCtrl.IInitConfig<"OnInitDpc", ITestCtrlInitDataMap>) {
+    onDpcInit(config: displayCtrl.IInitConfig<"OnInitDpc", ITestCtrlInitDataMap>) {
         this.initData = config.onInitData;
     }
 }
