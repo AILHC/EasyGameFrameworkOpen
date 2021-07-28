@@ -78,7 +78,7 @@
     "test:gen-dts:global": "egf dts -p ./__tests__/gen-dts -g -n genDts -o dist/genDts.d.ts",
     "test:gen-dts": "egf dts -p ./__tests__/gen-dts -l",
     "test:gen-dts:subproj": "egf dts -p ./__tests__/gen-dts/subproj -l -g -e ./testExclude.ts",
-    "test:auto_create_index:build:cjs": "egf build -p ./__tests__/auto_create_index -f cjs -acti -e ./src/index.ts",
+    "test:auto_create_index:build:cjs": "egf build -p ./__tests__/auto_create_index -f cjs -acti -e ./src/index.ts -ctim entrypoint",
     "test:owinput-output:build": "egf build -p ./__tests__/owinput-output -f cjs -e ./src/index.ts -c"
   }
 }
