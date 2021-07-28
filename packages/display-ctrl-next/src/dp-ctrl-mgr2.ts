@@ -45,15 +45,30 @@ export class DpcMgr<
         return !!this._templateMap[key];
     }
     getTemplate(key: keyof CtrlKeyType): displayCtrl.ICtrlTemplate<any, any> {
-        return this._templateMap[key];
-    }
-    getDpcRess<GetParams = any>(key: keyof CtrlKeyType, getParams?: GetParams): displayCtrl.ICtrlRes[] {
         const template = this._templateMap[key];
         if (!template) {
             console.error(`template not registed:${key}`);
             return undefined;
-        } else {
-            return template.getRess && template.getRess(getParams);
+        }
+        return template;
+    }
+    getTemplateState(key: keyof CtrlKeyType): displayCtrl.ITemplateState {
+        const template = this.getTemplate(key);
+        if (template) {
+            let loadState = template.state;
+            if (!loadState) {
+                loadState = {
+                    completes: []
+                };
+                template.state = loadState;
+            }
+            return template.state;
+        }
+    }
+    getDpcRess(key: keyof CtrlKeyType): displayCtrl.ICtrlRes[] {
+        const template = this.getTemplate(key);
+        if (template) {
+            return template.getRess && template.getRess();
         }
     }
     insDpc<T extends displayCtrl.ICtrl<any>>(key: keyof CtrlKeyType): displayCtrl.ReturnCtrlType<T> {
@@ -61,27 +76,45 @@ export class DpcMgr<
         if (!template) return undefined;
         return this._insDpcByTemplate(template);
     }
-    loadDpcRess(
+    loadDpcRess<LoadParam = any>(
         key: keyof CtrlKeyType,
         complete: displayCtrl.LoadResComplete,
-        loadParam?: displayCtrl.ILoadParam
+        forceLoad?: boolean,
+        loadParam?: LoadParam
     ): void {
         const template = this.getTemplate(key);
-
-        if (template.loadRes) {
-            template.loadRes(complete);
-        } else if (template.getRess) {
-            const ress = template.getRess(loadParam?.getRessParam);
-            if (ress && ress.length > 0) {
-                this._resHandler.loadRes({
-                    key: key as any,
-                    ress: ress,
-                    loadParam: loadParam?.loadParam,
-                    complete: complete
-                });
-            }
-        } else {
+        let loadState = this.getTemplateState(key);
+        if (loadState.isLoaded && !forceLoad) {
             complete();
+            return;
+        }
+        loadState.isLoading = true;
+        loadState.isLoaded = false;
+        loadState.completes.push(complete);
+        if (!template.loadRes && !template.getRess) {
+            complete();
+        } else {
+            const loadResComplete = (error?: any) => {
+                loadState.completes.forEach((complete) => {
+                    complete(error);
+                });
+                loadState.completes.length = 0;
+                loadState.isLoading = false;
+                loadState.isLoaded = !!error;
+            };
+            if (template.loadRes) {
+                template.loadRes(loadResComplete);
+            } else if (template.getRess) {
+                const ress = template.getRess();
+                if (ress && ress.length > 0) {
+                    this._resHandler.loadRes({
+                        key: key as any,
+                        ress: ress,
+                        loadParam: loadParam,
+                        complete: loadResComplete
+                    });
+                }
+            }
         }
     }
     showDpc<T, keyType extends keyof CtrlKeyType = any>(
@@ -92,30 +125,126 @@ export class DpcMgr<
         forceLoad?: boolean,
         onLoadData?: any,
         loadCb?: displayCtrl.CtrlInsCb<unknown>,
+        showEndCb?: VoidFunction,
         onCancel?: VoidFunction
-    ): displayCtrl.ReturnCtrlType<T> {}
+    ): displayCtrl.ReturnCtrlType<T> {
+        let showCfg: displayCtrl.IShowConfig<keyType>;
+        if (typeof key == "string") {
+            showCfg = {
+                key: key,
+                onShowData: onShowData,
+                showedCb: showedCb,
+                onInitData: onInitData,
+                forceLoad: forceLoad,
+                onLoadData: onLoadData,
+                showEndCb: showEndCb,
+                loadCb: loadCb,
+                onCancel: onCancel
+            };
+        } else if (typeof key === "object") {
+            showCfg = key;
+            onShowData !== undefined && (showCfg.onShowData = onShowData);
+            showedCb !== undefined && (showCfg.showedCb = showedCb);
+            showEndCb !== undefined && (showCfg.showEndCb = showEndCb);
+            onInitData !== undefined && (showCfg.onInitData = onInitData);
+            forceLoad !== undefined && (showCfg.forceLoad = forceLoad);
+            onLoadData !== undefined && (showCfg.onLoadData = onLoadData);
+            loadCb !== undefined && (showCfg.loadCb = loadCb);
+            onCancel !== undefined && (showCfg.onCancel = onCancel);
+        } else {
+            console.warn(`unknown showDpc`, key);
+            return;
+        }
+        const tplKey = showCfg.key;
+        const template = this.getTemplate(tplKey);
+        if (template) {
+            const tplState = this.getTemplateState(tplKey);
+            tplState.needShowSig = true;
+            if (forceLoad || !tplState.isLoaded) {
+                this.loadDpcRess(
+                    tplKey,
+                    (error) => {
+                        if (!error) {
+                            this._showSigDpc(tplKey, showCfg);
+                        }
+                    },
+                    forceLoad,
+                    showCfg.onLoadData
+                );
+            } else {
+                this._showSigDpc(tplKey, showCfg);
+            }
+        }
+    }
+
     updateDpc<keyType extends keyof CtrlKeyType>(
         key: keyType,
         updateData?: UpdateDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, UpdateDataTypeMapType>]
     ): void {}
-    hideDpc<keyType extends keyof CtrlKeyType>(key: keyType): void {}
+    hideDpc<keyType extends keyof CtrlKeyType>(key: keyType): void {
+        const template = this.getTemplate(key);
+        if (template) {
+            if (this.isLoaded(key)) {
+                const ctrlIns = this.sigCtrlCache[key];
+                this.hideDpcByIns(ctrlIns);
+            } else if (this.isLoading(key)) {
+            }
+        }
+    }
     destroyDpc<keyType extends keyof CtrlKeyType>(key: keyType, destroyRes?: boolean): void {}
-    isLoading<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
-    isLoaded<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
-    isInited<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
-    isShowed<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
-    isShowEnd<keyType extends keyof CtrlKeyType>(key: keyType): boolean {}
+    isLoading<keyType extends keyof CtrlKeyType>(key: keyType): boolean {
+        const state = this.getTemplateState(key);
+        if (state) {
+            return state.isLoading;
+        }
+    }
+    isLoaded<keyType extends keyof CtrlKeyType>(key: keyType): boolean {
+        const state = this.getTemplateState(key);
+        if (state) {
+            return state.isLoaded;
+        }
+    }
+    isInited<keyType extends keyof CtrlKeyType>(key: keyType): boolean {
+        const ctrlIns = this.sigCtrlCache[key];
+        return ctrlIns && ctrlIns.isInited;
+    }
+    isShowed<keyType extends keyof CtrlKeyType>(key: keyType): boolean {
+        const ctrlIns = this.sigCtrlCache[key];
+        return ctrlIns && ctrlIns.isShowed;
+    }
+    isShowEnd<keyType extends keyof CtrlKeyType>(key: keyType): boolean {
+        const ctrlIns = this.sigCtrlCache[key];
+        return ctrlIns && ctrlIns.isShowEnd;
+    }
 
-    initDpc<T extends displayCtrl.ICtrl<any> = any>(
+    initDpcByIns<T extends displayCtrl.ICtrl<any> = any>(
         ins: T,
         initCfg?: displayCtrl.IInitConfig<keyof CtrlKeyType, InitDataTypeMapType>
-    ): void {}
+    ): void {
+        if (ins) {
+            if (!ins.isInited) {
+                ins.isInited = true;
+                ins.onDpcInit && ins.onDpcInit(initCfg);
+            }
+        }
+    }
     showDpcByIns<T extends displayCtrl.ICtrl<any>>(
         ins: T,
         showCfg?: displayCtrl.IShowConfig<keyof CtrlKeyType, InitDataTypeMapType, ShowDataTypeMapType>
-    ): void {}
-    hideDpcByIns<T extends displayCtrl.ICtrl<any>>(ins: T): void {}
-    destroyDpcByIns<T extends displayCtrl.ICtrl<any>>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void {}
+    ): void {
+        ins.onDpcShow && ins.onDpcShow(showCfg);
+        ins.isShowed = true;
+        showCfg.showedCb && showCfg.showedCb(ins);
+    }
+    hideDpcByIns<T extends displayCtrl.ICtrl<any>>(ins: T): void {
+        if (!ins) return;
+        ins.onDpcHide && ins.onDpcHide();
+        ins.isShowed = false;
+    }
+    destroyDpcByIns<T extends displayCtrl.ICtrl<any>>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void {
+        if (!ins) return;
+        ins.onDpcDestroy();
+    }
     protected _insDpcByTemplate<T extends displayCtrl.ICtrl<any> = any>(template: displayCtrl.ICtrlTemplate): T {
         const createHandler = this._createHandlerMap[template.createType];
         if (!createHandler) {
@@ -124,10 +253,19 @@ export class DpcMgr<
         }
         return createHandler.create(template);
     }
-    protected _loadRess(loadCfg?: displayCtrl.ILoadConfig) {}
-    protected _cancelLoadFunc(task: displayCtrl.ILoadTask) {
-        return () => {
-            task.isCancel = true;
-        };
+    protected _showSigDpc<keyType extends keyof CtrlKeyType = any>(
+        key: keyType,
+        showCfg: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
+    ) {
+        const tplState = this.getTemplateState(key);
+        let ctrlIns = this.sigCtrlCache[key];
+        if (!ctrlIns) {
+            ctrlIns = this.insDpc(key);
+            this.initDpcByIns(ctrlIns, showCfg);
+        }
+        if (tplState.needShowSig) {
+            tplState.needShowSig = false;
+            this.showDpcByIns(ctrlIns, showCfg);
+        }
     }
 }

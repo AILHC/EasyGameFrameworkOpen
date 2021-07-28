@@ -6,5 +6,5 @@ export class CustomResHandlerDpc extends BaseDpCtrl implements displayCtrl.ICust
         config.complete();
     }
     releaseRes(): void {}
-    onDestroy() {}
+    onDpcDestroy() {}
 }

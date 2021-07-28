@@ -12,7 +12,7 @@ declare global {
              */
             class: "class";
         }
-        interface ICtrlTemplate<GetRessParam = any, LoadParam = any, CreateParams = any> {
+        interface ICtrlTemplate<LoadParam = any, CreateParams = any> {
             /**key */
             key: string;
 
@@ -22,19 +22,23 @@ declare global {
             createType?: keyof ICreateTypes;
             /**
              * 获取资源信息
-             * @param param
              */
-            getRess?(param?: GetRessParam): ICtrlRes[];
+            getRess?(): ICtrlRes[];
             /**
              * 自定义加载
              * @param complate 加载完成回调,如果加载失败会error不为空
-             * @param loadParam 加载参数，可选
+             * @param loadParam 加载参数，可选透传给资源加载处理器IResHandler.loadRes
+             * 和自定义加载透传给CtrlTemplate.loadRes
              */
             loadRes?(complate: LoadResComplete, loadParam?: LoadParam): void;
             /**
              * 创建参数
              */
             createParams?: CreateParams;
+            /**
+             * 模板状态
+             */
+            state?: displayCtrl.ITemplateState;
         }
         /**
          * 加载资源完成回调，如果加载失败会error不为空
@@ -51,6 +55,15 @@ declare global {
             needLoad?: boolean;
             /**是否取消 */
             isCancel?: boolean;
+        }
+        interface ITemplateState {
+            /**正在加载 */
+            isLoading?: boolean;
+            /**已经加载 */
+            isLoaded?: boolean;
+            /**是否需要显示单例 */
+            needShowSig?: boolean;
+            completes: displayCtrl.LoadResComplete[];
         }
         type CancelLoad = () => void;
         interface ICreateHandler<T extends displayCtrl.ICtrl = any, CreateParams = any> {
@@ -110,15 +123,6 @@ declare global {
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
             loadCb?: CtrlInsCb;
         }
-        interface ILoadParam<LoadParam = any, GetRessParam = any> {
-            /**
-             * 透传给资源加载处理器IResHandler.loadRes
-             * 和自定义加载透传给CtrlTemplate.loadRes
-             * 的数据 */
-            loadParam?: LoadParam;
-            /**透传给CtrlTemplate:getRess 方法的数据 */
-            getRessParam?: GetRessParam;
-        }
         interface ILoadHandler extends ILoadConfig {
             loadCount: number;
         }
@@ -168,30 +172,22 @@ declare global {
             isShowed?: boolean;
             /**显示结束，由业务去控制这个状态，用于动画等异步状态 */
             isShowEnd?: boolean;
-
-            /**
-             * 透传给加载处理的数据,
-             * 会和调用显示接口showDpc中传来的onLoadData合并,
-             * 以接口传入的为主
-             * Object.assign(ins.onLoadData,cfg.onLoadData);
-             * */
-            onLoadData?: any;
             /**
              * 初始化
              * @param initData 初始化数据
              */
-            onInit(config?: displayCtrl.IInitConfig): void;
+            onDpcInit(config?: displayCtrl.IInitConfig): void;
             /**
              * 当显示时
              * @param showData 显示数据
              */
-            onShow(config?: displayCtrl.IShowConfig): void;
+            onDpcShow(config?: displayCtrl.IShowConfig): void;
             /**
              * 当更新时
              * @param updateData 更新数据
              * @param endCb 结束回调
              */
-            onUpdate(updateData: any): void;
+            onDpcUpdate(updateData: any): void;
             /**
              * 获取控制器
              */
@@ -199,12 +195,12 @@ declare global {
             /**
              * 当隐藏时
              */
-            onHide(): void;
+            onDpcHide(): void;
             /**
              * 当销毁时
              * @param destroyRes
              */
-            onDestroy(destroyRes?: boolean): void;
+            onDpcDestroy(destroyRes?: boolean): void;
             /**
              * 获取显示节点
              */
@@ -253,9 +249,8 @@ declare global {
             /**
              * 获取控制器模版依赖的资源信息
              * @param templateKey
-             * @param getParams 参数
              */
-            getDpcRess<GetParams = any>(templateKey: keyof CtrlKeyType, getParams?: GetParams): ICtrlRes[];
+            getDpcRess(templateKey: keyof CtrlKeyType): ICtrlRes[];
 
             /**
              * 加载控制器模版依赖的资源
@@ -263,10 +258,11 @@ declare global {
              * @param complate 加载资源完成回调，如果加载失败会error不为空
              * @param loadParam
              */
-            loadDpcRess(
+            loadDpcRess<LoadParam = any>(
                 templateKey: keyof CtrlKeyType,
                 complate: displayCtrl.LoadResComplete,
-                loadParam?: displayCtrl.ILoadParam
+                forceLoad?: boolean,
+                loadParam?: LoadParam
             ): void;
 
             /**
