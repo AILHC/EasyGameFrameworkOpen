@@ -16,7 +16,7 @@ describe(`管理器属性测试 DpcMgr property test`, function () {
                 config.complete();
             }
         });
-        expect(dpcMgr.sigCtrlCache).toEqual({});
+        expect(dpcMgr["_sigCtrlCache"]).toEqual({});
     });
     test(`管理器的属性 单例控制器类字典是等于空字典 {}
     dpc-mgr property ctrlClassMap is toEqual {}`, function () {
@@ -231,7 +231,7 @@ test("测试销毁显示控制器资源和实例 test destroy display ctrl", fun
         dpcMgr.destroyDpc(WithResDpCtrl.typeKey, true);
         expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(1);
         expect(ctrlOnDestroySpy).toBeCalledTimes(1);
-        expect(dpcMgr.sigCtrlCache[WithResDpCtrl.typeKey]).toBeUndefined();
+        expect(dpcMgr._sigCtrlCache[WithResDpCtrl.typeKey]).toBeUndefined();
 
         expect(ctrlIns.isLoaded).toBeFalsy();
         expect(ctrlIns.isInited).toBeFalsy();
@@ -263,7 +263,7 @@ test("测试加载和销毁实现了自定义资源处理接口的dpc", function
         expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(0);
         expect(ctrlCustomReleaseResSpy).toBeCalledTimes(1);
         expect(ctrlOnDestroySpy).toBeCalledTimes(1);
-        expect(dpcMgr.sigCtrlCache[CustomResHandlerDpc.typeKey]).toBeUndefined();
+        expect(dpcMgr._sigCtrlCache[CustomResHandlerDpc.typeKey]).toBeUndefined();
 
         expect(ctrlIns.isLoaded).toBeFalsy();
         expect(ctrlIns.isInited).toBeFalsy();

@@ -1,5 +1,5 @@
 // import { CreateTypes } from './create-types';
-// import { DpcMgr } from './dp-ctrl-mgr';
+import { DpcMgr } from "./dp-ctrl-mgr";
 
 // class testCtrlClass implements displayCtrl.ICtrl {
 //     key?: any;
@@ -44,11 +44,11 @@
 //         return new testCtrlClass();
 //     }
 // };
-// interface CtrlKeyTypeMapType {
-//     /**dasfas */
-//     typeTest: "typeTest";
-//     typeTest2: "typeTest2";
-// }
+interface CtrlKeyTypeMapType {
+    /**dasfas */
+    typeTest: "typeTest";
+    typeTest2: "typeTest2";
+}
 // const mgr: displayCtrl.IMgr<CtrlKeyTypeMapType> = {} as any;
 // mgr.loadDpc("typeTest", {
 //     onLoadData
@@ -60,6 +60,7 @@
 //         typeKey: "typeTest"
 //     }
 // );
+
 // const task: displayCtrl.ILoadTask = {
 //     get isCancel() {
 //         return task._isCancel;
@@ -70,8 +71,10 @@
 //     },
 
 // }
-// const dpcMgr = new DpcMgr<CtrlKeyTypeMapType>();
+const dpcMgr = new DpcMgr<CtrlKeyTypeMapType>();
 // dpcMgr.keys.typeTest
 // const template: displayCtrl.ICtrlTemplate = {
 //     createType: CreateTypes.class
 // }
+const key: string = dpcMgr.getKey("typeTest");
+dpcMgr.getDpcRess("typeTest");

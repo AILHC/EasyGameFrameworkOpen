@@ -8,5 +8,5 @@ export function defineDisplayCtrlTemplate<GetRessParams = any, CreateParams = an
     ctrlTemplate: displayCtrl.ICtrlTemplate<GetRessParams, CreateParams>,
     templateMap: displayCtrl.CtrlTemplateMap = globalCtrlTemplateMap
 ) {
-    globalCtrlTemplateMap[ctrlTemplate.key] = ctrlTemplate;
+    templateMap[ctrlTemplate.key] = ctrlTemplate;
 }
