@@ -183,7 +183,7 @@ test("测试传参初始化显示控制器 test transfer param init display ctrl
     });
     dpcMgr.regist(OnInitDpc);
     const ctrlIns: OnInitDpc = dpcMgr.getSigDpcIns(OnInitDpc.typeKey);
-    const ctrlOnInitSpy = jest.spyOn(ctrlIns, "onInit");
+    const ctrlOnInitSpy = jest.spyOn(ctrlIns, "onDpcInit");
     dpcMgr.initSigDpc(OnInitDpc.typeKey, { onInitData: 2 });
     expect(ctrlOnInitSpy).toBeCalledTimes(1);
     expect(ctrlIns.initData).toBe(2);
@@ -197,7 +197,7 @@ test("测试传参显示 显示控制器 test transfer param show display ctrl",
     });
     dpcMgr.regist(OnShowDpc);
     const ctrlIns: OnShowDpc = dpcMgr.getSigDpcIns(OnShowDpc.typeKey as any);
-    const ctrlOnShowSpy = jest.spyOn(ctrlIns, "onShow");
+    const ctrlOnShowSpy = jest.spyOn(ctrlIns, "onDpcShow");
     dpcMgr.showDpc({
         key: "OnShowDpc",
         onShowData: 2,
@@ -226,12 +226,12 @@ test("测试销毁显示控制器资源和实例 test destroy display ctrl", fun
 
     dpcMgr.showDpc(WithResDpCtrl.typeKey, undefined, (ctrlIns: WithResDpCtrl) => {
         const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
-        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDestroy");
+        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDpcDestroy");
 
         dpcMgr.destroyDpc(WithResDpCtrl.typeKey, true);
         expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(1);
         expect(ctrlOnDestroySpy).toBeCalledTimes(1);
-        expect(dpcMgr._sigCtrlCache[WithResDpCtrl.typeKey]).toBeUndefined();
+        expect(dpcMgr.getSigDpcIns(WithResDpCtrl.typeKey)).toBeUndefined();
 
         expect(ctrlIns.isLoaded).toBeFalsy();
         expect(ctrlIns.isInited).toBeFalsy();
@@ -256,14 +256,14 @@ test("测试加载和销毁实现了自定义资源处理接口的dpc", function
     const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
     const dpcMgrResHandlerloadResSpy = jest.spyOn(dpcMgr["_resHandler"], "loadRes");
     dpcMgr.showDpc(CustomResHandlerDpc.typeKey, undefined, (ctrlIns: CustomResHandlerDpc) => {
-        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDestroy");
+        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDpcDestroy");
         expect(dpcMgrResHandlerloadResSpy).toBeCalledTimes(0);
         expect(ctrlCustomLoadResSpy).toBeCalledTimes(1);
         dpcMgr.destroyDpc(CustomResHandlerDpc.typeKey, true);
         expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(0);
         expect(ctrlCustomReleaseResSpy).toBeCalledTimes(1);
         expect(ctrlOnDestroySpy).toBeCalledTimes(1);
-        expect(dpcMgr._sigCtrlCache[CustomResHandlerDpc.typeKey]).toBeUndefined();
+        expect(dpcMgr.getSigDpcIns(CustomResHandlerDpc.typeKey)).toBeUndefined();
 
         expect(ctrlIns.isLoaded).toBeFalsy();
         expect(ctrlIns.isInited).toBeFalsy();
@@ -408,7 +408,7 @@ test("hideDpcByIns test", function () {
     });
     dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
     const ins: RessInClassDpc = dpcMgr.getSigDpcIns("RessInClassDpc");
-    const ctrlOnHideSpy = jest.spyOn(ins, "onHide");
+    const ctrlOnHideSpy = jest.spyOn(ins, "onDpcHide");
     dpcMgr.hideDpcByIns(ins);
     expect(ctrlOnHideSpy).toBeCalledTimes(1);
 });

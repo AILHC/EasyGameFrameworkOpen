@@ -1,8 +1,31 @@
 declare global {
+    type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never }[keyof T] &
+        string;
     namespace displayCtrl {
-        type CtrlClassType<T> = {
+        /**
+         * @deprecated 兼容1.x的,即将废弃
+         */
+        type CtrlClassType<T = any> = {
             new (): T;
         };
+        /**
+         * @deprecated 兼容1.x的,即将废弃
+         */
+        type CtrlClassMap = { [key: string]: CtrlClassType<ICtrl> };
+
+        /**
+         * @deprecated 兼容1.x的,即将废弃
+         */
+        interface ILoadConfig {
+            /**页面类型key */
+            typeKey?: string | any;
+            /**强制重新加载 */
+            forceLoad?: boolean;
+            /**加载后onLoad参数 */
+            onLoadData?: any;
+            /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
+            loadCb?: CtrlInsCb;
+        }
         interface ICtrlRes {
             url: string;
         }
@@ -43,6 +66,10 @@ declare global {
              * 模板状态
              */
             state?: displayCtrl.ITemplateState;
+            /**
+             * 自定义生命周期函数映射,主要用于兼容
+             */
+            ctrlLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<displayCtrl.ICtrl_New>>]?: string };
         }
         interface ITemplateState {
             /**正在加载 */
@@ -113,6 +140,7 @@ declare global {
              */
             releaseRes?(template?: displayCtrl.ICtrlTemplate): void;
         }
+
         /**
          * 将索引类型转换为任意类型的索引类型
          */
@@ -147,6 +175,12 @@ declare global {
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
              * 或自定义加载透传给CtrlTemplate.loadRes */
             loadParam?: any;
+            /**
+             * 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
+             * 或自定义加载透传给CtrlTemplate.loadRes
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            onLoadData?: any;
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
             loadCb?: CtrlInsCb;
         }
@@ -165,7 +199,7 @@ declare global {
             loadParam?: any;
         }
         type ReturnCtrlType<T> = T extends displayCtrl.ICtrl ? T : displayCtrl.ICtrl;
-        interface ICtrl<NodeType = any> {
+        interface ICtrl_New<NodeType = any> {
             key?: string | any;
 
             /**已经初始化 */
@@ -208,6 +242,8 @@ declare global {
              */
             getNode(): NodeType;
         }
+
+        interface ICtrl<NodeType = any> extends displayCtrl.ICtrl_New<NodeType>, displayCtrl.ICtrl_OLD<NodeType> {}
 
         type CreateHandlerMap = { [key in keyof displayCtrl.ICreateTypes]: ICreateHandler };
         interface IMgr<
@@ -276,7 +312,7 @@ declare global {
              * 获取单例控制器实例
              * @param key
              */
-            getSigDpcIns<T>(key: keyType): displayCtrl.ICtrl<T>;
+            getSigDpcIns<T extends displayCtrl.ICtrl = any>(key: keyType): T;
             /**
              * 显示单例显示控制器
              * @param keyOrConfig 类key或者显示配置IShowConfig
@@ -389,6 +425,149 @@ declare global {
              * @param destroyRes 是否销毁资源
              */
             destroyDpcByIns<T extends displayCtrl.ICtrl>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void;
+
+            //兼容，即将废弃的API
+
+            /**
+             * 批量注册控制器类
+             * @param classMap
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void;
+            /**
+             * 注册控制器类
+             * @param ctrlClass
+             * @param typeKey 如果ctrlClass这个类里没有静态属性typeKey则取传入的typeKey
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyType): void;
+            /**
+             * 获取单例UI的资源数组
+             * @param typeKey
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            getSigDpcRess(typeKey: keyType): string[] | any[];
+            /**
+             *
+             * 加载Dpc
+             * @param typeKey 注册时的typeKey
+             * @param loadCfg 透传数据和回调
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            loadSigDpc<T>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T>;
+            /**
+             * 初始化单例显示控制器
+             * @param typeKey 注册类时的 typeKey
+             * @param initCfg displayCtrl.IInitConfig
+             * @returns
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            initSigDpc<T = any>(
+                typeKey: keyType,
+                initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
+            ): displayCtrl.ReturnCtrlType<T>;
+            /**
+             * 获取注册类的资源信息
+             * 读取类的静态变量 ress
+             * @param typeKey
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            getDpcRessInClass(typeKey: keyType): string[] | any[];
+            /**
+             * 加载显示控制器
+             * @param ins
+             * @param loadCfg
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
+
+            /**
+             * 获取控制器类
+             * @param typeKey
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            getCtrlClass(typeKey: keyType): CtrlClassType<ICtrl>;
+        }
+        interface ICtrl_OLD<NodeType = any> {
+            key?: string | any;
+            /**
+             * 正在加载
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            isLoading?: boolean;
+            /**
+             * 已经加载
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            isLoaded?: boolean;
+            /**已经初始化 */
+            isInited?: boolean;
+            /**已经显示 */
+            isShowed?: boolean;
+            /**显示结束，由业务去控制这个状态，用于动画等异步状态 */
+            isShowEnd?: boolean;
+            /**
+             * 需要显示
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            needShow?: boolean;
+            /**
+             * 需要加载
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            needLoad?: boolean;
+
+            /**
+             * 透传给加载处理的数据,
+             * 会和调用显示接口showDpc中传来的onLoadData合并,
+             * 以接口传入的为主
+             * Object.assign(ins.onLoadData,cfg.onLoadData);
+             * @deprecated 兼容1.x的,即将废弃
+             * */
+            onLoadData?: any;
+            /**
+             * 获取资源
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            getRess?(): string[] | any[];
+            /**
+             * 初始化
+             * @param initData 初始化数据
+             * @deprecated 兼容1.x的,即将废弃, 请使用最新的 onDpcInit
+             */
+            onInit?(config?: displayCtrl.IInitConfig): void;
+            /**
+             * 当显示时
+             * @param showData 显示数据
+             * @deprecated 兼容1.x的,即将废弃 请使用最新的 onDpcShow
+             */
+            onShow?(config?: displayCtrl.IShowConfig): void;
+            /**
+             * 当更新时
+             * @param updateData 更新数据
+             * @param endCb 结束回调
+             * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcUpdate
+             */
+            onUpdate?(updateData: any): void;
+            /**
+             * 获取控制器
+             */
+            getFace<T>(): ReturnCtrlType<T>;
+            /**
+             * 当隐藏时
+             * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcHide
+             */
+            onHide?(): void;
+            /**
+             * 当销毁时
+             * @param destroyRes
+             * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcDestroy
+             */
+            onDestroy?(destroyRes?: boolean): void;
+            /**
+             * 获取显示节点
+             */
+            getNode(): NodeType;
         }
     }
 }

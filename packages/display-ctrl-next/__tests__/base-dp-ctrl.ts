@@ -5,6 +5,7 @@ export class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
     constructor(dpcMgr?: displayCtrl.IMgr) {
         this._dpcMgr = dpcMgr;
     }
+    onLoadData?: any;
     public needLoad: boolean = true;
     public isLoaded: boolean = false;
     public isLoading: boolean = false;
