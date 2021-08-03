@@ -1,4 +1,4 @@
-import { DpcMgr } from "../src";
+import { DpcMgr } from "../../src";
 interface CtrlKeyTypeMapType {
     typeTest: "typeTest";
     typeTest2: "typeTest2";

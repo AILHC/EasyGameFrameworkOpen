@@ -212,31 +212,31 @@ declare global {
              * 初始化
              * @param initData 初始化数据
              */
-            onDpcInit(config?: displayCtrl.IInitConfig): void;
+            onDpcInit?(config?: displayCtrl.IInitConfig): void;
             /**
              * 当显示时
              * @param showData 显示数据
              */
-            onDpcShow(config?: displayCtrl.IShowConfig): void;
+            onDpcShow?(config?: displayCtrl.IShowConfig): void;
             /**
              * 当更新时
              * @param updateData 更新数据
              * @param endCb 结束回调
              */
-            onDpcUpdate(updateData: any): void;
+            onDpcUpdate?(updateData: any): void;
             /**
              * 获取控制器
              */
-            getFace<T>(): ReturnCtrlType<T>;
+            getFace?<T = any>(): ReturnCtrlType<T>;
             /**
              * 当隐藏时
              */
-            onDpcHide(): void;
+            onDpcHide?(): void;
             /**
              * 当销毁时
              * @param destroyRes
              */
-            onDpcDestroy(destroyRes?: boolean): void;
+            onDpcDestroy?(destroyRes?: boolean): void;
             /**
              * 获取显示节点
              */
@@ -288,7 +288,7 @@ declare global {
              * 获取控制器模版依赖的资源信息
              * @param templateKey
              */
-            getDpcRess(templateKey: keyType): ICtrlRes[];
+            getDpcRess(templateKey: keyType): ICtrlRes[] | string[];
 
             /**
              * 加载控制器模版依赖的资源
@@ -552,7 +552,7 @@ declare global {
             /**
              * 获取控制器
              */
-            getFace<T>(): ReturnCtrlType<T>;
+            getFace?<T = any>(): ReturnCtrlType<T>;
             /**
              * 当隐藏时
              * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcHide

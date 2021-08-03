@@ -1,11 +1,12 @@
-import { DpcMgr } from "../src";
 import { NoResDpCtrl } from "./no-res-dpctrl";
 import { NoTypeKeyDpCtrl } from "./no-typekey-dpctrl";
-import { WithResDpCtrl } from "./with-res-dpctrl";
+
 import { OnInitDpc, OnShowDpc, OnUpdateDpc } from "./transfer-param-dpcs";
 import { CustomResHandlerDpc } from "./custom-res-handler-dpc";
 import { AsyncShowDpCtrl } from "./async-show-dpctrl";
 import { RessInClassDpc } from "./ress-in-class-dpc";
+import { DpcMgr } from "../../src";
+import { WithResDpCtrl } from "./with-res-dpctrl";
 
 describe(`管理器属性测试 DpcMgr property test`, function () {
     test(`管理器的属性 单例控制器缓存字典是等于空字典 {}
@@ -183,7 +184,7 @@ test("测试传参初始化显示控制器 test transfer param init display ctrl
     });
     dpcMgr.regist(OnInitDpc);
     const ctrlIns: OnInitDpc = dpcMgr.getSigDpcIns(OnInitDpc.typeKey);
-    const ctrlOnInitSpy = jest.spyOn(ctrlIns, "onDpcInit");
+    const ctrlOnInitSpy = jest.spyOn(ctrlIns, "onInit");
     dpcMgr.initSigDpc(OnInitDpc.typeKey, { onInitData: 2 });
     expect(ctrlOnInitSpy).toBeCalledTimes(1);
     expect(ctrlIns.initData).toBe(2);
@@ -197,7 +198,7 @@ test("测试传参显示 显示控制器 test transfer param show display ctrl",
     });
     dpcMgr.regist(OnShowDpc);
     const ctrlIns: OnShowDpc = dpcMgr.getSigDpcIns(OnShowDpc.typeKey as any);
-    const ctrlOnShowSpy = jest.spyOn(ctrlIns, "onDpcShow");
+    const ctrlOnShowSpy = jest.spyOn(ctrlIns, "onShow");
     dpcMgr.showDpc({
         key: "OnShowDpc",
         onShowData: 2,
@@ -226,7 +227,7 @@ test("测试销毁显示控制器资源和实例 test destroy display ctrl", fun
 
     dpcMgr.showDpc(WithResDpCtrl.typeKey, undefined, (ctrlIns: WithResDpCtrl) => {
         const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
-        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDpcDestroy");
+        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onUpdate");
 
         dpcMgr.destroyDpc(WithResDpCtrl.typeKey, true);
         expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(1);
@@ -256,7 +257,7 @@ test("测试加载和销毁实现了自定义资源处理接口的dpc", function
     const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
     const dpcMgrResHandlerloadResSpy = jest.spyOn(dpcMgr["_resHandler"], "loadRes");
     dpcMgr.showDpc(CustomResHandlerDpc.typeKey, undefined, (ctrlIns: CustomResHandlerDpc) => {
-        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDpcDestroy");
+        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDestroy");
         expect(dpcMgrResHandlerloadResSpy).toBeCalledTimes(0);
         expect(ctrlCustomLoadResSpy).toBeCalledTimes(1);
         dpcMgr.destroyDpc(CustomResHandlerDpc.typeKey, true);
@@ -408,7 +409,7 @@ test("hideDpcByIns test", function () {
     });
     dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
     const ins: RessInClassDpc = dpcMgr.getSigDpcIns("RessInClassDpc");
-    const ctrlOnHideSpy = jest.spyOn(ins, "onDpcHide");
+    const ctrlOnHideSpy = jest.spyOn(ins, "onHide");
     dpcMgr.hideDpcByIns(ins);
     expect(ctrlOnHideSpy).toBeCalledTimes(1);
 });

@@ -1,4 +1,4 @@
-import { BaseDpCtrl } from "./base-dp-ctrl";
+import { BaseDpCtrl_Old } from "./base-dp-ctrl";
 declare global {
     interface ITestCtrlKeyType {
         OnUpdateDpc: "OnUpdateDpc";
@@ -15,37 +15,37 @@ declare global {
         OnUpdateDpc: number;
     }
 }
-export class OnUpdateDpc extends BaseDpCtrl {
+export class OnUpdateDpc extends BaseDpCtrl_Old {
     public static readonly typeKey: "OnUpdateDpc" = "OnUpdateDpc";
     public updateData: number;
 
     constructor() {
         super();
     }
-    onDpcUpdate(updateData: number) {
+    onUpdate(updateData: number) {
         this.updateData = updateData;
     }
 }
-export class OnShowDpc extends BaseDpCtrl {
+export class OnShowDpc extends BaseDpCtrl_Old {
     public static readonly typeKey: string = "OnShowDpc";
     public showData: number;
 
     constructor() {
         super();
     }
-    onDpcShow(config: displayCtrl.IShowConfig<"OnShowDpc", ITestCtrlShowDataMap>) {
+    onShow(config: displayCtrl.IShowConfig<"OnShowDpc", ITestCtrlShowDataMap>) {
         this.showData = config.onShowData;
-        super.onDpcShow(config);
+        super.onShow(config);
     }
 }
-export class OnInitDpc extends BaseDpCtrl {
+export class OnInitDpc extends BaseDpCtrl_Old {
     public static readonly typeKey: "OnInitDpc" = "OnInitDpc";
     public initData: number;
 
     constructor() {
         super();
     }
-    onDpcInit(config: displayCtrl.IInitConfig<"OnInitDpc", ITestCtrlInitDataMap>) {
+    onInit(config: displayCtrl.IInitConfig<"OnInitDpc", ITestCtrlInitDataMap>) {
         this.initData = config.onInitData;
     }
 }

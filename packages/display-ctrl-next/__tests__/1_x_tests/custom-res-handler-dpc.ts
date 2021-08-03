@@ -1,10 +1,10 @@
-import { BaseDpCtrl } from "./base-dp-ctrl";
+import { BaseDpCtrl_Old } from "./base-dp-ctrl";
 
-export class CustomResHandlerDpc extends BaseDpCtrl implements displayCtrl.IResHandler {
+export class CustomResHandlerDpc extends BaseDpCtrl_Old implements displayCtrl.IResHandler {
     public static typeKey = "CustomResHandlerDpc";
     loadRes(config: displayCtrl.IResLoadConfig): void {
         config.complete();
     }
     releaseRes(): void {}
-    onDpcDestroy() {}
+    onDestroy() {}
 }
