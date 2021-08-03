@@ -1,11 +1,11 @@
-import { BaseDpCtrl } from "./base-dp-ctrl";
+import { BaseDpCtrl_Old } from "./base-dp-ctrl";
 
 declare global {
     interface ITestCtrlKeyType {
         AsyncShowDpCtrl: "AsyncShowDpCtrl";
     }
 }
-export class AsyncShowDpCtrl extends BaseDpCtrl {
+export class AsyncShowDpCtrl extends BaseDpCtrl_Old {
     onDpcShow(config: displayCtrl.IShowConfig) {
         setTimeout(() => {
             this.isShowEnd = true;

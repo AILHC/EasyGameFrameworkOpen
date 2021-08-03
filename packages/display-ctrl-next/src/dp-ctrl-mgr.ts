@@ -87,7 +87,7 @@ export class DpcMgr<
         }
         return template;
     }
-    getDpcRess(key: keyType): displayCtrl.ICtrlRes[] {
+    getDpcRess(key: keyType): displayCtrl.ICtrlRes[] | string[] {
         if (!this._inited) {
             console.error(`DisplayCtrlManager is no inited`);
             return;
@@ -401,7 +401,7 @@ export class DpcMgr<
             if (initFuncKey && ins[initFuncKey]) {
                 ins[initFuncKey](initCfg);
             } else {
-                ins.onDpcInit(initCfg);
+                ins.onDpcInit && ins.onDpcInit(initCfg);
             }
         } else {
             !ins && console.warn(`dpctrl no instance`);
@@ -421,7 +421,7 @@ export class DpcMgr<
             if (showFuncKey && ins[showFuncKey]) {
                 ins[showFuncKey](showCfg);
             } else {
-                ins.onDpcShow(showCfg);
+                ins.onDpcShow && ins.onDpcShow(showCfg);
             }
             ins.isShowed = true;
             showCfg.showedCb && showCfg.showedCb(ins);
@@ -432,11 +432,11 @@ export class DpcMgr<
     updateDpcByIns<T extends displayCtrl.ICtrl<any>>(ins: T, updateData: any) {
         if (ins) {
             const template = this.getTemplate(ins.key);
-            let updateFuncKey = template?.ctrlLifeCycleFuncMap["onDpcUpdate"];
+            let updateFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcUpdate;
             if (updateFuncKey) {
                 ins[updateFuncKey](updateData);
             } else {
-                ins.onDpcUpdate(updateData);
+                ins.onDpcUpdate && ins.onDpcUpdate(updateData);
             }
         }
     }
@@ -447,11 +447,11 @@ export class DpcMgr<
         }
         if (ins && ins.isShowed) {
             const template = this.getTemplate(ins.key);
-            const hideFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcInit;
+            const hideFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcHide;
             if (hideFuncKey && ins[hideFuncKey]) {
                 ins[hideFuncKey]();
             } else {
-                ins.onDpcHide();
+                ins.onDpcHide && ins.onDpcHide();
             }
             ins.isShowed = false;
         } else {
@@ -467,11 +467,11 @@ export class DpcMgr<
             ins.isShowed = false;
             ins.isInited = false;
             const template = this.getTemplate(ins.key);
-            const destroyFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcInit;
+            const destroyFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcDestroy;
             if (destroyFuncKey && ins[destroyFuncKey]) {
-                ins[destroyFuncKey]();
+                ins[destroyFuncKey](releaseRes);
             } else {
-                ins.onDpcDestroy();
+                ins.onDpcDestroy && ins.onDpcDestroy(releaseRes);
             }
             releaseRes && this._releaseTemplateRess(ins.key);
         } else {

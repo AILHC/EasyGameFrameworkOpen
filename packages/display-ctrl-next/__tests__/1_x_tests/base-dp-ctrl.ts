@@ -1,4 +1,4 @@
-export class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
+export class BaseDpCtrl_Old<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
     protected _dpcMgr: displayCtrl.IMgr;
     public key: string;
     protected _node: NodeType;
@@ -15,18 +15,18 @@ export class BaseDpCtrl<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
     public isShowEnd: boolean = false;
     public needShow: boolean = false;
 
-    public onDpcInit(config?: displayCtrl.IInitConfig): void {}
-    public onDpcShow(config?: displayCtrl.IShowConfig): void {}
-    public onDpcUpdate(updateData?: any): void {}
+    public onInit(config?: displayCtrl.IInitConfig): void {}
+    public onShow(config?: displayCtrl.IShowConfig): void {}
+    public onUpdate(updateData?: any): void {}
     public getFace<T>(): T {
         return this as any;
     }
-    public onDpcHide(): void {}
+    public onHide(): void {}
     public forceHide(): void {}
     public getNode() {
         return this._node;
     }
-    public onDpcDestroy(destroyRes?: boolean): void {}
+    public onDestroy(destroyRes?: boolean): void {}
     public getRess(): string[] {
         return null;
     }
