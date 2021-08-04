@@ -27,7 +27,7 @@ describe(`管理器属性测试 DpcMgr property test`, function () {
                 config.complete();
             }
         });
-        expect(dpcMgr["_ctrlClassMap"]).toEqual({});
+        expect(dpcMgr["_templateMap"]).toEqual({});
     });
 });
 
@@ -58,6 +58,7 @@ describe(`注册类测试, DpcMgr regist and registTypes test`, function () {
     test(`注册类字典 ，这些类会在管理器的控制器类字典里
     registTypes The DpCtrls will be in the dpcMgr ctrlClassMap`, function () {
         const dpcMgr = new DpcMgr();
+        dpcMgr.init({});
         const classMap: displayCtrl.CtrlClassMap = {};
         classMap[NoResDpCtrl.typeKey] = NoResDpCtrl;
         classMap["NoTypeKeyDpCtrl"] = NoTypeKeyDpCtrl;
@@ -227,7 +228,7 @@ test("测试销毁显示控制器资源和实例 test destroy display ctrl", fun
 
     dpcMgr.showDpc(WithResDpCtrl.typeKey, undefined, (ctrlIns: WithResDpCtrl) => {
         const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
-        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onUpdate");
+        const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDestroy");
 
         dpcMgr.destroyDpc(WithResDpCtrl.typeKey, true);
         expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(1);
