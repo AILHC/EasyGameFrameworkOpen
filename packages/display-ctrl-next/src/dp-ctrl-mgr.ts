@@ -25,13 +25,15 @@ export class DpcMgr<
     init(resHandler: displayCtrl.IResHandler, createHandlerMap?: displayCtrl.CreateHandlerMap): void {
         if (this._inited) return;
         this._resHandler = resHandler;
+        this._sigCtrlCache = {};
+
         if (createHandlerMap) {
             this._createHandlerMap = Object.assign(this._createHandlerMap, createHandlerMap);
         } else {
             this._createHandlerMap["class"] = {
                 type: "class",
                 create(template: displayCtrl.ICtrlTemplate<any, ObjectConstructor>) {
-                    return new template.createParams();
+                    return new template.createParams() as any;
                 },
                 checkIsValid(template: displayCtrl.ICtrlTemplate) {
                     return typeof template.createParams === "function";
@@ -39,7 +41,7 @@ export class DpcMgr<
             };
         }
         this._inited = true;
-        this._templateMap = globalCtrlTemplateMap;
+        this._templateMap = Object.assign({}, globalCtrlTemplateMap);
     }
     registTemplates(templates: displayCtrl.ICtrlTemplate<any, any>[] | displayCtrl.CtrlTemplateMap): void {
         if (!templates) return;
@@ -62,7 +64,7 @@ export class DpcMgr<
             console.error(`DisplayCtrlManager is no inited`);
             return;
         }
-        this._templateMap[template.createType] = template;
+        this._templateMap[template.key] = template;
     }
 
     isRegisted(key: keyType): boolean {
@@ -100,7 +102,7 @@ export class DpcMgr<
 
     public loadDpcRess<LoadParam = any>(
         key: keyType,
-        complete: displayCtrl.LoadResComplete,
+        complete?: displayCtrl.LoadResComplete,
         forceLoad?: boolean,
         loadParam?: LoadParam
     ): void {
@@ -109,26 +111,26 @@ export class DpcMgr<
             return;
         }
         const template = this.getTemplate(key);
-        let loadState = template.state;
-        if (loadState.isLoaded && !forceLoad) {
-            complete();
+        let tplState = template.state;
+        if (tplState.isLoaded && !forceLoad) {
+            complete && complete();
             return;
         }
-        loadState.isLoading = true;
-        loadState.isLoaded = false;
-        loadState.completes.push(complete);
+        tplState.isLoading = true;
+        tplState.isLoaded = false;
+        complete && tplState.completes.push(complete);
         if (!template.loadRes && !template.getRess) {
-            complete();
+            complete && complete();
         } else {
             const loadResComplete = (error?: any) => {
                 console.error(`[display-ctrl]loadDpcRess load error`, error);
-                loadState.completes.reverse();
-                loadState.completes.forEach((complete) => {
+                tplState.completes.reverse();
+                tplState.isLoading = false;
+                tplState.isLoaded = !error;
+                tplState.completes.forEach((complete) => {
                     complete(error);
                 });
-                loadState.completes.length = 0;
-                loadState.isLoading = false;
-                loadState.isLoaded = !!error;
+                tplState.completes.length = 0;
             };
             if (template.loadRes) {
                 template.loadRes(loadResComplete);
@@ -141,7 +143,11 @@ export class DpcMgr<
                         loadParam: loadParam,
                         complete: loadResComplete
                     });
+                } else {
+                    complete();
                 }
+            } else {
+                complete();
             }
         }
     }
@@ -275,9 +281,8 @@ export class DpcMgr<
                 this.destroyDpcByIns(ctrlIns, destroyRes);
             } else if (this.isLoading(key)) {
                 tplState.needShowSig = false;
-            } else {
-                this._resHandler.releaseRes && this._resHandler.releaseRes(template);
             }
+
             delete this._sigCtrlCache[key];
             tplState.updateData = undefined;
         }
@@ -482,8 +487,10 @@ export class DpcMgr<
         const template = this.getTemplate(key);
         if (template) {
             if (template.releaseRes) {
+                template.state.isLoaded = false;
                 template.releaseRes();
             } else if (this._resHandler.releaseRes) {
+                template.state.isLoaded = false;
                 this._resHandler.releaseRes(template);
             }
         }
@@ -499,7 +506,9 @@ export class DpcMgr<
             console.error(`The template:${template.key} createType:${template.createType} has no handler`);
             return undefined;
         }
-        return createHandler.create(template);
+        const ins = createHandler.create<T>(template);
+        ins.key = template.key;
+        return ins;
     }
     /**
      * 显示单例控制器
@@ -608,6 +617,7 @@ export class DpcMgr<
                 }
             };
             this.registTemplate(template);
+            ins.key = typeKey;
             this._sigCtrlCache[typeKey] = ins;
             if (ins["getRess"]) template.getRess = ins["getRess"].bind(ins);
             if (ins["loadRes"]) template.loadRes = ins["loadRes"].bind(ins);
@@ -630,7 +640,16 @@ export class DpcMgr<
      * @deprecated 兼容1.x的,即将废弃
      */
     loadSigDpc<T>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T> {
-        this.loadDpcRess(typeKey, loadCfg?.loadCb, loadCfg?.forceLoad, loadCfg?.onLoadData);
+        const ctrlIns = this.getSigDpcIns(typeKey) as any;
+        const ctrlInsCb = loadCfg?.loadCb;
+        let completeCb;
+        if (ctrlInsCb) {
+            completeCb = (error?) => {
+                ctrlInsCb(!error ? ctrlIns : undefined);
+            };
+        }
+
+        this.loadDpcRess(typeKey, completeCb, loadCfg?.forceLoad, loadCfg?.onLoadData);
         return this.getSigDpcIns(typeKey) as any;
     }
     /**

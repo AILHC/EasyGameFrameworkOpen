@@ -108,7 +108,7 @@ declare global {
              * 创建控制器实例
              * @param params 创建参数
              */
-            create(template?: displayCtrl.ICtrlTemplate<any, CreateParams>): T;
+            create<T extends displayCtrl.ICtrl = any>(template?: displayCtrl.ICtrlTemplate<any, CreateParams>): T;
         }
         type CtrlLoadedCb = (isOk: boolean) => void;
         type CtrlInsMap<keyType extends keyof any = any> = { [P in keyType]: ICtrl };
