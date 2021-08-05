@@ -49,11 +49,9 @@ declare global {
             getRess?(): ICtrlRes[];
             /**
              * 自定义加载
-             * @param complate 加载完成回调,如果加载失败会error不为空
-             * @param loadParam 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes
+             * @param config
              */
-            loadRes?(complate: LoadResComplete, loadParam?: LoadParam): void;
+            loadRes?(config?: IResLoadConfig): void;
             /**
              * 自定义释放资源
              */
@@ -63,15 +61,11 @@ declare global {
              */
             createParams?: CreateParams;
             /**
-             * 模板状态
-             */
-            state?: displayCtrl.ITemplateState;
-            /**
              * 自定义生命周期函数映射,主要用于兼容
              */
             ctrlLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<displayCtrl.ICtrl_New>>]?: string };
         }
-        interface ITemplateState {
+        interface ICtrlState {
             /**正在加载 */
             isLoading?: boolean;
             /**已经加载 */
@@ -90,11 +84,11 @@ declare global {
          * 加载资源完成回调，如果加载失败会error不为空
          */
         type LoadResComplete = (error?: any) => void;
-
+        type CtrlStateMap<keyType extends keyof any = any> = { [P in keyType]: ICtrlState };
         type CtrlTemplateMap<keyType extends keyof any = any> = { [P in keyType]: ICtrlTemplate };
 
         type CancelLoad = () => void;
-        interface ICreateHandler<T extends displayCtrl.ICtrl = any, CreateParams = any> {
+        interface ICreateHandler<CreateParams = any> {
             /**
              * 创建类型
              */

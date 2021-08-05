@@ -6,7 +6,7 @@ declare global {
     }
 }
 export class AsyncShowDpCtrl extends BaseDpCtrl_Old {
-    onDpcShow(config: displayCtrl.IShowConfig) {
+    onShow(config: displayCtrl.IShowConfig) {
         setTimeout(() => {
             this.isShowEnd = true;
             config.showEndCb && config.showEndCb();

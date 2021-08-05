@@ -16,20 +16,34 @@ export class DpcMgr<
             }
         }
     ) as any;
+
+    /**单例控制器缓存 */
     protected _sigCtrlCache: displayCtrl.CtrlInsMap<any>;
 
+    /**资源处理器 */
     protected _resHandler: displayCtrl.IResHandler;
-    protected _createHandlerMap: displayCtrl.CreateHandlerMap = {} as any;
+
+    /**模版创建处理器字典 */
+    protected _createHandlerMap: displayCtrl.CreateHandlerMap;
+
+    /**模版字典 */
     protected _templateMap: displayCtrl.CtrlTemplateMap;
+
+    /**单例控制器状态缓存 */
+    protected _sigCtrlStateMap: displayCtrl.CtrlStateMap;
+
+    /**初始化 */
     protected _inited: boolean;
+
     init(resHandler: displayCtrl.IResHandler, createHandlerMap?: displayCtrl.CreateHandlerMap): void {
         if (this._inited) return;
         this._resHandler = resHandler;
         this._sigCtrlCache = {};
 
         if (createHandlerMap) {
-            this._createHandlerMap = Object.assign(this._createHandlerMap, createHandlerMap);
+            this._createHandlerMap = createHandlerMap;
         } else {
+            this._createHandlerMap = {} as any;
             this._createHandlerMap["class"] = {
                 type: "class",
                 create(template: displayCtrl.ICtrlTemplate<any, ObjectConstructor>) {
@@ -40,6 +54,7 @@ export class DpcMgr<
                 }
             };
         }
+        this._sigCtrlStateMap = {};
         this._inited = true;
         this._templateMap = Object.assign({}, globalCtrlTemplateMap);
     }
@@ -52,8 +67,8 @@ export class DpcMgr<
         let template: displayCtrl.ICtrlTemplate;
         for (let key in templates) {
             template = templates[key];
-            this._templateMap[template.key] = template;
-            template.state = {
+            this._templateMap[key] = template;
+            this._sigCtrlStateMap[key] = {
                 completes: []
             };
         }
@@ -111,29 +126,33 @@ export class DpcMgr<
             return;
         }
         const template = this.getTemplate(key);
-        let tplState = template.state;
-        if (tplState.isLoaded && !forceLoad) {
+        let ctrlState = this._sigCtrlStateMap[key];
+        if (ctrlState.isLoaded && !forceLoad) {
             complete && complete();
             return;
         }
-        tplState.isLoading = true;
-        tplState.isLoaded = false;
-        complete && tplState.completes.push(complete);
+        ctrlState.isLoading = true;
+        ctrlState.isLoaded = false;
+        complete && ctrlState.completes.push(complete);
         if (!template.loadRes && !template.getRess) {
             complete && complete();
         } else {
             const loadResComplete = (error?: any) => {
-                console.error(`[display-ctrl]loadDpcRess load error`, error);
-                tplState.completes.reverse();
-                tplState.isLoading = false;
-                tplState.isLoaded = !error;
-                tplState.completes.forEach((complete) => {
+                error && console.error(`[display-ctrl]loadDpcRess load error`, error);
+                ctrlState.completes.reverse();
+                ctrlState.isLoading = false;
+                ctrlState.isLoaded = !error;
+                ctrlState.completes.forEach((complete) => {
                     complete(error);
                 });
-                tplState.completes.length = 0;
+                ctrlState.completes.length = 0;
             };
             if (template.loadRes) {
-                template.loadRes(loadResComplete);
+                template.loadRes({
+                    key: key as any,
+                    loadParam: loadParam,
+                    complete: loadResComplete
+                });
             } else if (template.getRess) {
                 const ress = template.getRess();
                 if (ress && ress.length > 0) {
@@ -211,9 +230,9 @@ export class DpcMgr<
         const tplKey = showCfg.key;
         const template = this.getTemplate(tplKey);
         if (template) {
-            const tplState = template.state;
-            tplState.needShowSig = true;
-            if (forceLoad || !tplState.isLoaded) {
+            const ctrlState = this._sigCtrlStateMap[tplKey];
+            ctrlState.needShowSig = true;
+            if (forceLoad || !ctrlState.isLoaded) {
                 this.loadDpcRess(
                     tplKey,
                     (error) => {
@@ -229,6 +248,7 @@ export class DpcMgr<
             } else {
                 this._showSigDpc(tplKey, showCfg);
             }
+            return this._sigCtrlCache[tplKey] as any;
         }
     }
 
@@ -246,7 +266,7 @@ export class DpcMgr<
             if (ctrlIns) {
                 this.updateDpcByIns(ctrlIns, updateData);
             } else {
-                template.state.updateData = updateData;
+                this._sigCtrlStateMap[key].updateData = updateData;
             }
         }
     }
@@ -257,14 +277,14 @@ export class DpcMgr<
         }
         const template = this.getTemplate(key);
         if (template) {
-            const tplState = template.state;
+            const ctrlState = this._sigCtrlStateMap[key];
             const ctrlIns = this._sigCtrlCache[key];
             if (this.isLoaded(key) && ctrlIns) {
                 this.hideDpcByIns(ctrlIns);
             } else if (this.isLoading(key)) {
-                tplState.needShowSig = false;
+                ctrlState.needShowSig = false;
             }
-            tplState.updateData = undefined;
+            ctrlState.updateData = undefined;
         }
     }
     destroyDpc(key: keyType, destroyRes?: boolean): void {
@@ -274,17 +294,17 @@ export class DpcMgr<
         }
         const template = this.getTemplate(key);
         if (template) {
-            const tplState = template.state;
+            const ctrlState = this._sigCtrlStateMap[key];
             const ctrlIns = this._sigCtrlCache[key];
 
             if (this.isLoaded(key) && ctrlIns) {
                 this.destroyDpcByIns(ctrlIns, destroyRes);
             } else if (this.isLoading(key)) {
-                tplState.needShowSig = false;
+                ctrlState.needShowSig = false;
             }
 
             delete this._sigCtrlCache[key];
-            tplState.updateData = undefined;
+            ctrlState.updateData = undefined;
         }
     }
     callSigDpcFunc<T extends displayCtrl.ICtrl>(key: keyType, funcKey: keyof T, ...args) {
@@ -300,20 +320,16 @@ export class DpcMgr<
             console.error(`DisplayCtrlManager is no inited`);
             return;
         }
-        const state = this.getTemplate(key).state;
-        if (state) {
-            return state.isLoading;
-        }
+        const state = this._sigCtrlStateMap[key];
+        return state && state.isLoading;
     }
     isLoaded(key: keyType): boolean {
         if (!this._inited) {
             console.error(`DisplayCtrlManager is no inited`);
             return;
         }
-        const state = this.getTemplate(key).state;
-        if (state) {
-            return state.isLoaded;
-        }
+        const state = this._sigCtrlStateMap[key];
+        return state && state.isLoaded;
     }
     isInited(key: keyType): boolean {
         if (!this._inited) {
@@ -368,10 +384,9 @@ export class DpcMgr<
             return;
         }
         const tplKey = createCfg.key;
-        const template = this.getTemplate(tplKey);
-        if (template) {
-            const tplState = template.state;
-            if (forceLoad || !tplState.isLoaded) {
+        const ctrlState = this._sigCtrlStateMap[tplKey];
+        if (ctrlState) {
+            if (forceLoad || !ctrlState.isLoaded) {
                 this.loadDpcRess(
                     tplKey,
                     (error) => {
@@ -429,7 +444,7 @@ export class DpcMgr<
                 ins.onDpcShow && ins.onDpcShow(showCfg);
             }
             ins.isShowed = true;
-            showCfg.showedCb && showCfg.showedCb(ins);
+            showCfg?.showedCb && showCfg.showedCb(ins);
         } else {
             console.warn(`${!ins ? "dpctrl no instance" : "dpctrl is show =>" + ins.key}`);
         }
@@ -486,11 +501,12 @@ export class DpcMgr<
     protected _releaseTemplateRess(key: keyType) {
         const template = this.getTemplate(key);
         if (template) {
+            const ctrlState = this._sigCtrlStateMap[key];
             if (template.releaseRes) {
-                template.state.isLoaded = false;
+                ctrlState.isLoaded = false;
                 template.releaseRes();
             } else if (this._resHandler.releaseRes) {
-                template.state.isLoaded = false;
+                ctrlState.isLoaded = false;
                 this._resHandler.releaseRes(template);
             }
         }
@@ -519,8 +535,11 @@ export class DpcMgr<
         key: keyType,
         showCfg: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
     ) {
-        const template = this.getTemplate(key);
-        const tplState = template.state;
+        const ctrlState = this._sigCtrlStateMap[key];
+        if (!ctrlState) {
+            console.error(`template not registed`);
+            return;
+        }
         let ctrlIns = this._sigCtrlCache[key];
         if (!ctrlIns) {
             ctrlIns = this.insDpc(key);
@@ -529,12 +548,12 @@ export class DpcMgr<
         if (ctrlIns) {
             showCfg.loadCb && showCfg.loadCb(ctrlIns);
             this.initDpcByIns(ctrlIns, showCfg);
-            if (tplState.needShowSig) {
-                tplState.needShowSig = false;
+            if (ctrlState.needShowSig) {
+                ctrlState.needShowSig = false;
                 this.showDpcByIns(ctrlIns, showCfg);
-                if (tplState.updateData) {
-                    this.updateDpcByIns(ctrlIns, tplState.updateData);
-                    tplState.updateData = undefined;
+                if (ctrlState.updateData) {
+                    this.updateDpcByIns(ctrlIns, ctrlState.updateData);
+                    ctrlState.updateData = undefined;
                 }
             }
         }
@@ -575,9 +594,7 @@ export class DpcMgr<
         } else {
             typeKey = ctrlClass["typeKey"];
         }
-        const template = this.getTemplate(typeKey);
-
-        if (template) {
+        if (this.isRegisted(typeKey)) {
             console.error(`type:${typeKey} is exit`);
         } else {
             const ins: displayCtrl.ICtrl = new ctrlClass();
@@ -592,31 +609,32 @@ export class DpcMgr<
                     onDpcInit: "onInit",
                     onDpcShow: "onShow",
                     onDpcUpdate: "onUpdate"
-                },
-                state: {
-                    get isLoaded() {
-                        return ins["isLoaded"];
-                    },
-                    set isLoaded(value) {
-                        ins["isLoaded"] = value;
-                    },
-                    get isLoading() {
-                        return ins["isLoading"];
-                    },
-                    set isLoading(value) {
-                        ins["isLoading"] = value;
-                    },
-                    get needShowSig() {
-                        return ins["needShow"];
-                    },
-                    set needShowSig(value) {
-                        ins["needShow"] = value;
-                    },
-
-                    completes: []
                 }
             };
+
             this.registTemplate(template);
+            this._sigCtrlStateMap[typeKey] = {
+                get isLoaded() {
+                    return ins["isLoaded"];
+                },
+                set isLoaded(value) {
+                    ins["isLoaded"] = value;
+                },
+                get isLoading() {
+                    return ins["isLoading"];
+                },
+                set isLoading(value) {
+                    ins["isLoading"] = value;
+                },
+                get needShowSig() {
+                    return ins["needShow"];
+                },
+                set needShowSig(value) {
+                    ins["needShow"] = value;
+                },
+
+                completes: []
+            };
             ins.key = typeKey;
             this._sigCtrlCache[typeKey] = ins;
             if (ins["getRess"]) template.getRess = ins["getRess"].bind(ins);
@@ -690,7 +708,12 @@ export class DpcMgr<
      * @deprecated 兼容1.x的,即将废弃
      */
     loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void {
-        this.loadDpcRess(ins.key, loadCfg?.loadCb, loadCfg?.forceLoad, loadCfg?.onLoadData);
+        const complete = !loadCfg?.loadCb
+            ? undefined
+            : (error) => {
+                  loadCfg.loadCb(error ? undefined : ins);
+              };
+        this.loadDpcRess(ins.key, complete, loadCfg?.forceLoad, loadCfg?.onLoadData);
     }
     /**
      * 获取控制器类
