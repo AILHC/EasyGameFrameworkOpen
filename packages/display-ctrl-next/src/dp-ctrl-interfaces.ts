@@ -2,15 +2,10 @@ declare global {
     type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never }[keyof T] &
         string;
     namespace displayCtrl {
-        /**
-         * @deprecated 兼容1.x的,即将废弃
-         */
         type CtrlClassType<T = any> = {
             new (): T;
         };
-        /**
-         * @deprecated 兼容1.x的,即将废弃
-         */
+
         type CtrlClassMap = { [key: string]: CtrlClassType<ICtrl> };
 
         /**

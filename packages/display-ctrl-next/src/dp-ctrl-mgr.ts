@@ -35,7 +35,11 @@ export class DpcMgr<
     /**初始化 */
     protected _inited: boolean;
 
-    init(resHandler: displayCtrl.IResHandler, createHandlerMap?: displayCtrl.CreateHandlerMap): void {
+    init(
+        resHandler: displayCtrl.IResHandler,
+        createHandlerMap?: displayCtrl.CreateHandlerMap,
+        ctrlTemplateMap: displayCtrl.CtrlTemplateMap = globalCtrlTemplateMap
+    ): void {
         if (this._inited) return;
         this._resHandler = resHandler;
         this._sigCtrlCache = {};
@@ -56,7 +60,8 @@ export class DpcMgr<
         }
         this._sigCtrlStateMap = {};
         this._inited = true;
-        this._templateMap = Object.assign({}, globalCtrlTemplateMap);
+        this._templateMap = {};
+        this.registTemplates(ctrlTemplateMap ? ctrlTemplateMap : {});
     }
     registTemplates(templates: displayCtrl.ICtrlTemplate<any, any>[] | displayCtrl.CtrlTemplateMap): void {
         if (!templates) return;
@@ -64,13 +69,8 @@ export class DpcMgr<
             console.error(`DisplayCtrlManager is no inited`);
             return;
         }
-        let template: displayCtrl.ICtrlTemplate;
         for (let key in templates) {
-            template = templates[key];
-            this._templateMap[key] = template;
-            this._sigCtrlStateMap[key] = {
-                completes: []
-            };
+            this.registTemplate(templates[key]);
         }
     }
     registTemplate(template: displayCtrl.ICtrlTemplate<any, any>): void {
@@ -79,9 +79,94 @@ export class DpcMgr<
             console.error(`DisplayCtrlManager is no inited`);
             return;
         }
-        this._templateMap[template.key] = template;
-    }
 
+        this._templateMap[template.key] = template;
+        this._sigCtrlStateMap[template.key] = {
+            completes: []
+        };
+    }
+    /**
+     * 批量注册控制器类
+     * @param classMap
+     */
+    registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void {
+        if (classes) {
+            if (typeof classes.length === "number" && classes.length) {
+                for (let i = 0; i < classes.length; i++) {
+                    this.regist(classes[i]);
+                }
+            } else {
+                for (const typeKey in classes) {
+                    this.regist(classes[typeKey], typeKey as any);
+                }
+            }
+        }
+    }
+    /**
+     * 注册控制器类
+     * @param ctrlClass
+     * @param typeKey 如果ctrlClass这个类里没有静态属性typeKey则取传入的typeKey
+     */
+    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyType): void {
+        if (!ctrlClass["typeKey"]) {
+            if (!typeKey) {
+                console.error(`typeKey is null`);
+                return;
+            } else {
+                (ctrlClass as any)["typeKey"] = typeKey;
+            }
+        } else {
+            typeKey = ctrlClass["typeKey"];
+        }
+        if (this.isRegisted(typeKey)) {
+            console.error(`type:${typeKey} is exit`);
+        } else {
+            const ins: displayCtrl.ICtrl = new ctrlClass();
+
+            const template: displayCtrl.ICtrlTemplate = {
+                key: typeKey as any,
+                createType: "class",
+                createParams: ctrlClass,
+                ctrlLifeCycleFuncMap: {
+                    onDpcDestroy: "onDestroy",
+                    onDpcHide: "onHide",
+                    onDpcInit: "onInit",
+                    onDpcShow: "onShow",
+                    onDpcUpdate: "onUpdate"
+                }
+            };
+
+            this.registTemplate(template);
+            //兼容处理
+            this._sigCtrlStateMap[typeKey] = {
+                get isLoaded() {
+                    return ins["isLoaded"];
+                },
+                set isLoaded(value) {
+                    ins["isLoaded"] = value;
+                },
+                get isLoading() {
+                    return ins["isLoading"];
+                },
+                set isLoading(value) {
+                    ins["isLoading"] = value;
+                },
+                get needShowSig() {
+                    return ins["needShow"];
+                },
+                set needShowSig(value) {
+                    ins["needShow"] = value;
+                },
+
+                completes: []
+            };
+            ins.key = typeKey;
+            this._sigCtrlCache[typeKey] = ins;
+            if (ins["getRess"]) template.getRess = ins["getRess"].bind(ins);
+            if (ins["loadRes"]) template.loadRes = ins["loadRes"].bind(ins);
+            if (ins["releaseRes"]) template.releaseRes = ins["releaseRes"].bind(ins);
+        }
+    }
     isRegisted(key: keyType): boolean {
         if (!this._inited) {
             console.error(`DisplayCtrlManager is no inited`);
@@ -559,89 +644,6 @@ export class DpcMgr<
         }
     }
 
-    /**
-     * 批量注册控制器类
-     * @param classMap
-     * @deprecated 兼容1.x的,即将废弃
-     */
-    registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void {
-        if (classes) {
-            if (typeof classes.length === "number" && classes.length) {
-                for (let i = 0; i < classes.length; i++) {
-                    this.regist(classes[i]);
-                }
-            } else {
-                for (const typeKey in classes) {
-                    this.regist(classes[typeKey], typeKey as any);
-                }
-            }
-        }
-    }
-    /**
-     * 注册控制器类
-     * @param ctrlClass
-     * @param typeKey 如果ctrlClass这个类里没有静态属性typeKey则取传入的typeKey
-     * @deprecated 兼容1.x的,即将废弃
-     */
-    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyType): void {
-        if (!ctrlClass["typeKey"]) {
-            if (!typeKey) {
-                console.error(`typeKey is null`);
-                return;
-            } else {
-                (ctrlClass as any)["typeKey"] = typeKey;
-            }
-        } else {
-            typeKey = ctrlClass["typeKey"];
-        }
-        if (this.isRegisted(typeKey)) {
-            console.error(`type:${typeKey} is exit`);
-        } else {
-            const ins: displayCtrl.ICtrl = new ctrlClass();
-
-            const template: displayCtrl.ICtrlTemplate = {
-                key: typeKey as any,
-                createType: "class",
-                createParams: ctrlClass,
-                ctrlLifeCycleFuncMap: {
-                    onDpcDestroy: "onDestroy",
-                    onDpcHide: "onHide",
-                    onDpcInit: "onInit",
-                    onDpcShow: "onShow",
-                    onDpcUpdate: "onUpdate"
-                }
-            };
-
-            this.registTemplate(template);
-            this._sigCtrlStateMap[typeKey] = {
-                get isLoaded() {
-                    return ins["isLoaded"];
-                },
-                set isLoaded(value) {
-                    ins["isLoaded"] = value;
-                },
-                get isLoading() {
-                    return ins["isLoading"];
-                },
-                set isLoading(value) {
-                    ins["isLoading"] = value;
-                },
-                get needShowSig() {
-                    return ins["needShow"];
-                },
-                set needShowSig(value) {
-                    ins["needShow"] = value;
-                },
-
-                completes: []
-            };
-            ins.key = typeKey;
-            this._sigCtrlCache[typeKey] = ins;
-            if (ins["getRess"]) template.getRess = ins["getRess"].bind(ins);
-            if (ins["loadRes"]) template.loadRes = ins["loadRes"].bind(ins);
-            if (ins["releaseRes"]) template.releaseRes = ins["releaseRes"].bind(ins);
-        }
-    }
     /**
      * 获取单例UI的资源数组
      * @param typeKey
