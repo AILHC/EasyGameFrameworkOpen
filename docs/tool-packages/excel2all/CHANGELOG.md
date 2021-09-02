@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.2...@ailhc/excel2all@0.3.3) (2021-09-02)
+
+
+### Bug Fixes
+
+* 修复默认值转换逻辑，将cellValue转换为字符串时,字符串前后的空格被去除的bug ([65b4232](https://github.com/AILHC/EasyGameFrameworkOpen/commit/65b4232e324d7903fcb0197ba9582c0d92f27293))
+
+
+
+
+
+## [0.3.2](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.1...@ailhc/excel2all@0.3.2) (2021-07-26)
+
+
+### Bug Fixes
+
+* 修复默认解析获取表头定义时的可能bug ([d26cc37](https://github.com/AILHC/EasyGameFrameworkOpen/commit/d26cc376779df17fd31f99038fe74ccff4efd9a9))
+
+
+
+
+
+## [0.3.1](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.0...@ailhc/excel2all@0.3.1) (2021-07-22)
+
+
+### Bug Fixes
+
+* 修复默认解析中跳过空格子不生成类型信息的问题 ([3acb954](https://github.com/AILHC/EasyGameFrameworkOpen/commit/3acb954d3971bb016f6613b35dbc8869f3f9a41e))
+
+
+
+
+
 # [0.3.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.2.8...@ailhc/excel2all@0.3.0) (2021-07-19)
 
 
