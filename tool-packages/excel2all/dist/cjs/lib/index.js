@@ -64,10 +64,10 @@ function strToIntArr(fieldItem, cellValue) {
 }
 function strToStrArr(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
-    cellValue = cellValue.trim();
+    const trimCellValue = cellValue.trim();
     let result = {};
     let arr;
-    if (cellValue !== "") {
+    if (trimCellValue !== "") {
         try {
             arr = JSON.parse(cellValue);
             result.value = arr;
@@ -107,8 +107,8 @@ function strToJsonObj(fieldItem, cellValue) {
 function anyToStr(fieldItem, cellValue) {
     let result = {};
     if (typeof cellValue === "string") {
-        cellValue = cellValue.trim();
-        if (cellValue !== "") {
+        const trimCellValue = cellValue.trim();
+        if (trimCellValue !== "") {
             result.value = cellValue;
         }
     }
@@ -119,10 +119,10 @@ function anyToStr(fieldItem, cellValue) {
 }
 function anyToAny(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
-    cellValue = cellValue.trim();
+    const trimCellValue = cellValue.trim();
     let obj;
     let error;
-    if (cellValue !== "") {
+    if (trimCellValue !== "") {
         try {
             obj = JSON.parse(cellValue);
         }
