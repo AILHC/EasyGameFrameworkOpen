@@ -44,7 +44,7 @@ test("test init Object Pool By Class", function () {
 });
 //测试通用对象池对象处理器
 test("test general Object Pool ObjHandler", function () {
-    const handler: objPool.IObjHandler<ITestObjGetDataMap["TestObj1"]> = {
+    const handler: objPool.IObjHandler<{ a: number } & objPool.IObj, ITestObjGetDataMap["TestObj1"]> = {
         onCreate(obj) {},
         onGet(obj, onGetData) {
             obj["a"] = onGetData ? onGetData.num : 0;

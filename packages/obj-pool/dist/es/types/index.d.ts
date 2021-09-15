@@ -6,8 +6,8 @@ declare module '@ailhc/obj-pool' {
 	    private _sign;
 	    get sign(): string;
 	    private _createFunc;
-	    protected _objHandler: objPool.IObjHandler;
-	    setObjHandler(objHandler: objPool.IObjHandler<onGetDataType>): void;
+	    protected _objHandler: objPool.IObjHandler<T, onGetDataType>;
+	    setObjHandler(objHandler: objPool.IObjHandler<T, onGetDataType>): void;
 	    get size(): number;
 	    get usedCount(): number;
 	    threshold: number;
@@ -132,7 +132,7 @@ declare module '@ailhc/obj-pool' {
 	            /**对象构建类 */
 	            clas?: Clas<T>;
 	            /**通用对象处理函数 */
-	            objHandler?: IObjHandler<onGetDataType>;
+	            objHandler?: IObjHandler<T, onGetDataType>;
 	        }
 	        interface IPool<T = any, onGetDataType = any> {
 	            /**
@@ -179,7 +179,7 @@ declare module '@ailhc/obj-pool' {
 	             * @param objHandler
 	             * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
 	             */
-	            setObjHandler(objHandler: IObjHandler<onGetDataType>): void;
+	            setObjHandler(objHandler: IObjHandler<T, onGetDataType>): void;
 	            /**
 	             * 预创建
 	             * @param num 数量
