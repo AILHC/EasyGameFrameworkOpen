@@ -354,6 +354,7 @@ type ValueTransFuncMap = { [key: string]: ValueTransFunc };
 ```
 
 具体可见`__test__/convert_customValueTrans_test.js`
+配置:
 
 ```js
 const tableFileDir = path.join(process.cwd(), "__test__/test-excel-files");
@@ -404,16 +405,22 @@ module.exports = config;
 
 ```
 
-例子:
-配置
+excel配置:
+
 | 自定义类型,解析为number数组 	|
 |-----------------------------	|
 | nums                        	|
 | field_custom_type           	|
 |                             	|
 | 1,2,3,4                     	|
-解析结果
 
+解析结果:
+
+```json
+
+"field_custom_type":[1,2,3,4],
+
+```
 ## 自定义整个转换流程
 
 可以只实现某个hook，其他没实现的则调用默认hook的逻辑
