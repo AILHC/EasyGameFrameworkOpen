@@ -9,8 +9,8 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         return this._sign;
     }
     private _createFunc: (...args) => T;
-    protected _objHandler: objPool.IObjHandler;
-    public setObjHandler(objHandler: objPool.IObjHandler<onGetDataType>): void {
+    protected _objHandler: objPool.IObjHandler<T, onGetDataType>;
+    public setObjHandler(objHandler: objPool.IObjHandler<T, onGetDataType>): void {
         if (objHandler) {
             objHandler.pool = this;
             this._objHandler = objHandler;
@@ -90,7 +90,7 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
             if (obj && obj.onCreate) {
                 obj.onCreate();
             } else if (handler && handler.onCreate) {
-                handler.onCreate(obj);
+                handler.onCreate(obj as any);
             }
             obj.poolSign = this._sign as string;
             obj.isInPool = true;
@@ -176,7 +176,7 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
             if (obj && obj.onCreate) {
                 obj.onCreate();
             } else if (handler && handler.onCreate) {
-                handler.onCreate(obj);
+                handler.onCreate(obj as any);
             }
             obj.poolSign = this._sign as any;
             obj.pool = this;
@@ -186,7 +186,7 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         if (obj.onGet) {
             obj.onGet(onGetData);
         } else if (handler && handler.onGet) {
-            handler.onGet(obj, onGetData);
+            handler.onGet(obj as any, onGetData);
         }
         return obj as any;
     }

@@ -3,6 +3,8 @@ interface ITestObjGetDataMap {
     TestObj1: { num: number };
     TestObj2: { name: string };
     TestObj3: { name: string };
+    TestSetObjHandler2: { a: number };
+    TestSetObjHandler1: { a: number };
 }
 class TestObj1 implements objPool.IObj {
     poolSign: string;
@@ -41,6 +43,9 @@ class TestObj2 implements objPool.IObj {
     onCreate() {}
     onReturn() {}
     onKill() {}
+}
+class TestAnyObj {
+    a: number;
 }
 // 管理器接口调用测试
 test("test createPool by Mgr", function () {
@@ -139,28 +144,34 @@ test("test mgr functions", function () {
 });
 
 test("test setObjPoolHandler to pool", function () {
-    const poolMgr = new ObjPoolMgr();
-    poolMgr.createByFunc("testSetHandlerPool", () => {
+    const poolMgr = new ObjPoolMgr<ITestObjGetDataMap>();
+    poolMgr.createByFunc("TestSetObjHandler1", () => {
         return { a: 1 };
     });
-    const handler: objPool.IObjHandler = {
-        onGet() {}
-    } as any;
+    const handler: objPool.IObjHandler<TestAnyObj, ITestObjGetDataMap["TestSetObjHandler2"]> = {
+        onGet(obj, data) {
+            if (data) {
+                obj.a = data.a;
+            }
+        }
+    };
     poolMgr.createObjPool({
-        sign: "testSetHandlerPool2",
+        sign: "TestSetObjHandler2",
         objHandler: handler,
         createFunc: () => {
             return { a: 1 };
         }
     });
+    poolMgr.setPoolHandler("TestSetObjHandler1", handler);
+
     const spyonGet = jest.spyOn(handler, "onGet");
-    poolMgr.setPoolHandler("testSetHandlerPool", handler);
-    const obj = poolMgr.get("testSetHandlerPool");
-    const obj2 = poolMgr.get("testSetHandlerPool2");
+
+    const obj = poolMgr.get("TestSetObjHandler1", { a: 2 });
+    const obj2 = poolMgr.get("TestSetObjHandler2", { a: 3 });
     expect(obj).toBeDefined();
     expect(obj2).toBeDefined();
-    expect(obj.a).toBe(1);
-    expect(obj2.a).toBe(1);
+    expect(obj.a).toBe(2);
+    expect(obj2.a).toBe(3);
     expect(spyonGet).toBeCalledTimes(2);
 });
 
