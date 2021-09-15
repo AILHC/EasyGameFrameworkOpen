@@ -52,7 +52,7 @@
     "//推送到github":"",
     "gpGH":"git push https://github.com/AILHC/EasyGameFrameworkOpen.git --all && git push https://github.com/AILHC/EasyGameFrameworkOpen.git --tags",
     "//推送到gitee":"",
-    "gpMY":"git push --all --repo https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --tags"
+    "gpMY":"git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --all && git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --tags"
   },
   "config": {
     "commitizen": {
