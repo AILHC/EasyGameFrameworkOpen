@@ -49,6 +49,8 @@
     "//添加hook": "",
     "addHuskyHook": "husky add .husky/commit-msg \"yarn commitlint --edit $1\" && husky add .husky/pre-commit \"npm run lint-staged\"",
     "lint-staged": "lint-staged",
+    "//文档服务器":"",
+    "docs":"docsify serve ./docs",
     "//推送到github":"",
     "gpGH":"git push https://github.com/AILHC/EasyGameFrameworkOpen.git --all && git push https://github.com/AILHC/EasyGameFrameworkOpen.git --tags",
     "//推送到gitee":"",
