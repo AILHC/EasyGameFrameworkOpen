@@ -13,6 +13,8 @@ defaultValueTransFuncMap["[int]"] = strToIntArr;
 defaultValueTransFuncMap["[string]"] = strToStrArr;
 defaultValueTransFuncMap["json"] = strToJsonObj;
 defaultValueTransFuncMap["any"] = anyToAny;
+defaultValueTransFuncMap["bool"] = anyToBoolean;
+defaultValueTransFuncMap["boolean"] = anyToBoolean;
 function strToIntArr(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
     cellValue = cellValue.trim();
@@ -96,6 +98,36 @@ function anyToAny(fieldItem, cellValue) {
         catch (err) {
             obj = cellValue;
         }
+    }
+    return { error: error, value: obj };
+}
+function anyToBoolean(fieldItem, cellValue) {
+    let obj;
+    let error;
+    if (typeof cellValue === "boolean") ;
+    else if (typeof cellValue === "string") {
+        if (cellValue === "FALSE") {
+            obj = false;
+        }
+        else if (cellValue === "TRUE") {
+            obj = true;
+        }
+        else {
+            error = `无法解析这个值：${cellValue}`;
+            obj = cellValue;
+        }
+    }
+    else if (typeof cellValue === "number") {
+        if (cellValue > 0) {
+            obj = true;
+        }
+        else {
+            obj = false;
+        }
+    }
+    else {
+        error = `无法解析这个值：${cellValue}`;
+        obj = cellValue;
     }
     return { error: error, value: obj };
 }
