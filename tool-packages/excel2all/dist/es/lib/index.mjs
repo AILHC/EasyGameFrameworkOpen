@@ -104,12 +104,14 @@ function anyToAny(fieldItem, cellValue) {
 function anyToBoolean(fieldItem, cellValue) {
     let obj;
     let error;
-    if (typeof cellValue === "boolean") ;
+    if (typeof cellValue === "boolean") {
+        obj = cellValue;
+    }
     else if (typeof cellValue === "string") {
-        if (cellValue === "FALSE") {
+        if (cellValue === "FALSE" || cellValue === "false") {
             obj = false;
         }
-        else if (cellValue === "TRUE") {
+        else if (cellValue === "TRUE" || cellValue === "true") {
             obj = true;
         }
         else {

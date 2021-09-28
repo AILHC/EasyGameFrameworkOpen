@@ -106,10 +106,11 @@ function anyToBoolean(fieldItem: ITableField, cellValue: string): ITransValueRes
     let obj;
     let error: string;
     if (typeof cellValue === "boolean") {
+        obj = cellValue;
     } else if (typeof cellValue === "string") {
-        if (cellValue === "FALSE") {
+        if (cellValue === "FALSE" || cellValue === "false") {
             obj = false as any;
-        } else if (cellValue === "TRUE") {
+        } else if (cellValue === "TRUE" || cellValue === "true") {
             obj = true as any;
         } else {
             error = `无法解析这个值：${cellValue}`;
