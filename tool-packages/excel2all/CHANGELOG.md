@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.3...@ailhc/excel2all@0.3.4) (2021-09-28)
+
+
+### Bug Fixes
+
+* 修复解析bool或boolean类型的值的bug ([f6fb849](https://github.com/AILHC/EasyGameFrameworkOpen/commit/f6fb849c2376ea603735f9b1b4116801cf65c1df))
+
+
+
+
+
 ## [0.3.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.2...@ailhc/excel2all@0.3.3) (2021-09-02)
 
 
