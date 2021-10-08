@@ -49,12 +49,12 @@
     "//添加hook": "",
     "addHuskyHook": "husky add .husky/commit-msg \"yarn commitlint --edit $1\" && husky add .husky/pre-commit \"npm run lint-staged\"",
     "lint-staged": "lint-staged",
-    "//文档服务器":"",
-    "docs":"docsify serve ./docs",
-    "//推送到github":"",
-    "gpGH":"git push https://github.com/AILHC/EasyGameFrameworkOpen.git --all && git push https://github.com/AILHC/EasyGameFrameworkOpen.git --tags",
-    "//推送到gitee":"",
-    "gpMY":"git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --all && git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --tags"
+    "//文档服务器": "",
+    "docs": "docsify serve ./docs",
+    "//推送到github": "",
+    "gpGH": "git push https://github.com/AILHC/EasyGameFrameworkOpen.git --all && git push https://github.com/AILHC/EasyGameFrameworkOpen.git --tags",
+    "//推送到gitee": "",
+    "gpMY": "git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --all && git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --tags"
   },
   "config": {
     "commitizen": {
@@ -70,6 +70,7 @@
     "@ailhc/egf-cli": "workspace:^3.0.2",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/config-lerna-scopes": "^13.2.0",
     "@oasis-engine/typedoc-theme": "^0.0.2",
     "@strictsoftware/typedoc-plugin-monorepo": "^0.3.1",
     "@types/jest": "^24.0.23",
