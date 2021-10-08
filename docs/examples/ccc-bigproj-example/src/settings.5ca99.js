@@ -1,1 +1,0 @@
-window._CCSettings={platform:"web-desktop",groupList:["default"],collisionMatrix:[[true]],hasResourcesBundle:true,hasStartSceneBundle:false,remoteBundles:[],subpackages:[],launchScene:"db://assets/TestList.fire",orientation:"",jsList:["assets/libs/fairygui/fairygui.5e7f5.js"],bundleVers:{internal:"dd89b",resources:"2577d",testbundle:"79e2f",main:"07d23"}};

@@ -30,13 +30,13 @@ importers:
       typescript: ^4.3.5
     devDependencies:
       '@ailhc/egf-cli': link:packages/cli
-      '@commitlint/cli': registry.npmmirror.com/@commitlint/cli/11.0.0
+      '@commitlint/cli': registry.nlark.com/@commitlint/cli/11.0.0
       '@commitlint/config-conventional': registry.npmmirror.com/@commitlint/config-conventional/11.0.0
       '@commitlint/config-lerna-scopes': registry.npmmirror.com/@commitlint/config-lerna-scopes/13.2.0_lerna@3.22.1
-      '@oasis-engine/typedoc-theme': registry.npmmirror.com/@oasis-engine/typedoc-theme/0.0.2
-      '@strictsoftware/typedoc-plugin-monorepo': registry.npmmirror.com/@strictsoftware/typedoc-plugin-monorepo/0.3.1_typedoc@0.19.2
-      '@types/jest': registry.npmmirror.com/@types/jest/24.9.1
-      commitizen: registry.nlark.com/commitizen/4.2.4_typescript@4.4.3
+      '@oasis-engine/typedoc-theme': registry.nlark.com/@oasis-engine/typedoc-theme/0.0.2
+      '@strictsoftware/typedoc-plugin-monorepo': registry.nlark.com/@strictsoftware/typedoc-plugin-monorepo/0.3.1_typedoc@0.19.2
+      '@types/jest': registry.nlark.com/@types/jest/24.9.1
+      commitizen: registry.nlark.com/commitizen/4.2.4
       conventional-changelog-cli: registry.nlark.com/conventional-changelog-cli/2.1.1
       cpr: registry.npmmirror.com/cpr/3.0.1
       cross-var: registry.npmmirror.com/cross-var/1.1.0

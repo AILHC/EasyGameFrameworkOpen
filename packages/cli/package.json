@@ -1,6 +1,6 @@
 {
   "name": "@ailhc/egf-cli",
-  "version": "3.0.6",
+  "version": "3.0.8",
   "description": "The Extension library build package based on Rollup's EasyGameFramework can also be used to build other libraries",
   "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/cli#readme",
   "keywords": [
@@ -78,7 +78,7 @@
     "test:gen-dts:global": "egf dts -p ./__tests__/gen-dts -g -n genDts -o dist/genDts.d.ts",
     "test:gen-dts": "egf dts -p ./__tests__/gen-dts -l",
     "test:gen-dts:subproj": "egf dts -p ./__tests__/gen-dts/subproj -l -g -e ./testExclude.ts",
-    "test:auto_create_index:build:cjs": "egf build -p ./__tests__/auto_create_index -f cjs -acti -e ./src/index.ts",
+    "test:auto_create_index:build:cjs": "egf build -p ./__tests__/auto_create_index -f cjs -acti -e ./src/index.ts -ctim entrypoint",
     "test:owinput-output:build": "egf build -p ./__tests__/owinput-output -f cjs -e ./src/index.ts -c"
   }
 }

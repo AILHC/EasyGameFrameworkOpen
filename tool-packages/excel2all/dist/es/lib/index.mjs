@@ -13,6 +13,8 @@ defaultValueTransFuncMap["[int]"] = strToIntArr;
 defaultValueTransFuncMap["[string]"] = strToStrArr;
 defaultValueTransFuncMap["json"] = strToJsonObj;
 defaultValueTransFuncMap["any"] = anyToAny;
+defaultValueTransFuncMap["bool"] = anyToBoolean;
+defaultValueTransFuncMap["boolean"] = anyToBoolean;
 function strToIntArr(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
     cellValue = cellValue.trim();
@@ -31,10 +33,10 @@ function strToIntArr(fieldItem, cellValue) {
 }
 function strToStrArr(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
-    cellValue = cellValue.trim();
+    const trimCellValue = cellValue.trim();
     let result = {};
     let arr;
-    if (cellValue !== "") {
+    if (trimCellValue !== "") {
         try {
             arr = JSON.parse(cellValue);
             result.value = arr;
@@ -74,8 +76,8 @@ function strToJsonObj(fieldItem, cellValue) {
 function anyToStr(fieldItem, cellValue) {
     let result = {};
     if (typeof cellValue === "string") {
-        cellValue = cellValue.trim();
-        if (cellValue !== "") {
+        const trimCellValue = cellValue.trim();
+        if (trimCellValue !== "") {
             result.value = cellValue;
         }
     }
@@ -86,16 +88,48 @@ function anyToStr(fieldItem, cellValue) {
 }
 function anyToAny(fieldItem, cellValue) {
     cellValue = (cellValue + "").replace(/，/g, ",");
-    cellValue = cellValue.trim();
+    const trimCellValue = cellValue.trim();
     let obj;
     let error;
-    if (cellValue !== "") {
+    if (trimCellValue !== "") {
         try {
             obj = JSON.parse(cellValue);
         }
         catch (err) {
             obj = cellValue;
         }
+    }
+    return { error: error, value: obj };
+}
+function anyToBoolean(fieldItem, cellValue) {
+    let obj;
+    let error;
+    if (typeof cellValue === "boolean") {
+        obj = cellValue;
+    }
+    else if (typeof cellValue === "string") {
+        if (cellValue === "FALSE" || cellValue === "false") {
+            obj = false;
+        }
+        else if (cellValue === "TRUE" || cellValue === "true") {
+            obj = true;
+        }
+        else {
+            error = `无法解析这个值：${cellValue}`;
+            obj = cellValue;
+        }
+    }
+    else if (typeof cellValue === "number") {
+        if (cellValue > 0) {
+            obj = true;
+        }
+        else {
+            obj = false;
+        }
+    }
+    else {
+        error = `无法解析这个值：${cellValue}`;
+        obj = cellValue;
     }
     return { error: error, value: obj };
 }
@@ -303,6 +337,7 @@ class DefaultTableParser {
         let cellObj;
         const sheetNames = workBook.SheetNames;
         let sheet;
+        let firstCanParseSheet;
         let firstCellValue;
         let firstCellObj;
         const tableDefine = {};
@@ -310,6 +345,7 @@ class DefaultTableParser {
             sheet = workBook.Sheets[sheetNames[i]];
             firstCellObj = sheet["A" + 1];
             if (!isEmptyCell(firstCellObj)) {
+                firstCanParseSheet = sheet;
                 firstCellValue = this._getFirstCellValue(firstCellObj);
                 if (!tableDefine.tableName) {
                     tableDefine.tableName = firstCellValue.tableNameInSheet;
@@ -338,7 +374,7 @@ class DefaultTableParser {
             horizontalFieldDefine.textRow = 1;
             for (let i = 1; i < 100; i++) {
                 cellKey = "A" + i;
-                cellObj = sheet[cellKey];
+                cellObj = firstCanParseSheet[cellKey];
                 if (isEmptyCell(cellObj) || cellObj.v === "NO" || cellObj.v === "END" || cellObj.v === "START") {
                     tableDefine.startRow = i;
                 }

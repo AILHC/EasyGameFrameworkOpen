@@ -72,6 +72,8 @@ or
 e2a convert -p ./__tests__ -c ./testConfig
 
 ```
+配置参考具体可见:./__tests__/e2a.config.js
+
 ### tfm (测试表格文件匹配)
 
 #### **参数**
@@ -130,7 +132,9 @@ const customConvertHook = {
 module.exports = customConvertHook;
 
 ```
+
 在配置文件e2a.config.js/自定义配置文件 上配置
+具体可见:./__tests__/e2a.config.js
 
 ```js
 //__tests__/e2a.config.js
@@ -154,6 +158,7 @@ const config = {
 e2a convert -t ../../excel2all/__test__/test-excel-files -p ./__tests__ -j ./test-export/bundle.json -cstj ./test-export/export-jsons -cchkp ./testCustomHook.js
 
 ```
+
 ### 配置表值解析和声明生成扩展
 
 基于默认解析逻辑的扩展
