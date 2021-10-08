@@ -1,18 +1,18 @@
-export const globalCtrlTemplateMap: displayCtrl.CtrlTemplateMap = {};
+export const globalCtrlDefineMap: displayCtrl.CtrlTemplateMap = {};
 
 /**
  * 定义显示控制器模板,仅用于dpcMgr初始化前调用
- * @param ctrlTemplate 显示控制器模板
- * @param templateMap 默认为全局模板字典，可自定义
+ * @param define 显示控制器定义
+ * @param defineMap 默认为全局字典，可自定义
  */
-export function defineDisplayCtrlTemplate<GetRessParams = any, CreateParams = any>(
-    ctrlTemplate: displayCtrl.ICtrlTemplate<GetRessParams, CreateParams>,
-    templateMap: displayCtrl.CtrlTemplateMap = globalCtrlTemplateMap
+export function defineCtrl(
+    define: displayCtrl.ICtrlTemplate,
+    defineMap: displayCtrl.CtrlTemplateMap = globalCtrlDefineMap
 ) {
-    const tplKey = ctrlTemplate.key;
-    if (templateMap[tplKey]) {
+    const key = define.key;
+    if (defineMap[key]) {
         console.error(`template is defined`);
         return;
     }
-    templateMap[tplKey] = ctrlTemplate;
+    defineMap[key] = define;
 }
