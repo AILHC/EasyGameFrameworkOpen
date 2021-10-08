@@ -7,6 +7,8 @@ defaultValueTransFuncMap["[int]"] = strToIntArr;
 defaultValueTransFuncMap["[string]"] = strToStrArr;
 defaultValueTransFuncMap["json"] = strToJsonObj;
 defaultValueTransFuncMap["any"] = anyToAny;
+defaultValueTransFuncMap["bool"] = anyToBoolean;
+defaultValueTransFuncMap["boolean"] = anyToBoolean;
 function strToIntArr(fieldItem: ITableField, cellValue: string): ITransValueResult {
     cellValue = (cellValue + "").replace(/，/g, ","); //为了防止策划误填，先进行转换
     cellValue = cellValue.trim();
@@ -25,10 +27,10 @@ function strToIntArr(fieldItem: ITableField, cellValue: string): ITransValueResu
 }
 function strToStrArr(fieldItem: ITableField, cellValue: string): ITransValueResult {
     cellValue = (cellValue + "").replace(/，/g, ","); //为了防止策划误填，先进行转换
-    cellValue = cellValue.trim();
+    const trimCellValue = cellValue.trim();
     let result: ITransValueResult = {};
     let arr: string[];
-    if (cellValue !== "") {
+    if (trimCellValue !== "") {
         try {
             arr = JSON.parse(cellValue);
             result.value = arr;
@@ -65,8 +67,8 @@ function strToJsonObj(fieldItem: ITableField, cellValue: string): ITransValueRes
 function anyToStr(fieldItem: ITableField, cellValue: any): ITransValueResult {
     let result: ITransValueResult = {} as any;
     if (typeof cellValue === "string") {
-        cellValue = cellValue.trim();
-        if (cellValue !== "") {
+        const trimCellValue = cellValue.trim();
+        if (trimCellValue !== "") {
             result.value = cellValue;
         }
     } else {
@@ -82,15 +84,48 @@ function anyToStr(fieldItem: ITableField, cellValue: any): ITransValueResult {
  */
 function anyToAny(fieldItem: ITableField, cellValue: string): ITransValueResult {
     cellValue = (cellValue + "").replace(/，/g, ","); //为了防止策划误填，先进行转换
-    cellValue = cellValue.trim();
+    const trimCellValue = cellValue.trim();
     let obj;
     let error;
-    if (cellValue !== "") {
+    if (trimCellValue !== "") {
         try {
             obj = JSON.parse(cellValue);
         } catch (err) {
             obj = cellValue;
         }
     }
+    return { error: error, value: obj };
+}
+/**
+ *
+ * @param fieldItem
+ * @param cellValue
+ * @returns
+ */
+function anyToBoolean(fieldItem: ITableField, cellValue: string): ITransValueResult {
+    let obj;
+    let error: string;
+    if (typeof cellValue === "boolean") {
+        obj = cellValue;
+    } else if (typeof cellValue === "string") {
+        if (cellValue === "FALSE" || cellValue === "false") {
+            obj = false as any;
+        } else if (cellValue === "TRUE" || cellValue === "true") {
+            obj = true as any;
+        } else {
+            error = `无法解析这个值：${cellValue}`;
+            obj = cellValue;
+        }
+    } else if (typeof cellValue === "number") {
+        if (cellValue > 0) {
+            obj = true as any;
+        } else {
+            obj = false as any;
+        }
+    } else {
+        error = `无法解析这个值：${cellValue}`;
+        obj = cellValue;
+    }
+
     return { error: error, value: obj };
 }

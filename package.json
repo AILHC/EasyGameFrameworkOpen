@@ -49,10 +49,12 @@
     "//添加hook": "",
     "addHuskyHook": "husky add .husky/commit-msg \"yarn commitlint --edit $1\" && husky add .husky/pre-commit \"npm run lint-staged\"",
     "lint-staged": "lint-staged",
+    "//文档服务器": "",
+    "docs": "docsify serve ./docs",
     "//推送到github": "",
-    "gpGH": "git push --repo https://github.com/AILHC/EasyGameFrameworkOpen.git --tags",
+    "gpGH": "git push https://github.com/AILHC/EasyGameFrameworkOpen.git --all && git push https://github.com/AILHC/EasyGameFrameworkOpen.git --tags",
     "//推送到gitee": "",
-    "gpMY": "git push --repo https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --tags"
+    "gpMY": "git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --all && git push https://gitee.com/AIGameHome/EasyGameFrameworkOpen.git --tags"
   },
   "config": {
     "commitizen": {

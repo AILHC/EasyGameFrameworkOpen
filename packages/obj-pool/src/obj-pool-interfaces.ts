@@ -81,7 +81,7 @@ declare global {
             /**对象构建类 */
             clas?: Clas<T>;
             /**通用对象处理函数 */
-            objHandler?: IObjHandler<onGetDataType>;
+            objHandler?: IObjHandler<T, onGetDataType>;
         }
         interface IPool<T = any, onGetDataType = any> {
             /**
@@ -128,7 +128,7 @@ declare global {
              * @param objHandler
              * @deprecated 这个方法即将弃用，请用最新的init(opt)方法
              */
-            setObjHandler(objHandler: IObjHandler<onGetDataType>): void;
+            setObjHandler(objHandler: IObjHandler<T, onGetDataType>): void;
             /**
              * 预创建
              * @param num 数量

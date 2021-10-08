@@ -160,6 +160,7 @@ export class DefaultTableParser implements ITableParser {
 
         const sheetNames = workBook.SheetNames;
         let sheet: xlsx.Sheet;
+        let firstCanParseSheet: xlsx.Sheet;
         //第一个格子的值tableNameInSheet(表名),tableType:表格类型
         let firstCellValue: ITableFirstCellValue;
         let firstCellObj: xlsx.CellObject;
@@ -170,6 +171,7 @@ export class DefaultTableParser implements ITableParser {
             sheet = workBook.Sheets[sheetNames[i]];
             firstCellObj = sheet["A" + 1];
             if (!isEmptyCell(firstCellObj)) {
+                firstCanParseSheet = sheet;
                 firstCellValue = this._getFirstCellValue(firstCellObj);
                 if (!tableDefine.tableName) {
                     tableDefine.tableName = firstCellValue.tableNameInSheet;
@@ -197,7 +199,7 @@ export class DefaultTableParser implements ITableParser {
             horizontalFieldDefine.textRow = 1;
             for (let i = 1; i < 100; i++) {
                 cellKey = "A" + i;
-                cellObj = sheet[cellKey];
+                cellObj = firstCanParseSheet[cellKey];
                 if (isEmptyCell(cellObj) || cellObj.v === "NO" || cellObj.v === "END" || cellObj.v === "START") {
                     tableDefine.startRow = i;
                 } else if (cellObj.v === "CLIENT") {

@@ -10,7 +10,7 @@
 * 基于TypeScript
 
 [GitHub](https://github.com/AILHC/EasyGameFrameworkOpen.git)
-[Gitee](https://gitee.com/AIGAMESTUDIO.AILHC/EasyGameFrameworkOpen)
+[Gitee](https://gitee.com/AIGameHome/EasyGameFrameworkOpen)
 [API](api/index.html)
 [Get Started](README.md)
 
