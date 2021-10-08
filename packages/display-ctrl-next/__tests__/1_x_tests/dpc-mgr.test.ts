@@ -252,7 +252,7 @@ test("测试加载和销毁实现了自定义资源处理接口的dpc", function
     dpcMgr.regist(CustomResHandlerDpc);
 
     const ctrlIns: displayCtrl.IResHandler = dpcMgr.getSigDpcIns(CustomResHandlerDpc.typeKey) as any;
-    const template = dpcMgr.getTemplate(CustomResHandlerDpc.typeKey);
+    const template = dpcMgr.getDefine(CustomResHandlerDpc.typeKey);
     const ctrlCustomLoadResSpy = jest.spyOn(template, "loadRes");
     const ctrlCustomReleaseResSpy = jest.spyOn(template, "releaseRes");
 

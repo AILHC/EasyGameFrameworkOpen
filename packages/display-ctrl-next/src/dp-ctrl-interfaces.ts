@@ -21,27 +21,29 @@ declare global {
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
             loadCb?: CtrlInsCb;
         }
-        interface ICtrlRes {
-            url: string;
+        interface ICtrlResInfo<RessType = any> {
+            type: string;
+            ress: RessType;
         }
-        interface ICreateTypes {
-            /**
-             * 类显示控制器
-             */
-            class: "class";
-        }
-        interface ICtrlTemplate<LoadParam = any, CreateParams = any> {
+        interface ICtrlTemplate {
             /**key */
             key: string;
-
             /**
-             * 类型,默认是类控制器 class
+             * 类型,让对应的处理器进行处理
              */
-            createType?: keyof ICreateTypes;
+            type?: string;
+            /**
+             * 处理参数
+             */
+            handlerParam?: any;
+            /**是否正在加载 */
+            isLoading?: boolean;
+            /**是否已经加载 */
+            isLoaded?: boolean;
             /**
              * 获取资源信息
              */
-            getRess?(): ICtrlRes[];
+            getResInfo?(): ICtrlResInfo;
             /**
              * 自定义加载
              * @param config
@@ -52,53 +54,79 @@ declare global {
              */
             releaseRes?(): void;
             /**
-             * 创建参数
+             * 自定义创建
              */
-            createParams?: CreateParams;
+            create?<T extends displayCtrl.ICtrl = any>(): displayCtrl.ReturnCtrlType<T>;
+            /**
+             * 自定义销毁处理
+             * @param ctrl
+             */
+            destroy?<T extends displayCtrl.ICtrl = any>(ctrl: T): void;
             /**
              * 自定义生命周期函数映射,主要用于兼容
              */
             ctrlLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<displayCtrl.ICtrl_New>>]?: string };
         }
-        interface ICtrlState {
-            /**正在加载 */
-            isLoading?: boolean;
-            /**已经加载 */
-            isLoaded?: boolean;
-            /**是否需要显示单例 */
-            needShowSig?: boolean;
-            /**加载完成回调 */
-            completes: displayCtrl.LoadResComplete[];
+        /**
+         * 模板字典
+         *  */
+        type TemplateHandlerMap<keyType extends keyof any = any> = { [P in keyType]: ICtrlTemplateHandler };
+        /**
+         * 控制器定义处理器
+         */
+        interface ICtrlTemplateHandler {
+            /**类型 */
+            type: string;
             /**
-             * 未显示之前调用updateDpc接口的数据，会覆盖
-             * 单例可用
+             * 加载资源
+             * @param template 模板
+             * @param config
              */
-            updateData?: any;
+            loadRes?(template: displayCtrl.ICtrlTemplate, config?: IResLoadConfig): void;
+            /**
+             * 释放资源
+             * @param template
+             */
+            releaseRes?(template: displayCtrl.ICtrlTemplate): void;
+            /**
+             * 创建实例
+             * @param template
+             */
+            create<T extends displayCtrl.ICtrl>(template: displayCtrl.ICtrlTemplate): T;
+            /**
+             * 销毁实例
+             * @param ins
+             * @param template
+             */
+            destroy?<T extends displayCtrl.ICtrl>(ins: T, template: displayCtrl.ICtrlTemplate): void;
+        }
+        interface ICtrlState {
+            id: string;
+            /**是否需要初始化 */
+            needInit?: boolean;
+
+            /**是否需要显示 */
+            needShow?: boolean;
+
+            /**
+             * 未显示之前调用update接口的传递的数据
+             */
+            updateState?: any;
+            /**
+             * 未显示之前调用hide相关接口的传递的数据
+             */
+            hideParam?: any;
+            /**控制器实例 */
+            ctrlIns?: displayCtrl.ICtrl;
         }
         /**
          * 加载资源完成回调，如果加载失败会error不为空
          */
         type LoadResComplete = (error?: any) => void;
-        type CtrlStateMap<keyType extends keyof any = any> = { [P in keyType]: ICtrlState };
+        type CtrlStateMap = { [key: string]: ICtrlState };
         type CtrlTemplateMap<keyType extends keyof any = any> = { [P in keyType]: ICtrlTemplate };
 
         type CancelLoad = () => void;
-        interface ICreateHandler<CreateParams = any> {
-            /**
-             * 创建类型
-             */
-            type: keyof displayCtrl.ICreateTypes;
-            /**
-             * 注册template时会用这个方法来检查是否有效
-             * @param template
-             */
-            checkIsValid?(template: displayCtrl.ICtrlTemplate<any, CreateParams>): boolean;
-            /**
-             * 创建控制器实例
-             * @param params 创建参数
-             */
-            create<T extends displayCtrl.ICtrl = any>(template?: displayCtrl.ICtrlTemplate<any, CreateParams>): T;
-        }
         type CtrlLoadedCb = (isOk: boolean) => void;
         type CtrlInsMap<keyType extends keyof any = any> = { [P in keyType]: ICtrl };
         type CtrlShowCfgs = { [key: string]: IShowConfig[] };
@@ -107,27 +135,12 @@ declare global {
             /**页面key */
             key: string | any;
             /**资源数组 */
-            ress?: ICtrlRes[];
+            ress?: ICtrlResInfo;
             /**完成回调 */
             complete: displayCtrl.LoadResComplete;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes */
+             * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
-        }
-        /**
-         * 资源处理器
-         */
-        interface IResHandler {
-            /**
-             * 加载资源
-             * @param config
-             */
-            loadRes?(config: displayCtrl.IResLoadConfig): void;
-            /**
-             * 释放资源
-             * @param template
-             */
-            releaseRes?(template?: displayCtrl.ICtrlTemplate): void;
         }
 
         /**
@@ -141,12 +154,12 @@ declare global {
         /**
          * 显示配置
          */
-        interface IShowConfig<keyType extends keyof any = any, InitDataTypeMapType = any, ShowDataTypeMapType = any> {
+        interface IShowConfig<keyType extends keyof any = any> {
             key?: keyType;
             /**
              * 透传初始化数据
              */
-            onInitData?: InitDataTypeMapType[ToAnyIndexKey<keyType, InitDataTypeMapType>];
+            onInitData?: any;
             /**
              * 强制重新加载
              */
@@ -154,7 +167,7 @@ declare global {
             /**
              * 显示数据
              */
-            onShowData?: ShowDataTypeMapType[ToAnyIndexKey<keyType, ShowDataTypeMapType>];
+            onShowData?: any;
             /**在调用控制器实例onShow后回调 */
             showedCb?: CtrlInsCb;
             /**控制器显示完成后回调 */
@@ -162,11 +175,11 @@ declare global {
             /**显示被取消了 */
             onCancel?: VoidFunction;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes */
+             * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
             /**
              * 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes
+             * 或自定义加载透传给CtrlDefine.loadRes
              * @deprecated 兼容1.x的,即将废弃
              */
             onLoadData?: any;
@@ -175,308 +188,30 @@ declare global {
         }
         interface ICreateConfig<keyType extends keyof any = any> {
             key?: keyType;
+
             /**
-             * 是否强制加载
+             * 透传初始化数据
+             */
+            onInitData?: any;
+            /**
+             * 强制重新加载
              */
             forceLoad?: boolean;
+            /**自动显示 */
+            autoShow?: boolean;
+            /**
+             * 显示数据
+             */
+            onShowData?: any;
             /**
              * 创建回调,失败实例为空,成功则不为空
              */
             createCb?: CtrlInsCb;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes */
+             * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
         }
-        type ReturnCtrlType<T> = T extends displayCtrl.ICtrl ? T : displayCtrl.ICtrl;
-        interface ICtrl_New<NodeType = any> {
-            key?: string | any;
 
-            /**已经初始化 */
-            isInited?: boolean;
-            /**已经显示 */
-            isShowed?: boolean;
-            /**显示结束，由业务去控制这个状态，用于动画等异步状态 */
-            isShowEnd?: boolean;
-            /**
-             * 初始化
-             * @param initData 初始化数据
-             */
-            onDpcInit?(config?: displayCtrl.IInitConfig): void;
-            /**
-             * 当显示时
-             * @param showData 显示数据
-             */
-            onDpcShow?(config?: displayCtrl.IShowConfig): void;
-            /**
-             * 当更新时
-             * @param updateData 更新数据
-             * @param endCb 结束回调
-             */
-            onDpcUpdate?(updateData: any): void;
-            /**
-             * 获取控制器
-             */
-            getFace?<T = any>(): ReturnCtrlType<T>;
-            /**
-             * 当隐藏时
-             */
-            onDpcHide?(): void;
-            /**
-             * 当销毁时
-             * @param destroyRes
-             */
-            onDpcDestroy?(destroyRes?: boolean): void;
-            /**
-             * 获取显示节点
-             */
-            getNode(): NodeType;
-        }
-
-        interface ICtrl<NodeType = any> extends displayCtrl.ICtrl_New<NodeType>, displayCtrl.ICtrl_OLD<NodeType> {}
-
-        type CreateHandlerMap = { [key in keyof displayCtrl.ICreateTypes]: ICreateHandler };
-        interface IMgr<
-            CtrlKeyType = any,
-            InitDataTypeMapType = any,
-            ShowDataTypeMapType = any,
-            UpdateDataTypeMapType = any,
-            keyType extends keyof CtrlKeyType = any
-        > {
-            /**
-             * 初始化
-             * @param resHandler 资源处理
-             * @param createHandlerMap 创建处理器字典，key为类型，值为处理器
-             */
-            init(resHandler: IResHandler, createHandlerMap?: CreateHandlerMap): void;
-            /**
-             * 获取key
-             * @param key
-             */
-            getKey(key: keyType): keyType;
-            /**
-             * 批量注册控制器模版
-             * @param templates
-             */
-            registTemplates(templates: ICtrlTemplate[]): void;
-            /**
-             * 注册控制器模版
-             * @param template
-             */
-            registTemplate(template: ICtrlTemplate): void;
-            /**
-             * 是否注册了
-             * @param templateKey
-             */
-            isRegisted(templateKey: keyType): boolean;
-            /**
-             * 获取控制器模板
-             * @param templateKey
-             */
-            getTemplate(templateKey: keyType): ICtrlTemplate;
-            /**
-             * 获取控制器模版依赖的资源信息
-             * @param templateKey
-             */
-            getDpcRess(templateKey: keyType): ICtrlRes[] | string[];
-
-            /**
-             * 加载控制器模版依赖的资源
-             * @param templateKey
-             * @param complate 加载资源完成回调，如果加载失败会error不为空
-             * @param loadParam 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes
-             */
-            loadDpcRess<LoadParam = any>(
-                templateKey: keyType,
-                complate: displayCtrl.LoadResComplete,
-                forceLoad?: boolean,
-                loadParam?: LoadParam
-            ): void;
-            /**
-             * 实例化显示控制器
-             * @param teamplateKey 类型key
-             */
-            insDpc<T extends displayCtrl.ICtrl>(teamplateKey: keyType): ReturnCtrlType<T>;
-            /**
-             * 获取单例控制器实例
-             * @param key
-             */
-            getSigDpcIns<T extends displayCtrl.ICtrl = any>(key: keyType): T;
-            /**
-             * 显示单例显示控制器
-             * @param keyOrConfig 类key或者显示配置IShowConfig
-             * @param onShowData 显示透传数据
-             * @param showedCb 显示完成回调(onShow调用之后)
-             * @param onInitData 初始化透传数据
-             * @param forceLoad 是否强制重新加载
-             * @param loadParam 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes
-             * @param showEndCb 显示结束回调，由控制器调用
-             * @param onCancel 取消显示回调
-             */
-            showDpc<T = any>(
-                keyOrConfig: keyType | displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>,
-                onShowData?: ShowDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, ShowDataTypeMapType>],
-                showedCb?: displayCtrl.CtrlInsCb<T>,
-                onInitData?: InitDataTypeMapType[displayCtrl.ToAnyIndexKey<keyType, InitDataTypeMapType>],
-                forceLoad?: boolean,
-                loadParam?: any,
-                loadCb?: displayCtrl.CtrlInsCb<unknown>,
-                showEndCb?: VoidFunction,
-                onCancel?: VoidFunction
-            ): displayCtrl.ReturnCtrlType<T>;
-            /**
-             * 更新控制器
-             * @param key UIkey
-             * @param updateData 更新数据
-             */
-            updateDpc(
-                key: keyType,
-                updateData?: UpdateDataTypeMapType[ToAnyIndexKey<keyType, UpdateDataTypeMapType>]
-            ): void;
-            /**
-             * 隐藏单例控制器
-             * @param key
-             */
-            hideDpc(key: keyType): void;
-            /**
-             * 销毁单例控制器
-             * @param key
-             * @param destroyRes 销毁资源
-             */
-            destroyDpc(key: keyType, destroyRes?: boolean): void;
-            /**
-             * 获取单例控制器是否正在
-             * @param key
-             */
-            isLoading(key: keyType): boolean;
-            /**
-             * 获取单例控制器是否加载了
-             * @param key
-             */
-            isLoaded(key: keyType): boolean;
-            /**
-             * 获取单例控制器是否初始化了
-             * @param key
-             */
-            isInited(key: keyType): boolean;
-            /**
-             * 获取单例控制器是否显示
-             * @param key
-             */
-            isShowed(key: keyType): boolean;
-            /**
-             * 获取单例控制器是否显示完成
-             * @param key
-             */
-            isShowEnd(key: keyType): boolean;
-            /**
-             * 加载并创建Dpc实例
-             * @param keyOrConfig 控制器key或者创建配置对象displayCtrl.IcreateConfig
-             * @param createCb 创建结束回调
-             * @param loadParam loadParam 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlTemplate.loadRes
-             * @param forceLoad
-             */
-            createDpc(
-                keyOrConfig: keyType | displayCtrl.ICreateConfig<keyType>,
-                createCb?: displayCtrl.CtrlInsCb,
-                loadParam?: boolean,
-                forceLoad?: boolean
-            ): void;
-
-            /**
-             * 初始化显示控制器
-             * @param ins
-             * @param initData
-             */
-            initDpcByIns<T extends displayCtrl.ICtrl = any>(
-                ins: T,
-                initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
-            ): void;
-            /**
-             * 显示 显示控制器
-             * @param ins
-             * @param showCfg
-             */
-            showDpcByIns<T extends displayCtrl.ICtrl>(
-                ins: T,
-                showCfg?: displayCtrl.IShowConfig<keyType, InitDataTypeMapType, ShowDataTypeMapType>
-            ): void;
-            /**
-             * 通过实例隐藏
-             * @param ins
-             */
-            hideDpcByIns<T extends displayCtrl.ICtrl>(ins: T): void;
-            /**
-             * 通过实例销毁
-             * @param ins
-             * @param destroyRes 是否销毁资源
-             */
-            destroyDpcByIns<T extends displayCtrl.ICtrl>(ins: T, destroyRes?: boolean, endCb?: VoidFunction): void;
-
-            //兼容，即将废弃的API
-
-            /**
-             * 批量注册控制器类
-             * @param classMap
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void;
-            /**
-             * 注册控制器类
-             * @param ctrlClass
-             * @param typeKey 如果ctrlClass这个类里没有静态属性typeKey则取传入的typeKey
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyType): void;
-            /**
-             * 获取单例UI的资源数组
-             * @param typeKey
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            getSigDpcRess(typeKey: keyType): string[] | any[];
-            /**
-             *
-             * 加载Dpc
-             * @param typeKey 注册时的typeKey
-             * @param loadCfg 透传数据和回调
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            loadSigDpc<T>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T>;
-            /**
-             * 初始化单例显示控制器
-             * @param typeKey 注册类时的 typeKey
-             * @param initCfg displayCtrl.IInitConfig
-             * @returns
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            initSigDpc<T = any>(
-                typeKey: keyType,
-                initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
-            ): displayCtrl.ReturnCtrlType<T>;
-            /**
-             * 获取注册类的资源信息
-             * 读取类的静态变量 ress
-             * @param typeKey
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            getDpcRessInClass(typeKey: keyType): string[] | any[];
-            /**
-             * 加载显示控制器
-             * @param ins
-             * @param loadCfg
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            loadDpcByIns(ins: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig): void;
-
-            /**
-             * 获取控制器类
-             * @param typeKey
-             * @deprecated 兼容1.x的,即将废弃
-             */
-            getCtrlClass(typeKey: keyType): CtrlClassType<ICtrl>;
-        }
         interface ICtrl_OLD<NodeType = any> {
             key?: string | any;
             /**
@@ -544,19 +279,236 @@ declare global {
             getFace?<T = any>(): ReturnCtrlType<T>;
             /**
              * 当隐藏时
+             * @param hideParam
              * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcHide
              */
-            onHide?(): void;
+            onHide?(hideParam: any): void;
             /**
              * 当销毁时
-             * @param destroyRes
+             * @param releaseRes
              * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcDestroy
              */
-            onDestroy?(destroyRes?: boolean): void;
+            onDestroy?(releaseRes?: boolean): void;
             /**
              * 获取显示节点
              */
             getNode(): NodeType;
+        }
+        interface ICtrl_New<NodeType = any> {
+            key?: string | any;
+
+            /**已经初始化 */
+            isInited?: boolean;
+            /**已经显示 */
+            isShowed?: boolean;
+            /**显示结束，由业务去控制这个状态，用于动画等异步状态 */
+            isShowEnd?: boolean;
+            /**
+             * 初始化
+             * @param config 初始化数据
+             */
+            onDpcInit?(config?: displayCtrl.IInitConfig): void;
+            /**
+             * 当显示时
+             * @param config 显示数据
+             */
+            onDpcShow?(config?: displayCtrl.IShowConfig): void;
+            /**
+             * 当更新时
+             * @param param 更新数据
+             */
+            onDpcUpdate?(param?: any): void;
+            /**
+             * 获取控制器
+             */
+            getFace?<T = any>(): ReturnCtrlType<T>;
+            /**
+             * 当隐藏时
+             */
+            onDpcHide?(param?: any): void;
+            /**
+             * 当销毁时
+             * @param releaseRes
+             */
+            onDpcDestroy?(releaseRes?: boolean): void;
+            /**
+             * 获取显示节点
+             */
+            getNode(): NodeType;
+        }
+
+        interface ICtrl<NodeType = any> extends displayCtrl.ICtrl_New<NodeType>, displayCtrl.ICtrl_OLD<NodeType> {
+            /**控制器实例唯一id */
+            id?: string;
+        }
+        type ReturnCtrlType<T> = T extends displayCtrl.ICtrl ? T : displayCtrl.ICtrl;
+
+        interface IMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any> {
+            /**
+             * 初始化
+             * @param templateHandlerMap 模板处理器字典
+             * @param templateMap 模板字典
+             */
+            init(templateHandlerMap?: TemplateHandlerMap, templateMap?: displayCtrl.CtrlTemplateMap): void;
+            /**
+             * 获取key
+             * @param key
+             */
+            getKey(key: keyType): keyType;
+            /**
+             * 批量注册控制器模版
+             * @param templates 定义字典，单个定义，定义数组
+             */
+            template(templates: ICtrlTemplate[] | ICtrlTemplate | displayCtrl.CtrlTemplateMap): void;
+            /**
+             * 添加模板处理器
+             * @param templateHandler
+             */
+            addTemplateHandler(templateHandler: ICtrlTemplateHandler): void;
+
+            /**
+             * 是否注册了
+             * @param key
+             */
+            hasTemplate(key: keyType): boolean;
+            /**
+             * 获取控制器模板
+             * @param key
+             */
+            getTemplate(key: keyType): ICtrlTemplate;
+
+            /**
+             * 获取控制器模版依赖的资源信息
+             * @param key
+             */
+            getResInfo(key: keyType): ICtrlResInfo;
+            /**
+             * 加载控制器模版依赖的资源
+             * @param key
+             * @param complate 加载资源完成回调，如果加载失败会error不为空
+             * @param loadParam 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
+             * 或自定义加载透传给CtrlDefine.loadRes
+             */
+            loadRess<LoadParam = any>(
+                key: keyType,
+                complate: displayCtrl.LoadResComplete,
+                forceLoad?: boolean,
+                loadParam?: LoadParam
+            ): void;
+            /**
+             * 释放模板依赖的资源
+             * @param key
+             */
+            releaseRess(key: keyType): void;
+            /**
+             * 创建实例
+             * @param keyOrConfig key或者配置
+             * @param onInitData 初始化
+             * @param autoShow 是否自动显示
+             * @param createCb 创建完成回调
+             */
+            create(
+                keyOrConfig: keyType | displayCtrl.ICreateConfig<keyType>,
+                onInitData?: any,
+                autoShow?: boolean,
+                createCb?: displayCtrl.CtrlInsCb
+            ): string;
+
+            /**
+             * 显示单例显示控制器
+             * @param keyOrConfig 类key或者显示配置IShowConfig
+             * @param onShowData 显示透传数据
+             * @param showedCb 显示完成回调(onShow调用之后)
+             */
+            show<T = any>(
+                keyOrConfig: keyType | displayCtrl.IShowConfig<keyType>,
+                onShowData?: any,
+                showedCb?: displayCtrl.CtrlInsCb<T>
+            ): void;
+            /**
+             * 更新控制器
+             * @param key UIkey
+             * @param updateState 更新数据
+             */
+            update(key: keyType, updateState?: any): void;
+
+            /**
+             * 隐藏单例控制器
+             * @param key
+             * @param hideParam
+             */
+            hide<T = any>(key: keyType, hideParam?: T): void;
+
+            /**
+             * 销毁单例控制器
+             * @param key
+             * @param releaseRes 释放资源
+             */
+            destroy(key: keyType, releaseRes?: boolean): void;
+            /**
+             * 模板是否正在加载中
+             * @param key
+             */
+            isLoading(key: keyType): boolean;
+            /**
+             * 模板是否加载了
+             * @param key
+             */
+            isLoaded(key: keyType): boolean;
+            /**
+             * 获取单例控制器是否初始化了
+             * @param key
+             */
+            isInited(key: keyType): boolean;
+            /**
+             * 获取单例控制器是否显示
+             * @param key
+             */
+            isShowed(key: keyType): boolean;
+            /**
+             * 获取单例控制器是否显示完成
+             * @param key
+             */
+            isShowEnd(key: keyType): boolean;
+            /**
+             * 显示 显示控制器
+             * @param ins
+             * @param showCfg
+             */
+            showById(id: string, showCfg?: displayCtrl.IShowConfig<keyType>): void;
+            /**
+             * 更新指定控制器
+             * @param id
+             * @param updateState
+             */
+            updateById<T = any>(id: string, updateState?: T): void;
+            /**
+             * 通过实例隐藏
+             * @param id
+             * @param hideParam
+             */
+            hideById<T = any>(id: string, hideParam?: T): void;
+            /**
+             * 通过实例销毁
+             * @param id
+             * @param releaseRes 是否释放资源
+             */
+            destroyById(id: string, releaseRes?: boolean): void;
+            /**
+             * 控制器是否初始化了
+             * @param id
+             */
+            isInitedById(id: string): boolean;
+            /**
+             * 获取单例控制器是否显示
+             * @param id
+             */
+            isShowedById(id: string): boolean;
+            /**
+             * 获取单例控制器是否显示完成
+             * @param id
+             */
+            isShowEndById(id: string): boolean;
         }
     }
 }
