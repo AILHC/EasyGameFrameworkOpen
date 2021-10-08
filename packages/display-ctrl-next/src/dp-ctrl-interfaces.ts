@@ -40,6 +40,8 @@ declare global {
             isLoading?: boolean;
             /**是否已经加载 */
             isLoaded?: boolean;
+            /**需要销毁，给加载完后消费用 */
+            needDestroy?: boolean;
             /**
              * 获取资源信息
              */
@@ -50,9 +52,18 @@ declare global {
              */
             loadRes?(config?: IResLoadConfig): void;
             /**
-             * 自定义释放资源
+             * 自定义持有资源引用
+             */
+            retainRes?(): void;
+            /**
+             * 自定义释放资源引用
              */
             releaseRes?(): void;
+            /**
+             * 自定义资源销毁处理
+             * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
+             */
+            destroyRes?(): boolean;
             /**
              * 自定义创建
              */
@@ -84,21 +95,32 @@ declare global {
              */
             loadRes?(template: displayCtrl.ICtrlTemplate, config?: IResLoadConfig): void;
             /**
-             * 释放资源
-             * @param template
-             */
-            releaseRes?(template: displayCtrl.ICtrlTemplate): void;
-            /**
              * 创建实例
              * @param template
              */
-            create<T extends displayCtrl.ICtrl>(template: displayCtrl.ICtrlTemplate): T;
+            create?<T extends displayCtrl.ICtrl>(template: displayCtrl.ICtrlTemplate): T;
             /**
              * 销毁实例
              * @param ins
              * @param template
              */
             destroy?<T extends displayCtrl.ICtrl>(ins: T, template: displayCtrl.ICtrlTemplate): void;
+            /**
+             * 持有模板资源引用
+             * @param template
+             */
+            retainRes?(template: displayCtrl.ICtrlTemplate): void;
+            /**
+             * 释放模板资源引用
+             * @param template
+             */
+            releaseRes?(template: displayCtrl.ICtrlTemplate): void;
+            /**
+             * 销毁模板资源
+             * @param template
+             * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
+             */
+            destroyRes?(template: displayCtrl.ICtrlTemplate): boolean;
         }
         interface ICtrlState {
             id: string;
@@ -112,6 +134,11 @@ declare global {
              * 未显示之前调用update接口的传递的数据
              */
             updateState?: any;
+            /**
+             * 隐藏时释放资源
+             * 主要针对还未显示就隐藏的逻辑
+             */
+            hideReleaseRes?: boolean;
             /**
              * 未显示之前调用hide相关接口的传递的数据
              */
@@ -135,7 +162,7 @@ declare global {
             /**页面key */
             key: string | any;
             /**资源数组 */
-            ress?: ICtrlResInfo;
+            resInfo?: ICtrlResInfo;
             /**完成回调 */
             complete: displayCtrl.LoadResComplete;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
@@ -280,12 +307,13 @@ declare global {
             /**
              * 当隐藏时
              * @param hideParam
+             * @param releaseRes 是否释放资源引用，默认为false
              * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcHide
              */
-            onHide?(hideParam: any): void;
+            onHide?(hideParam: any, releaseRes?: boolean): void;
             /**
              * 当销毁时
-             * @param releaseRes
+             * @param releaseRes 是否释放资源引用，默认为true
              * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcDestroy
              */
             onDestroy?(releaseRes?: boolean): void;
@@ -324,11 +352,13 @@ declare global {
             getFace?<T = any>(): ReturnCtrlType<T>;
             /**
              * 当隐藏时
+             * @param param
+             * @param releaseRes 是否释放资源引用，默认为false
              */
-            onDpcHide?(param?: any): void;
+            onDpcHide?(param?: any, releaseRes?: boolean): void;
             /**
              * 当销毁时
-             * @param releaseRes
+             * @param releaseRes 是否释放资源引用，默认为true
              */
             onDpcDestroy?(releaseRes?: boolean): void;
             /**
@@ -386,20 +416,21 @@ declare global {
              * 加载控制器模版依赖的资源
              * @param key
              * @param complate 加载资源完成回调，如果加载失败会error不为空
+             * @param forceLoad 强制加载
              * @param loadParam 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
              * 或自定义加载透传给CtrlDefine.loadRes
              */
-            loadRess<LoadParam = any>(
+            loadRes<LoadParam = any>(
                 key: keyType,
-                complate: displayCtrl.LoadResComplete,
+                complate?: displayCtrl.LoadResComplete,
                 forceLoad?: boolean,
                 loadParam?: LoadParam
             ): void;
             /**
-             * 释放模板依赖的资源
+             * 销毁模板依赖的资源,如果模板资源正在加载中
              * @param key
              */
-            releaseRess(key: keyType): void;
+            destroyRes(key: keyType): void;
             /**
              * 创建实例
              * @param keyOrConfig key或者配置

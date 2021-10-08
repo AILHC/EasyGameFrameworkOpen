@@ -1,4 +1,4 @@
-import { globalCtrlDefineMap } from "./define-display-ctrl";
+import { globalDpcTemplateMap } from "./display-ctrl-template";
 
 export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     implements displayCtrl.IMgr<CtrlKeyType, keyType>
@@ -25,7 +25,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     }
     init(
         templateHandlerMap?: displayCtrl.TemplateHandlerMap,
-        templateMap: displayCtrl.CtrlTemplateMap<keyType> = globalCtrlDefineMap
+        templateMap: displayCtrl.CtrlTemplateMap<keyType> = globalDpcTemplateMap
     ): void {
         if (this._inited) return;
         this._ctrlStateMap = {};
@@ -40,7 +40,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     ): void {
         if (!templates) return;
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`[displayCtrlMgr](template): is no inited`);
             return;
         }
         if (typeof templates["key"] === "string") {
@@ -52,6 +52,10 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         }
     }
     addTemplateHandler(templateHandler: displayCtrl.ICtrlTemplateHandler): void {
+        if (!this._inited) {
+            console.error(`[displayCtrlMgr](addTemplateHandler): is no inited`);
+            return;
+        }
         if (templateHandler) {
             const type = templateHandler.type;
             if (typeof type === "string" && type !== "") {
@@ -80,9 +84,9 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     getResInfo(key: keyType): displayCtrl.ICtrlResInfo<any> {
         return this._templateMap[key]?.getResInfo();
     }
-    loadRess<LoadParam = any>(
+    loadRes<LoadParam = any>(
         key: keyType,
-        complete: displayCtrl.LoadResComplete,
+        complete?: displayCtrl.LoadResComplete,
         forceLoad?: boolean,
         loadParam?: LoadParam
     ): void {
@@ -109,15 +113,26 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         template.isLoaded = false;
 
         if (!template.loadRes && !template.getResInfo) {
+            template.isLoaded = true;
+            template.isLoading = false;
             complete && complete();
         } else {
+            template.needDestroy = false;
             complete && loadCompletes.push(complete);
             const loadResComplete = (error?: any) => {
                 const loadCompletes = this._templateLoadResCompletesMap[key];
-                error && console.error(`[display-ctrl]loadDpcRess load error`, error);
+                error && console.error(`[displayCtrlMgr](loadRess): load error`, error);
+                if (template.needDestroy) {
+                    this.destroyRes(key);
+                    template.needDestroy = false;
+                    template.isLoading = false;
+                    error = "loadRes error , destroyRes is called";
+                } else {
+                    template.isLoading = false;
+                    template.isLoaded = !error;
+                }
+
                 loadCompletes.reverse();
-                template.isLoading = false;
-                template.isLoaded = !error;
                 loadCompletes.forEach((complete) => {
                     complete(error);
                 });
@@ -135,7 +150,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
                 if (resInfo && handler) {
                     handler.loadRes(template, {
                         key: key as any,
-                        ress: resInfo,
+                        resInfo: resInfo,
                         loadParam: loadParam,
                         complete: loadResComplete
                     });
@@ -151,16 +166,18 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             }
         }
     }
-    releaseRess(key: keyType): void {
+    destroyRes(key: keyType): void {
         const template = this.getTemplate(key);
         if (template) {
-            const handler = this._getTemplateHandler(key as string);
-            if (template.releaseRes) {
-                template.isLoaded = false;
-                template.releaseRes();
-            } else if (handler && handler.releaseRes) {
-                template.isLoaded = false;
-                handler.releaseRes(template);
+            if (template.isLoading) {
+                template.needDestroy = true;
+            } else {
+                const handler = this._getTemplateHandler(key as string);
+                if (template.destroyRes) {
+                    template.isLoaded = !template.destroyRes();
+                } else if (handler && handler.destroyRes) {
+                    template.isLoaded = !handler.destroyRes(template);
+                }
             }
         }
     }
@@ -212,7 +229,8 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         const id = this._createCtrlId(tplKey);
         const ctrlState = this._getCtrlState(id);
         ctrlState.needShow = !!createCfg.autoShow;
-        this.loadRess(
+        this._retainTemplateRes(this.getTemplate(tplKey));
+        this.loadRes(
             tplKey,
             (error) => {
                 if (!error) {
@@ -230,7 +248,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         return id;
     }
     show<T = any>(
-        keyOrConfig: keyType | displayCtrl.IShowConfig<keyType, any, any>,
+        keyOrConfig: keyType | displayCtrl.IShowConfig<keyType>,
         onShowData?: any,
         showedCb?: displayCtrl.CtrlInsCb<T>
     ): keyType {
@@ -259,13 +277,19 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         const template = this.getTemplate(tplKey);
         if (template) {
             const ctrlState = this._getCtrlState(tplKey as string);
+            if (!ctrlState.needShow) {
+                this._retainTemplateRes(template);
+            }
             ctrlState.needInit = true;
             ctrlState.needShow = true;
-            this.loadRess(
+            this.loadRes(
                 tplKey,
                 (error) => {
                     if (!error) {
-                        if (!ctrlState.needInit) return;
+                        if (!ctrlState.needInit) {
+                            this._releaseTemplateRes(template);
+                            return;
+                        }
                         let ctrlIns = ctrlState.ctrlIns;
                         if (!ctrlIns) {
                             ctrlIns = this._insByTemplate(ctrlState.id, template);
@@ -289,8 +313,8 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     update(key: keyType, updateState?: any): void {
         this.updateById(key as string, updateState);
     }
-    hide<T = any>(key: keyType, hideParam?: T): void {
-        this.hideById(key as string, hideParam);
+    hide<T = any>(key: keyType, hideParam?: T, hideReleaseRes?: boolean): void {
+        this.hideById(key as string, hideParam, hideReleaseRes);
     }
     destroy(key: keyType, destroyRes?: boolean): void {
         this.destroyById(key as string, destroyRes);
@@ -320,6 +344,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         const ins = ctrlState.ctrlIns;
         if (ins && !ins.isShowed) {
             const template = this.getTemplate(ins.key);
+            this._retainTemplateRes(template);
             const showFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcShow;
             if (showFuncKey && ins[showFuncKey]) {
                 ins[showFuncKey](showCfg);
@@ -331,6 +356,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         } else {
             ctrlState.needShow = true;
             ctrlState.hideParam = undefined;
+            ctrlState.hideReleaseRes = false;
         }
     }
     updateById<T = any>(id: string, updateState?: T): void {
@@ -356,32 +382,29 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             ctrlState.updateState = updateState;
         }
     }
-    hideById<T = any>(id: string, hideParam?: T): void {
+    hideById<T = any>(id: string, hideParam?: T, hideReleaseRes?: boolean): void {
         if (!this._inited) {
             console.error(`DisplayCtrlManager is no inited`);
             return;
         }
         const ctrlState = this._getCtrlState(id);
-        if (!ctrlState.ctrlIns) {
-            console.warn(`ctrlIns is null`);
-            return;
-        }
         const ins = ctrlState.ctrlIns;
         if (ins && ins.isShowed) {
             const template = this.getTemplate(ins.key);
             const hideFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcHide;
             if (hideFuncKey && ins[hideFuncKey]) {
-                ins[hideFuncKey](hideParam);
+                ins[hideFuncKey](hideParam, hideReleaseRes);
             } else {
-                ins.onDpcHide && ins.onDpcHide(hideParam);
+                ins.onDpcHide && ins.onDpcHide(hideParam, hideReleaseRes);
             }
             ins.isShowed = false;
         } else {
             ctrlState.needShow = false;
+            ctrlState.hideReleaseRes = hideReleaseRes;
             ctrlState.hideParam = hideParam;
         }
     }
-    destroyById(id: string, destroyRes?: boolean): void {
+    destroyById(id: string, releaseRes: boolean = true): void {
         if (!this._inited) {
             console.error(`DisplayCtrlManager is no inited`);
             return;
@@ -398,10 +421,11 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             const template = this.getTemplate(ins.key);
             const destroyFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcDestroy;
             if (destroyFuncKey && ins[destroyFuncKey]) {
-                ins[destroyFuncKey](destroyRes);
+                ins[destroyFuncKey](releaseRes);
             } else {
-                ins.onDpcDestroy && ins.onDpcDestroy(destroyRes);
+                ins.onDpcDestroy && ins.onDpcDestroy(releaseRes);
             }
+            this._releaseTemplateRes(template);
         } else {
             ctrlState.needInit = false;
         }
@@ -417,6 +441,34 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     isShowEndById(id: string): boolean {
         const ctrlIns = this._getCtrlIns(id);
         return ctrlIns && ctrlIns.isShowEnd;
+    }
+    /**
+     * 持有模板资源引用
+     * @param template
+     */
+    protected _retainTemplateRes(template: displayCtrl.ICtrlTemplate) {
+        if (template) {
+            if (template.retainRes) {
+                template.retainRes();
+            } else {
+                const handler = this._getTemplateHandler(template.type);
+                handler?.retainRes && handler.retainRes(template);
+            }
+        }
+    }
+    /**
+     * 释放模板资源引用
+     * @param template
+     */
+    protected _releaseTemplateRes(template: displayCtrl.ICtrlTemplate) {
+        if (template) {
+            if (template.releaseRes) {
+                template.releaseRes();
+            } else {
+                const handler = this._getTemplateHandler(template.type);
+                handler?.releaseRes && handler.releaseRes(template);
+            }
+        }
     }
     /**
      * 添加模板到模板字典
@@ -464,7 +516,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     }
     protected _getCtrlIns(id: string): displayCtrl.ICtrl {
         const ctrlState = this._ctrlStateMap[id];
-        return ctrlState.ctrlIns;
+        return ctrlState?.ctrlIns;
     }
 
     /**
@@ -502,7 +554,12 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         if (ctrlState.ctrlIns) {
             this.initDpcByIns(ctrlState.ctrlIns, showCfg);
             ctrlState.needInit = false;
+
             if (!ctrlState.needShow) {
+                if (ctrlState.hideReleaseRes) {
+                    ctrlState.hideReleaseRes = false;
+                    this._releaseTemplateRes(this.getTemplate(ctrlState.ctrlIns.key));
+                }
                 return;
             }
             ctrlState.needShow = false;
@@ -689,7 +746,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             };
         }
 
-        this.loadRess(typeKey, completeCb, loadCfg?.forceLoad, loadCfg?.onLoadData);
+        this.loadRes(typeKey, completeCb, loadCfg?.forceLoad, loadCfg?.onLoadData);
         return this.getSigDpcIns(typeKey) as any;
     }
     /**
@@ -732,7 +789,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             : (error) => {
                   loadCfg.loadCb(error ? undefined : ins);
               };
-        this.loadRess(ins.key, complete, loadCfg?.forceLoad, loadCfg?.onLoadData);
+        this.loadRes(ins.key, complete, loadCfg?.forceLoad, loadCfg?.onLoadData);
     }
     /**
      * 获取控制器类
@@ -762,7 +819,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         return this._insByTemplate(key as string, template);
     }
     getSigDpcIns<T = any>(key: keyType): displayCtrl.ReturnCtrlType<T> {
-        return this._getCtrlIns(key as string);
+        return this._getCtrlIns(key as string) as any;
     }
     /**
      * 显示控制器
@@ -840,7 +897,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
      * @deprecated 兼容1.x处理，即将废弃
      */
     hideDpc(key: keyType, hideParam?: any): void {
-        this.hideById(key as string);
+        this.hideById(key as string, hideParam);
     }
     /**
      * 销毁显示控制器
