@@ -109,15 +109,16 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             complete && loadCompletes.push(complete);
             return;
         }
-        template.isLoading = true;
-        template.isLoaded = false;
 
         if (!template.loadRes && !template.getResInfo) {
             template.isLoaded = true;
             template.isLoading = false;
             complete && complete();
         } else {
+            template.isLoading = true;
+            template.isLoaded = false;
             template.needDestroy = false;
+
             complete && loadCompletes.push(complete);
             const loadResComplete = (error?: any) => {
                 const loadCompletes = this._templateLoadResCompletesMap[key];
@@ -172,7 +173,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             if (template.isLoading) {
                 template.needDestroy = true;
             } else {
-                const handler = this._getTemplateHandler(key as string);
+                const handler = this._getTemplateHandler(template.type);
                 if (template.destroyRes) {
                     template.isLoaded = !template.destroyRes();
                 } else if (handler && handler.destroyRes) {
@@ -585,7 +586,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         let ins: T = this._getCtrlIns(id) as any;
         if (ins) return ins;
         if (template.create) {
-            ins = template.create<T>() as T;
+            ins = template.create();
         } else {
             const handler = this._getTemplateHandler(template.type);
             if (handler) {

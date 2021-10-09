@@ -67,7 +67,7 @@ declare global {
             /**
              * 自定义创建
              */
-            create?<T extends displayCtrl.ICtrl = any>(): displayCtrl.ReturnCtrlType<T>;
+            create?(): any;
             /**
              * 自定义销毁处理
              * @param ctrl
