@@ -1,7 +1,7 @@
 declare global {
     type FunctionPropertyNames<T> = { [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never }[keyof T] &
         string;
-    namespace displayCtrl {
+    namespace akView {
         interface ITemplateResInfo<RessType = any> {
             type: string;
             ress: RessType;
@@ -51,13 +51,13 @@ declare global {
             create?(): any;
             /**
              * 自定义销毁处理
-             * @param ctrl
+             * @param view
              */
-            destroy?<T extends displayCtrl.IWidget = any>(ctrl: T): void;
+            destroy?<T extends akView.IView = any>(view: T): void;
             /**
              * 自定义生命周期函数映射,主要用于兼容
              */
-            ctrlLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<displayCtrl.IWidget>>]?: string };
+            viewLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<akView.IView>>]?: string };
         }
         /**
          * 模板字典
@@ -74,43 +74,45 @@ declare global {
              * @param template 模板
              * @param config
              */
-            loadRes?(template: displayCtrl.ITemplate, config?: IResLoadConfig): void;
+            loadRes?(template: akView.ITemplate, config?: IResLoadConfig): void;
             /**
              * 创建实例
              * @param template
              */
-            create?<T extends displayCtrl.IWidget>(template: displayCtrl.ITemplate): T;
+            create?<T extends akView.IView>(template: akView.ITemplate): T;
             /**
              * 销毁实例
              * @param ins
              * @param template
              */
-            destroy?<T extends displayCtrl.IWidget>(ins: T, template: displayCtrl.ITemplate): void;
+            destroy?<T extends akView.IView>(ins: T, template: akView.ITemplate): void;
             /**
              * 持有模板资源引用
              * @param template
              */
-            retainRes?(template: displayCtrl.ITemplate): void;
+            retainRes?(template: akView.ITemplate): void;
             /**
              * 释放模板资源引用
              * @param template
              */
-            releaseRes?(template: displayCtrl.ITemplate): void;
+            releaseRes?(template: akView.ITemplate): void;
             /**
              * 销毁模板资源
              * @param template
              * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
              */
-            destroyRes?(template: displayCtrl.ITemplate): boolean;
+            destroyRes?(template: akView.ITemplate): boolean;
         }
-        interface IWidgetState {
+        interface IViewState {
             id: string;
-            /**是否需要初始化 */
-            needInit?: boolean;
+            /**持有模板资源引用 */
+            retainTemplateRes?: boolean;
+            /**是否需要实例化 */
+            needIns?: boolean;
 
             /**是否需要显示 */
             needShow?: boolean;
-            showCfg?: displayCtrl.IShowConfig;
+            showCfg?: akView.IShowConfig;
             /**
              * 未显示之前调用update接口的传递的数据
              */
@@ -125,25 +127,25 @@ declare global {
              */
             hideParam?: any;
             /**控制器实例 */
-            ins?: displayCtrl.IWidget;
+            ins?: akView.IView;
         }
         /**
          * 加载资源完成回调，如果加载失败会error不为空
          */
         type LoadResComplete = (error?: any) => void;
-        type WidgetStateMap = { [key: string]: IWidgetState };
+        type ViewStateMap = { [key: string]: IViewState };
         type TemplateMap<keyType extends keyof any = any> = { [P in keyType]: ITemplate };
 
         type CancelLoad = () => void;
         type TemplateLoadedCb = (isOk: boolean) => void;
-        type WidgetInsCb<T = unknown> = (ctrl?: T extends displayCtrl.IWidget ? T : displayCtrl.IWidget) => void;
+        type ViewInsCb<T = unknown> = (view?: T extends akView.IView ? T : akView.IView) => void;
         interface IResLoadConfig {
             /**页面key */
             key: string | any;
             /**资源数组 */
             resInfo?: ITemplateResInfo;
             /**完成回调 */
-            complete: displayCtrl.LoadResComplete;
+            complete: akView.LoadResComplete;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
              * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
@@ -175,7 +177,7 @@ declare global {
              */
             onShowData?: any;
             /**在调用控制器实例onShow后回调 */
-            showedCb?: WidgetInsCb;
+            showedCb?: ViewInsCb;
             /**控制器显示完成后回调 */
             showEndCb?: VoidFunction;
             /**显示被取消了 */
@@ -184,19 +186,19 @@ declare global {
              * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
             /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
-            loadCb?: WidgetInsCb;
+            loadCb?: ViewInsCb;
         }
-        interface ICreateConfig<keyType extends keyof any = any> extends displayCtrl.IShowConfig<keyType> {
+        interface ICreateConfig<keyType extends keyof any = any> extends akView.IShowConfig<keyType> {
             /**自动显示 */
             autoShow?: boolean;
 
             /**
              * 创建回调,失败实例为空,成功则不为空
              */
-            createCb?: WidgetInsCb;
+            createCb?: ViewInsCb;
         }
 
-        interface IWidget<NodeType = any> {
+        interface IView<NodeType = any> {
             /**控制器实例唯一id */
             id?: string;
             key?: string | any;
@@ -211,42 +213,42 @@ declare global {
              * 初始化
              * @param config 初始化数据
              */
-            onWInit?(config?: displayCtrl.IInitConfig): void;
+            onViewInit?(config?: akView.IInitConfig): void;
             /**
              * 当显示时
              * @param config 显示数据
              */
-            onWShow?(config?: displayCtrl.IShowConfig): void;
+            onViewShow?(config?: akView.IShowConfig): void;
             /**
              * 当更新时
              * @param param 更新数据
              */
-            onWUpdate?(param?: any): void;
+            onViewUpdate?(param?: any): void;
             /**
              * 当隐藏时
              * @param param
              * @param releaseRes 是否释放资源引用，默认为false
              */
-            onWHide?(param?: any, releaseRes?: boolean): void;
+            onViewHide?(param?: any, releaseRes?: boolean): void;
             /**
              * 当销毁时
              * @param releaseRes 是否释放资源引用，默认为true
              */
-            onWDestroy?(releaseRes?: boolean): void;
+            onViewDestroy?(releaseRes?: boolean): void;
             /**
              * 获取显示节点
              */
             getNode(): NodeType;
         }
-        type ReturnCtrlType<T> = T extends displayCtrl.IWidget ? T : displayCtrl.IWidget;
+        type ReturnCtrlType<T> = T extends akView.IView ? T : akView.IView;
 
-        interface IMgr<WidgetKeyType = any, keyType extends keyof WidgetKeyType = any> {
+        interface IMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any> {
             /**
              * 初始化
              * @param templateHandlerMap 模板处理器字典
              * @param templateMap 模板字典
              */
-            init(templateHandlerMap?: TemplateHandlerMap, templateMap?: displayCtrl.TemplateMap): void;
+            init(templateHandlerMap?: TemplateHandlerMap, templateMap?: akView.TemplateMap): void;
             /**
              * 获取key
              * @param key
@@ -256,7 +258,7 @@ declare global {
              * 批量注册控制器模版
              * @param templates 定义字典，单个定义，定义数组
              */
-            template(templates: ITemplate[] | ITemplate | displayCtrl.TemplateMap): void;
+            template(templates: ITemplate[] | ITemplate | akView.TemplateMap): void;
             /**
              * 添加模板处理器
              * @param templateHandler
@@ -289,7 +291,7 @@ declare global {
              */
             loadRes<LoadParam = any>(
                 key: keyType,
-                complate?: displayCtrl.LoadResComplete,
+                complate?: akView.LoadResComplete,
                 forceLoad?: boolean,
                 loadParam?: LoadParam
             ): void;
@@ -306,10 +308,10 @@ declare global {
              * @param createCb 创建完成回调
              */
             create(
-                keyOrConfig: keyType | displayCtrl.ICreateConfig<keyType>,
+                keyOrConfig: keyType | akView.ICreateConfig<keyType>,
                 onInitData?: any,
                 autoShow?: boolean,
-                createCb?: displayCtrl.WidgetInsCb
+                createCb?: akView.ViewInsCb
             ): string;
 
             /**
@@ -319,9 +321,9 @@ declare global {
              * @param showedCb 显示完成回调(onShow调用之后)
              */
             show<T = any>(
-                keyOrConfig: keyType | displayCtrl.IShowConfig<keyType>,
+                keyOrConfig: keyType | akView.IShowConfig<keyType>,
                 onShowData?: any,
-                showedCb?: displayCtrl.WidgetInsCb<T>
+                showedCb?: akView.ViewInsCb<T>
             ): void;
             /**
              * 更新控制器
@@ -373,7 +375,7 @@ declare global {
              * @param ins
              * @param showCfg
              */
-            showById(id: string, showCfg?: displayCtrl.IShowConfig<keyType>): void;
+            showById(id: string, showCfg?: akView.IShowConfig<keyType>): void;
             /**
              * 更新指定控制器
              * @param id

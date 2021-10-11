@@ -33,7 +33,7 @@ export class OnShowDpc extends BaseDpCtrl_Old {
     constructor() {
         super();
     }
-    onShow(config: displayCtrl.IShowConfig<"OnShowDpc", ITestCtrlShowDataMap>) {
+    onShow(config: akView.IShowConfig<"OnShowDpc", ITestCtrlShowDataMap>) {
         this.showData = config.onShowData;
         super.onShow(config);
     }
@@ -45,7 +45,7 @@ export class OnInitDpc extends BaseDpCtrl_Old {
     constructor() {
         super();
     }
-    onInit(config: displayCtrl.IInitConfig<"OnInitDpc", ITestCtrlInitDataMap>) {
+    onInit(config: akView.IInitConfig<"OnInitDpc", ITestCtrlInitDataMap>) {
         this.initData = config.onInitData;
     }
 }

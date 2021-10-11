@@ -1,8 +1,8 @@
-export class BaseDpCtrl_Old<NodeType = any> implements displayCtrl.IWidget<NodeType> {
-    protected _dpcMgr: displayCtrl.IMgr;
+export class BaseDpCtrl_Old<NodeType = any> implements akView.IWidget<NodeType> {
+    protected _dpcMgr: akView.IMgr;
     public key: string;
     protected _node: NodeType;
-    constructor(dpcMgr?: displayCtrl.IMgr) {
+    constructor(dpcMgr?: akView.IMgr) {
         this._dpcMgr = dpcMgr;
     }
     onLoadData?: any;
@@ -15,8 +15,8 @@ export class BaseDpCtrl_Old<NodeType = any> implements displayCtrl.IWidget<NodeT
     public isShowEnd: boolean = false;
     public needShow: boolean = false;
 
-    public onInit(config?: displayCtrl.IInitConfig): void {}
-    public onShow(config?: displayCtrl.IShowConfig): void {}
+    public onInit(config?: akView.IInitConfig): void {}
+    public onShow(config?: akView.IShowConfig): void {}
     public onUpdate(updateData?: any): void {}
     public getFace<T>(): T {
         return this as any;

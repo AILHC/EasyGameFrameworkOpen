@@ -1,5 +1,5 @@
 // import { CreateTypes } from './create-types';
-import { DpcMgr } from "./dp-ctrl-mgr";
+import { ViewMgr } from "./view-mgr";
 
 // class testCtrlClass implements displayCtrl.ICtrl {
 //     key?: any;
@@ -71,7 +71,7 @@ interface CtrlKeyTypeMapType {
 //     },
 
 // }
-const dpcMgr = new DpcMgr<CtrlKeyTypeMapType>();
+const dpcMgr = new ViewMgr<CtrlKeyTypeMapType>();
 // dpcMgr.keys.typeTest
 // const template: displayCtrl.ICtrlTemplate = {
 //     createType: CreateTypes.class

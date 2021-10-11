@@ -1,36 +1,36 @@
-import { DpcMgr } from "../src";
+import { ViewMgr } from "../src";
 describe(`显示-创建相关接口单元测试`, function () {
     test(`测试显示指定模板单例控制器`, function (testDone) {
-        const dpcMgr = new DpcMgr();
-        dpcMgr.init();
-        const testTemplate: displayCtrl.ITemplate = {
+        const uiMgr = new ViewMgr();
+        uiMgr.init();
+        const testTemplate: akView.ITemplate = {
             key: "testTemplate",
             create() {
-                const ctrlIns: displayCtrl.IWidget = {
-                    onWInit(initCfg) {
+                const viewIns: akView.IView = {
+                    onViewInit(initCfg) {
                         expect(initCfg.onInitData).toBeUndefined();
                     },
-                    onWShow(showCfg) {
+                    onViewShow(showCfg) {
                         expect(showCfg.onShowData.test).toBe("a");
                     },
                     getNode() {
                         return {};
                     }
                 };
-                const spyOnDpcInit = spyOn(ctrlIns, "onWInit");
+                const spyOnDpcInit = spyOn(viewIns, "onViewInit");
                 expect(spyOnDpcInit).toBeCalled();
 
-                const spyOnDpcShow = spyOn(ctrlIns, "onWShow");
+                const spyOnDpcShow = spyOn(viewIns, "onViewShow");
                 expect(spyOnDpcShow).toBeCalled();
 
-                return ctrlIns;
+                return viewIns;
             }
         };
 
-        const spyshow = spyOn(dpcMgr, "show");
-        dpcMgr.template(testTemplate);
-        dpcMgr.show<displayCtrl.IWidget>(testTemplate.key, { test: "a" }, (ctrlIns) => {
-            expect(ctrlIns.key).toEqual(testTemplate.key);
+        const spyshow = spyOn(uiMgr, "show");
+        uiMgr.template(testTemplate);
+        uiMgr.show<akView.IView>(testTemplate.key, { test: "a" }, (viewIns) => {
+            expect(viewIns.key).toEqual(testTemplate.key);
 
             testDone();
         });
