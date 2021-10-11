@@ -1,4 +1,4 @@
-export const globalDpcTemplateMap: displayCtrl.CtrlTemplateMap = {};
+export const globalDpcTemplateMap: displayCtrl.TemplateMap = {};
 
 /**
  * 定义显示控制器模板,仅用于dpcMgr初始化前调用
@@ -6,8 +6,8 @@ export const globalDpcTemplateMap: displayCtrl.CtrlTemplateMap = {};
  * @param templateMap 默认为全局字典，可自定义
  */
 export function dpcTemplate(
-    template: displayCtrl.ICtrlTemplate,
-    templateMap: displayCtrl.CtrlTemplateMap = globalDpcTemplateMap
+    template: displayCtrl.ITemplate,
+    templateMap: displayCtrl.TemplateMap = globalDpcTemplateMap
 ): boolean {
     const key = template.key;
     if (templateMap[key]) {

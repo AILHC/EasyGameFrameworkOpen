@@ -3,13 +3,13 @@ import { dpcTemplate, globalDpcTemplateMap as globalDpcTemplateMap } from "../sr
 
 describe(`注册模板相关单元测试`, function () {
     test(`测试注册模板`, function () {
-        const dpcTemplateTestTemplate: displayCtrl.ICtrlTemplate = { key: "dpcTemplateTest" };
+        const dpcTemplateTestTemplate: displayCtrl.ITemplate = { key: "dpcTemplateTest" };
 
         dpcTemplate(dpcTemplateTestTemplate);
 
         expect(Object.values(globalDpcTemplateMap).includes(dpcTemplateTestTemplate)).toBeTruthy();
 
-        const sameDpcTemplateTestTemplate: displayCtrl.ICtrlTemplate = { key: "dpcTemplateTest" };
+        const sameDpcTemplateTestTemplate: displayCtrl.ITemplate = { key: "dpcTemplateTest" };
         dpcTemplate(sameDpcTemplateTestTemplate);
         expect(globalDpcTemplateMap[dpcTemplateTestTemplate.key]).toEqual(dpcTemplateTestTemplate);
 
@@ -18,18 +18,18 @@ describe(`注册模板相关单元测试`, function () {
         dpcMgr.init();
 
         expect(dpcMgr.hasTemplate(dpcTemplateTestTemplate.key)).toBeTruthy();
-        const testTemplate: displayCtrl.ICtrlTemplate = { key: "testTemplate" };
+        const testTemplate: displayCtrl.ITemplate = { key: "testTemplate" };
         dpcMgr.template(testTemplate);
 
         expect(dpcMgr.hasTemplate(testTemplate)).toBeDefined();
         //重复注册不覆盖
-        const sameTestTemplate: displayCtrl.ICtrlTemplate = { key: "testTemplate" };
+        const sameTestTemplate: displayCtrl.ITemplate = { key: "testTemplate" };
         dpcMgr.template(sameTestTemplate);
 
         expect(dpcMgr.getTemplate(testTemplate.key)).toEqual(testTemplate);
     });
     test(`测试模板处理器注册`, function () {
-        const testDpcTemplateHandler: displayCtrl.ICtrlTemplateHandler = {
+        const testDpcTemplateHandler: displayCtrl.ITemplateHandler = {
             type: "testDpcTemplateHandler"
         };
         const dpcMgr = new DpcMgr();
@@ -41,7 +41,7 @@ describe(`注册模板相关单元测试`, function () {
     test(`测试创建无Type无自定义创建函数模板的实例`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const noTypeTemplate: displayCtrl.ICtrlTemplate = {
+        const noTypeTemplate: displayCtrl.ITemplate = {
             key: "noTypeTemplate"
         };
         dpcMgr.template(noTypeTemplate);
@@ -54,13 +54,13 @@ describe(`注册模板相关单元测试`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
 
-        const hasTypeTemplate: displayCtrl.ICtrlTemplate = {
+        const hasTypeTemplate: displayCtrl.ITemplate = {
             key: "hasTypeTemplate",
             type: "hasTypeTemplateHandler"
         };
         dpcMgr.template(hasTypeTemplate);
 
-        const hasTypeTemplateHandler: displayCtrl.ICtrlTemplateHandler = {
+        const hasTypeTemplateHandler: displayCtrl.ITemplateHandler = {
             type: "hasTypeTemplateHandler",
             create: (template) => {
                 return { key: template.key } as any;
@@ -78,7 +78,7 @@ describe(`注册模板相关单元测试`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
 
-        const noTypeCustomCreateTemplate: displayCtrl.ICtrlTemplate = {
+        const noTypeCustomCreateTemplate: displayCtrl.ITemplate = {
             key: "noTypeCustomCreateTemplate",
             create: () => {
                 return { key: "noTypeCustomCreateTemplate" } as any;

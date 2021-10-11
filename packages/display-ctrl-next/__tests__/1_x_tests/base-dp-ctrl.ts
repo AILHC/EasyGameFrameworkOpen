@@ -1,4 +1,4 @@
-export class BaseDpCtrl_Old<NodeType = any> implements displayCtrl.ICtrl<NodeType> {
+export class BaseDpCtrl_Old<NodeType = any> implements displayCtrl.IWidget<NodeType> {
     protected _dpcMgr: displayCtrl.IMgr;
     public key: string;
     protected _node: NodeType;

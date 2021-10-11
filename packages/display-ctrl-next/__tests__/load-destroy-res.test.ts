@@ -4,7 +4,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试加载有Type模板依赖的资源-成功`, function (testDone) {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const hasTypeTemplate: displayCtrl.ICtrlTemplate = {
+        const hasTypeTemplate: displayCtrl.ITemplate = {
             key: "hasTypeTemplate",
             type: "hasTypeTemplateHandler",
             getResInfo() {
@@ -13,7 +13,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         dpcMgr.template(hasTypeTemplate);
 
-        const hasTypeTemplateHandler: displayCtrl.ICtrlTemplateHandler = {
+        const hasTypeTemplateHandler: displayCtrl.ITemplateHandler = {
             type: "hasTypeTemplateHandler",
             loadRes: (template, config) => {
                 expect(config.resInfo.type).toBe("any");
@@ -55,7 +55,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试加载有Type模板依赖的资源-失败`, function (testDone) {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const hasTypeTemplate: displayCtrl.ICtrlTemplate = {
+        const hasTypeTemplate: displayCtrl.ITemplate = {
             key: "hasTypeTemplate",
             type: "hasTypeTemplateHandler",
             getResInfo() {
@@ -64,7 +64,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         dpcMgr.template(hasTypeTemplate);
 
-        const hasTypeTemplateHandler: displayCtrl.ICtrlTemplateHandler = {
+        const hasTypeTemplateHandler: displayCtrl.ITemplateHandler = {
             type: "hasTypeTemplateHandler",
             loadRes: (template, config) => {
                 expect(config.resInfo.type).toBe("any");
@@ -88,7 +88,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试加载无Type模板依赖的资源`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const noTypeTemplate: displayCtrl.ICtrlTemplate = {
+        const noTypeTemplate: displayCtrl.ITemplate = {
             key: "noTypeTemplate",
             getResInfo() {
                 return { type: "any", ress: {} };
@@ -106,7 +106,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试加载无Type无资源依赖模板依赖的资源`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const noTypeTemplate: displayCtrl.ICtrlTemplate = {
+        const noTypeTemplate: displayCtrl.ITemplate = {
             key: "noTypeTemplate"
         };
         dpcMgr.template(noTypeTemplate);
@@ -121,7 +121,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试加载无Type有自定义加载逻辑模板依赖的资源-成功`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const noTypeCustomLoadResTemplate: displayCtrl.ICtrlTemplate = {
+        const noTypeCustomLoadResTemplate: displayCtrl.ITemplate = {
             key: "noTypeCustomLoadResTemplate",
             getResInfo() {
                 return { type: "any", ress: {} };
@@ -145,7 +145,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试加载无Type有自定义加载逻辑模板依赖的资源-失败`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const noTypeCustomLoadResTemplate: displayCtrl.ICtrlTemplate = {
+        const noTypeCustomLoadResTemplate: displayCtrl.ITemplate = {
             key: "noTypeCustomLoadResTemplate",
             getResInfo() {
                 return { type: "any", ress: {} };
@@ -170,7 +170,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         //加载完成之后isLoaded=true;
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const noTypeTemplate: displayCtrl.ICtrlTemplate = {
+        const noTypeTemplate: displayCtrl.ITemplate = {
             key: "noTypeTemplate"
         };
         dpcMgr.template(noTypeTemplate);
@@ -183,13 +183,13 @@ describe(`模板资源加载销毁单元测试`, function () {
         //
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const hasTypeCanDestroyResTemplate: displayCtrl.ICtrlTemplate = {
+        const hasTypeCanDestroyResTemplate: displayCtrl.ITemplate = {
             key: "hasTypeCanDestroyResTemplate",
             type: "hasTypeTemplateHandlerReturnDestroyTrue"
         };
         dpcMgr.template(hasTypeCanDestroyResTemplate);
 
-        const hasTypeTemplateHandlerReturnDestroyTrue: displayCtrl.ICtrlTemplateHandler = {
+        const hasTypeTemplateHandlerReturnDestroyTrue: displayCtrl.ITemplateHandler = {
             type: "hasTypeTemplateHandlerReturnDestroyTrue",
             destroyRes(template) {
                 expect(template?.key).toBe(hasTypeCanDestroyResTemplate.key);
@@ -209,13 +209,13 @@ describe(`模板资源加载销毁单元测试`, function () {
         //测试可能会因为还有引用所以销毁资源没成功
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const hasTypeNoDestroyResTemplate: displayCtrl.ICtrlTemplate = {
+        const hasTypeNoDestroyResTemplate: displayCtrl.ITemplate = {
             key: "hasTypeNoDestroyResTemplate",
             type: "hasTypeTemplateHandlerReturnDestroyFalse"
         };
         dpcMgr.template(hasTypeNoDestroyResTemplate);
 
-        const hasTypeTemplateHandlerReturnDestroyFalse: displayCtrl.ICtrlTemplateHandler = {
+        const hasTypeTemplateHandlerReturnDestroyFalse: displayCtrl.ITemplateHandler = {
             type: "hasTypeTemplateHandlerReturnDestroyFalse",
             destroyRes: (template) => {
                 expect(template?.key).toBe(hasTypeNoDestroyResTemplate.key);
@@ -233,7 +233,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试无Type有自定义释放处理函数模板的资源销毁-成功`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const hasTypeCanDestroyResTemplate: displayCtrl.ICtrlTemplate = {
+        const hasTypeCanDestroyResTemplate: displayCtrl.ITemplate = {
             key: "hasTypeCanDestroyResTemplate",
             destroyRes() {
                 return true;
@@ -249,7 +249,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试无Type有自定义释放处理函数模板的资源销毁-失败`, function () {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const hasTypeNoDestroyResTemplate: displayCtrl.ICtrlTemplate = {
+        const hasTypeNoDestroyResTemplate: displayCtrl.ITemplate = {
             key: "hasTypeNoDestroyResTemplate",
             destroyRes() {
                 return false;
@@ -265,7 +265,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试模板资源加载过程中销毁资源`, function (done) {
         const dpcMgr = new DpcMgr();
         dpcMgr.init();
-        const testTemplate: displayCtrl.ICtrlTemplate = {
+        const testTemplate: displayCtrl.ITemplate = {
             key: "testTemplate",
             type: "testTemplate",
             loadRes(config) {
