@@ -1,57 +1,57 @@
-import { globalDpcTemplateMap } from "./display-ctrl-template";
+import { globalViewTemplateMap } from "./view-template";
 
-export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
-    implements displayCtrl.IMgr<CtrlKeyType, keyType>
+export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
+    implements akView.IMgr<ViewKeyType, keyType>
 {
     /**模版字典 */
-    protected _templateMap: displayCtrl.TemplateMap;
+    protected _templateMap: akView.TemplateMap;
 
-    /**控制器状态缓存 */
-    protected _ctrlStateMap: displayCtrl.WidgetStateMap;
+    /**状态缓存 */
+    protected _viewStateMap: akView.ViewStateMap;
     /**
      * 模板加载完成回调数组
      */
-    protected _templateLoadResCompletesMap: { [P in keyType]: displayCtrl.LoadResComplete[] };
+    protected _templateLoadResCompletesMap: { [P in keyType]: akView.LoadResComplete[] };
     /**
      * 模板处理器字典
      */
-    protected _templateHandlerMap: displayCtrl.TemplateHandlerMap;
+    protected _templateHandlerMap: akView.TemplateHandlerMap;
     /**是否初始化 */
     protected _inited: boolean;
-    /**控制器实例数，用于创建id */
-    protected _ctrlInsCount: number = 0;
+    /**实例数，用于创建id */
+    protected _insCount: number = 0;
     getKey(key: keyType): keyType {
         return key as any;
     }
     init(
-        templateHandlerMap?: displayCtrl.TemplateHandlerMap,
-        templateMap: displayCtrl.TemplateMap<keyType> = globalDpcTemplateMap
+        templateHandlerMap?: akView.TemplateHandlerMap,
+        templateMap: akView.TemplateMap<keyType> = globalViewTemplateMap
     ): void {
         if (this._inited) return;
-        this._ctrlStateMap = {};
+        this._viewStateMap = {};
         this._templateLoadResCompletesMap = {} as any;
         this._templateHandlerMap = templateHandlerMap ? templateHandlerMap : {};
         this._inited = true;
         this._templateMap = {};
         templateMap && this.template(templateMap);
     }
-    template(templates: displayCtrl.TemplateMap<any> | displayCtrl.ITemplate | displayCtrl.ITemplate[]): void {
+    template(templates: akView.TemplateMap<any> | akView.ITemplate | akView.ITemplate[]): void {
         if (!templates) return;
         if (!this._inited) {
-            console.error(`[displayCtrlMgr](template): is no inited`);
+            console.error(`[viewMgr](template): is no inited`);
             return;
         }
         if (typeof templates["key"] === "string") {
-            this._addTemplate(templates as displayCtrl.ITemplate);
+            this._addTemplate(templates as akView.ITemplate);
         } else {
             for (let key in templates) {
                 this._addTemplate(templates[key]);
             }
         }
     }
-    addTemplateHandler(templateHandler: displayCtrl.ITemplateHandler): void {
+    addTemplateHandler(templateHandler: akView.ITemplateHandler): void {
         if (!this._inited) {
-            console.error(`[displayCtrlMgr](addTemplateHandler): is no inited`);
+            console.error(`[viewMgr](addTemplateHandler): is no inited`);
             return;
         }
         if (templateHandler) {
@@ -60,36 +60,36 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
                 if (!this._templateHandlerMap[type]) {
                     this._templateHandlerMap[type] = templateHandler;
                 } else {
-                    console.error(`[displayCtrlMgr](addTemplateHandler): [type:${type}] handler is exit `);
+                    console.error(`[viewMgr](addTemplateHandler): [type:${type}] handler is exit `);
                 }
             } else {
-                console.error(`[displayCtrlMgr](addTemplateHandler) handler type is null`);
+                console.error(`[viewMgr](addTemplateHandler) handler type is null`);
             }
         } else {
-            console.error(`[displayCtrlMgr](addTemplateHandler) handler is null`);
+            console.error(`[viewMgr](addTemplateHandler) handler is null`);
         }
     }
     hasTemplate(key: keyType): boolean {
         return !!this._templateMap[key];
     }
-    getTemplate(key: keyType): displayCtrl.ITemplate {
+    getTemplate(key: keyType): akView.ITemplate {
         const template = this._templateMap[key];
         if (!template) {
             console.warn(`template is not exit:${key}`);
         }
         return template;
     }
-    getResInfo(key: keyType): displayCtrl.ITemplateResInfo<any> {
+    getResInfo(key: keyType): akView.ITemplateResInfo<any> {
         return this._templateMap[key]?.getResInfo();
     }
     loadRes<LoadParam = any>(
         key: keyType,
-        complete?: displayCtrl.LoadResComplete,
+        complete?: akView.LoadResComplete,
         forceLoad?: boolean,
         loadParam?: LoadParam
     ): void {
         if (!this._inited) {
-            console.error(`[displayCtrlMgr](loadRess): is no inited`);
+            console.error(`[viewMgr](loadRess): is no inited`);
             return;
         }
         const template = this.getTemplate(key);
@@ -120,7 +120,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             complete && loadCompletes.push(complete);
             const loadResComplete = (error?: any) => {
                 const loadCompletes = this._templateLoadResCompletesMap[key];
-                error && console.error(`[displayCtrlMgr](loadRess): load error`, error);
+                error && console.error(`[viewMgr](loadRess): load error`, error);
                 if (template.needDestroy) {
                     this.destroyRes(key);
                     template.needDestroy = false;
@@ -182,7 +182,7 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     }
     isLoading(key: keyType): boolean {
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
         const state = this.getTemplate(key);
@@ -190,23 +190,23 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
     }
     isLoaded(key: keyType): boolean {
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
         const state = this.getTemplate(key);
         return state && state.isLoaded;
     }
     create(
-        keyOrConfig: keyType | displayCtrl.ICreateConfig<keyType>,
+        keyOrConfig: keyType | akView.ICreateConfig<keyType>,
         onInitData?: any,
         autoShow?: boolean,
-        createCb?: displayCtrl.WidgetInsCb
+        createCb?: akView.ViewInsCb
     ): string {
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
-        let createCfg: displayCtrl.ICreateConfig<keyType>;
+        let createCfg: akView.ICreateConfig<keyType>;
         if (typeof keyOrConfig == "string") {
             createCfg = {
                 key: keyOrConfig,
@@ -220,24 +220,32 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             onInitData !== undefined && (createCfg.onInitData = onInitData);
             autoShow !== undefined && (createCfg.autoShow = autoShow);
         } else {
-            console.warn(`unknown createDpc`, keyOrConfig);
+            console.warn(`unknown`, keyOrConfig);
             return;
         }
         const tplKey = createCfg.key;
 
-        const id = this._createCtrlId(tplKey);
-        const ctrlState = this._getWidgetState(id);
-        ctrlState.needShow = !!createCfg.autoShow;
-        this._retainTemplateRes(this.getTemplate(tplKey));
+        const id = this._createViewId(tplKey);
+        const viewState = this._getViewState(id);
+        viewState.needIns = true;
+        viewState.needShow = !!createCfg.autoShow;
+        //持有模板资源
+        const template = this.getTemplate(tplKey);
+        this._retainTemplateResByState(viewState, template);
         this.loadRes(
             tplKey,
             (error) => {
-                if (!error) {
-                    let ctrlIns = this._insByTemplate(id, this.getTemplate(tplKey));
-                    ctrlState.ins = ctrlIns;
-                    this._showWidget(ctrlState, createCfg);
-                    createCfg.createCb && createCfg.createCb(ctrlIns);
+                const viewIns = this._insView(viewState, this.getTemplate(tplKey));
+                if (viewIns) {
+                    this._initAndShowAndUpdateView(viewState, createCfg);
+                    createCfg.createCb && createCfg.createCb(viewIns);
                 } else {
+                    //加载失败、实例化失败、或者被销毁
+                    //释放引用
+                    this._releaseTemplateResByState(viewState, template);
+                    // 还原状态
+                    this._clearViewState(viewState);
+
                     createCfg.createCb && createCfg.createCb();
                 }
             },
@@ -247,15 +255,15 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         return id;
     }
     show<T = any>(
-        keyOrConfig: keyType | displayCtrl.IShowConfig<keyType>,
+        keyOrConfig: keyType | akView.IShowConfig<keyType>,
         onShowData?: any,
-        showedCb?: displayCtrl.WidgetInsCb<T>
+        showedCb?: akView.ViewInsCb<T>
     ): keyType {
         if (!this._inited) {
-            console.error(`[displayCtrlMgr](show) is no inited`);
+            console.error(`[viewMgr](show) is no inited`);
             return;
         }
-        let showCfg: displayCtrl.IShowConfig<keyType>;
+        let showCfg: akView.IShowConfig<keyType>;
         if (typeof keyOrConfig == "string") {
             showCfg = {
                 key: keyOrConfig,
@@ -267,38 +275,35 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             onShowData !== undefined && (showCfg.onShowData = onShowData);
             showedCb !== undefined && (showCfg.showedCb = showedCb);
         } else {
-            console.warn(`[displayCtrlMgr](show) unknown param`, keyOrConfig);
+            console.warn(`[viewMgr](show) unknown param`, keyOrConfig);
             return;
         }
         const tplKey = showCfg.key;
         const template = this.getTemplate(tplKey);
         if (template) {
-            const widgetState = this._getWidgetState(tplKey as string);
-            if (!widgetState.needShow) {
-                this._retainTemplateRes(template);
-            }
-            widgetState.needInit = widgetState.ins && !widgetState.ins.isInited;
-            widgetState.needShow = true;
+            const viewState = this._getViewState(tplKey as string);
+            this._retainTemplateResByState(viewState, template);
+            viewState.needIns = true;
+            viewState.needShow = true;
             this.loadRes(
                 tplKey,
                 (error) => {
-                    let widgetIns: displayCtrl.IWidget;
-                    if (!error && widgetState.needInit) {
-                        widgetIns = widgetState.ins;
-                        if (!widgetIns) {
-                            widgetIns = this._insByTemplate(widgetState.id, template);
-                            widgetState.ins = widgetIns;
-                        }
-                    }
-                    if (widgetIns) {
-                        showCfg.loadCb && showCfg.loadCb(widgetIns);
-                        this._showWidget(widgetState, showCfg);
+                    let viewIns: akView.IView = this._insView(viewState, template);
+                    if (viewIns) {
+                        showCfg.loadCb && showCfg.loadCb(viewIns);
+                        this._initAndShowAndUpdateView(viewState, showCfg);
                     } else {
                         //加载失败了
-                        //释放引用
-                        this._releaseTemplateRes(template);
-                        // 还原状态
-                        this._clearWidgetState(widgetState);
+                        if (viewState.ins) {
+                            //之前实例化过，但需要销毁
+                            this._destroyByViewState(viewState);
+                        } else {
+                            //释放引用
+                            this._releaseTemplateResByState(viewState, template);
+                            // 还原状态
+                            this._clearViewState(viewState);
+                        }
+
                         showCfg.loadCb && showCfg.loadCb();
                     }
                 },
@@ -317,203 +322,248 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         this.destroyById(key as string, destroyRes);
     }
     isInited(key: keyType): boolean {
-        const ctrlIns = this._getCtrlIns(key as string);
-        return ctrlIns && ctrlIns.isInited;
+        const viewIns = this._getViewIns(key as string);
+        return viewIns && viewIns.isInited;
     }
     isShowed(key: keyType): boolean {
-        const ctrlIns = this._getCtrlIns(key as string);
-        return ctrlIns && ctrlIns.isShowed;
+        const viewIns = this._getViewIns(key as string);
+        return viewIns && viewIns.isShowed;
     }
     isShowEnd(key: keyType): boolean {
-        const ctrlIns = this._getCtrlIns(key as string);
-        return ctrlIns && ctrlIns.isShowEnd;
+        const viewIns = this._getViewIns(key as string);
+        return viewIns && viewIns.isShowEnd;
     }
-    showById(id: string, showCfg?: displayCtrl.IShowConfig<keyType>): void {
+    showById(id: string, showCfg?: akView.IShowConfig<keyType>): void {
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
-        const widgetState = this._getWidgetState(id);
-        widgetState && this._showByWidgetState(widgetState);
+        const viewState = this._getViewState(id);
+        viewState && this._showByViewState(viewState);
     }
     updateById<T = any>(id: string, updateState?: T): void {
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
-        const widgetState = this._getWidgetState(id);
-        widgetState && this._updateByWidgetState(widgetState, updateState);
+        const viewState = this._getViewState(id);
+        viewState && this._updateByViewState(viewState, updateState);
     }
     hideById<T = any>(id: string, hideParam?: T, hideReleaseRes?: boolean): void {
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
-        const widgetState = this._getWidgetState(id);
-        widgetState && this._hideByWidgetState(widgetState, hideParam, hideReleaseRes);
+        const viewState = this._getViewState(id);
+        viewState && this._hideByViewState(viewState, hideParam, hideReleaseRes);
     }
     destroyById(id: string, releaseRes: boolean = true): void {
         if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
-        const widgetState = this._getWidgetState(id);
-        widgetState && this._destroyByWidgetState(widgetState, releaseRes);
+        const viewState = this._getViewState(id);
+        viewState && this._destroyByViewState(viewState, releaseRes);
     }
     isInitedById(id: string): boolean {
-        const ctrlIns = this._getCtrlIns(id);
-        return ctrlIns && ctrlIns.isInited;
+        const viewIns = this._getViewIns(id);
+        return viewIns && viewIns.isInited;
     }
     isShowedById(id: string): boolean {
-        const ctrlIns = this._getCtrlIns(id);
-        return ctrlIns && ctrlIns.isShowed;
+        const viewIns = this._getViewIns(id);
+        return viewIns && viewIns.isShowed;
     }
     isShowEndById(id: string): boolean {
-        const ctrlIns = this._getCtrlIns(id);
-        return ctrlIns && ctrlIns.isShowEnd;
+        const viewIns = this._getViewIns(id);
+        return viewIns && viewIns.isShowEnd;
     }
     /**
      * 清理和还原状态
-     * @param widgetState
+     * @param viewState
      */
-    protected _clearWidgetState(widgetState: displayCtrl.IWidgetState) {
-        widgetState.needInit = false;
-        widgetState.needShow = false;
-        widgetState.updateState = undefined;
-        widgetState.hideParam = undefined;
-        widgetState.hideReleaseRes = undefined;
+    protected _clearViewState(viewState: akView.IViewState) {
+        viewState.needIns = false;
+        viewState.needShow = false;
+        viewState.updateState = undefined;
+        viewState.hideParam = undefined;
+        viewState.hideReleaseRes = undefined;
+        viewState.retainTemplateRes = undefined;
+    }
+    /**
+     * 实例化
+     * 如果needIns=false或者isLoaded=false 则不会实例化
+     * @param id id
+     * @param template 模板
+     * @returns
+     */
+    protected _insView(viewState: akView.IViewState, template: akView.ITemplate): akView.IView {
+        if (!viewState.needIns || !template.isLoaded) return;
+
+        viewState.needIns = false;
+        let ins = this._getViewIns(viewState.id);
+        if (ins) return ins;
+        if (template.create) {
+            ins = template.create();
+        } else {
+            const handler = this._getTemplateHandler(template.type);
+            if (handler) {
+                ins = handler.create(template);
+            }
+        }
+        if (ins) {
+            ins.key = template.key;
+            ins.id = viewState.id;
+        }
+        return ins;
     }
     /**
      *
-     * @param widgetState
+     * @param viewState
      * @param initCfg
      * @returns
      */
-    protected _initByWidgetState(
-        widgetState: displayCtrl.IWidgetState,
-        initCfg?: displayCtrl.IInitConfig<keyType>
-    ): void {
-        if (!this._inited) {
-            console.error(`DisplayCtrlManager is no inited`);
-            return;
-        }
-        const ins = widgetState.ins;
-        if (ins && !ins.isInited) {
-            ins.isInited = true;
-            const template = this.getTemplate(ins.key);
-            const initFuncKey = template?.ctrlLifeCycleFuncMap?.onWInit;
-            if (initFuncKey && ins[initFuncKey]) {
-                ins[initFuncKey](initCfg);
-            } else {
-                ins.onWInit && ins.onWInit(initCfg);
+    protected _initByViewState(viewState: akView.IViewState, initCfg?: akView.IInitConfig<keyType>): void {
+        const ins = viewState.ins;
+        if (ins) {
+            if (!ins.isInited) {
+                ins.isInited = true;
+                const template = this.getTemplate(ins.key);
+                const initFuncKey = template?.viewLifeCycleFuncMap?.onViewInit;
+                if (initFuncKey && ins[initFuncKey]) {
+                    ins[initFuncKey](initCfg);
+                } else {
+                    ins.onViewInit && ins.onViewInit(initCfg);
+                }
             }
         } else {
-            !ins && console.warn(`dpctrl no instance`);
+            console.warn(`ins is null`);
         }
     }
     /**
      *
-     * @param widgetState
+     * @param viewState
      * @param showCfg
      */
-    protected _showByWidgetState(widgetState: displayCtrl.IWidgetState, showCfg?: displayCtrl.IShowConfig<keyType>) {
-        const ins = widgetState.ins;
+    protected _showByViewState(viewState: akView.IViewState, showCfg?: akView.IShowConfig<keyType>) {
+        const ins = viewState.ins;
         if (ins) {
             if (!ins.isShowed) {
                 const template = this.getTemplate(ins.key);
                 this._retainTemplateRes(template);
-                const showFuncKey = template?.ctrlLifeCycleFuncMap?.onWShow;
+                const showFuncKey = template?.viewLifeCycleFuncMap?.onViewShow;
                 if (showFuncKey && ins[showFuncKey]) {
                     ins[showFuncKey](showCfg);
                 } else {
-                    ins.onWShow && ins.onWShow(showCfg);
+                    ins.onViewShow && ins.onViewShow(showCfg);
                 }
                 ins.isShowed = true;
                 showCfg?.showedCb && showCfg.showedCb(ins);
             }
+            viewState.needShow = false;
         } else {
-            widgetState.showCfg = showCfg;
-            widgetState.needShow = true;
-            widgetState.hideParam = undefined;
-            widgetState.hideReleaseRes = false;
+            viewState.showCfg = showCfg;
+            viewState.needShow = true;
+            viewState.hideParam = undefined;
+            viewState.hideReleaseRes = false;
         }
     }
     /**
-     * 通过widgetState，调用widget实例onDpcUpdate
-     * @param widgetState
+     * 通过viewState，调用view实例onDpcUpdate
+     * @param viewState
      * @param updateState
      */
-    protected _updateByWidgetState(widgetState: displayCtrl.IWidgetState, updateState?: any) {
-        const ins = widgetState.ins;
+    protected _updateByViewState(viewState: akView.IViewState, updateState?: any) {
+        const ins = viewState.ins;
         if (ins) {
+            updateState = updateState ? updateState : viewState.updateState;
             const template = this.getTemplate(ins.key);
-            let updateFuncKey = template?.ctrlLifeCycleFuncMap?.onWUpdate;
+            let updateFuncKey = template?.viewLifeCycleFuncMap?.onViewUpdate;
             if (updateFuncKey) {
                 ins[updateFuncKey](updateState);
             } else {
-                ins.onWUpdate && ins.onWUpdate(updateState);
+                ins.onViewUpdate && ins.onViewUpdate(updateState);
             }
+            viewState.updateState = undefined;
         } else {
-            widgetState.updateState = updateState;
+            viewState.updateState = updateState;
         }
     }
     /**
      *
-     * @param widgetState
+     * @param viewState
      * @param hideParam
      * @param hideReleaseRes
      */
-    protected _hideByWidgetState<T = any>(
-        widgetState: displayCtrl.IWidgetState,
-        hideParam?: T,
-        hideReleaseRes?: boolean
-    ) {
-        const ins = widgetState.ins;
+    protected _hideByViewState<T = any>(viewState: akView.IViewState, hideParam?: T, hideReleaseRes?: boolean) {
+        const ins = viewState.ins;
         if (ins) {
             if (ins.isShowed) {
                 const template = this.getTemplate(ins.key);
-                const hideFuncKey = template?.ctrlLifeCycleFuncMap?.onWHide;
+                const hideFuncKey = template?.viewLifeCycleFuncMap?.onViewHide;
                 if (hideFuncKey && ins[hideFuncKey]) {
                     ins[hideFuncKey](hideParam, hideReleaseRes);
                 } else {
-                    ins.onWHide && ins.onWHide(hideParam, hideReleaseRes);
+                    ins.onViewHide && ins.onViewHide(hideParam, hideReleaseRes);
                 }
                 ins.isShowed = false;
-                hideReleaseRes && this._releaseTemplateRes(template);
+                hideReleaseRes && this._releaseTemplateResByState(viewState, template);
             }
         } else {
-            widgetState.needShow = false;
-            widgetState.hideReleaseRes = hideReleaseRes;
-            widgetState.hideParam = hideParam;
+            viewState.needShow = false;
+            viewState.hideReleaseRes = hideReleaseRes;
+            viewState.hideParam = hideParam;
         }
     }
     /**
      *
-     * @param widgetState
+     * @param viewState
      * @param releaseRes
      */
-    protected _destroyByWidgetState(widgetState: displayCtrl.IWidgetState, releaseRes: boolean = true) {
-        const ins = widgetState.ins;
+    protected _destroyByViewState(viewState: akView.IViewState, releaseRes: boolean = true) {
+        const ins = viewState.ins;
         if (ins) {
             ins.isShowed = false;
             ins.isInited = false;
             const template = this.getTemplate(ins.key);
-            const destroyFuncKey = template?.ctrlLifeCycleFuncMap?.onWDestroy;
+            const destroyFuncKey = template?.viewLifeCycleFuncMap?.onViewDestroy;
             if (destroyFuncKey && ins[destroyFuncKey]) {
                 ins[destroyFuncKey](releaseRes);
             } else {
-                ins.onWDestroy && ins.onWDestroy(releaseRes);
+                ins.onViewDestroy && ins.onViewDestroy(releaseRes);
             }
-            this._releaseTemplateRes(template);
+            this._releaseTemplateResByState(viewState, template);
+            this._clearViewState(viewState);
         } else {
-            widgetState.needInit = false;
+            viewState.needIns = false;
         }
     }
     /**
      * 持有模板资源引用
+     * @param viewState
      * @param template
      */
-    protected _retainTemplateRes(template: displayCtrl.ITemplate) {
+    protected _retainTemplateResByState(viewState: akView.IViewState, template: akView.ITemplate) {
+        if (!viewState.retainTemplateRes) {
+            viewState.retainTemplateRes = true;
+            this._retainTemplateRes(template);
+        }
+    }
+    /**
+     * 释放模板资源引用
+     * @param viewState
+     * @param template
+     */
+    protected _releaseTemplateResByState(viewState: akView.IViewState, template: akView.ITemplate) {
+        if (viewState.retainTemplateRes) {
+            viewState.retainTemplateRes = false;
+            this._releaseTemplateRes(template);
+        }
+    }
+    /**
+     * 模板资源引用持有处理
+     * @param template
+     */
+    protected _retainTemplateRes(template: akView.ITemplate) {
         if (template) {
             if (template.retainRes) {
                 template.retainRes();
@@ -524,10 +574,10 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         }
     }
     /**
-     * 释放模板资源引用
+     * 模板资源引用释放处理
      * @param template
      */
-    protected _releaseTemplateRes(template: displayCtrl.ITemplate) {
+    protected _releaseTemplateRes(template: akView.ITemplate) {
         if (template) {
             if (template.releaseRes) {
                 template.releaseRes();
@@ -542,10 +592,10 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
      * @param template
      * @returns
      */
-    protected _addTemplate(template: displayCtrl.ITemplate): void {
+    protected _addTemplate(template: akView.ITemplate): void {
         if (!template) return;
         if (!this._inited) {
-            console.error(`[displayCtrlMgr](_addTemplate): is no inited`);
+            console.error(`[viewMgr](_addTemplate): is no inited`);
             return;
         }
         const key = template.key;
@@ -553,10 +603,10 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
             if (!this._templateMap[key]) {
                 this._templateMap[template.key] = template;
             } else {
-                console.error(`[displayCtrlMgr](_addTemplate): [key:${key}] is exit`);
+                console.error(`[viewMgr](_addTemplate): [key:${key}] is exit`);
             }
         } else {
-            console.error(`[displayCtrlMgr](_addTemplate): key is null`);
+            console.error(`[viewMgr](_addTemplate): key is null`);
         }
     }
     /**
@@ -564,26 +614,26 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
      * @param type
      * @returns
      */
-    protected _getTemplateHandler(type: string): displayCtrl.ITemplateHandler {
+    protected _getTemplateHandler(type: string): akView.ITemplateHandler {
         const handler = this._templateHandlerMap[type];
         if (!handler) {
             console.warn(`this type:${type} handler is not exit`);
         }
         return handler;
     }
-    protected _getWidgetState(id: string): displayCtrl.IWidgetState {
-        let ctrlState = this._ctrlStateMap[id];
-        if (!ctrlState) {
-            ctrlState = {
+    protected _getViewState(id: string): akView.IViewState {
+        let viewState = this._viewStateMap[id];
+        if (!viewState) {
+            viewState = {
                 id: id
             };
-            this._ctrlStateMap[id];
+            this._viewStateMap[id];
         }
-        return ctrlState;
+        return viewState;
     }
-    protected _getCtrlIns(id: string): displayCtrl.IWidget {
-        const ctrlState = this._ctrlStateMap[id];
-        return ctrlState?.ins;
+    protected _getViewIns(id: string): akView.IView {
+        const viewState = this._viewStateMap[id];
+        return viewState?.ins;
     }
 
     /**
@@ -591,9 +641,9 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
      * @param key
      * @returns
      */
-    protected _createCtrlId(key: keyType): string {
-        this._ctrlInsCount++;
-        return `${key}_$_${this._ctrlInsCount}`;
+    protected _createViewId(key: keyType): string {
+        this._insCount++;
+        return `${key}_$_${this._insCount}`;
     }
     /**
      * 从id中解析出key
@@ -607,60 +657,27 @@ export class DpcMgr<CtrlKeyType = any, keyType extends keyof CtrlKeyType = any>
         return id.split("_$_")[0] as keyType;
     }
     /**
-     * 显示控制器
+     * 根据viewState，走init、show、update view的流程
      * @param id
      * @param showCfg
      */
-    protected _showWidget(
-        widgetState: displayCtrl.IWidgetState,
-        showCfg: displayCtrl.IShowConfig<keyType> & displayCtrl.ICreateConfig<keyType>
+    protected _initAndShowAndUpdateView(
+        viewState: akView.IViewState,
+        showCfg: akView.IShowConfig<keyType> & akView.ICreateConfig<keyType>
     ) {
-        if (!widgetState.needInit) {
-            //可能初始化过
-            return;
-        }
-        if (widgetState.ins) {
-            this._initByWidgetState(widgetState, showCfg);
-            widgetState.needInit = false;
+        if (viewState.ins) {
+            this._initByViewState(viewState, showCfg);
 
-            if (!widgetState.needShow) {
-                if (widgetState.hideReleaseRes) {
-                    widgetState.hideReleaseRes = false;
-                    this._releaseTemplateRes(this.getTemplate(widgetState.ins.key));
+            if (!viewState.needShow) {
+                //被隐藏
+                if (viewState.hideReleaseRes) {
+                    viewState.hideReleaseRes = false;
+                    this._releaseTemplateResByState(viewState, this.getTemplate(viewState.ins.key));
                 }
                 return;
             }
-            this._showByWidgetState(widgetState, showCfg);
-            widgetState.needShow = false;
-            const updateState = widgetState.updateState;
-            widgetState.updateState = undefined;
-
-            if (updateState) {
-                this._updateByWidgetState(widgetState, updateState);
-            }
+            this._showByViewState(viewState, showCfg);
+            this._updateByViewState(viewState);
         }
-    }
-    /**
-     * 实例化指定key的控制器
-     * @param id id
-     * @param template 模板
-     * @returns
-     */
-    protected _insByTemplate<T extends displayCtrl.IWidget<any> = any>(id: string, template: displayCtrl.ITemplate): T {
-        let ins: T = this._getCtrlIns(id) as any;
-        if (ins) return ins;
-        if (template.create) {
-            ins = template.create();
-        } else {
-            const handler = this._getTemplateHandler(template.type);
-            if (handler) {
-                ins = handler.create(template);
-            }
-        }
-        if (ins) {
-            ins.key = template.key;
-            ins.id = id;
-        }
-        return ins;
     }
 }

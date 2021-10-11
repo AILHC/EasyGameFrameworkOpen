@@ -1,4 +1,4 @@
-import { DpcMgr } from "../../src";
+import { ViewMgr } from "../../src";
 interface CtrlKeyTypeMapType {
     typeTest: "typeTest";
     typeTest2: "typeTest2";
@@ -84,13 +84,13 @@ interface ITestMgr<
      */
     destroyDpc(key: string, destroyRes?: boolean, destroyIns?: boolean): void;
 }
-const mgr: ITestMgr<CtrlKeyTypeMapType, InitDataTypeMapType, ShowDataTypeMapType> = new DpcMgr() as any;
+const mgr: ITestMgr<CtrlKeyTypeMapType, InitDataTypeMapType, ShowDataTypeMapType> = new ViewMgr() as any;
 mgr.showDpc({
     typeKey: "typeTest",
     onInitData: { a: 1, b: 1 },
     onShowData: { a: 1, b: 1 }
 });
-const myMgr: displayCtrl.IMgr<CtrlKeyTypeMapType, InitDataTypeMapType, ShowDataTypeMapType> = {} as any;
+const myMgr: akView.IMgr<CtrlKeyTypeMapType, InitDataTypeMapType, ShowDataTypeMapType> = {} as any;
 
 myMgr.showDpc("typeTest2");
 
