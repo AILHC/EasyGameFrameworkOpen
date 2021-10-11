@@ -1,0 +1,411 @@
+interface ICtrl_OLD<NodeType = any> {
+            key?: string | any;
+            /**
+             * 正在加载
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            isLoading?: boolean;
+            /**
+             * 已经加载
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            isLoaded?: boolean;
+            /**已经初始化 */
+            isInited?: boolean;
+            /**已经显示 */
+            isShowed?: boolean;
+            /**显示结束，由业务去控制这个状态，用于动画等异步状态 */
+            isShowEnd?: boolean;
+            /**
+             * 需要显示
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            needShow?: boolean;
+            /**
+             * 需要加载
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            needLoad?: boolean;
+
+            /**
+             * 透传给加载处理的数据,
+             * 会和调用显示接口showDpc中传来的onLoadData合并,
+             * 以接口传入的为主
+             * Object.assign(ins.onLoadData,cfg.onLoadData);
+             * @deprecated 兼容1.x的,即将废弃
+             * */
+            onLoadData?: any;
+            /**
+             * 获取资源
+             * @deprecated 兼容1.x的,即将废弃
+             */
+            getRess?(): string[] | any[];
+            /**
+             * 初始化
+             * @param initData 初始化数据
+             * @deprecated 兼容1.x的,即将废弃, 请使用最新的 onDpcInit
+             */
+            onInit?(config?: displayCtrl.IInitConfig): void;
+            /**
+             * 当显示时
+             * @param showData 显示数据
+             * @deprecated 兼容1.x的,即将废弃 请使用最新的 onDpcShow
+             */
+            onShow?(config?: displayCtrl.IShowConfig): void;
+            /**
+             * 当更新时
+             * @param updateData 更新数据
+             * @param endCb 结束回调
+             * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcUpdate
+             */
+            onUpdate?(updateData: any): void;
+            /**
+             * 获取控制器
+             */
+            getFace?<T = any>(): ReturnCtrlType<T>;
+            /**
+             * 当隐藏时
+             * @param hideParam
+             * @param releaseRes 是否释放资源引用，默认为false
+             * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcHide
+             */
+            onHide?(hideParam: any, releaseRes?: boolean): void;
+            /**
+             * 当销毁时
+             * @param releaseRes 是否释放资源引用，默认为true
+             * @deprecated 兼容1.x的,即将废弃 , 请使用最新的 onDpcDestroy
+             */
+            onDestroy?(releaseRes?: boolean): void;
+            /**
+             * 获取显示节点
+             */
+            getNode(): NodeType;
+        }
+
+        /**
+         * @deprecated 兼容1.x的,即将废弃
+         */
+        interface ILoadConfig {
+            /**页面类型key */
+            typeKey?: string | any;
+            /**强制重新加载 */
+            forceLoad?: boolean;
+            /**加载后onLoad参数 */
+            onLoadData?: any;
+            /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
+            loadCb?: WidgetInsCb;
+        }
+
+
+        废弃兼容逻辑
+        //#region 兼容处理
+
+    /**
+     * 批量注册控制器类
+     * @param classMap
+     */
+    registTypes(classes: displayCtrl.CtrlClassMap | displayCtrl.CtrlClassType[]): void {
+        if (classes) {
+            if (typeof classes.length === "number" && classes.length) {
+                for (let i = 0; i < classes.length; i++) {
+                    this.regist(classes[i]);
+                }
+            } else {
+                for (const typeKey in classes) {
+                    this.regist(classes[typeKey], typeKey as any);
+                }
+            }
+        }
+    }
+    /**
+     * 注册控制器类
+     * @param ctrlClass
+     * @param typeKey 如果ctrlClass这个类里没有静态属性typeKey则取传入的typeKey
+     */
+    regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyType): void {
+        if (!ctrlClass["typeKey"]) {
+            if (!typeKey) {
+                console.error(`typeKey is null`);
+                return;
+            } else {
+                (ctrlClass as any)["typeKey"] = typeKey;
+            }
+        } else {
+            typeKey = ctrlClass["typeKey"];
+        }
+        if (this.isRegisted(typeKey)) {
+            console.error(`type:${typeKey} is exit`);
+        } else {
+            const ins: displayCtrl.IWidget = new ctrlClass();
+
+            const template: displayCtrl.ITemplate = {
+                key: typeKey as any,
+                create: () => new ctrlClass(),
+                getResInfo: () => {
+                    return { type: "default", ress: ctrlClass["ress"] };
+                },
+                ctrlLifeCycleFuncMap: {
+                    onDpcDestroy: "onDestroy",
+                    onDpcHide: "onHide",
+                    onDpcInit: "onInit",
+                    onDpcShow: "onShow",
+                    onDpcUpdate: "onUpdate"
+                }
+            };
+            template["ctrlClass"] = ctrlClass;
+
+            this._addTemplate(template);
+            //兼容处理
+            this._ctrlStateMap[typeKey as string] = {
+                id: typeKey as string,
+                ctrlIns: ins
+            };
+            ins.key = typeKey;
+            if (ins["getRess"]) template.getResInfo = ins["getRess"].bind(ins);
+            if (ins["loadRes"]) template.loadRes = ins["loadRes"].bind(ins);
+            if (ins["releaseRes"]) template.releaseRes = ins["releaseRes"].bind(ins);
+        }
+    }
+    isRegisted(key: keyType): boolean {
+        if (!this._inited) {
+            console.error(`DisplayCtrlManager is no inited`);
+            return;
+        }
+        return !!this._templateMap[key];
+    }
+
+    initDpcByIns<T extends displayCtrl.IWidget<any> = any>(ins: T, initCfg?: displayCtrl.IInitConfig<keyType>): void {
+        if (!this._inited) {
+            console.error(`DisplayCtrlManager is no inited`);
+            return;
+        }
+        if (ins && !ins.isInited) {
+            ins.isInited = true;
+            const template = this.getTemplate(ins.key);
+            const initFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcInit;
+            if (initFuncKey && ins[initFuncKey]) {
+                ins[initFuncKey](initCfg);
+            } else {
+                ins.onDpcInit && ins.onDpcInit(initCfg);
+            }
+        } else {
+            !ins && console.warn(`dpctrl no instance`);
+        }
+    }
+    showDpcByIns<T extends displayCtrl.IWidget<any>>(ins: T, showCfg?: displayCtrl.IShowConfig<keyType>): void {
+        if (!this._inited) {
+            console.error(`DisplayCtrlManager is no inited`);
+            return;
+        }
+        if (ins && !ins.isShowed) {
+            const template = this.getTemplate(ins.key);
+            const showFuncKey = template?.ctrlLifeCycleFuncMap?.onDpcShow;
+            if (showFuncKey && ins[showFuncKey]) {
+                ins[showFuncKey](showCfg);
+            } else {
+                ins.onDpcShow && ins.onDpcShow(showCfg);
+            }
+            ins.isShowed = true;
+            showCfg?.showedCb && showCfg.showedCb(ins);
+        } else {
+            console.warn(`${!ins ? "dpctrl no instance" : "dpctrl is show =>" + ins.key}`);
+        }
+    }
+    updateDpcByIns<T extends displayCtrl.IWidget<any>>(ins: T, updateData: any) {
+        this.updateById(ins?.id, updateData);
+    }
+    hideDpcByIns<T extends displayCtrl.IWidget<any>>(ins: T, hideParam?: any): void {
+        this.hideById(ins?.id, hideParam);
+    }
+    destroyDpcByIns<T extends displayCtrl.IWidget<any>>(ins: T, destroyRes?: boolean): void {
+        this.destroyById(ins?.id, destroyRes);
+    }
+
+    /**
+     * 获取单例UI的资源数组
+     * @param typeKey
+     * @deprecated 兼容1.x的,即将废弃
+     */
+    getSigDpcRess(typeKey: keyType): string[] | any[] {
+        return this.getDpcRess(typeKey);
+    }
+    /**
+     *
+     * 加载Dpc
+     * @param typeKey 注册时的typeKey
+     * @param loadCfg 透传数据和回调
+     * @deprecated 兼容1.x的,即将废弃
+     */
+    loadSigDpc<T>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T> {
+        const ctrlIns = this.getSigDpcIns(typeKey) as any;
+        const ctrlInsCb = loadCfg?.loadCb;
+        let completeCb;
+        if (ctrlInsCb) {
+            completeCb = (error?) => {
+                ctrlInsCb(!error ? ctrlIns : undefined);
+            };
+        }
+
+        this.loadRes(typeKey, completeCb, loadCfg?.forceLoad, loadCfg?.onLoadData);
+        return this.getSigDpcIns(typeKey) as any;
+    }
+    /**
+     * 初始化单例显示控制器
+     * @param typeKey 注册类时的 typeKey
+     * @param initCfg displayCtrl.IInitConfig
+     * @returns
+     * @deprecated 兼容1.x的,即将废弃
+     */
+    initSigDpc<T = any>(typeKey: keyType, initCfg?: displayCtrl.IInitConfig<keyType>): displayCtrl.ReturnCtrlType<T> {
+        let ctrlIns: displayCtrl.IWidget;
+        ctrlIns = this.getSigDpcIns(typeKey);
+        this.initDpcByIns(ctrlIns, initCfg);
+        return ctrlIns as any;
+    }
+    /**
+     * 获取注册类的资源信息
+     * 读取类的静态变量 ress
+     * @param typeKey
+     * @deprecated 兼容1.x的,即将废弃
+     */
+    getDpcRessInClass(typeKey: keyType): string[] | any[] {
+        const template = this.getTemplate(typeKey);
+        if (template) {
+            return template.getResInfo()?.ress;
+        } else {
+            console.error(`This class :${typeKey} is not registered `);
+            return undefined;
+        }
+    }
+    /**
+     * 加载显示控制器
+     * @param ins
+     * @param loadCfg
+     * @deprecated 兼容1.x的,即将废弃
+     */
+    loadDpcByIns(ins: displayCtrl.IWidget, loadCfg?: displayCtrl.ILoadConfig): void {
+        const complete = !loadCfg?.loadCb
+            ? undefined
+            : (error) => {
+                  loadCfg.loadCb(error ? undefined : ins);
+              };
+        this.loadRes(ins.key, complete, loadCfg?.forceLoad, loadCfg?.onLoadData);
+    }
+    /**
+     * 获取控制器类
+     * @param typeKey
+     * @deprecated 兼容1.x的,即将废弃
+     */
+    getCtrlClass(typeKey: keyType): displayCtrl.CtrlClassType<displayCtrl.IWidget> {
+        return this.getTemplate(typeKey)["ctrlClass"];
+    }
+    /**
+     * 获取控制器依赖资源
+     * @param key
+     * @returns
+     * @deprecated 兼容1.x的，即将废弃，请使用 getResInfo
+     */
+    getDpcRess(key: keyType): string[] {
+        return this.getResInfo(key).ress;
+    }
+
+    insDpc<T extends displayCtrl.IWidget<any>>(key: keyType): displayCtrl.ReturnCtrlType<T> {
+        if (!this._inited) {
+            console.error(`DisplayCtrlManager is no inited`);
+            return;
+        }
+        const template = this.getTemplate(key);
+        if (!template) return undefined;
+        return this._insByTemplate(key as string, template);
+    }
+    getSigDpcIns<T = any>(key: keyType): displayCtrl.ReturnCtrlType<T> {
+        return this._getCtrlIns(key as string) as any;
+    }
+    /**
+     * 显示控制器
+     * @param keyOrConfig
+     * @param onShowData
+     * @param showedCb
+     * @param onInitData
+     * @param forceLoad
+     * @param loadParam
+     * @param loadCb
+     * @param showEndCb
+     * @param onCancel
+     * @returns
+     * @deprecated 兼容1.x处理，即将废弃
+     */
+    showDpc<T = any>(
+        keyOrConfig: keyType | displayCtrl.IShowConfig<keyType>,
+        onShowData?: any,
+        showedCb?: displayCtrl.WidgetInsCb<T>,
+        onInitData?: any,
+        forceLoad?: boolean,
+        loadParam?: any,
+        loadCb?: displayCtrl.WidgetInsCb<unknown>,
+        showEndCb?: VoidFunction,
+        onCancel?: VoidFunction
+    ): displayCtrl.ReturnCtrlType<T> {
+        if (!this._inited) {
+            console.error(`DisplayCtrlManager is no inited`);
+            return;
+        }
+        let showCfg: displayCtrl.IShowConfig<keyType>;
+        if (typeof keyOrConfig == "string") {
+            showCfg = {
+                key: keyOrConfig,
+                onShowData: onShowData,
+                showedCb: showedCb,
+                onInitData: onInitData,
+                forceLoad: forceLoad,
+                loadParam: loadParam,
+                showEndCb: showEndCb,
+                loadCb: loadCb,
+                onCancel: onCancel
+            };
+        } else if (typeof keyOrConfig === "object") {
+            showCfg = keyOrConfig;
+            onShowData !== undefined && (showCfg.onShowData = onShowData);
+            showedCb !== undefined && (showCfg.showedCb = showedCb);
+            showEndCb !== undefined && (showCfg.showEndCb = showEndCb);
+            onInitData !== undefined && (showCfg.onInitData = onInitData);
+            forceLoad !== undefined && (showCfg.forceLoad = forceLoad);
+            loadParam !== undefined && (showCfg.loadParam = loadParam);
+            loadCb !== undefined && (showCfg.loadCb = loadCb);
+            onCancel !== undefined && (showCfg.onCancel = onCancel);
+            //兼容1.x
+            !showCfg.loadParam && showCfg.loadParam === showCfg.onLoadData;
+        } else {
+            console.warn(`unknown showDpc`, keyOrConfig);
+            return;
+        }
+        this.show(showCfg);
+    }
+    /**
+     * 更新显示控制器
+     * @param key
+     * @param updateData
+     * @deprecated 兼容1.x处理
+     */
+    updateDpc(key: keyType, updateData?: any): void {
+        this.updateById(key as string, updateData);
+    }
+    /**
+     * 隐藏显示控制器
+     * @param key
+     * @param hideParam 传参
+     * @deprecated 兼容1.x处理，即将废弃
+     */
+    hideDpc(key: keyType, hideParam?: any): void {
+        this.hideById(key as string, hideParam);
+    }
+    /**
+     * 销毁显示控制器
+     * @param key
+     * @param destroyRes 是否销毁资源
+     * @deprecated 兼容1.x处理，即将废弃
+     */
+    destroyDpc(key: keyType, destroyRes?: boolean): void {
+        this.destroyById(key as string, destroyRes);
+    }
+    //#endregion
