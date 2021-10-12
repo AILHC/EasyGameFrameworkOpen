@@ -112,7 +112,7 @@ declare global {
 
             /**是否需要显示 */
             needShow?: boolean;
-            showCfg?: akView.IShowConfig;
+
             /**
              * 未显示之前调用update接口的传递的数据
              */
