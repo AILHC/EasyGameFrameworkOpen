@@ -17,23 +17,28 @@ describe(`显示-创建相关接口单元测试`, function () {
                         return {};
                     }
                 };
-                const spyOnDpcInit = spyOn(viewIns, "onViewInit");
-                expect(spyOnDpcInit).toBeCalled();
-
-                const spyOnDpcShow = spyOn(viewIns, "onViewShow");
-                expect(spyOnDpcShow).toBeCalled();
 
                 return viewIns;
             }
         };
 
-        const spyshow = spyOn(uiMgr, "show");
         uiMgr.template(testTemplate);
-        uiMgr.show<akView.IView>(testTemplate.key, { test: "a" }, (viewIns) => {
-            expect(viewIns.key).toEqual(testTemplate.key);
+        let spyOnViewInit: jasmine.Spy;
+        let spyOnViewShow: jasmine.Spy;
 
-            testDone();
-        });
-        expect(spyshow).toBeCalled();
+        uiMgr.show<akView.IView>({
+            key: testTemplate.key,
+            onShowData: { test: "a" },
+            loadCb: (viewIns) => {
+                spyOnViewInit = spyOn(viewIns, "onViewInit");
+                spyOnViewShow = spyOn(viewIns, "onViewShow");
+            },
+            showedCb: (viewIns) => {
+                expect(spyOnViewInit).toBeCalledTimes(1);
+                expect(spyOnViewShow).toBeCalledTimes(1);
+                expect(viewIns.key).toEqual(testTemplate.key);
+                testDone();
+            }
+        } as akView.IShowConfig);
     });
 });

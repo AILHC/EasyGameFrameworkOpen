@@ -289,8 +289,8 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 tplKey,
                 (error) => {
                     let viewIns: akView.IView = this._insView(viewState, template);
+                    showCfg.loadCb && showCfg.loadCb(viewIns);
                     if (viewIns) {
-                        showCfg.loadCb && showCfg.loadCb(viewIns);
                         this._initAndShowAndUpdateView(viewState, showCfg);
                     } else {
                         //加载失败了
@@ -303,8 +303,6 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                             // 还原状态
                             this._clearViewState(viewState);
                         }
-
-                        showCfg.loadCb && showCfg.loadCb();
                     }
                 },
                 showCfg.forceLoad,
@@ -414,6 +412,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             ins.key = template.key;
             ins.id = viewState.id;
         }
+        viewState.ins = ins;
         return ins;
     }
     /**
@@ -461,7 +460,6 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             }
             viewState.needShow = false;
         } else {
-            viewState.showCfg = showCfg;
             viewState.needShow = true;
             viewState.hideParam = undefined;
             viewState.hideReleaseRes = false;
@@ -533,6 +531,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             }
             this._releaseTemplateResByState(viewState, template);
             this._clearViewState(viewState);
+            viewState.ins = undefined;
         } else {
             viewState.needIns = false;
         }

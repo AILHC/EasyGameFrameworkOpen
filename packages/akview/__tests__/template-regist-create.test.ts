@@ -56,7 +56,8 @@ describe(`注册模板相关单元测试`, function () {
 
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler"
+            type: "hasTypeTemplateHandler",
+            isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
 
@@ -80,6 +81,7 @@ describe(`注册模板相关单元测试`, function () {
 
         const noTypeCustomCreateTemplate: akView.ITemplate = {
             key: "noTypeCustomCreateTemplate",
+            isLoaded: true,
             create: () => {
                 return { key: "noTypeCustomCreateTemplate" } as any;
             }
