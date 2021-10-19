@@ -134,7 +134,7 @@ declare global {
          */
         type LoadResComplete = (error?: any) => void;
         type ViewStateMap = { [key: string]: IViewState };
-        type TemplateMap<keyType extends keyof any = any> = { [P in keyType]: ITemplate };
+        type TemplateMap<keyType extends keyof any = string> = { [P in keyType]: ITemplate };
 
         type CancelLoad = () => void;
         type TemplateLoadedCb = (isOk: boolean) => void;
@@ -195,7 +195,7 @@ declare global {
             /**
              * 创建回调,失败实例为空,成功则不为空
              */
-            createCb?: ViewInsCb;
+            createdCb?: ViewInsCb;
         }
 
         interface IView<NodeType = any> {
