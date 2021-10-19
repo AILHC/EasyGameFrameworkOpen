@@ -33,14 +33,14 @@ describe(`注册模板相关单元测试`, function () {
             type: "testViewTemplateHandler"
         };
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         uiMgr.addTemplateHandler(testViewTemplateHandler);
         expect(uiMgr["_templateHandlerMap"][testViewTemplateHandler.type]).toBeDefined();
     });
 
     test(`测试创建无Type无自定义创建函数模板的实例`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const noTypeTemplate: akView.ITemplate = {
             key: "noTypeTemplate"
         };
@@ -52,7 +52,7 @@ describe(`注册模板相关单元测试`, function () {
     });
     test(`测试创建有Type模板的实例`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
 
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
@@ -77,7 +77,7 @@ describe(`注册模板相关单元测试`, function () {
     });
     test(`测试创建无Type有自定义创建函数模板的实例`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
 
         const noTypeCustomCreateTemplate: akView.ITemplate = {
             key: "noTypeCustomCreateTemplate",

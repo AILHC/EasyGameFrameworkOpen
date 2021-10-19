@@ -54,7 +54,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试加载有Type模板依赖的资源-失败`, function (testDone) {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
             type: "hasTypeTemplateHandler",
@@ -87,7 +87,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试加载无Type模板依赖的资源`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const noTypeTemplate: akView.ITemplate = {
             key: "noTypeTemplate",
             getResInfo() {
@@ -105,7 +105,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试加载无Type无资源依赖模板依赖的资源`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const noTypeTemplate: akView.ITemplate = {
             key: "noTypeTemplate"
         };
@@ -120,7 +120,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试加载无Type有自定义加载逻辑模板依赖的资源-成功`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const noTypeCustomLoadResTemplate: akView.ITemplate = {
             key: "noTypeCustomLoadResTemplate",
             getResInfo() {
@@ -144,7 +144,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试加载无Type有自定义加载逻辑模板依赖的资源-失败`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const noTypeCustomLoadResTemplate: akView.ITemplate = {
             key: "noTypeCustomLoadResTemplate",
             getResInfo() {
@@ -169,7 +169,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试无Type模板的资源销毁`, function () {
         //加载完成之后isLoaded=true;
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const noTypeTemplate: akView.ITemplate = {
             key: "noTypeTemplate"
         };
@@ -182,7 +182,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试有Type模板的资源销毁-成功`, function () {
         //
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const hasTypeCanDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeCanDestroyResTemplate",
             type: "hasTypeTemplateHandlerReturnDestroyTrue"
@@ -208,7 +208,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     test(`测试有Type模板的资源销毁-失败`, function () {
         //测试可能会因为还有引用所以销毁资源没成功
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const hasTypeNoDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeNoDestroyResTemplate",
             type: "hasTypeTemplateHandlerReturnDestroyFalse"
@@ -232,7 +232,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试无Type有自定义释放处理函数模板的资源销毁-成功`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const hasTypeCanDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeCanDestroyResTemplate",
             destroyRes() {
@@ -248,7 +248,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试无Type有自定义释放处理函数模板的资源销毁-失败`, function () {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const hasTypeNoDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeNoDestroyResTemplate",
             destroyRes() {
@@ -264,7 +264,7 @@ describe(`模板资源加载销毁单元测试`, function () {
     });
     test(`测试模板资源加载过程中销毁资源`, function (done) {
         const uiMgr = new ViewMgr();
-        uiMgr.init();
+        uiMgr.init(null, null);
         const testTemplate: akView.ITemplate = {
             key: "testTemplate",
             type: "testTemplate",
