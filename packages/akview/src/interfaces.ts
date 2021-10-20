@@ -218,7 +218,7 @@ declare global {
              * 当显示时
              * @param config 显示数据
              */
-            onViewShow?(config?: akView.IShowConfig): void;
+            onViewShow?(config?: akView.IShowConfig): Promise<void> | void;
             /**
              * 当更新时
              * @param param 更新数据
@@ -229,7 +229,7 @@ declare global {
              * @param param
              * @param releaseRes 是否释放资源引用，默认为false
              */
-            onViewHide?(param?: any, releaseRes?: boolean): void;
+            onViewHide?(param?: any, releaseRes?: boolean): Promise<void> | void;
             /**
              * 当销毁时
              * @param releaseRes 是否释放资源引用，默认为true
