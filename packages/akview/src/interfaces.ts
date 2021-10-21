@@ -117,15 +117,8 @@ declare global {
              * 未显示之前调用update接口的传递的数据
              */
             updateState?: any;
-            /**
-             * 隐藏时释放资源
-             * 主要针对还未显示就隐藏的逻辑
-             */
-            hideReleaseRes?: boolean;
-            /**
-             * 未显示之前调用hide相关接口的传递的数据
-             */
-            hideParam?: any;
+            /**hide 传参 */
+            hideCfg?: akView.IHideConfig;
             /**控制器实例 */
             ins?: akView.IView;
         }
@@ -176,12 +169,16 @@ declare global {
              * 显示数据
              */
             onShowData?: any;
-            /**在调用控制器实例onShow后回调 */
+            /**
+             * 在调用控制器实例onShow后回调
+             * 由view-mgr调用，禁止在view逻辑中调用
+             */
             showedCb?: ViewInsCb;
-            /**控制器显示完成后回调 */
+            /**
+             * 控制器显示完成后回调
+             * 由view-mgr调用，禁止在view逻辑中调用
+             */
             showEndCb?: VoidFunction;
-            /**显示被取消了 */
-            onCancel?: VoidFunction;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
              * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
@@ -194,8 +191,13 @@ declare global {
 
             /**
              * 创建回调,失败实例为空,成功则不为空
+             * 由view-mgr调用，禁止在view逻辑中调用
              */
             createdCb?: ViewInsCb;
+        }
+        interface IHideConfig {
+            /**默认false */
+            releaseRes?: boolean;
         }
 
         interface IView<NodeType = any> {
@@ -217,6 +219,7 @@ declare global {
             /**
              * 当显示时
              * @param config 显示数据
+             * @returns 可返回promise,当执行一些异步逻辑时，比如播放动画
              */
             onViewShow?(config?: akView.IShowConfig): Promise<void> | void;
             /**
@@ -225,16 +228,15 @@ declare global {
              */
             onViewUpdate?(param?: any): void;
             /**
-             * 当隐藏时
-             * @param param
-             * @param releaseRes 是否释放资源引用，默认为false
+             * 当隐藏时，可以在显示节点隐藏后进行动态资源的资源释放操作，模板资源释放view-mgr来处理
+             * @param hideCfg
+             * @returns 可返回promise,当执行一些异步逻辑时，比如播放动画,告诉view-mgr显示节点隐藏了，可以进行资源释放了
              */
-            onViewHide?(param?: any, releaseRes?: boolean): Promise<void> | void;
+            onViewHide?(hideCfg: IHideConfig): Promise<void> | void;
             /**
-             * 当销毁时
-             * @param releaseRes 是否释放资源引用，默认为true
+             * 当销毁时，默认是需要进行资源引用释放的
              */
-            onViewDestroy?(releaseRes?: boolean): void;
+            onViewDestroy?(): void;
             /**
              * 获取显示节点
              */
@@ -383,17 +385,16 @@ declare global {
              */
             updateById<T = any>(id: string, updateState?: T): void;
             /**
-             * 通过实例隐藏
+             * 隐藏指定id的view实例
              * @param id
-             * @param hideParam
+             * @param cfg
              */
-            hideById<T = any>(id: string, hideParam?: T): void;
+            hideById(id: string, cfg?: IHideConfig): void;
             /**
-             * 通过实例销毁
+             * 销毁指定id的view实例
              * @param id
-             * @param releaseRes 是否释放资源
              */
-            destroyById(id: string, releaseRes?: boolean): void;
+            destroyById(id: string): void;
             /**
              * 控制器是否初始化了
              * @param id
