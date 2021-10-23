@@ -240,6 +240,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                     this._initAndShowAndUpdateView(viewState, createCfg);
                     createCfg.createdCb?.(viewIns);
                 } else {
+                    this._viewStateMap[id] = undefined;
                     //加载失败、实例化失败、或者被销毁
                     //释放引用
                     this._releaseTemplateResByState(viewState, template);
@@ -282,6 +283,8 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         const template = this.getTemplate(tplKey);
         if (template) {
             const viewState = this._getViewState(tplKey as string);
+            viewState.showingPromise = undefined;
+            viewState.hidingPromise = undefined;
             this._retainTemplateResByState(viewState, template);
             viewState.needIns = true;
             viewState.needShow = true;
@@ -291,15 +294,21 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                     let viewIns: akView.IView = this._insView(viewState, template);
                     showCfg.loadCb?.(viewIns);
                     if (viewIns) {
-                        const promise = this._initAndShowAndUpdateView(viewState, showCfg);
+                        let promise = this._initAndShowAndUpdateView(viewState, showCfg);
                         showCfg.showedCb?.(viewIns);
+                        viewState.showingPromise = promise;
                         if (isPromise(promise)) {
-                            showCfg.showEndCb && promise.then(showCfg.showEndCb);
+                            showCfg.showEndCb &&
+                                promise.then(() => {
+                                    if (viewState.showingPromise === promise) {
+                                        showCfg.showEndCb();
+                                    }
+                                });
                         } else {
                             showCfg.showEndCb?.();
                         }
                     } else {
-                        //加载失败了
+                        //加载失败了,或者被销毁了
                         if (viewState.ins) {
                             //之前实例化过，但需要销毁
                             this._destroyByViewState(viewState);
@@ -365,6 +374,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
         const viewState = this._getViewState(id);
         viewState && this._destroyByViewState(viewState);
+        this._viewStateMap[id] = undefined;
     }
     isInitedById(id: string): boolean {
         const viewIns = this._getViewIns(id);
@@ -448,17 +458,15 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         const ins = viewState.ins;
         let promise: Promise<void> | void;
         if (ins) {
-            if (!ins.isShowed) {
-                const template = this.getTemplate(ins.key);
-                this._retainTemplateRes(template);
-                const showFuncKey = template?.viewLifeCycleFuncMap?.onViewShow;
-                if (showFuncKey && ins[showFuncKey]) {
-                    promise = ins[showFuncKey](showCfg);
-                } else {
-                    promise = ins.onViewShow?.(showCfg);
-                }
-                ins.isShowed = true;
+            const template = this.getTemplate(ins.key);
+            this._retainTemplateRes(template);
+            const showFuncKey = template?.viewLifeCycleFuncMap?.onViewShow;
+            if (showFuncKey && ins[showFuncKey]) {
+                promise = ins[showFuncKey](showCfg);
+            } else {
+                promise = ins.onViewShow?.(showCfg);
             }
+            ins.isShowed = true;
             viewState.needShow = false;
         } else {
             viewState.needShow = true;
@@ -494,30 +502,46 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param hideParam
      * @param hideReleaseRes
      */
-    protected _hideByViewState<T = any>(viewState: akView.IViewState, hideCfg?: akView.IHideConfig) {
+    protected _hideByViewState(viewState: akView.IViewState, hideCfg?: akView.IHideConfig) {
         const ins = viewState.ins;
         if (ins) {
             if (ins.isShowed) {
                 let promise: Promise<void> | void;
                 const template = this.getTemplate(ins.key);
-                const hideFuncKey = template?.viewLifeCycleFuncMap?.onViewHide;
-                if (hideFuncKey && ins[hideFuncKey]) {
-                    promise = ins[hideFuncKey](hideCfg);
-                } else {
-                    promise = ins.onViewHide?.(hideCfg);
-                }
+                // const hideFuncKey = template?.viewLifeCycleFuncMap?.onViewHide;
+                // if (hideFuncKey && ins[hideFuncKey]) {
+                //     promise = ins[hideFuncKey](hideCfg);
+                // } else {
+
+                // }
+                promise = ins.onViewHide?.(hideCfg);
                 ins.isShowed = false;
-                if (hideCfg?.releaseRes) {
-                    if (promise) {
-                        promise.then(() => {
-                            this._releaseTemplateResByState(viewState, template);
-                        });
-                    } else {
+                const hideEnd = () => {
+                    if (promise !== viewState.hidingPromise) return;
+
+                    if (hideCfg.destroyAfterHide) {
+                        this._destroyByViewState(viewState);
+                    } else if (hideCfg?.releaseRes) {
                         this._releaseTemplateResByState(viewState, template);
                     }
+                };
+                if (hideCfg?.destroyAfterHide) {
+                    //隐藏后销毁，那这个viewState就是不存在的了
+                    this._viewStateMap[viewState.id] = undefined;
+                }
+                if (isPromise(promise)) {
+                    promise.then(hideEnd);
+                } else {
+                    hideEnd();
                 }
             }
         } else {
+            if (hideCfg?.destroyAfterHide) {
+                //隐藏后销毁，那这个viewState就是不存在的了
+                this._viewStateMap[viewState.id] = undefined;
+                viewState.needIns = false;
+            }
+
             viewState.needShow = false;
             viewState.hideCfg = hideCfg;
         }
@@ -529,6 +553,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      */
     protected _destroyByViewState(viewState: akView.IViewState) {
         const ins = viewState.ins;
+
         if (ins) {
             ins.isShowed = false;
             ins.isInited = false;
@@ -543,10 +568,13 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             this._clearViewState(viewState);
             viewState.ins = undefined;
         } else {
+            this._viewStateMap[viewState.id] = undefined;
             viewState.needIns = false;
         }
     }
     /**
+     * 如果 viewState.retainTemplateRes = false
+     * 则
      * 持有模板资源引用
      * @param viewState
      * @param template
@@ -558,6 +586,8 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
     }
     /**
+     * 如果 viewState.retainTemplateRes = true
+     * 则
      * 释放模板资源引用
      * @param viewState
      * @param template
@@ -632,7 +662,8 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         let viewState = this._viewStateMap[id];
         if (!viewState) {
             viewState = {
-                id: id
+                id: id,
+                templateKey: this._getKeyById(id) as any
             };
             this._viewStateMap[id] = viewState;
         }
@@ -679,7 +710,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 //被隐藏
                 if (viewState.hideCfg?.releaseRes) {
                     viewState.hideCfg.releaseRes = false;
-                    this._releaseTemplateResByState(viewState, this.getTemplate(viewState.ins.key));
+                    this._releaseTemplateResByState(viewState, this.getTemplate(viewState.templateKey as any));
                 }
                 return;
             }

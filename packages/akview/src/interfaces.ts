@@ -105,6 +105,8 @@ declare global {
         }
         interface IViewState {
             id: string;
+            /**模板key */
+            templateKey: string;
             /**持有模板资源引用 */
             retainTemplateRes?: boolean;
             /**是否需要实例化 */
@@ -112,7 +114,10 @@ declare global {
 
             /**是否需要显示 */
             needShow?: boolean;
-
+            /**显示过程中的Promise */
+            showingPromise?: Promise<void> | void;
+            /**隐藏中的Promise */
+            hidingPromise?: Promise<void> | void;
             /**
              * 未显示之前调用update接口的传递的数据
              */
@@ -196,8 +201,10 @@ declare global {
             createdCb?: ViewInsCb;
         }
         interface IHideConfig {
-            /**默认false */
+            /**释放资源引用 默认false */
             releaseRes?: boolean;
+            /**隐藏后销毁 */
+            destroyAfterHide?: boolean;
         }
 
         interface IView<NodeType = any> {
