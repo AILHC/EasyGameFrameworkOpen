@@ -1,10 +1,13 @@
+import { DefaultViewState } from "./default-view-state";
 import { globalViewTemplateMap } from "./view-template";
 const isPromise = <T = any>(val: any): val is Promise<T> => {
     return val !== null && typeof val === "object" && typeof val.then === "function" && typeof val.catch === "function";
 };
+type MYConstructor<T extends akView.IBaseViewState = any> = { new (...args): T };
 export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     implements akView.IMgr<ViewKeyType, keyType>
 {
+    protected _viewStateClassMap: { [key: string]: MYConstructor } = {};
     /**模版字典 */
     protected _templateMap: akView.TemplateMap<keyType>;
 
@@ -35,6 +38,8 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         this._templateHandlerMap = templateHandlerMap ? templateHandlerMap : {};
         this._inited = true;
         this._templateMap = {} as any;
+        this._viewStateClassMap = {};
+        this._viewStateClassMap["default"] = DefaultViewState;
         templateMap && this.template(templateMap);
     }
     template(templates: akView.TemplateMap<any> | akView.ITemplate | akView.ITemplate[]): void {
@@ -51,6 +56,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             }
         }
     }
+    registViewState(type: string, viewStateClass: FunctionConstructor) {}
     addTemplateHandler(templateHandler: akView.ITemplateHandler): void {
         if (!this._inited) {
             console.error(`[viewMgr](addTemplateHandler): is no inited`);
@@ -84,19 +90,14 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     getResInfo(key: keyType): akView.ITemplateResInfo<any> {
         return this._templateMap[key]?.getResInfo();
     }
-    loadRes<LoadParam = any>(
-        key: keyType,
-        complete?: akView.LoadResComplete,
-        forceLoad?: boolean,
-        loadParam?: LoadParam
-    ): void {
+    loadRes<LoadParam = any>(key: keyType, complete?: akView.LoadResComplete, loadParam?: LoadParam): void {
         if (!this._inited) {
             console.error(`[viewMgr](loadRess): is no inited`);
             return;
         }
         const template = this.getTemplate(key);
         if (!template) return;
-        if (template.isLoaded && !forceLoad) {
+        if (template.isLoaded) {
             complete?.();
             return;
         }
@@ -147,7 +148,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 });
             } else if (template.getResInfo) {
                 const resInfo = template.getResInfo();
-                const handler = this._getTemplateHandler(template.type);
+                const handler = this.getTemplateHandler(template.type);
                 if (resInfo && handler) {
                     handler.loadRes(template, {
                         key: key as any,
@@ -176,7 +177,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 if (template.destroyRes) {
                     template.isLoaded = !template.destroyRes();
                 } else {
-                    template.isLoaded = !this._getTemplateHandler(template.type)?.destroyRes?.(template);
+                    template.isLoaded = !this.getTemplateHandler(template.type)?.destroyRes?.(template);
                 }
             }
         }
@@ -193,6 +194,23 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             console.error(`viewMgr is no inited`);
             return;
         }
+
+        return this.getTemplate(key)?.isLoaded;
+    }
+    isLoadingById(id: string): boolean {
+        if (!this._inited) {
+            console.error(`viewMgr is no inited`);
+            return;
+        }
+        const key = this.getKeyById(id);
+        return this.getTemplate(key)?.isLoading;
+    }
+    isLoadedById(id: string): boolean {
+        if (!this._inited) {
+            console.error(`viewMgr is no inited`);
+            return;
+        }
+        const key = this.getKeyById(id);
         return this.getTemplate(key)?.isLoaded;
     }
     create<T extends akView.IView = any>(
@@ -223,36 +241,38 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             return;
         }
         const tplKey = createCfg.key;
-
-        const id = this._createViewId(tplKey);
-        const viewState = this._getViewState(id);
-        viewState.needIns = true;
-        viewState.needShow = !!createCfg.autoShow;
-        //持有模板资源
         const template = this.getTemplate(tplKey);
-        this._retainTemplateResByState(viewState, template);
-        this.loadRes(
-            tplKey,
-            (error) => {
-                const viewIns = this._insView(viewState, this.getTemplate(tplKey));
-                createCfg.loadCb?.(viewIns);
-                if (viewIns) {
-                    this._initAndShowAndUpdateView(viewState, createCfg);
-                    createCfg.createdCb?.(viewIns);
-                } else {
-                    this._viewStateMap[id] = undefined;
-                    //加载失败、实例化失败、或者被销毁
-                    //释放引用
-                    this._releaseTemplateResByState(viewState, template);
-                    // 还原状态
-                    this._clearViewState(viewState);
+        if (!template) return;
+        const id = this.createViewId(tplKey);
+        const viewState: akView.IViewState = this.getViewState(id);
 
-                    createCfg.createdCb?.();
-                }
-            },
-            createCfg.forceLoad,
-            createCfg.loadParam
-        );
+        //持有模板资源
+        viewState.retainTemplateResByState();
+        //在不同状态下进行处理
+        //未加载,去加载
+        //加载中,更新showCfg,并调用hideEndCb
+        //加载了,show,showing
+        //显示中,走hideEnd,再show,showing
+        //显示结束,走hideEnd,再show,showing
+        //隐藏中,走hideEnd,再show,showing
+        //隐藏结束,show,showing
+
+        //showUI
+        viewState.needShow = !!createCfg.autoShow;
+        //更新showCfg
+        viewState.showCfg = createCfg;
+
+        if (!template.isLoaded || template.isLoading) {
+            const onLoadedCb = (error?) => {
+                viewState.entryLoaded();
+            };
+            //没加载
+            //加载
+            this.loadRes(tplKey, onLoadedCb, createCfg.loadParam);
+        } else {
+            //加载完成
+            viewState.entryLoaded();
+        }
         return id;
     }
     show<T = any>(
@@ -281,49 +301,54 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
         const tplKey = showCfg.key;
         const template = this.getTemplate(tplKey);
-        if (template) {
-            const viewState = this._getViewState(tplKey as string);
-            viewState.showingPromise = undefined;
-            viewState.hidingPromise = undefined;
-            this._retainTemplateResByState(viewState, template);
-            viewState.needIns = true;
-            viewState.needShow = true;
-            this.loadRes(
-                tplKey,
-                (error) => {
-                    let viewIns: akView.IView = this._insView(viewState, template);
-                    showCfg.loadCb?.(viewIns);
-                    if (viewIns) {
-                        let promise = this._initAndShowAndUpdateView(viewState, showCfg);
-                        showCfg.showedCb?.(viewIns);
-                        viewState.showingPromise = promise;
-                        if (isPromise(promise)) {
-                            showCfg.showEndCb &&
-                                promise.then(() => {
-                                    if (viewState.showingPromise === promise) {
-                                        showCfg.showEndCb();
-                                    }
-                                });
-                        } else {
-                            showCfg.showEndCb?.();
-                        }
-                    } else {
-                        //加载失败了,或者被销毁了
-                        if (viewState.ins) {
-                            //之前实例化过，但需要销毁
-                            this._destroyByViewState(viewState);
-                        } else {
-                            //释放引用
-                            this._releaseTemplateResByState(viewState, template);
-                            // 还原状态
-                            this._clearViewState(viewState);
-                        }
-                    }
-                },
-                showCfg.forceLoad,
-                showCfg.loadParam
-            );
+        if (!template) {
+            return;
         }
+        const viewState: akView.IViewState = this.getViewState(tplKey as string);
+        //持有模板资源
+        viewState.retainTemplateResByState();
+        //在不同状态下进行处理
+        //未加载,去加载
+        //加载中,更新showCfg,并调用hideEndCb
+        //加载了,show,showing
+        //显示中,走hideEnd,再show,showing
+        //显示结束,走hideEnd,再show,showing
+        //隐藏中,走hideEnd,再show,showing
+        //隐藏结束,show,showing
+
+        //showUI
+        viewState.needDestroy = false;
+        viewState.needHide = false;
+        viewState.needShow = true;
+
+        //在显示中或者显示结束
+        if (viewState.viewIns && viewState.viewIns.isShowed) {
+            viewState.showingPromise = undefined;
+            //处理隐藏
+            viewState.entryHideEnd();
+        }
+
+        //在隐藏中
+        if (viewState.hidingPromise) {
+            viewState.hidingPromise = undefined;
+            //处理隐藏
+            viewState.entryHideEnd();
+        }
+        //更新showCfg
+        viewState.showCfg = showCfg;
+
+        if (!template.isLoaded) {
+            const onLoadedCb = (error?) => {
+                viewState.entryLoaded();
+            };
+            //没加载
+            //加载
+            this.loadRes(tplKey, onLoadedCb, showCfg.loadParam);
+        } else if (!template.isLoading) {
+            //加载完成
+            viewState.entryLoaded();
+        }
+        //加载中不处理
     }
     update(key: keyType, updateState?: any): void {
         this.updateById(key as string, updateState);
@@ -335,279 +360,125 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         this.destroyById(key as string);
     }
     isInited(key: keyType): boolean {
-        return this._getViewIns(key as string)?.isInited;
+        return this.getViewIns(key as string)?.isInited;
     }
     isShowed(key: keyType): boolean {
-        return this._getViewIns(key as string)?.isShowed;
+        return this.getViewIns(key as string)?.isShowed;
     }
     isShowEnd(key: keyType): boolean {
-        return this._getViewIns(key as string)?.isShowEnd;
+        return this.getViewIns(key as string)?.isShowEnd;
     }
     showById(id: string, showCfg?: akView.IShowConfig<keyType>): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        const viewState = this._getViewState(id);
-        viewState && this._showByViewState(viewState, showCfg);
+        const viewState: akView.IViewState = this.getViewState(id);
+        if (!viewState) return;
+        viewState.needHide = false;
+        viewState.needDestroy = false;
+        viewState.needShow = true;
+        viewState.showCfg = showCfg;
+        //在显示中或者显示结束
+        if (viewState.viewIns && viewState.viewIns.isShowed) {
+            viewState.showingPromise = undefined;
+            //处理隐藏
+            viewState.entryHideEnd();
+        }
+        //在隐藏中
+        if (viewState.hidingPromise) {
+            viewState.hidingPromise = undefined;
+            //处理隐藏
+            viewState.entryHideEnd();
+        }
+        if (viewState.template.isLoaded) {
+            viewState.entryLoaded();
+        }
     }
     updateById<T = any>(id: string, updateState?: T): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        const viewState = this._getViewState(id);
-        viewState && this._updateByViewState(viewState, updateState);
+        const viewState: akView.IViewState = this.getViewState(id);
+        if (!viewState) return;
+
+        if (viewState.template.isLoaded && viewState.viewIns.isInited) {
+            viewState.viewIns.onViewUpdate?.(updateState);
+        } else {
+            viewState.updateState = updateState;
+        }
     }
     hideById(id: string, hideCfg?: akView.IHideConfig): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        const viewState = this._getViewState(id);
-        viewState && this._hideByViewState(viewState, hideCfg);
+        const viewState: akView.IViewState = this.getViewState(id);
+        if (!viewState) return;
+        viewState.hideCfg = hideCfg;
+        viewState.needHide = true;
+        viewState.needDestroy = hideCfg?.destroyAfterHide;
+        if (viewState.template.isLoaded) {
+            viewState.entryHiding();
+        }
     }
     destroyById(id: string): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        const viewState = this._getViewState(id);
-        viewState && this._destroyByViewState(viewState);
-        this._viewStateMap[id] = undefined;
+        const viewState: akView.IViewState = this.getViewState(id) as any;
+        if (!viewState) return;
+        viewState.needDestroy = true;
+        if (viewState.template.isLoaded) {
+            viewState.entryHideEnd();
+        }
     }
     isInitedById(id: string): boolean {
-        const viewIns = this._getViewIns(id);
+        const viewIns = this.getViewIns(id);
         return viewIns && viewIns.isInited;
     }
     isShowedById(id: string): boolean {
-        const viewIns = this._getViewIns(id);
+        const viewIns = this.getViewIns(id);
         return viewIns && viewIns.isShowed;
     }
     isShowEndById(id: string): boolean {
-        const viewIns = this._getViewIns(id);
+        const viewIns = this.getViewIns(id);
         return viewIns && viewIns.isShowEnd;
     }
     /**
-     * 清理和还原状态
-     * @param viewState
-     */
-    protected _clearViewState(viewState: akView.IViewState) {
-        viewState.needIns = false;
-        viewState.needShow = false;
-        viewState.updateState = undefined;
-        viewState.hideCfg = undefined;
-        viewState.retainTemplateRes = undefined;
-    }
-    /**
      * 实例化
-     * 如果needIns=false或者isLoaded=false 则不会实例化
      * @param id id
      * @param template 模板
      * @returns
      */
-    protected _insView(viewState: akView.IViewState, template: akView.ITemplate): akView.IView {
-        if (!viewState.needIns || !template.isLoaded) return;
-
-        viewState.needIns = false;
-        let ins = this._getViewIns(viewState.id);
+    insView(viewState: akView.IBaseViewState): akView.IView {
+        const template = viewState.template;
+        if (!template.isLoaded) return;
+        let ins = viewState.viewIns;
         if (ins) return ins;
         ins = template.create?.();
         if (!template.create) {
-            ins = this._getTemplateHandler(template.type)?.create(template);
+            ins = this.getTemplateHandler(template.type)?.create(template);
         }
         if (ins) {
             ins.key = template.key;
             ins.id = viewState.id;
         }
-        viewState.ins = ins;
+        viewState.viewIns = ins;
         return ins;
-    }
-    /**
-     *
-     * @param viewState
-     * @param initCfg
-     * @returns
-     */
-    protected _initByViewState(viewState: akView.IViewState, initCfg?: akView.IInitConfig<keyType>): void {
-        const ins = viewState.ins;
-        if (ins) {
-            if (!ins.isInited) {
-                ins.isInited = true;
-                const template = this.getTemplate(ins.key);
-                const initFuncKey = template?.viewLifeCycleFuncMap?.onViewInit;
-                if (initFuncKey && ins[initFuncKey]) {
-                    ins[initFuncKey](initCfg);
-                } else {
-                    ins.onViewInit?.(initCfg);
-                }
-            }
-        } else {
-            console.warn(`ins is null`);
-        }
-    }
-    /**
-     *
-     * @param viewState
-     * @param showCfg
-     */
-    protected _showByViewState(
-        viewState: akView.IViewState,
-        showCfg?: akView.IShowConfig<keyType>
-    ): Promise<void> | void {
-        const ins = viewState.ins;
-        let promise: Promise<void> | void;
-        if (ins) {
-            const template = this.getTemplate(ins.key);
-            this._retainTemplateRes(template);
-            const showFuncKey = template?.viewLifeCycleFuncMap?.onViewShow;
-            if (showFuncKey && ins[showFuncKey]) {
-                promise = ins[showFuncKey](showCfg);
-            } else {
-                promise = ins.onViewShow?.(showCfg);
-            }
-            ins.isShowed = true;
-            viewState.needShow = false;
-        } else {
-            viewState.needShow = true;
-            viewState.hideCfg = undefined;
-        }
-        return promise;
-    }
-    /**
-     * 通过viewState，调用view实例onDpcUpdate
-     * @param viewState
-     * @param updateState
-     */
-    protected _updateByViewState(viewState: akView.IViewState, updateState?: any) {
-        const ins = viewState.ins;
-        updateState = updateState ? updateState : viewState.updateState;
-
-        if (ins && updateState !== undefined && updateState !== null) {
-            const template = this.getTemplate(ins.key);
-            let updateFuncKey = template?.viewLifeCycleFuncMap?.onViewUpdate;
-            if (updateFuncKey) {
-                ins[updateFuncKey](updateState);
-            } else {
-                ins.onViewUpdate?.(updateState);
-            }
-            viewState.updateState = undefined;
-        } else {
-            viewState.updateState = updateState;
-        }
-    }
-    /**
-     *
-     * @param viewState
-     * @param hideParam
-     * @param hideReleaseRes
-     */
-    protected _hideByViewState(viewState: akView.IViewState, hideCfg?: akView.IHideConfig) {
-        const ins = viewState.ins;
-        if (ins) {
-            if (ins.isShowed) {
-                let promise: Promise<void> | void;
-                const template = this.getTemplate(ins.key);
-                // const hideFuncKey = template?.viewLifeCycleFuncMap?.onViewHide;
-                // if (hideFuncKey && ins[hideFuncKey]) {
-                //     promise = ins[hideFuncKey](hideCfg);
-                // } else {
-
-                // }
-                promise = ins.onViewHide?.(hideCfg);
-                ins.isShowed = false;
-                const hideEnd = () => {
-                    if (promise !== viewState.hidingPromise) return;
-
-                    if (hideCfg.destroyAfterHide) {
-                        this._destroyByViewState(viewState);
-                    } else if (hideCfg?.releaseRes) {
-                        this._releaseTemplateResByState(viewState, template);
-                    }
-                };
-                if (hideCfg?.destroyAfterHide) {
-                    //隐藏后销毁，那这个viewState就是不存在的了
-                    this._viewStateMap[viewState.id] = undefined;
-                }
-                if (isPromise(promise)) {
-                    promise.then(hideEnd);
-                } else {
-                    hideEnd();
-                }
-            }
-        } else {
-            if (hideCfg?.destroyAfterHide) {
-                //隐藏后销毁，那这个viewState就是不存在的了
-                this._viewStateMap[viewState.id] = undefined;
-                viewState.needIns = false;
-            }
-
-            viewState.needShow = false;
-            viewState.hideCfg = hideCfg;
-        }
-    }
-    /**
-     *
-     * @param viewState
-     * @param releaseRes
-     */
-    protected _destroyByViewState(viewState: akView.IViewState) {
-        const ins = viewState.ins;
-
-        if (ins) {
-            ins.isShowed = false;
-            ins.isInited = false;
-            const template = this.getTemplate(ins.key);
-            const destroyFuncKey = template?.viewLifeCycleFuncMap?.onViewDestroy;
-            if (destroyFuncKey && ins[destroyFuncKey]) {
-                ins[destroyFuncKey]();
-            } else {
-                ins.onViewDestroy?.();
-            }
-            this._releaseTemplateResByState(viewState, template);
-            this._clearViewState(viewState);
-            viewState.ins = undefined;
-        } else {
-            this._viewStateMap[viewState.id] = undefined;
-            viewState.needIns = false;
-        }
-    }
-    /**
-     * 如果 viewState.retainTemplateRes = false
-     * 则
-     * 持有模板资源引用
-     * @param viewState
-     * @param template
-     */
-    protected _retainTemplateResByState(viewState: akView.IViewState, template: akView.ITemplate) {
-        if (!viewState.retainTemplateRes) {
-            viewState.retainTemplateRes = true;
-            this._retainTemplateRes(template);
-        }
-    }
-    /**
-     * 如果 viewState.retainTemplateRes = true
-     * 则
-     * 释放模板资源引用
-     * @param viewState
-     * @param template
-     */
-    protected _releaseTemplateResByState(viewState: akView.IViewState, template: akView.ITemplate) {
-        if (viewState.retainTemplateRes) {
-            viewState.retainTemplateRes = false;
-            this._releaseTemplateRes(template);
-        }
     }
     /**
      * 模板资源引用持有处理
      * @param template
      */
-    protected _retainTemplateRes(template: akView.ITemplate) {
+    retainTemplateRes(template: akView.ITemplate) {
         if (template) {
             if (template.retainRes) {
                 template.retainRes();
             } else {
-                this._getTemplateHandler(template.type)?.retainRes?.(template);
+                this.getTemplateHandler(template.type)?.retainRes?.(template);
             }
         }
     }
@@ -615,12 +486,12 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * 模板资源引用释放处理
      * @param template
      */
-    protected _releaseTemplateRes(template: akView.ITemplate) {
+    releaseTemplateRes(template: akView.ITemplate) {
         if (template) {
             if (template.releaseRes) {
                 template.releaseRes();
             } else {
-                this._getTemplateHandler(template.type)?.releaseRes?.(template);
+                this.getTemplateHandler(template.type)?.releaseRes?.(template);
             }
         }
     }
@@ -651,35 +522,52 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param type
      * @returns
      */
-    protected _getTemplateHandler(type: string): akView.ITemplateHandler {
+    getTemplateHandler(type: string): akView.ITemplateHandler {
         const handler = this._templateHandlerMap[type];
         if (!handler) {
             console.warn(`this type:${type} handler is not exit`);
         }
         return handler;
     }
-    protected _getViewState(id: string): akView.IViewState {
+    /**
+     * 根据viewid获取ViewState
+     * @param id
+     * @returns
+     */
+    getViewState<T extends akView.IBaseViewState = any>(id: string): T {
         let viewState = this._viewStateMap[id];
         if (!viewState) {
-            viewState = {
-                id: id,
-                templateKey: this._getKeyById(id) as any
-            };
+            const template = this.getTemplate(this.getKeyById(id));
+            const viewStateClass = this._viewStateClassMap[template.viewStateType ? template.viewStateType : "default"];
+            const viewState = new viewStateClass();
+            viewState.init(id, template, this);
             this._viewStateMap[id] = viewState;
         }
-        return viewState;
+        return viewState as any;
     }
-    protected _getViewIns(id: string): akView.IView {
+    /**
+     * 移除指定id的viewState
+     * @param id
+     */
+    removeViewState(id: string): void {
+        delete this._viewStateMap[id];
+    }
+    /**
+     * 根据viewid 获取view实例
+     * @param id view id
+     * @returns
+     */
+    getViewIns(id: string): akView.IView {
         const viewState = this._viewStateMap[id];
-        return viewState?.ins;
+        return viewState?.viewIns;
     }
 
     /**
-     * key生成id
+     * 通过模板key生成id
      * @param key
      * @returns
      */
-    protected _createViewId(key: keyType): string {
+    createViewId(key: keyType): string {
         this._insCount++;
         return `${key}_$_${this._insCount}`;
     }
@@ -688,35 +576,10 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param id
      * @returns
      */
-    protected _getKeyById(id: string): keyType {
+    getKeyById(id: string): keyType {
         if (typeof id !== "string" || id === "") {
             return undefined;
         }
         return id.split("_$_")[0] as keyType;
-    }
-    /**
-     * 根据viewState，走init、show、update view的流程
-     * @param id
-     * @param showCfg
-     */
-    protected _initAndShowAndUpdateView(
-        viewState: akView.IViewState,
-        showCfg: akView.IShowConfig<keyType> & akView.ICreateConfig<keyType>
-    ): Promise<void> | void {
-        if (viewState.ins) {
-            this._initByViewState(viewState, showCfg);
-
-            if (!viewState.needShow) {
-                //被隐藏
-                if (viewState.hideCfg?.releaseRes) {
-                    viewState.hideCfg.releaseRes = false;
-                    this._releaseTemplateResByState(viewState, this.getTemplate(viewState.templateKey as any));
-                }
-                return;
-            }
-            let promise = this._showByViewState(viewState, showCfg);
-            this._updateByViewState(viewState);
-            return promise;
-        }
     }
 }

@@ -47,7 +47,7 @@ describe(`注册模板相关单元测试`, function () {
         uiMgr.template(noTypeTemplate);
 
         //创建无Type无自定义创建函数模板的实例
-        const noTypeTemplateIns = uiMgr["_insView"]({ id: noTypeTemplate.key, needIns: true }, noTypeTemplate);
+        const noTypeTemplateIns = uiMgr["insView"]({ id: noTypeTemplate.key, needIns: true }, noTypeTemplate);
         expect(noTypeTemplateIns).toBeUndefined();
     });
     test(`测试创建有Type模板的实例`, function () {
@@ -71,7 +71,7 @@ describe(`注册模板相关单元测试`, function () {
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
         //创建有Type模板的实例
-        const hasTypeTemplateIns = uiMgr["_insView"]({ id: hasTypeTemplate.key, needIns: true }, hasTypeTemplate);
+        const hasTypeTemplateIns = uiMgr["insView"]({ id: hasTypeTemplate.key, needIns: true }, hasTypeTemplate);
         expect(hasTypeTemplateIns).toBeDefined();
         expect(hasTypeTemplateIns.key).toEqual(hasTypeTemplate.key);
     });
@@ -90,7 +90,7 @@ describe(`注册模板相关单元测试`, function () {
         uiMgr.template(noTypeCustomCreateTemplate);
 
         //创建无Type有自定义创建函数模板的实例
-        const noTypeCustomCreateTemplateIns = uiMgr["_insView"](
+        const noTypeCustomCreateTemplateIns = uiMgr["insView"](
             { id: noTypeCustomCreateTemplate.key, needIns: true },
             noTypeCustomCreateTemplate
         );
