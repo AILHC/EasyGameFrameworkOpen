@@ -6,9 +6,12 @@ declare global {
             type: string;
             ress: RessType;
         }
+
         interface ITemplate {
             /**key */
             key: string;
+            /**ViewState类型 */
+            viewStateType?: string;
             /**
              * 类型,让对应的处理器进行处理
              */
@@ -103,17 +106,33 @@ declare global {
              */
             destroyRes?(template: akView.ITemplate): boolean;
         }
-        interface IViewState {
+        interface IBaseViewState {
             id: string;
-            /**模板key */
-            templateKey: string;
+
             /**持有模板资源引用 */
             retainTemplateRes?: boolean;
-            /**是否需要实例化 */
-            needIns?: boolean;
-
+            /**模板 */
+            template: akView.ITemplate;
+            /**控制器实例 */
+            viewIns?: akView.IView;
+            /**
+             * 初始化
+             * @param id
+             * @param template
+             * @param viewMgr
+             */
+            init(id: string, template: akView.ITemplate, viewMgr: akView.IMgr): void;
+        }
+        interface IViewState extends IBaseViewState {
+            /**是否需要销毁 */
+            needDestroy?: boolean;
             /**是否需要显示 */
             needShow?: boolean;
+
+            /**是否需要隐藏 */
+            needHide?: boolean;
+            /**显示配置 */
+            showCfg?: akView.IShowConfig | akView.ICreateConfig;
             /**显示过程中的Promise */
             showingPromise?: Promise<void> | void;
             /**隐藏中的Promise */
@@ -124,14 +143,53 @@ declare global {
             updateState?: any;
             /**hide 传参 */
             hideCfg?: akView.IHideConfig;
-            /**控制器实例 */
-            ins?: akView.IView;
+
+            /**
+             * 进入加载完成状态
+             */
+            entryLoaded(): void;
+            /**
+             * 进入初始化状态
+             */
+            entryInit(): void;
+            /**
+             * 进入显示中状态
+             */
+            entryShowing(): void;
+            /**
+             * 进入显示结束状态
+             */
+            entryShowEnd(): void;
+            /**
+             * 进入隐藏中状态
+             */
+            entryHiding(): void;
+            /**
+             * 进入隐藏结束状态
+             */
+            entryHideEnd(): void;
+            /**
+             * 进入销毁状态
+             */
+            entryDestroyed(): void;
+            /**
+             * 如果 viewState.retainTemplateRes = false
+             * 则
+             * 持有模板资源引用
+             */
+            retainTemplateResByState(): void;
+            /**
+             * 如果 viewState.retainTemplateRes = true
+             * 则
+             * 释放模板资源引用
+             */
+            releaseTemplateResByState(): void;
         }
         /**
          * 加载资源完成回调，如果加载失败会error不为空
          */
         type LoadResComplete = (error?: any) => void;
-        type ViewStateMap = { [key: string]: IViewState };
+        type ViewStateMap = { [key: string]: IBaseViewState };
         type TemplateMap<keyType extends keyof any = string> = { [P in keyType]: ITemplate };
 
         type CancelLoad = () => void;
@@ -168,6 +226,7 @@ declare global {
             onInitData?: any;
             /**
              * 强制重新加载
+             * @deprecated
              */
             forceLoad?: boolean;
             /**
@@ -178,17 +237,28 @@ declare global {
              * 在调用控制器实例onShow后回调
              * 由view-mgr调用，禁止在view逻辑中调用
              */
-            showedCb?: ViewInsCb;
+            showedCb?: (ins: any, ...args) => void;
             /**
              * 控制器显示完成后回调
-             * 由view-mgr调用，禁止在view逻辑中调用
+             * 理论上 由view-mgr调用，禁止在view逻辑中调用
+             * 如果在view逻辑里调用，记得消费掉 即showCfg.showEndCb=undefined;
              */
-            showEndCb?: VoidFunction;
+            showEndCb?: Function;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
              * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
-            /**加载完成回调,返回实例为空则加载失败，返回实例则成功 */
-            loadCb?: ViewInsCb;
+
+            /**
+             * 加载完成回调,返回实例为空则加载失败，返回实例则成功
+             * 由view-mgr调用，禁止在view逻辑中调用
+             */
+            loadCb?: (ins: any, ...args) => void;
+            /**
+             * 控制器隐藏后回调
+             * 理论上 由view-mgr调用，禁止在view逻辑中调用
+             * 如果在view逻辑里调用，记得消费掉 即showCfg.showEndCb=undefined;
+             */
+            hideEndCb?: Function;
         }
         interface ICreateConfig<keyType extends keyof any = any> extends akView.IShowConfig<keyType> {
             /**自动显示 */
@@ -235,11 +305,15 @@ declare global {
              */
             onViewUpdate?(param?: any): void;
             /**
-             * 当隐藏时，可以在显示节点隐藏后进行动态资源的资源释放操作，模板资源释放view-mgr来处理
+             * 当隐藏时
              * @param hideCfg
              * @returns 可返回promise,当执行一些异步逻辑时，比如播放动画,告诉view-mgr显示节点隐藏了，可以进行资源释放了
              */
             onViewHide?(hideCfg: IHideConfig): Promise<void> | void;
+            /**
+             * 隐藏结束调用,可以在显示节点隐藏后进行动态资源的资源释放操作，模板资源释放view-mgr来处理
+             */
+            onViewHideEnd?(hideCfg: IHideConfig): void;
             /**
              * 当销毁时，默认是需要进行资源引用释放的
              */
@@ -365,6 +439,16 @@ declare global {
              */
             isLoaded(key: keyType): boolean;
             /**
+             * 模板是否正在加载中
+             * @param id
+             */
+            isLoadingById(id: string): boolean;
+            /**
+             * 模板是否加载了
+             * @param id
+             */
+            isLoadedById(id: string): boolean;
+            /**
              * 获取单例控制器是否初始化了
              * @param key
              */
@@ -417,6 +501,58 @@ declare global {
              * @param id
              */
             isShowEndById(id: string): boolean;
+            /**
+             * 获取模板处理器
+             * @param type
+             * @returns
+             */
+            getTemplateHandler(type: string): akView.ITemplateHandler;
+            /**
+             * 模板资源引用持有处理
+             * @param template
+             */
+            retainTemplateRes(template: akView.ITemplate): void;
+            /**
+             * 模板资源引用释放处理
+             * @param template
+             */
+            releaseTemplateRes(template: akView.ITemplate): void;
+            /**
+             * 从id中解析出key
+             * @param id
+             * @returns
+             */
+            getKeyById(id: string): keyType;
+            /**
+             * 通过模板key生成id
+             * @param key
+             * @returns
+             */
+            createViewId(key: keyType): string;
+            /**
+             * 根据viewid 获取view实例
+             * @param id view id
+             * @returns
+             */
+            getViewIns(id: string): akView.IView;
+            /**
+             * 根据viewid获取ViewState
+             * @param id
+             * @returns
+             */
+            getViewState(id: string): akView.IBaseViewState;
+            /**
+             * 移除指定id的viewState
+             * @param id
+             */
+            removeViewState(id: string): void;
+            /**
+             * 实例化
+             * @param id id
+             * @param template 模板
+             * @returns
+             */
+            insView(viewState: akView.IBaseViewState): akView.IView;
         }
     }
 }
