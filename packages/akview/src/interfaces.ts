@@ -228,6 +228,11 @@ declare global {
          * 显示配置
          */
         interface IShowConfig<keyType extends keyof any = any> {
+            id?: string;
+            /**
+             * template key
+             * 如果是单例UI，则 id = key ,id字段可不赋值
+             */
             key?: keyType;
             /**
              * 透传初始化数据
@@ -474,10 +479,11 @@ declare global {
             isShowEnd(key: keyType): boolean;
             /**
              * 显示 显示控制器
-             * @param ins
-             * @param showCfg
+             * @param idOrConfig id或者显示配置
+             * @param onShowData 显示传参
+             * @param showedCb 显示回调
              */
-            showById(id: string, showCfg?: akView.IShowConfig<keyType>): void;
+            showById(idOrConfig: string | akView.IShowConfig<keyType>, onShowData?: any, showedCb?: ViewInsCb): void;
             /**
              * 更新指定控制器
              * @param id
