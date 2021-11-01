@@ -6,12 +6,10 @@ declare global {
             type: string;
             ress: RessType;
         }
-
+        type ViewStateConstructor<T extends akView.IBaseViewState = any> = { new (...args): T };
         interface ITemplate {
             /**key */
             key: string;
-            /**ViewState类型 */
-            viewStateType?: string;
             /**
              * 类型,让对应的处理器进行处理
              */
@@ -49,9 +47,13 @@ declare global {
              */
             destroyRes?(): boolean;
             /**
-             * 自定义创建
+             * 自定义创建akView.IView实例
              */
-            create?(): any;
+            createViewIns?(): akView.IView;
+            /**
+             * 自定义创建akView.IBaseViewState实例
+             */
+            createViewState?(id: string, viewMgr: akView.IMgr): akView.IBaseViewState;
             /**
              * 自定义销毁处理
              * @param view
@@ -73,16 +75,30 @@ declare global {
             /**类型 */
             type: string;
             /**
+             * 注册
+             * @param viewMgr
+             */
+            onRegist?(viewMgr: akView.IMgr): void;
+            /**
              * 加载资源
              * @param template 模板
              * @param config
              */
             loadRes?(template: akView.ITemplate, config?: IResLoadConfig): void;
             /**
-             * 创建实例
+             * 创建akView.IView实例
              * @param template
              */
-            create?<T extends akView.IView>(template: akView.ITemplate): T;
+            createViewIns?<T extends akView.IView>(template: akView.ITemplate): T;
+
+            /**
+             * 创建ViewState , 如果没实现这个方法，则会默认 new DefaultViewState();
+             * @param template
+             * @param id viewState的id
+             * @returns
+             */
+            createViewState?<T extends akView.IBaseViewState>(template: akView.ITemplate, id: string): T;
+
             /**
              * 销毁实例
              * @param ins
@@ -108,20 +124,13 @@ declare global {
         }
         interface IBaseViewState {
             id: string;
-
             /**持有模板资源引用 */
-            retainTemplateRes?: boolean;
+            isRetainTemplateRes?: boolean;
             /**模板 */
             template: akView.ITemplate;
             /**控制器实例 */
             viewIns?: akView.IView;
-            /**
-             * 初始化
-             * @param id
-             * @param template
-             * @param viewMgr
-             */
-            init(id: string, template: akView.ITemplate, viewMgr: akView.IMgr): void;
+            viewMgr?: akView.IMgr;
         }
         interface IViewState extends IBaseViewState {
             /**是否需要销毁 */
@@ -173,17 +182,17 @@ declare global {
              */
             entryDestroyed(): void;
             /**
-             * 如果 viewState.retainTemplateRes = false
+             * 如果 viewState.isRetainTemplateRes = false
              * 则
              * 持有模板资源引用
              */
-            retainTemplateResByState(): void;
+            retainTemplateRes(): void;
             /**
-             * 如果 viewState.retainTemplateRes = true
+             * 如果 viewState.isRetainTemplateRes = true
              * 则
              * 释放模板资源引用
              */
-            releaseTemplateResByState(): void;
+            releaseTemplateRes(): void;
         }
         /**
          * 加载资源完成回调，如果加载失败会error不为空

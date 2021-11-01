@@ -5,7 +5,7 @@ const isPromise = <T = any>(val: any): val is Promise<T> => {
 export class DefaultViewState implements akView.IViewState {
     id: string;
     template: akView.ITemplate;
-    retainTemplateRes?: boolean;
+    isRetainTemplateRes?: boolean;
     needDestroy?: boolean;
     needShow?: boolean;
     needHide?: boolean;
@@ -39,6 +39,7 @@ export class DefaultViewState implements akView.IViewState {
         const viewIns = this.viewIns;
         if (viewIns) {
             if (!viewIns.isInited) {
+                viewIns.isInited = true;
                 viewIns.onViewInit(this.showCfg);
             }
             if (this.needShow) {
@@ -91,7 +92,7 @@ export class DefaultViewState implements akView.IViewState {
         }
     }
     entryHideEnd(): void {
-        const hideEndCb = this.showCfg.hideEndCb;
+        const hideEndCb = this.showCfg?.hideEndCb;
         this.needHide = false;
         if (this.viewIns) {
             this.viewIns.onViewHideEnd?.(this.hideCfg);
@@ -100,13 +101,14 @@ export class DefaultViewState implements akView.IViewState {
             this.entryDestroyed();
         } else {
             if (this.hideCfg?.releaseRes) {
-                this.releaseTemplateResByState();
+                this.releaseTemplateRes();
             }
             this.hideCfg = undefined;
         }
         hideEndCb?.();
     }
     entryDestroyed(): void {
+        this.viewMgr.removeViewState(this.id);
         const viewIns = this.viewIns;
         this.needDestroy = false;
         if (viewIns) {
@@ -123,39 +125,18 @@ export class DefaultViewState implements akView.IViewState {
         }
         //加载失败、实例化失败、或者被销毁
         //释放引用
-        this.releaseTemplateResByState();
+        this.releaseTemplateRes();
         // 还原状态
         this.destroy();
-        this.viewMgr.removeViewState(this.id);
     }
     /**
-     * 实例化
-     * 如果needIns=false或者isLoaded=false 则不会实例化
-     * @returns
-     */
-    protected _insView(): akView.IView {
-        const template = this.template;
-        let viewIns = this.viewIns;
-        if (viewIns) return viewIns;
-        viewIns = template.create?.();
-        if (!template.create) {
-            viewIns = this.viewMgr.getTemplateHandler(template.type)?.create(template);
-        }
-        if (viewIns) {
-            viewIns.key = template.key;
-            viewIns.id = this.id;
-        }
-        this.viewIns = viewIns;
-        return viewIns;
-    }
-    /**
-     * 如果 viewState.retainTemplateRes = false
+     * 如果 viewState.isRetainTemplateRes = false
      * 则
      * 持有模板资源引用
      */
-    retainTemplateResByState(): void {
-        if (!this.retainTemplateRes) {
-            this.retainTemplateRes = true;
+    retainTemplateRes(): void {
+        if (!this.isRetainTemplateRes) {
+            this.isRetainTemplateRes = true;
 
             this.viewMgr.retainTemplateRes(this.template);
         }
@@ -165,9 +146,9 @@ export class DefaultViewState implements akView.IViewState {
      * 则
      * 释放模板资源引用
      */
-    releaseTemplateResByState(): void {
-        if (this.retainTemplateRes) {
-            this.retainTemplateRes = false;
+    releaseTemplateRes(): void {
+        if (this.isRetainTemplateRes) {
+            this.isRetainTemplateRes = false;
             this.viewMgr.releaseTemplateRes(this.template);
         }
     }

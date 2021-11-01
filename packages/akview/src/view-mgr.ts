@@ -3,11 +3,10 @@ import { globalViewTemplateMap } from "./view-template";
 const isPromise = <T = any>(val: any): val is Promise<T> => {
     return val !== null && typeof val === "object" && typeof val.then === "function" && typeof val.catch === "function";
 };
-type MYConstructor<T extends akView.IBaseViewState = any> = { new (...args): T };
+
 export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     implements akView.IMgr<ViewKeyType, keyType>
 {
-    protected _viewStateClassMap: { [key: string]: MYConstructor } = {};
     /**模版字典 */
     protected _templateMap: akView.TemplateMap<keyType>;
 
@@ -36,27 +35,27 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         this._viewStateMap = {};
         this._templateLoadResCompletesMap = {} as any;
         this._templateHandlerMap = templateHandlerMap ? templateHandlerMap : {};
+
+        for (let key in this._templateHandlerMap) {
+            this._templateHandlerMap[key].onRegist?.(this);
+        }
         this._inited = true;
-        this._templateMap = {} as any;
-        this._viewStateClassMap = {};
-        this._viewStateClassMap["default"] = DefaultViewState;
-        templateMap && this.template(templateMap);
+        this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
-    template(templates: akView.TemplateMap<any> | akView.ITemplate | akView.ITemplate[]): void {
+    template(templates: akView.ITemplate | akView.ITemplate[]): void {
         if (!templates) return;
         if (!this._inited) {
             console.error(`[viewMgr](template): is no inited`);
             return;
         }
-        if (typeof templates["key"] === "string") {
-            this._addTemplate(templates as akView.ITemplate);
-        } else {
+        if (Array.isArray(templates)) {
             for (let key in templates) {
                 this._addTemplate(templates[key]);
             }
+        } else {
+            this._addTemplate(templates as akView.ITemplate);
         }
     }
-    registViewState(type: string, viewStateClass: FunctionConstructor) {}
     addTemplateHandler(templateHandler: akView.ITemplateHandler): void {
         if (!this._inited) {
             console.error(`[viewMgr](addTemplateHandler): is no inited`);
@@ -123,7 +122,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             complete && loadCompletes.push(complete);
             const loadResComplete = (error?: any) => {
                 const loadCompletes = this._templateLoadResCompletesMap[key];
-                error && console.error(`[viewMgr](loadRess): load error`, error);
+                error && console.error(`[viewMgr](loadRess): load error:`, error);
                 if (template.needDestroy) {
                     this.destroyRes(key);
                     template.needDestroy = false;
@@ -148,7 +147,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 });
             } else if (template.getResInfo) {
                 const resInfo = template.getResInfo();
-                const handler = this.getTemplateHandler(template.type);
+                const handler = template.type && this.getTemplateHandler(template.type);
                 if (resInfo && handler) {
                     handler.loadRes(template, {
                         key: key as any,
@@ -176,7 +175,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             } else {
                 if (template.destroyRes) {
                     template.isLoaded = !template.destroyRes();
-                } else {
+                } else if (template.type) {
                     template.isLoaded = !this.getTemplateHandler(template.type)?.destroyRes?.(template);
                 }
             }
@@ -247,7 +246,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         const viewState: akView.IViewState = this.getViewState(id);
 
         //持有模板资源
-        viewState.retainTemplateResByState();
+        viewState.retainTemplateRes();
         //在不同状态下进行处理
         //未加载,去加载
         //加载中,更新showCfg,并调用hideEndCb
@@ -306,7 +305,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
         const viewState: akView.IViewState = this.getViewState(tplKey as string);
         //持有模板资源
-        viewState.retainTemplateResByState();
+        viewState.retainTemplateRes();
         //在不同状态下进行处理
         //未加载,去加载
         //加载中,更新showCfg,并调用hideEndCb
@@ -373,8 +372,12 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             console.error(`viewMgr is no inited`);
             return;
         }
+
         const viewState: akView.IViewState = this.getViewState(id);
         if (!viewState) return;
+        if (showCfg) {
+            showCfg.key = id as any;
+        }
         viewState.needHide = false;
         viewState.needDestroy = false;
         viewState.needShow = true;
@@ -436,16 +439,13 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
     }
     isInitedById(id: string): boolean {
-        const viewIns = this.getViewIns(id);
-        return viewIns && viewIns.isInited;
+        return this.getViewIns(id)?.isInited;
     }
     isShowedById(id: string): boolean {
-        const viewIns = this.getViewIns(id);
-        return viewIns && viewIns.isShowed;
+        return this.getViewIns(id)?.isShowed;
     }
     isShowEndById(id: string): boolean {
-        const viewIns = this.getViewIns(id);
-        return viewIns && viewIns.isShowEnd;
+        return this.getViewIns(id)?.isShowEnd;
     }
     /**
      * 实例化
@@ -458,9 +458,9 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         if (!template.isLoaded) return;
         let ins = viewState.viewIns;
         if (ins) return ins;
-        ins = template.create?.();
-        if (!template.create) {
-            ins = this.getTemplateHandler(template.type)?.create(template);
+        ins = template.createViewIns?.();
+        if (!template.createViewIns && template.type) {
+            ins = this.getTemplateHandler(template.type)?.createViewIns(template);
         }
         if (ins) {
             ins.key = template.key;
@@ -477,7 +477,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         if (template) {
             if (template.retainRes) {
                 template.retainRes();
-            } else {
+            } else if (template.type) {
                 this.getTemplateHandler(template.type)?.retainRes?.(template);
             }
         }
@@ -490,7 +490,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         if (template) {
             if (template.releaseRes) {
                 template.releaseRes();
-            } else {
+            } else if (template.type) {
                 this.getTemplateHandler(template.type)?.releaseRes?.(template);
             }
         }
@@ -538,9 +538,21 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         let viewState = this._viewStateMap[id];
         if (!viewState) {
             const template = this.getTemplate(this.getKeyById(id));
-            const viewStateClass = this._viewStateClassMap[template.viewStateType ? template.viewStateType : "default"];
-            const viewState = new viewStateClass();
-            viewState.init(id, template, this);
+
+            if (template.createViewState) {
+                viewState = template.createViewState(id, this);
+            } else {
+                const templateHandler = template.type && this.getTemplateHandler(template.type);
+                if (templateHandler && templateHandler.createViewState) {
+                    viewState = templateHandler.createViewState?.(template, id);
+                } else {
+                    viewState = new DefaultViewState();
+                    viewState.id = id;
+                    viewState.template = template;
+                    viewState.viewMgr = this;
+                }
+            }
+
             this._viewStateMap[id] = viewState;
         }
         return viewState as any;

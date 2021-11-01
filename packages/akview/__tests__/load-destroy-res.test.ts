@@ -29,28 +29,13 @@ describe(`模板资源加载销毁单元测试`, function () {
             expect(error).toBeUndefined();
             expect(hasTypeTemplate.isLoaded).toBe(true);
             expect(hasTypeTemplate.isLoading).toBe(false);
+            testDone();
         });
         //isLoading=true
         expect(hasTypeTemplate.isLoading).toBe(true);
         //重复加载,加载回调=2
         uiMgr.loadRes(hasTypeTemplate.key, () => {});
         expect(uiMgr["_templateLoadResCompletesMap"][hasTypeTemplate.key].length).toBe(2);
-        //强制加载
-        setTimeout(() => {
-            expect(uiMgr["_templateLoadResCompletesMap"][hasTypeTemplate.key].length).toBe(0);
-            uiMgr.loadRes(
-                hasTypeTemplate.key,
-                (error) => {
-                    expect(error).toBeUndefined();
-                    expect(hasTypeTemplate.isLoaded).toBe(true);
-                    expect(hasTypeTemplate.isLoading).toBe(false);
-                    testDone();
-                },
-                true
-            );
-            expect(uiMgr["_templateLoadResCompletesMap"][hasTypeTemplate.key].length).toBe(1);
-            expect(hasTypeTemplate.isLoading).toBe(true);
-        }, 1100);
     });
     test(`测试加载有Type模板依赖的资源-失败`, function (testDone) {
         const uiMgr = new ViewMgr();
