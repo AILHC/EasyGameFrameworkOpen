@@ -286,6 +286,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         let showCfg: akView.IShowConfig<keyType>;
         if (typeof keyOrConfig == "string") {
             showCfg = {
+                id: keyOrConfig,
                 key: keyOrConfig,
                 onShowData: onShowData,
                 showedCb: showedCb
@@ -367,17 +368,29 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     isShowEnd(key: keyType): boolean {
         return this.getViewIns(key as string)?.isShowEnd;
     }
-    showById(id: string, showCfg?: akView.IShowConfig<keyType>): void {
+    showById(idOrConfig: string | akView.IShowConfig<keyType>, onShowData?: any, showedCb?: akView.ViewInsCb): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-
-        const viewState: akView.IViewState = this.getViewState(id);
-        if (!viewState) return;
-        if (showCfg) {
-            showCfg.key = id as any;
+        let showCfg: akView.IShowConfig<keyType>;
+        if (typeof idOrConfig == "string") {
+            showCfg = {
+                id: idOrConfig,
+                key: this.getKeyById(idOrConfig),
+                onShowData: onShowData,
+                showedCb: showedCb
+            };
+        } else if (typeof idOrConfig === "object") {
+            showCfg = idOrConfig;
+            onShowData !== undefined && (showCfg.onShowData = onShowData);
+            showedCb !== undefined && (showCfg.showedCb = showedCb);
+        } else {
+            console.warn(`[viewMgr](show) unknown param`, idOrConfig);
+            return;
         }
+        const viewState: akView.IViewState = this.getViewState(showCfg.id);
+        if (!viewState) return;
         viewState.needHide = false;
         viewState.needDestroy = false;
         viewState.needShow = true;
