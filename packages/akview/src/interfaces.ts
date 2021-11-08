@@ -7,6 +7,9 @@ declare global {
             ress: RessType;
         }
         type ViewStateConstructor<T extends akView.IBaseViewState = any> = { new (...args): T };
+        interface IPlugin {
+            onUse(mgr: IMgr): void;
+        }
         interface ITemplate {
             /**key */
             key: string;
@@ -20,7 +23,10 @@ declare global {
             handlerParam?: any;
             /**是否正在加载 */
             isLoading?: boolean;
-            /**是否已经加载 */
+            /**
+             * 是否已经加载
+             * 为true则无需加载资源
+             *  */
             isLoaded?: boolean;
             /**需要销毁，给加载完后消费用 */
             needDestroy?: boolean;
@@ -98,7 +104,17 @@ declare global {
              * @returns
              */
             createViewState?<T extends akView.IBaseViewState>(template: akView.ITemplate, id: string): T;
+            /**
+             * 添加到层级
+             * @param viewState
+             */
+            addToLayer?(viewState: akView.IBaseViewState): void;
 
+            /**
+             * 从层级移除
+             * @param viewState
+             */
+            removeFromLayer?(viewState: akView.IBaseViewState): void;
             /**
              * 销毁实例
              * @param ins
@@ -133,6 +149,9 @@ declare global {
             viewMgr?: akView.IMgr;
         }
         interface IViewState extends IBaseViewState {
+            isInited: boolean;
+            isShowed: boolean;
+            isShowEnd: boolean;
             /**是否需要销毁 */
             needDestroy?: boolean;
             /**是否需要显示 */
@@ -154,33 +173,22 @@ declare global {
             hideCfg?: akView.IHideConfig;
 
             /**
-             * 进入加载完成状态
+             * 显示
              */
-            entryLoaded(): void;
+            onShow(showCfg: akView.IShowConfig): void;
             /**
-             * 进入初始化状态
+             * 更新
+             * @param updateState
              */
-            entryInit(): void;
+            onUpdate(updateState: any): void;
             /**
-             * 进入显示中状态
+             * 隐藏
              */
-            entryShowing(): void;
+            onHide(hideCfg: akView.IHideConfig): void;
             /**
-             * 进入显示结束状态
+             * 销毁
              */
-            entryShowEnd(): void;
-            /**
-             * 进入隐藏中状态
-             */
-            entryHiding(): void;
-            /**
-             * 进入隐藏结束状态
-             */
-            entryHideEnd(): void;
-            /**
-             * 进入销毁状态
-             */
-            entryDestroyed(): void;
+            onDestroy(): void;
             /**
              * 如果 viewState.isRetainTemplateRes = false
              * 则
@@ -244,6 +252,11 @@ declare global {
              */
             forceLoad?: boolean;
             /**
+             * 加载后是否显示
+             * 由mgr自动赋值
+             */
+            needShow?: boolean;
+            /**
              * 显示数据
              */
             onShowData?: any;
@@ -268,11 +281,10 @@ declare global {
              */
             loadCb?: (ins: any, ...args) => void;
             /**
-             * 控制器隐藏后回调
-             * 理论上 由view-mgr调用，禁止在view逻辑中调用
-             * 如果在view逻辑里调用，记得消费掉 即showCfg.showEndCb=undefined;
+             * 中断回调
+             * 在show的过程中，可能会调用hide,destroy等
              */
-            hideEndCb?: Function;
+            showAbortCb?: () => void;
         }
         interface ICreateConfig<keyType extends keyof any = any> extends akView.IShowConfig<keyType> {
             /**自动显示 */
@@ -289,10 +301,14 @@ declare global {
             releaseRes?: boolean;
             /**隐藏后销毁 */
             destroyAfterHide?: boolean;
+            hideEndCb?: Function;
         }
 
         interface IView<NodeType = any> {
-            /**控制器实例唯一id */
+            /**
+             * 控制器实例唯一id
+             * ViewMgr自动生成
+             */
             id?: string;
             key?: string | any;
 
@@ -303,10 +319,15 @@ declare global {
             /**显示结束，由业务去控制这个状态，用于动画等异步状态 */
             isShowEnd?: boolean;
             /**
-             * 初始化
+             * 初始化，只执行一次
              * @param config 初始化数据
              */
             onViewInit?(config?: akView.IInitConfig): void;
+            /**
+             * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
+             * @param config
+             */
+            onBeforeViewShow?(config?: akView.IShowConfig): void;
             /**
              * 当显示时
              * @param config 显示数据
@@ -346,6 +367,11 @@ declare global {
              * @param templateMap 模板字典
              */
             init(templateHandlerMap?: TemplateHandlerMap, templateMap?: akView.TemplateMap): void;
+            /**
+             * 使用插件，可在插件声明周期中对Mgr进行扩展：addTemplate,addTemplateHandler等
+             * @param plugin
+             */
+            use(plugin: akView.IPlugin): void;
             /**
              * 获取key
              * @param key
@@ -397,6 +423,17 @@ declare global {
              * @param key
              */
             destroyRes(key: keyType): void;
+            /**
+             * 添加到层级
+             * @param viewState
+             */
+            addToLayer(viewState: akView.IBaseViewState): void;
+            /**
+             * 从层级移除
+             * @param viewState
+             */
+            removeFromLayer(viewState: akView.IBaseViewState): void;
+
             /**
              * 创建实例
              * @param keyOrConfig key或者配置
@@ -552,6 +589,7 @@ declare global {
             getViewIns(id: string): akView.IView;
             /**
              * 根据viewid获取ViewState
+             * 如果没有则创建
              * @param id
              * @returns
              */

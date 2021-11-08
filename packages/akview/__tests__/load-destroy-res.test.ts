@@ -156,10 +156,11 @@ describe(`模板资源加载销毁单元测试`, function () {
         const uiMgr = new ViewMgr();
         uiMgr.init(null, null);
         const noTypeTemplate: akView.ITemplate = {
+            isLoaded: true,
             key: "noTypeTemplate"
         };
         uiMgr.template(noTypeTemplate);
-        uiMgr.loadRes(noTypeTemplate.key, undefined);
+
         //由于没有做销毁处理，所以销毁后还是true
         uiMgr.destroyRes(noTypeTemplate.key);
         expect(noTypeTemplate.isLoaded).toBeTruthy();
@@ -220,13 +221,12 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeCanDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeCanDestroyResTemplate",
+            isLoaded: true,
             destroyRes() {
                 return true;
             }
         };
         uiMgr.template(hasTypeCanDestroyResTemplate);
-        uiMgr.loadRes(hasTypeCanDestroyResTemplate.key);
-        expect(hasTypeCanDestroyResTemplate.isLoaded).toBeTruthy();
         //销毁成功所以会是false
         uiMgr.destroyRes(hasTypeCanDestroyResTemplate.key);
         expect(hasTypeCanDestroyResTemplate.isLoaded).toBeFalsy();
@@ -236,13 +236,13 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeNoDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeNoDestroyResTemplate",
+            isLoaded: true,
             destroyRes() {
                 return false;
             }
         };
         uiMgr.template(hasTypeNoDestroyResTemplate);
-        uiMgr.loadRes(hasTypeNoDestroyResTemplate.key);
-        expect(hasTypeNoDestroyResTemplate.isLoaded).toBeTruthy();
+
         //销毁失败，所以会是true
         uiMgr.destroyRes(hasTypeNoDestroyResTemplate.key);
         expect(hasTypeNoDestroyResTemplate.isLoaded).toBeTruthy();
