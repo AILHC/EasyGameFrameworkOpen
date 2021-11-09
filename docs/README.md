@@ -255,7 +255,7 @@ A progressive universal game front-end development framework based on [Typescrip
     ```
 * 给所有包添加开发时依赖(如果是添加内部包，需要加版本号@0.0.x)
     ```bash
-    yarn workspaces add -D lodash
+    pnpm add lodash -D --filter "@ailhc/*"
     ```
 **移除依赖**
 * 移除指定包a对xxx包的依赖(到指定包目录下，也可使用--filter)
@@ -297,14 +297,14 @@ A progressive universal game front-end development framework based on [Typescrip
 
     ```bash
     cd packages/core
-    yarn link
+    npm link
     ```
 
 2. 到项目里创建链接(这个@egf/core是包名)
     
     ```bash
     cd cocos-example
-    yarn link @egf/core
+    npm link @egf/core
     ```
 
 ## Who am I?
