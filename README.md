@@ -150,16 +150,74 @@ A progressive universal game front-end development framework based on [Typescrip
 ### Use Tools
 
 * [Lerna](https://lerna.js.org/) 
-    >Lerna是一种工具，可以优化使用git和npm管理多包存储库的工作流程。
+    > Lerna是一种`monorepo`管理工具，可以优化使用`git`和`npm`管理多包存储库的工作流程。
 
-* Yarn
-  
+* [Pnpm](https://www.pnpm.cn/)
+    > 最快最稳的`nodejs`包管理工具 墙裂推荐
+    > 更加适合在基于`monorepo`的`CocosCreator`项目中使用的`nodejs`管理工具
+* 为什么从`Lerna+Yarn` 切换为 `Pnpm + Lerna`
+
+    Yarn 安装包的方式，是扁平化，多个包依赖的包被安装到顶层的`node_modules`。
+
+    这样会导致某个包没有依赖顶层`node_modules`的包，也能引用并调用。
+
+    后果就是，依赖关系不准确，暗藏依赖，在协作时可能会出问题。
+
+    而且`CocosCreator3.x`项目会识别错误，导致报找不到某某依赖的错。
+
+    另外一方面，使用感受上，`Yarn+Lerna`很难用，安装速度慢，偶尔会出点问题。而`Pnpm`则非常舒服
 ### Reference(参考资料)
-1. [lerna+yarn workspace+monorepo项目的最佳实践](https://blog.csdn.net/i10630226/article/details/99702447)
-2. [基于lerna和yarn workspace的monorepo工作流](https://zhuanlan.zhihu.com/p/71385053)
-3. [Monorepo 项目管理Lerna](https://www.cnblogs.com/sanbao/p/11834137.html)
-4. [Lerna 中文教程详解](https://segmentfault.com/a/1190000019350611?utm_source=tag-newest)
-5. [lerna管理前端模块最佳实践](https://juejin.cn/post/6844903568751722509)
+1. [Pnpm 中文网](https://www.pnpm.cn/)
+2. [Pnpm: 最先进的包管理工具](https://zhuanlan.zhihu.com/p/404784010)
+3. [为什么使用pnpm可以光速建立好用的monorepo（比yarn/lerna效率高）](https://blog.csdn.net/qq_21567385/article/details/118590143)
+
+### Pnpm WorkSpace 配置
+0. 安装`Pnpm`
+
+    ```bash
+    npm i pnpm -g
+    ```
+
+1. 创建`pnpm-workspace.yaml`
+
+    ```yaml
+    packages:
+    # all packages in subdirs of packages/ and components/
+    - 'packages/**'
+    - 'tool-packages/**'
+    - 'transed-packages/**'
+    - 'examples/**'
+    # exclude packages that are inside test directories
+    - '!**/test/**'
+    ```
+2. 兼容处理
+因为很多项目(包括`CocosCreator`)，并不兼容下面这种包引用(protocol)
+
+    ```json
+        {
+            "dependencies": {
+                "foo": "workspace:*",
+                "bar": "workspace:~",
+                "qar": "workspace:^",
+                "zoo": "workspace:^1.5.0"
+            }
+        }
+    ```
+    a. 需要创建一个`.npmrc`文件
+
+    ```yaml
+
+    save-workspace-protocol = false
+
+    ```
+3. 初始化安装
+如果旧项目，可能需要删除掉所有的`node_modules`
+之前用`lerna+yarn`的，则可以使用`lerna clean`
+然后
+    ```bash
+    pnpm install
+    ```
+
 
 ### Basic Commands
 
@@ -174,46 +232,51 @@ A progressive universal game front-end development framework based on [Typescrip
    ```
 **给包添加依赖**
 
-* 给指定包添加内部包依赖(需要加上版本号)
+* 给指定包添加内部包依赖
     ```bash
-    yarn workspace @xxx/a add @xxx/b@0.0.1
+    pnpm add @xxx/xxx
     ```
-* 给指定包添加开发时内部包依赖(需要加上版本号)
+* 给指定包添加开发时内部包依赖
     ```bash
-    yarn workspace @xxx/a add -D @xxx/b@0.0.1
+    pnpm add -D @xxx/b
     ```
-* 给指定包添加外部包依赖
+* 给指定包添加外部包依赖(在指定包目录下)
+    
     ```bash
-    yarn workspace @xxx/xxx add @xxx/xxxx
+    pnpm add xxxx
     ```
-* 给指定包添加开发时外部包依赖(如果是添加内部包，需要加版本号@0.0.x)
+* 给指定包添加开发时外部包依赖(在指定包目录下)
     ```bash
-    yarn workspace @xxx/xxx add -D @xxx/xxxx
+    pnpm add xxxx -D
     ```
-* 给所有包添加依赖(如果是添加内部包，需要加版本号@0.0.x)
+* 给所有包添加依赖(可以使用pnpm过滤，使用参考:https://www.pnpm.cn/filtering)
     ```bash
-    yarn workspaces add lodash
+    pnpm add lodash --filter "@ailhc/*"
     ```
 * 给所有包添加开发时依赖(如果是添加内部包，需要加版本号@0.0.x)
     ```bash
     yarn workspaces add -D lodash
     ```
 **移除依赖**
-* 移除指定包对xxx包的依赖
+* 移除指定包a对xxx包的依赖(到指定包目录下，也可使用--filter)
     ```bash
-    yarn workspace packageB remove packageA
+    pnpm remove xxx 
     ```
-* 移除所有包对指定包的依赖
+    使用fliter
     ```bash
-    yarn workspaces remove lodash
+    pnpm remove xxx --filter "a"
+    ```
+* 移除所有包对指定包xxx的依赖(可以使用pnpm filter 过滤)
+    ```bash
+    pnpm remove xxx --filter "@ailhc/*"
     ```
 * 移除根目录下对xxx包的依赖
     ```bash
-    yarn remove -W -D typescript 
+    pnpm remove xxx
     ```
 * 安装所有依赖
     ```bash
-    yarn install 或者 lerna bootstrap
+    pnpm install
     ```
 * 清除所有依赖
     ```bash

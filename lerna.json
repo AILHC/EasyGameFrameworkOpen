@@ -10,7 +10,7 @@
     "**/*.md"
   ],
   "version": "independent",
-  "npmClient": "yarn",
+  "npmClient": "pnpm",
   "commond": {},
   "useWorkspaces": true,
   "message": "chore: publish"
