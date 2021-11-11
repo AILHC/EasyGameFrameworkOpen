@@ -33,7 +33,7 @@
     "//提交": "",
     "cm": "git-cz",
     "//install钩子": "",
-    "preinstall": "node ./scripts/checkYarnAndpnpm.js",
+    "preinstall": "node ./scripts/checkPnpm.js",
     "//手动生成changelog": "",
     "gcl": "lerna exec --concurrency 1 --stream -- conventional-changelog --preset angular --release-count 0 --commit-path ^%CD^% --pkg ^%CD^%/package.json --outfile ^%CD^%/CHANGELOG.md --lerna-package ^%LERNA_PACKAGE_NAME^%",
     "//生成api文档": "",
