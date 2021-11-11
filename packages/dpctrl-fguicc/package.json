@@ -39,7 +39,7 @@
     "build:cjs": "egf build -f cjs -m true -s inline",
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:cjs && npm run build:es",
-    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $INIT_CWD"
   },
   "dependencies": {
     "@ailhc/display-ctrl": "^1.1.9",

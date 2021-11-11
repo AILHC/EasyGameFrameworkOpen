@@ -1,20 +1,14 @@
 {
   "name": "@ailhc/package-template",
-  "version": "1.0.0",
+  "version": "3.0.8",
   "description": "This is the EasyGameFramework library template project",
   "author": "AILHC <505126057@qq.com>",
-  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/tree/main/packages/package-template#readme",
+  "homepage": "https://github.com/AILHC/EasyGameFrameworkOpen/",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
   },
-  "main": "dist/cjs/lib/index.js",
-  "module": "dist/es/lib/index.mjs",
-  "typings": "dist/cjs/types",
-  "files": [
-    "dist"
-  ],
   "bugs": {
     "url": "https://github.com/AILHC/EasyGameFrameworkOpen/issues"
   },
@@ -26,20 +20,30 @@
     "require": "./dist/cjs/lib/index.js",
     "import": "./dist/es/lib/index.mjs"
   },
+  "main": "dist/cjs/lib/index.js",
+  "module": "dist/es/lib/index.mjs",
+  "typings": "dist/cjs/types",
+  "files": [
+    "dist"
+  ],
+  
+  
   "scripts": {
     "//创建index.ts,具体参数看文档": "",
     "cti": "egf cti -d ./src",
     "watch:cjs": "egf build -w true -f cjs -s inline",
-    "build:cjs": "egf build -f cjs",
-    "build:es": "egf build -f es",
-    "build:umd": "egf build -f umd:packageTemplate",
-    "build:iife": "egf build -f iife:packageTemplate",
-    "build:system": "egf build -f system:@ailhc/package-template",
+    "build:cjs": "egf build -f cjs -m true -s inline",
+    "build:es": "egf build -f es -m true -s inline",
+    "build:umd": "egf build -f umd -m true",
+    "build:iife": "egf build -f iife -m true",
+    "build:system": "egf build -f system -m true -s inline",
+    "clean-dist": "rimraf dist",
     "build:all": "npm run build:cjs&&npm run build:es&&npm run build:umd&&npm run build:iife",
     "test": "jest",
     "testc": "jest --coverage"
   },
   "devDependencies": {
+    "rimraf": "^3.0.2",
     "@ailhc/egf-cli": "1.1.0",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1"

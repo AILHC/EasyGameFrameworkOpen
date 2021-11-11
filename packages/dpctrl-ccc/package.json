@@ -36,7 +36,7 @@
     "build:iife:min:sourcemap": "egf build -f iife -m -ms",
     "clean-dist": "rimraf dist",
     "build:all": "npm run clean-dist && npm run build:cjs&&npm run build:es&&npm run build:iife&&npm run build:umd",
-    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $PWD"
+    "test": "cross-var lerna exec --scope $npm_package_name --concurrency 1 -- jest --config=../../jest.config.js --roots $INIT_CWD"
   },
   "dependencies": {
     "@ailhc/display-ctrl": "^1.1.9",
