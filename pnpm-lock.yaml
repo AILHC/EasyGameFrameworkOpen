@@ -251,7 +251,7 @@ importers:
     specifiers:
       '@ailhc/display-ctrl': ^1.1.9
       '@ailhc/layer': ^0.1.9
-      fairygui-cc: ^1.0.1
+      fairygui-cc: ^1.0.5
       tslib: ^2.3.0
     dependencies:
       '@ailhc/display-ctrl': link:../display-ctrl
@@ -2507,6 +2507,7 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=, tarball: lodash/download/lodash-4.17.21.tgz}
+    dev: true
 
   /log-symbols/4.1.0:
     resolution: {integrity: sha1-P727lbRoOsn8eFER55LlWNSr1QM=, tarball: log-symbols/download/log-symbols-4.1.0.tgz}
@@ -7330,6 +7331,12 @@ packages:
     version: 4.5.0
     dev: true
 
+  registry.nlark.com/lodash/4.17.21:
+    resolution: {integrity: sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/lodash/download/lodash-4.17.21.tgz}
+    name: lodash
+    version: 4.17.21
+    dev: false
+
   registry.nlark.com/log4js/6.3.0:
     resolution: {integrity: sha1-EN+vu0NDUaPjAnegC5h5RG9xW8s=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/log4js/download/log4js-6.3.0.tgz}
     name: log4js
@@ -10916,7 +10923,7 @@ packages:
     version: 1.0.5
     dependencies:
       '@types/node': registry.npmmirror.com/@types/node/14.17.33
-      lodash: 4.17.21
+      lodash: registry.nlark.com/lodash/4.17.21
     dev: false
 
   registry.npmmirror.com/file-uri-to-path/1.0.0:
