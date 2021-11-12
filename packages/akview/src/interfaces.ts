@@ -180,11 +180,11 @@ declare global {
              * 更新
              * @param updateState
              */
-            onUpdate(updateState: any): void;
+            onUpdate(updateState?: any): void;
             /**
              * 隐藏
              */
-            onHide(hideCfg: akView.IHideConfig): void;
+            onHide(hideCfg?: akView.IHideConfig): void;
             /**
              * 销毁
              */

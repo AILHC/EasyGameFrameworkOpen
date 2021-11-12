@@ -248,6 +248,27 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         expect(spyHandlerFunc).toReturnWith(viewState);
         expect(viewState.id).toBe(hasTypeTemplate.key);
     });
+    test("测试Template创建ViewState调用", () => {
+        const uiMgr = new ViewMgr();
+        uiMgr.init(null, null);
+        let viewState;
+        const hasTypeTemplate: akView.ITemplate = {
+            key: "hasTypeTemplate",
+            type: "hasTypeTemplateHandler",
+            isLoaded: true,
+            createViewState(id, viewMgr) {
+                viewState = { id: id, template: hasTypeTemplate, viewMgr: viewMgr };
+                return viewState as any;
+            }
+        };
+        uiMgr.template(hasTypeTemplate);
+        const spyFunc = jest.spyOn(hasTypeTemplate, "createViewState");
+        uiMgr.getViewState(hasTypeTemplate.key);
+        expect(spyFunc).toBeCalledTimes(1);
+        expect(spyFunc).toBeCalledWith(hasTypeTemplate.key, uiMgr);
+        expect(spyFunc).toReturnWith(viewState);
+        expect(viewState.id).toBe(hasTypeTemplate.key);
+    });
     // test(`测试批量注册模板`, function () { });
 
     // test(`测试注册View类模板`, function () { });
