@@ -205,7 +205,7 @@ export class DefaultViewState implements akView.IViewState {
             this.updateState = updateState;
         }
     }
-    onHide(hideCfg: akView.IHideConfig) {
+    onHide(hideCfg?: akView.IHideConfig) {
         this.hideCfg = hideCfg;
         this.needHide = true;
         this.needDestroy = this.hideCfg?.destroyAfterHide;

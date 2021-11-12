@@ -70,7 +70,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         //isLoading=true
         expect(hasTypeTemplate.isLoading).toBe(true);
     });
-    test(`测试加载无Type模板依赖的资源`, function () {
+    test(`测试加载无Type模板依赖的资源-失败`, function () {
         const uiMgr = new ViewMgr();
         uiMgr.init(null, null);
         const noTypeTemplate: akView.ITemplate = {
