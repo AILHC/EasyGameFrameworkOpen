@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.9](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.8...@ailhc/egf-cli@3.0.9) (2021-12-28)
+
+
+### Bug Fixes
+
+* fix a watch bug: Saving the file in vscode will result in a build in watch mode twice ([5067bfb](https://github.com/AILHC/EasyGameClientFrameworkOpen/commit/5067bfb82755d55098377cf9a5609b32864912dd))
+
+
+
+
+
 ## [3.0.8](https://github.com/AILHC/EasyGameClientFrameworkOpen/compare/@ailhc/egf-cli@3.0.7...@ailhc/egf-cli@3.0.8) (2021-07-28)
 
 
