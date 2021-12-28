@@ -318,6 +318,7 @@ async function rollupBuild(option) {
         const watchConfig = buildConfig;
         watchConfig.output = outputOption;
         watchConfig.watch = {
+            chokidar: { awaitWriteFinish: true },//vscode的文件写入，有延迟
             clearScreen: true
         }
         const rollupWatcher = await rollup.watch(watchConfig);
