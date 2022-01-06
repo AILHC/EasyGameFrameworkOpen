@@ -1,7 +1,6 @@
 const isPromise = <T = any>(val: any): val is Promise<T> => {
     return val !== null && typeof val === "object" && typeof val.then === "function" && typeof val.catch === "function";
 };
-
 export class DefaultViewState implements akView.IViewState {
     id: string;
     template: akView.ITemplate;
@@ -16,6 +15,7 @@ export class DefaultViewState implements akView.IViewState {
     hideCfg?: akView.IHideConfig;
     viewIns?: akView.IView<any>;
     viewMgr: akView.IMgr;
+    private _isShowEnd: boolean;
     get isInited(): boolean {
         return this.viewIns?.isInited;
     }
@@ -23,7 +23,7 @@ export class DefaultViewState implements akView.IViewState {
         return this.viewIns?.isShowed;
     }
     get isShowEnd(): boolean {
-        return this.viewIns?.isShowEnd;
+        return this._isShowEnd;
     }
     init(id: string, template: akView.ITemplate, viewMgr: akView.IMgr): void {
         this.id = id;
@@ -32,45 +32,59 @@ export class DefaultViewState implements akView.IViewState {
     }
     entryLoaded(): void {
         let viewIns: akView.IView;
-        if (this.template.isLoaded && !this.needDestroy) {
+
+        if (!this.needDestroy) {
             viewIns = this.viewMgr.insView(this);
         }
+        this.viewIns = viewIns;
         this.showCfg.loadCb?.(viewIns);
         this.showCfg.loadCb = undefined;
         if (this.needDestroy || this.needHide) {
             this.entryHideEnd();
         } else if (viewIns) {
             this.entryInit();
+        } else {
+            console.error(`id:${this.id} viewIns is null`);
         }
     }
     entryInit(): void {
         const viewIns = this.viewIns;
-        if (viewIns) {
-            if (!viewIns.isInited) {
-                viewIns.isInited = true;
-                viewIns.onViewInit?.(this.showCfg);
+        if (!viewIns.isInited) {
+            viewIns.isInited = true;
+            viewIns.onViewInit?.(this.showCfg);
+            //开始异步加载资源
+            const asyncLoadResInfo = this.template.getAsyncloadResInfo?.();
+            if (asyncLoadResInfo && viewIns.onAsyncResLoadProgress) {
+                const template = this.template;
+                const resHandler = this.viewMgr.getTemplateHandler(template, "resHandler");
+                resHandler.loadRes({
+                    key: template.key,
+                    progress: (resInfo, resItem, total, loadCount) => {
+                        //TODO 如果ViewState状态变化,容错处理？
+                        this.viewIns.onAsyncResLoadProgress(resInfo, resItem, total, loadCount);
+                    }
+                });
             }
-            if (this.needShow) {
-                this.entryShowing();
-            }
-        } else {
-            //创建失败
-            return;
+        }
+        if (this.needShow) {
+            this.entryShowing();
         }
     }
     entryShowing(): void {
         const ins = this.viewIns;
         ins.onBeforeViewShow?.(this.showCfg);
-        this.viewMgr.addToLayer(this);
-        ins.isShowEnd = false;
-        const promise = ins.onViewShow?.(this.showCfg);
+        this.viewMgr.showView(this);
+        this._isShowEnd = false;
+
+        ins.onViewShow?.(this.showCfg);
+        const promise = ins.onPlayAnim?.(true);
+        this.viewMgr.eventHandler.emit(this.id, "onViewShow");
         this.showingPromise = promise;
         ins.isShowed = true;
         this.needShow = false;
         if (this.updateState) {
             ins.onViewUpdate?.(this.updateState);
         }
-        this.showCfg.showedCb?.(ins);
 
         if (isPromise(this.showingPromise)) {
             this.showingPromise.then(() => {
@@ -83,17 +97,17 @@ export class DefaultViewState implements akView.IViewState {
         }
     }
     entryShowEnd(): void {
-        this.viewIns.isShowEnd = true;
-        this.showCfg.showEndCb?.();
+        this._isShowEnd = true;
         this.showCfg = undefined;
+        this.viewMgr.eventHandler.emit(this.id, "onViewShowEnd");
     }
     entryHideEnd(): void {
-        const hideEndCb = this.hideCfg?.hideEndCb;
         this.needHide = false;
+        this.viewMgr.hideView(this);
         if (this.viewIns) {
-            this.viewIns.onViewHideEnd?.(this.hideCfg);
+            this.viewIns.onViewHide?.(this.hideCfg);
         }
-        this.viewMgr.removeFromLayer(this);
+
         if (this.needDestroy) {
             this.entryDestroyed();
         } else {
@@ -102,10 +116,11 @@ export class DefaultViewState implements akView.IViewState {
             }
             this.hideCfg = undefined;
         }
-        hideEndCb?.();
+        this.viewMgr.eventHandler.emit(this.id, "onViewHideEnd");
     }
+
     entryDestroyed(): void {
-        this.viewMgr.removeViewState(this.id);
+        this.viewMgr.destroyViewState(this.id);
         const viewIns = this.viewIns;
         this.needDestroy = false;
         if (viewIns) {
@@ -185,72 +200,65 @@ export class DefaultViewState implements akView.IViewState {
         this.retainTemplateRes();
 
         const template = this.template;
-        if (template.isLoaded) {
-            //加载完成
-            this.entryLoaded();
-        } else if (!template.isLoading) {
-            const onLoadedCb = (error?) => {
+        const onLoadedCb = (error?) => {
+            if (!error) {
                 this.entryLoaded();
-            };
-            //没加载
-            //加载
-            this.viewMgr.loadRes(template.key, onLoadedCb, showCfg.loadParam);
-        }
-        //加载中不处理
+            }
+        };
+        this.viewMgr.loadPreloadRes(template.key, onLoadedCb, showCfg.loadParam);
     }
     onUpdate(updateState: any) {
-        if (this.template.isLoaded && this.viewIns.isInited) {
+        if (this.viewIns.isInited) {
             this.viewIns.onViewUpdate?.(updateState);
         } else {
             this.updateState = updateState;
         }
     }
     onHide(hideCfg?: akView.IHideConfig) {
+        const viewIns = this.viewIns;
+        if (!viewIns || !viewIns.isInited) {
+            return;
+        }
         this.hideCfg = hideCfg;
         this.needHide = true;
         this.needDestroy = this.hideCfg?.destroyAfterHide;
-        if (!this.template.isLoaded) {
-            return;
-        }
+
         this.showingPromise = undefined;
         this.showCfg?.showAbortCb?.();
-        const viewIns = this.viewIns;
-        let promise: Promise<void> | void;
+        this._isShowEnd = true;
+        let promise: Promise<void>;
         if (viewIns) {
             viewIns.isShowed = false;
-            promise = viewIns.onViewHide?.(this.hideCfg);
-            viewIns.isShowEnd = true;
+            promise = viewIns.onPlayAnim?.(false);
+            this.viewMgr.eventHandler.emit(this.id, "onViewHide");
             this.hidingPromise = promise;
         }
-        if (this.needHide) {
-            if (isPromise(promise)) {
-                promise.then(() => {
-                    if (this.hidingPromise !== promise) return;
-                    this.hidingPromise = undefined;
-                    this.entryHideEnd();
-                });
-            } else {
+        if (promise) {
+            promise.then(() => {
+                if (this.hidingPromise !== promise) return;
+                this.hidingPromise = undefined;
                 this.entryHideEnd();
-            }
+            });
+        } else {
+            this.entryHideEnd();
         }
     }
     onDestroy() {
         this.needDestroy = true;
-        if (this.template.isLoaded) {
-            if (this.hidingPromise) {
-                this.hidingPromise = undefined;
-            }
-            if (this.showingPromise) {
-                this.showingPromise = undefined;
-                //中断
-                this.showCfg?.showAbortCb?.();
-            }
-            if (this.viewIns.isShowed || this.needHide) {
-                this.entryHideEnd();
-            } else {
-                //已经隐藏了
-                this.entryDestroyed();
-            }
+        if (this.hidingPromise) {
+            this.hidingPromise = undefined;
+        }
+        if (this.showingPromise) {
+            this.showingPromise = undefined;
+            //中断
+            this.showCfg?.showAbortCb?.();
+        }
+
+        if (this.viewIns && (this.viewIns.isShowed || this.needHide)) {
+            this.entryHideEnd();
+        } else {
+            //已经隐藏了
+            this.entryDestroyed();
         }
     }
     /**

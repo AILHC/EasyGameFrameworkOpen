@@ -1,12 +1,9 @@
 import { DefaultViewState } from "./default-view-state";
 import { globalViewTemplateMap } from "./view-template";
-const isPromise = <T = any>(val: any): val is Promise<T> => {
-    return val !== null && typeof val === "object" && typeof val.then === "function" && typeof val.catch === "function";
-};
-
 export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     implements akView.IMgr<ViewKeyType, keyType>
 {
+    eventHandler: akView.IEventHandler;
     /**模版字典 */
     protected _templateMap: akView.TemplateMap<keyType>;
 
@@ -15,11 +12,11 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     /**
      * 模板加载完成回调数组
      */
-    protected _templateLoadResCompletesMap: { [P in keyType]: akView.LoadResComplete[] };
+    protected _templateLoadResCompletesMap: { [x: string]: akView.LoadResCompleteCallback[] };
     /**
      * 模板处理器字典
      */
-    protected _templateHandlerMap: akView.TemplateHandlerMap;
+    protected _templateHandlersMap: akView.TemplateHandlersMap;
     /**是否初始化 */
     protected _inited: boolean;
     /**实例数，用于创建id */
@@ -28,16 +25,21 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         return key as any;
     }
     init(
-        templateHandlerMap?: akView.TemplateHandlerMap,
+        eventHandler: akView.IEventHandler,
+        templateHandlerMap?: akView.TemplateHandlersMap,
         templateMap: akView.TemplateMap<keyType> = globalViewTemplateMap as any
     ): void {
         if (this._inited) return;
+        this.eventHandler = eventHandler;
         this._viewStateMap = {};
         this._templateLoadResCompletesMap = {} as any;
-        this._templateHandlerMap = templateHandlerMap ? templateHandlerMap : {};
-
-        for (let key in this._templateHandlerMap) {
-            this._templateHandlerMap[key].onRegist?.(this);
+        this._templateHandlersMap = templateHandlerMap ? templateHandlerMap : {};
+        let templateHandlers: akView.ITemplateHandlers;
+        for (let key in this._templateHandlersMap) {
+            templateHandlers = this._templateHandlersMap[key];
+            for (let key2 in templateHandlers) {
+                key2 !== "type" && templateHandlers[key2].onRegist?.(this);
+            }
         }
         this._inited = true;
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
@@ -59,16 +61,16 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             this._addTemplate(templates as akView.ITemplate);
         }
     }
-    addTemplateHandler(templateHandler: akView.ITemplateHandler): void {
+    addTemplateHandler(templateHandlers: akView.ITemplateHandlers): void {
         if (!this._inited) {
             console.error(`[viewMgr](addTemplateHandler): is no inited`);
             return;
         }
-        if (templateHandler) {
-            const type = templateHandler.type;
+        if (templateHandlers) {
+            const type = templateHandlers.type;
             if (typeof type === "string" && type !== "") {
-                if (!this._templateHandlerMap[type]) {
-                    this._templateHandlerMap[type] = templateHandler;
+                if (!this._templateHandlersMap[type]) {
+                    this._templateHandlersMap[type] = templateHandlers;
                 } else {
                     console.error(`[viewMgr](addTemplateHandler): [type:${type}] handler is exit `);
                 }
@@ -79,28 +81,51 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             console.error(`[viewMgr](addTemplateHandler) handler is null`);
         }
     }
-    hasTemplate(key: keyType): boolean {
-        return !!this._templateMap[key];
+    hasTemplate(key: keyType | String): boolean {
+        return !!this._templateMap[key as any];
     }
-    getTemplate(key: keyType): akView.ITemplate {
-        const template = this._templateMap[key];
+    getTemplate(key: keyType | String): akView.ITemplate {
+        const template = this._templateMap[key as any];
         if (!template) {
             console.warn(`template is not exit:${key}`);
         }
         return template;
     }
-    getResInfo(key: keyType): akView.ITemplateResInfo<any> {
-        return this._templateMap[key]?.getResInfo();
+    /**
+     * 获取预加载资源信息
+     * @param key 模板key
+     * @returns
+     */
+    getPreloadResInfo(key: keyType | String): akView.ITemplateResInfoType {
+        const template = this.getTemplate(key);
+        if (!template) {
+            return;
+        }
+        const resInfo = template.getPreloadResInfo?.();
+
+        return resInfo;
     }
-    loadRes<LoadParam = any>(key: keyType, complete?: akView.LoadResComplete, loadParam?: LoadParam): void {
+    loadPreloadRes<LoadParam = any>(keyOrConfig: (keyType | String) | akView.IResLoadConfig<LoadParam>): void {
         if (!this._inited) {
             console.error(`[viewMgr](loadRess): is no inited`);
             return;
         }
+        let key: string;
+        let config: akView.IResLoadConfig;
+
+        if (typeof keyOrConfig === "object") {
+            config = keyOrConfig as akView.IResLoadConfig;
+            key = config.key;
+        } else {
+            key = keyOrConfig as string;
+            config = { key: key };
+        }
         const template = this.getTemplate(key);
         if (!template) return;
-        if (template.isLoaded) {
-            complete?.();
+        const resHandler = this.getTemplateHandler(template, "resHandler");
+        const resInfo = template.getPreloadResInfo?.();
+        if (resHandler.isLoaded(resInfo)) {
+            config.complete?.();
             return;
         }
         let loadCompletes = this._templateLoadResCompletesMap[key];
@@ -109,15 +134,15 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             this._templateLoadResCompletesMap[key] = loadCompletes;
         }
         if (template.isLoading) {
-            complete && loadCompletes.push(complete);
+            config.complete && loadCompletes.push(config.complete);
             return;
         }
 
         template.isLoading = true;
-        template.isLoaded = false;
+
         template.needDestroy = false;
 
-        complete && loadCompletes.push(complete);
+        config.complete && loadCompletes.push(config.complete);
         const loadResComplete = (error?: any) => {
             const loadCompletes = this._templateLoadResCompletesMap[key];
             error && console.error(`[viewMgr](loadRes): load error:`, error);
@@ -128,7 +153,6 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 error = "loadRes error , destroyRes is called";
             } else {
                 template.isLoading = false;
-                template.isLoaded = !error;
             }
 
             loadCompletes.reverse();
@@ -137,87 +161,74 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             });
             loadCompletes.length = 0;
         };
-        if (template.loadRes) {
-            template.loadRes({
-                key: key as any,
-                loadParam: loadParam,
-                complete: loadResComplete
-            });
+
+        if (resHandler?.loadRes) {
+            const loadConfig = Object.assign({}, config, { complete: loadResComplete });
+            resHandler.loadRes(loadConfig);
+        } else if (resInfo) {
+            loadResComplete(`== ${"template: " + template.key + ("==type:" + template.type + "no handler")}`);
         } else {
-            const resInfo = template.getResInfo?.();
-            const handler = template.type && this.getTemplateHandler(template.type);
-            if (handler?.loadRes) {
-                handler.loadRes(template, {
-                    key: key as any,
-                    resInfo: resInfo,
-                    loadParam: loadParam,
-                    complete: loadResComplete
-                });
-            } else if (resInfo) {
-                loadResComplete(`== ${"template: " + template.key + ("==type:" + template.type + "no handler")}`);
-            } else {
-                loadResComplete();
-            }
+            loadResComplete();
         }
     }
-    destroyRes(key: keyType): void {
+    destroyRes(key: keyType | String): void {
         const template = this.getTemplate(key);
         if (template) {
             if (template.isLoading) {
                 template.needDestroy = true;
             } else {
-                if (template.destroyRes) {
-                    template.isLoaded = !template.destroyRes();
-                } else if (template.type) {
-                    template.isLoaded = !this.getTemplateHandler(template.type)?.destroyRes?.(template);
-                }
+                this.getTemplateHandler(template, "resHandler")?.destroyRes?.(template);
             }
         }
     }
+    showView(viewState: akView.IBaseViewState) {
+        if (viewState.template) {
+            const layerHandler = this.getTemplateHandler(viewState.template, "layerHandler");
+            if (!layerHandler?.addToLayer) {
+                console.error(`${viewState.template.key} 没有取到添加到层级的方法`);
+            } else {
+                layerHandler.addToLayer(viewState);
+            }
+        }
+    }
+    hideView(viewState: akView.IBaseViewState): void {
+        if (viewState.template) {
+            const layerHandler = this.getTemplateHandler(viewState.template, "layerHandler");
 
-    addToLayer(viewState: akView.IBaseViewState) {
-        if (viewState.template?.type) {
-            const templateHandler = this.getTemplateHandler(viewState.template?.type);
-            templateHandler?.addToLayer?.(viewState);
+            if (!layerHandler?.removeFromLayer) {
+                console.error(`${viewState.template.key} 没有取到从层级移除的方法`);
+            } else {
+                layerHandler.removeFromLayer(viewState);
+            }
         }
     }
-    removeFromLayer(viewState: akView.IBaseViewState): void {
-        if (viewState.template?.type) {
-            const templateHandler = this.getTemplateHandler(viewState.template?.type);
-            templateHandler?.removeFromLayer?.(viewState);
-        }
-    }
-    isLoading(key: keyType): boolean {
+    isPreloadResLoading(keyOrId: keyType | String): boolean {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        return this.getTemplate(key)?.isLoading;
+        keyOrId = this.getKeyById(keyOrId);
+        return this.getTemplate(keyOrId)?.isLoading;
     }
-    isLoaded(key: keyType): boolean {
+    isPreloadResLoaded(keyOrTemplate: (keyType | String) | akView.ITemplate): boolean {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
+        let template: akView.ITemplate;
+        if (typeof keyOrTemplate === "object") {
+            template = keyOrTemplate as any;
+        } else {
+            template = this.getTemplate(this.getKeyById(keyOrTemplate));
+        }
+        const resHandler = this.getTemplateHandler(template, "resHandler");
+        if (!resHandler || !resHandler.isLoaded) {
+            //没有加载处理器等于加载完成
+            return true;
+        }
+        return resHandler.isLoaded(template.getPreloadResInfo());
+    }
 
-        return this.getTemplate(key)?.isLoaded;
-    }
-    isLoadingById(id: string): boolean {
-        if (!this._inited) {
-            console.error(`viewMgr is no inited`);
-            return;
-        }
-        const key = this.getKeyById(id);
-        return this.getTemplate(key)?.isLoading;
-    }
-    isLoadedById(id: string): boolean {
-        if (!this._inited) {
-            console.error(`viewMgr is no inited`);
-            return;
-        }
-        const key = this.getKeyById(id);
-        return this.getTemplate(key)?.isLoaded;
-    }
     create<T extends akView.IView = any>(
         keyOrConfig: keyType | akView.ICreateConfig<keyType>,
         onInitData?: any,
@@ -268,11 +279,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         viewState.onShow(createCfg);
         return id;
     }
-    show<T = any>(
-        keyOrConfig: keyType | akView.IShowConfig<keyType>,
-        onShowData?: any,
-        showedCb?: akView.ViewInsCb<T>
-    ): keyType {
+    show(keyOrConfig: (keyType | String) | akView.IShowConfig<keyType>, onShowData?: any): keyType {
         if (!this._inited) {
             console.error(`[viewMgr](show) is no inited`);
             return;
@@ -281,14 +288,12 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         if (typeof keyOrConfig == "string") {
             showCfg = {
                 id: keyOrConfig,
-                key: keyOrConfig,
-                onShowData: onShowData,
-                showedCb: showedCb
+                key: keyOrConfig as keyType,
+                onShowData: onShowData
             };
         } else if (typeof keyOrConfig === "object") {
-            showCfg = keyOrConfig;
+            showCfg = keyOrConfig as any;
             onShowData !== undefined && (showCfg.onShowData = onShowData);
-            showedCb !== undefined && (showCfg.showedCb = showedCb);
         } else {
             console.warn(`[viewMgr](show) unknown param`, keyOrConfig);
             return;
@@ -303,88 +308,44 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         viewState.onShow(showCfg);
         return showCfg.key;
     }
-    update(key: keyType, updateState?: any): void {
-        this.updateById(key as string, updateState);
-    }
-    hide(key: keyType, hideCfg?: akView.IHideConfig): void {
-        this.hideById(key as string, hideCfg);
-    }
-    destroy(key: keyType): void {
-        this.destroyById(key as string);
-    }
-    isInited(key: keyType): boolean {
-        return (this._viewStateMap[key as any] as akView.IViewState)?.isInited;
-    }
-    isShowed(key: keyType): boolean {
-        return (this._viewStateMap[key as any] as akView.IViewState)?.isShowed;
-    }
-    isShowEnd(key: keyType): boolean {
-        return (this._viewStateMap[key as any] as akView.IViewState)?.isShowEnd;
-    }
-    showById(idOrConfig: string | akView.IShowConfig<keyType>, onShowData?: any, showedCb?: akView.ViewInsCb): void {
+    update(keyOrId: keyType | String, updateState?: any): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let showCfg: akView.IShowConfig<keyType>;
-        if (typeof idOrConfig == "string") {
-            showCfg = {
-                id: idOrConfig,
-                key: this.getKeyById(idOrConfig),
-                onShowData: onShowData,
-                showedCb: showedCb
-            };
-        } else if (typeof idOrConfig === "object") {
-            showCfg = idOrConfig;
-            onShowData !== undefined && (showCfg.onShowData = onShowData);
-            showedCb !== undefined && (showCfg.showedCb = showedCb);
-        } else {
-            console.warn(`[viewMgr](show) unknown param`, idOrConfig);
-            return;
-        }
-        const viewState: akView.IViewState = this.getViewState(showCfg.id);
-        if (!viewState) return;
-        showCfg.needShow = true;
-        viewState.onShow(showCfg);
-    }
-    updateById<T = any>(id: string, updateState?: T): void {
-        if (!this._inited) {
-            console.error(`viewMgr is no inited`);
-            return;
-        }
-        const viewState: akView.IViewState = this.getViewState(id);
+        const viewState: akView.IViewState = this.getViewState(keyOrId as string);
         if (!viewState) return;
 
         viewState.onUpdate(updateState);
     }
-    hideById(id: string, hideCfg?: akView.IHideConfig): void {
+    hide(keyOrId: keyType | String, hideCfg?: akView.IHideConfig): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        const viewState: akView.IViewState = this.getViewState(id);
+        const viewState: akView.IViewState = this.getViewState(keyOrId as any);
         if (!viewState) return;
-
         viewState.onHide(hideCfg);
     }
-    destroyById(id: string): void {
+    destroy(keyOrId: keyType | String): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        const viewState: akView.IViewState = this.getViewState(id) as any;
+        const viewState: akView.IViewState = this.getViewState(keyOrId as any);
         if (!viewState) return;
         viewState.onDestroy();
     }
-    isInitedById(id: string): boolean {
-        return (this._viewStateMap[id as any] as akView.IViewState)?.isInited;
+    isInited(keyOrId: keyType | String): boolean {
+        return (this._viewStateMap[keyOrId as any] as akView.IViewState)?.isInited;
     }
-    isShowedById(id: string): boolean {
-        return (this._viewStateMap[id as any] as akView.IViewState)?.isShowed;
+    isShowed(keyOrId: keyType | String): boolean {
+        return (this._viewStateMap[keyOrId as any] as akView.IViewState)?.isShowed;
     }
-    isShowEndById(id: string): boolean {
-        return (this._viewStateMap[id as any] as akView.IViewState)?.isShowEnd;
+    isShowEnd(keyOrId: keyType | String): boolean {
+        return (this._viewStateMap[keyOrId as any] as akView.IViewState)?.isShowEnd;
     }
+
     /**
      * 实例化
      * @param id id
@@ -393,16 +354,18 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      */
     insView(viewState: akView.IBaseViewState): akView.IView {
         const template = viewState.template;
-        if (!template.isLoaded) return;
+        if (!this.isPreloadResLoaded(template)) return;
         let ins = viewState.viewIns;
         if (ins) return ins;
-        ins = template.createViewIns?.();
-        if (!template.createViewIns && template.type) {
-            ins = this.getTemplateHandler(template.type)?.createViewIns(template);
-        }
+        const viewHandler = this.getTemplateHandler(template, "viewHandler");
+
+        ins = viewHandler && viewHandler.create?.(template);
+
         if (ins) {
             ins.key = template.key;
             ins.id = viewState.id;
+        } else {
+            console.warn(`key:${template.key} insView fail`);
         }
         viewState.viewIns = ins;
         return ins;
@@ -413,10 +376,11 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      */
     retainTemplateRes(template: akView.ITemplate) {
         if (template) {
-            if (template.retainRes) {
-                template.retainRes();
-            } else if (template.type) {
-                this.getTemplateHandler(template.type)?.retainRes?.(template);
+            const resHandler = this.getTemplateHandler(template, "resHandler");
+            if (resHandler?.retainRes) {
+                resHandler?.retainRes(template);
+            } else {
+                console.warn(`没有资源处理方法:retainRes`);
             }
         }
     }
@@ -426,10 +390,11 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      */
     releaseTemplateRes(template: akView.ITemplate) {
         if (template) {
-            if (template.releaseRes) {
-                template.releaseRes();
-            } else if (template.type) {
-                this.getTemplateHandler(template.type)?.releaseRes?.(template);
+            const resHandler = this.getTemplateHandler(template, "resHandler");
+            if (resHandler?.releaseRes) {
+                resHandler?.releaseRes(template);
+            } else {
+                console.warn(`没有资源处理方法:releaseRes`);
             }
         }
     }
@@ -456,16 +421,43 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
     }
     /**
-     * 获取模板处理器
+     * 获取模板处理器，优先获取template.customHandlerMap中的handler，如果没有再获取注册的handler
      * @param type
+     * @param handlerKey 处理器key
      * @returns
      */
-    getTemplateHandler(type: string): akView.ITemplateHandler {
-        const handler = this._templateHandlerMap[type];
+    getTemplateHandler<HandlerKeyType extends keyof akView.ITemplateHandlerMap>(
+        template: akView.ITemplate,
+        handlerKey: HandlerKeyType
+    ): akView.ITemplateHandlerMap[HandlerKeyType] {
+        let handler = template.customHandlers && template.customHandlers[handlerKey];
         if (!handler) {
-            console.warn(`this type:${type} handler is not exit`);
+            const handlers = this._templateHandlersMap[template.type];
+            if (!handlers) {
+                console.warn(`this type:${template.type} handlers is not exit`);
+            } else {
+                handler = handlers[handlerKey];
+            }
         }
+
         return handler;
+    }
+    /**
+     * 获取注册的模板处理器,主要是用于重写和自定义
+     * @param type
+     * @param handlerKey 处理器key
+     * @returns
+     */
+    getRegistedTemplateHandler<HandlerKeyType extends keyof akView.ITemplateHandlerMap>(
+        template: akView.ITemplate,
+        handlerKey: HandlerKeyType
+    ): akView.ITemplateHandlerMap[HandlerKeyType] {
+        const handlers = this._templateHandlersMap[template.type];
+        if (!handlers) {
+            console.warn(`this type:${template.type} handlers is not exit`);
+        } else {
+            return handlers[handlerKey];
+        }
     }
     /**
      * 根据viewid获取ViewState
@@ -476,19 +468,14 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         let viewState = this._viewStateMap[id];
         if (!viewState) {
             const template = this.getTemplate(this.getKeyById(id));
-
-            if (template?.createViewState) {
-                viewState = template.createViewState(id, this);
+            let handler = this.getTemplateHandler(template, "viewStateHandler");
+            if (handler) {
+                viewState = handler.create(template, id);
             } else {
-                const templateHandler = template.type && this.getTemplateHandler(template.type);
-                if (templateHandler && templateHandler.createViewState) {
-                    viewState = templateHandler.createViewState?.(template, id);
-                } else {
-                    viewState = new DefaultViewState();
-                    viewState.id = id;
-                    viewState.template = template;
-                    viewState.viewMgr = this;
-                }
+                viewState = new DefaultViewState();
+                viewState.id = id;
+                viewState.template = template;
+                viewState.viewMgr = this;
             }
 
             this._viewStateMap[id] = viewState;
@@ -499,7 +486,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * 移除指定id的viewState
      * @param id
      */
-    removeViewState(id: string): void {
+    destroyViewState(id: string): void {
         delete this._viewStateMap[id];
     }
     /**
@@ -526,10 +513,14 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param id
      * @returns
      */
-    getKeyById(id: string): keyType {
+    getKeyById(id: keyType | String): keyType | String {
         if (typeof id !== "string" || id === "") {
             return undefined;
         }
-        return id.split("_$_")[0] as keyType;
+        if (id.includes("_$_")) {
+            return id.split("_$_")[0] as keyType;
+        } else {
+            return id;
+        }
     }
 }

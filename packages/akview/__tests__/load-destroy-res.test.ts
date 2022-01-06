@@ -7,13 +7,13 @@ describe(`模板资源加载销毁单元测试`, function () {
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
             type: "hasTypeTemplateHandler",
-            getResInfo() {
-                return { type: "any", ress: {} };
+            getPreloadResInfo() {
+                return { type: "any", info: {} };
             }
         };
         uiMgr.template(hasTypeTemplate);
 
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
             loadRes: (template, config) => {
                 expect(config.resInfo.type).toBe("any");
@@ -25,7 +25,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.loadRes(hasTypeTemplate.key, (error) => {
+        uiMgr.loadPreloadRes(hasTypeTemplate.key, (error) => {
             expect(error).toBeUndefined();
             expect(hasTypeTemplate.isLoaded).toBe(true);
             expect(hasTypeTemplate.isLoading).toBe(false);
@@ -34,7 +34,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         //isLoading=true
         expect(hasTypeTemplate.isLoading).toBe(true);
         //重复加载,加载回调=2
-        uiMgr.loadRes(hasTypeTemplate.key, () => {});
+        uiMgr.loadPreloadRes(hasTypeTemplate.key, () => {});
         expect(uiMgr["_templateLoadResCompletesMap"][hasTypeTemplate.key].length).toBe(2);
     });
     test(`测试加载有Type模板依赖的资源-失败`, function (testDone) {
@@ -43,13 +43,13 @@ describe(`模板资源加载销毁单元测试`, function () {
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
             type: "hasTypeTemplateHandler",
-            getResInfo() {
-                return { type: "any", ress: {} };
+            getPreloadResInfo() {
+                return { type: "any", info: {} };
             }
         };
         uiMgr.template(hasTypeTemplate);
 
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
             loadRes: (template, config) => {
                 expect(config.resInfo.type).toBe("any");
@@ -61,7 +61,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.loadRes(hasTypeTemplate.key, (error) => {
+        uiMgr.loadPreloadRes(hasTypeTemplate.key, (error) => {
             expect(error).toBeDefined();
             expect(hasTypeTemplate.isLoaded).toBe(false);
             expect(hasTypeTemplate.isLoading).toBe(false);
@@ -75,12 +75,12 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const noTypeTemplate: akView.ITemplate = {
             key: "noTypeTemplate",
-            getResInfo() {
-                return { type: "any", ress: {} };
+            getPreloadResInfo() {
+                return { type: "any", info: {} };
             }
         };
         uiMgr.template(noTypeTemplate);
-        uiMgr.loadRes(noTypeTemplate.key, (error) => {
+        uiMgr.loadPreloadRes(noTypeTemplate.key, (error) => {
             expect(error).toBeDefined();
             expect(noTypeTemplate.isLoaded).toBe(false);
             expect(noTypeTemplate.isLoading).toBe(false);
@@ -95,7 +95,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             key: "noTypeTemplate"
         };
         uiMgr.template(noTypeTemplate);
-        uiMgr.loadRes(noTypeTemplate.key, (error) => {
+        uiMgr.loadPreloadRes(noTypeTemplate.key, (error) => {
             expect(error).toBeUndefined();
             expect(noTypeTemplate.isLoaded).toBe(true);
             expect(noTypeTemplate.isLoading).toBe(false);
@@ -108,8 +108,8 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const noTypeCustomLoadResTemplate: akView.ITemplate = {
             key: "noTypeCustomLoadResTemplate",
-            getResInfo() {
-                return { type: "any", ress: {} };
+            getPreloadResInfo() {
+                return { type: "any", info: {} };
             },
             loadRes(config) {
                 expect(config.resInfo).toBeUndefined();
@@ -120,7 +120,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             }
         };
         uiMgr.template(noTypeCustomLoadResTemplate);
-        uiMgr.loadRes(noTypeCustomLoadResTemplate.key, (error) => {
+        uiMgr.loadPreloadRes(noTypeCustomLoadResTemplate.key, (error) => {
             expect(error).toBeUndefined();
             expect(noTypeCustomLoadResTemplate.isLoaded).toBe(true);
             expect(noTypeCustomLoadResTemplate.isLoading).toBe(false);
@@ -132,8 +132,8 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const noTypeCustomLoadResTemplate: akView.ITemplate = {
             key: "noTypeCustomLoadResTemplate",
-            getResInfo() {
-                return { type: "any", ress: {} };
+            getPreloadResInfo() {
+                return { type: "any", info: {} };
             },
             loadRes(config) {
                 expect(config.resInfo).toBeUndefined();
@@ -144,7 +144,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             }
         };
         uiMgr.template(noTypeCustomLoadResTemplate);
-        uiMgr.loadRes(noTypeCustomLoadResTemplate.key, (error) => {
+        uiMgr.loadPreloadRes(noTypeCustomLoadResTemplate.key, (error) => {
             expect(error).toBeDefined();
             expect(noTypeCustomLoadResTemplate.isLoaded).toBe(false);
             expect(noTypeCustomLoadResTemplate.isLoading).toBe(false);
@@ -175,7 +175,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.template(hasTypeCanDestroyResTemplate);
 
-        const hasTypeTemplateHandlerReturnDestroyTrue: akView.ITemplateHandler = {
+        const hasTypeTemplateHandlerReturnDestroyTrue: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandlerReturnDestroyTrue",
             destroyRes(template) {
                 expect(template?.key).toBe(hasTypeCanDestroyResTemplate.key);
@@ -185,7 +185,7 @@ describe(`模板资源加载销毁单元测试`, function () {
 
         uiMgr.addTemplateHandler(hasTypeTemplateHandlerReturnDestroyTrue);
 
-        uiMgr.loadRes(hasTypeCanDestroyResTemplate.key);
+        uiMgr.loadPreloadRes(hasTypeCanDestroyResTemplate.key);
         expect(hasTypeCanDestroyResTemplate.isLoaded).toBeTruthy();
         //销毁成功所以会是false
         uiMgr.destroyRes(hasTypeCanDestroyResTemplate.key);
@@ -201,7 +201,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.template(hasTypeNoDestroyResTemplate);
 
-        const hasTypeTemplateHandlerReturnDestroyFalse: akView.ITemplateHandler = {
+        const hasTypeTemplateHandlerReturnDestroyFalse: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandlerReturnDestroyFalse",
             destroyRes: (template) => {
                 expect(template?.key).toBe(hasTypeNoDestroyResTemplate.key);
@@ -210,7 +210,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.addTemplateHandler(hasTypeTemplateHandlerReturnDestroyFalse);
 
-        uiMgr.loadRes(hasTypeNoDestroyResTemplate.key);
+        uiMgr.loadPreloadRes(hasTypeNoDestroyResTemplate.key);
         expect(hasTypeNoDestroyResTemplate.isLoaded).toBeTruthy();
         //销毁失败，所以会是true
         uiMgr.destroyRes(hasTypeNoDestroyResTemplate.key);
@@ -263,7 +263,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             }
         };
         uiMgr.template(testTemplate);
-        uiMgr.loadRes(testTemplate.key, (error) => {
+        uiMgr.loadPreloadRes(testTemplate.key, (error) => {
             expect(error).toBeTruthy();
             done();
         });

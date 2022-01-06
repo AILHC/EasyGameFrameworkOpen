@@ -30,7 +30,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
     });
 
     test(`测试模板处理器注册`, function () {
-        const testViewTemplateHandler: akView.ITemplateHandler = {
+        const testViewTemplateHandler: akView.ITemplateHandlerMap = {
             type: "testViewTemplateHandler"
         };
         const uiMgr = new ViewMgr();
@@ -39,7 +39,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         expect(uiMgr.getTemplateHandler(testViewTemplateHandler.type)).toBeDefined();
     });
     test("测试插件机制", function () {
-        const testViewTemplateHandler: akView.ITemplateHandler = {
+        const testViewTemplateHandler: akView.ITemplateHandlerMap = {
             type: "testViewTemplateHandler"
         };
         const testTemplate: akView.ITemplate = { key: "testTemplate" };
@@ -81,7 +81,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         };
         uiMgr.template(hasTypeTemplate);
 
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
             createViewIns: (template) => {
                 return { key: template.key } as any;
@@ -126,7 +126,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
             isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
             releaseRes(template) {}
         };
@@ -146,7 +146,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
             isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
             retainRes(template) {}
         };
@@ -166,7 +166,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
             isLoaded: false
         };
         uiMgr.template(hasTypeTemplate);
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
 
             loadRes(template, config) {
@@ -178,7 +178,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         const spyHandlerFunc = jest.spyOn(hasTypeTemplateHandler, "loadRes");
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.loadRes(hasTypeTemplate.key, function () {
+        uiMgr.loadPreloadRes(hasTypeTemplate.key, function () {
             done();
         });
         expect(spyHandlerFunc).toBeCalledTimes(1);
@@ -192,7 +192,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
             isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
             destroyRes(template) {
                 return true;
@@ -233,7 +233,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         };
         let viewState;
         uiMgr.template(hasTypeTemplate);
-        const hasTypeTemplateHandler: akView.ITemplateHandler = {
+        const hasTypeTemplateHandler: akView.ITemplateHandlerMap = {
             type: "hasTypeTemplateHandler",
             createViewState(template, id) {
                 viewState = { id: id, template: template, viewMgr: uiMgr };
