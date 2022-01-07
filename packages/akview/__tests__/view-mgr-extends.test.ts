@@ -133,7 +133,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         const spyHandlerFunc = jest.spyOn(hasTypeTemplateHandler, "releaseRes");
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.releaseTemplateRes(hasTypeTemplate);
+        uiMgr.decTemplateResRef(hasTypeTemplate);
         expect(spyHandlerFunc).toBeCalledTimes(1);
         expect(spyHandlerFunc).toBeCalledWith(hasTypeTemplate);
     });
@@ -153,7 +153,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         const spyHandlerFunc = jest.spyOn(hasTypeTemplateHandler, "retainRes");
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.retainTemplateRes(hasTypeTemplate);
+        uiMgr.addTemplateResRef(hasTypeTemplate);
         expect(spyHandlerFunc).toBeCalledTimes(1);
         expect(spyHandlerFunc).toBeCalledWith(hasTypeTemplate);
     });

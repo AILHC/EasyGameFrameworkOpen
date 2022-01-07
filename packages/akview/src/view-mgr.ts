@@ -3,7 +3,11 @@ import { globalViewTemplateMap } from "./view-template";
 export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     implements akView.IMgr<ViewKeyType, keyType>
 {
-    eventHandler: akView.IEventHandler;
+    /**事件处理器 */
+    public get eventHandler(): akView.IEventHandler {
+        return this._eventHandler;
+    }
+    private _eventHandler: akView.IEventHandler;
     /**模版字典 */
     protected _templateMap: akView.TemplateMap<keyType>;
 
@@ -12,7 +16,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     /**
      * 模板加载完成回调数组
      */
-    protected _templateLoadResCompletesMap: { [x: string]: akView.LoadResCompleteCallback[] };
+    protected _templateLoadResCompletesMap: { [key: string]: akView.LoadResCompleteCallback[] };
     /**
      * 模板处理器字典
      */
@@ -21,19 +25,19 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     protected _inited: boolean;
     /**实例数，用于创建id */
     protected _insCount: number = 0;
+    /**
+     * 默认ViewState的配置
+     */
+    private _defaultViewStateConfig: any;
     getKey(key: keyType): keyType {
         return key as any;
     }
-    init(
-        eventHandler: akView.IEventHandler,
-        templateHandlerMap?: akView.TemplateHandlersMap,
-        templateMap: akView.TemplateMap<keyType> = globalViewTemplateMap as any
-    ): void {
+    init(option: akView.IMgrInitOption): void {
         if (this._inited) return;
-        this.eventHandler = eventHandler;
+        this._eventHandler = option.eventHandler;
         this._viewStateMap = {};
         this._templateLoadResCompletesMap = {} as any;
-        this._templateHandlersMap = templateHandlerMap ? templateHandlerMap : {};
+        this._templateHandlersMap = option.templateHandlerMap ? option.templateHandlerMap : {};
         let templateHandlers: akView.ITemplateHandlers;
         for (let key in this._templateHandlersMap) {
             templateHandlers = this._templateHandlersMap[key];
@@ -41,7 +45,9 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 key2 !== "type" && templateHandlers[key2].onRegist?.(this);
             }
         }
+        this._defaultViewStateConfig = option.defaultViewStateConfig ? option.defaultViewStateConfig : {};
         this._inited = true;
+        const templateMap = option.templateMap ? option.templateMap : globalViewTemplateMap;
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
     use(plugin: akView.IPlugin): void {
@@ -81,11 +87,11 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             console.error(`[viewMgr](addTemplateHandler) handler is null`);
         }
     }
-    hasTemplate(key: keyType | String): boolean {
+    hasTemplate(key: keyType): boolean {
         return !!this._templateMap[key as any];
     }
-    getTemplate(key: keyType | String): akView.ITemplate {
-        const template = this._templateMap[key as any];
+    getTemplate(key: keyType): akView.ITemplate {
+        const template = this._templateMap[key];
         if (!template) {
             console.warn(`template is not exit:${key}`);
         }
@@ -96,7 +102,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param key 模板key
      * @returns
      */
-    getPreloadResInfo(key: keyType | String): akView.ITemplateResInfoType {
+    getPreloadResInfo(key: keyType): akView.ITemplateResInfoType {
         const template = this.getTemplate(key);
         if (!template) {
             return;
@@ -120,7 +126,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             key = keyOrConfig as string;
             config = { key: key };
         }
-        const template = this.getTemplate(key);
+        const template = this.getTemplate(key as any);
         if (!template) return;
         const resHandler = this.getTemplateHandler(template, "resHandler");
         const resInfo = template.getPreloadResInfo?.();
@@ -133,8 +139,8 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             loadCompletes = [];
             this._templateLoadResCompletesMap[key] = loadCompletes;
         }
+        config.complete && loadCompletes.push(config.complete);
         if (template.isLoading) {
-            config.complete && loadCompletes.push(config.complete);
             return;
         }
 
@@ -142,12 +148,11 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
 
         template.needDestroy = false;
 
-        config.complete && loadCompletes.push(config.complete);
         const loadResComplete = (error?: any) => {
             const loadCompletes = this._templateLoadResCompletesMap[key];
             error && console.error(`[viewMgr](loadRes): load error:`, error);
             if (template.needDestroy) {
-                this.destroyRes(key);
+                this.destroyRes(key as keyType);
                 template.needDestroy = false;
                 template.isLoading = false;
                 error = "loadRes error , destroyRes is called";
@@ -171,13 +176,19 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             loadResComplete();
         }
     }
-    destroyRes(key: keyType | String): void {
-        const template = this.getTemplate(key);
+    destroyRes(key: keyType): void {
+        const template = this.getTemplate(key as any);
         if (template) {
             if (template.isLoading) {
                 template.needDestroy = true;
             } else {
-                this.getTemplateHandler(template, "resHandler")?.destroyRes?.(template);
+                const resHandler = this.getTemplateHandler(template, "resHandler");
+                if (resHandler?.destroyRes) {
+                    resHandler.destroyRes(template.key, template.getPreloadResInfo());
+                    resHandler.destroyRes(template.key, template.getAsyncloadResInfo());
+                } else {
+                    console.warn(`can not handle template:${template.key} destroyRes`);
+                }
             }
         }
     }
@@ -202,7 +213,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             }
         }
     }
-    isPreloadResLoading(keyOrId: keyType | String): boolean {
+    isPreloadResLoading(keyOrId: keyType): boolean {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
@@ -263,7 +274,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         const viewState: akView.IViewState = this.getViewState(id);
 
         //持有模板资源
-        viewState.retainTemplateRes();
+
         //在不同状态下进行处理
         //未加载,去加载
         //加载中,更新showCfg,并调用hideEndCb
@@ -327,14 +338,14 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         if (!viewState) return;
         viewState.onHide(hideCfg);
     }
-    destroy(keyOrId: keyType | String): void {
+    destroy(keyOrId: keyType | String, destroyRes?: boolean): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
         const viewState: akView.IViewState = this.getViewState(keyOrId as any);
         if (!viewState) return;
-        viewState.onDestroy();
+        viewState.onDestroy(destroyRes);
     }
     isInited(keyOrId: keyType | String): boolean {
         return (this._viewStateMap[keyOrId as any] as akView.IViewState)?.isInited;
@@ -372,30 +383,39 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     }
     /**
      * 模板资源引用持有处理
-     * @param template
+     * @param viewState
      */
-    retainTemplateRes(template: akView.ITemplate) {
-        if (template) {
+    addTemplateResRef(viewState: akView.IBaseViewState): void {
+        if (viewState && !viewState.isHoldTemplateResRef) {
+            const id = viewState.id;
+            const template = viewState.template;
+
             const resHandler = this.getTemplateHandler(template, "resHandler");
-            if (resHandler?.retainRes) {
-                resHandler?.retainRes(template);
+            if (resHandler?.addResRef) {
+                resHandler.addResRef(id, template.getPreloadResInfo());
+                resHandler.addResRef(id, template.getAsyncloadResInfo());
             } else {
                 console.warn(`没有资源处理方法:retainRes`);
             }
+            viewState.isHoldTemplateResRef = true;
         }
     }
     /**
      * 模板资源引用释放处理
-     * @param template
+     * @param viewState
      */
-    releaseTemplateRes(template: akView.ITemplate) {
-        if (template) {
+    decTemplateResRef(viewState: akView.IBaseViewState): void {
+        if (viewState && viewState.isHoldTemplateResRef) {
+            const template = viewState.template;
+            const id = viewState.id;
             const resHandler = this.getTemplateHandler(template, "resHandler");
-            if (resHandler?.releaseRes) {
-                resHandler?.releaseRes(template);
+            if (resHandler?.decResRef) {
+                resHandler.decResRef(id, template.getAsyncloadResInfo());
+                resHandler.decResRef(id, template.getAsyncloadResInfo());
             } else {
                 console.warn(`没有资源处理方法:releaseRes`);
             }
+            viewState.isHoldTemplateResRef = false;
         }
     }
     /**
@@ -473,9 +493,13 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
                 viewState = handler.create(template, id);
             } else {
                 viewState = new DefaultViewState();
-                viewState.id = id;
-                viewState.template = template;
-                viewState.viewMgr = this;
+
+                viewState.onInit({
+                    id: id,
+                    viewMgr: this,
+                    template: template,
+                    config: Object.assign(this._defaultViewStateConfig, template.viewStateConfig)
+                });
             }
 
             this._viewStateMap[id] = viewState;
@@ -513,14 +537,14 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param id
      * @returns
      */
-    getKeyById(id: keyType | String): keyType | String {
+    getKeyById(id: keyType | String): keyType {
         if (typeof id !== "string" || id === "") {
             return undefined;
         }
         if (id.includes("_$_")) {
             return id.split("_$_")[0] as keyType;
         } else {
-            return id;
+            return id as keyType;
         }
     }
 }

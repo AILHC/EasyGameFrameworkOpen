@@ -76,9 +76,9 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
         expect(spyOnViewInit).toBeCalledTimes(1);
         expect(spyOnBeforeViewShow).toBeCalledTimes(2);
         expect(spyOnViewShow).toBeCalledTimes(2);
-        expect(uiMgr["_viewStateMap"][testTemplate.key].isRetainTemplateRes).toBeTruthy();
-        uiMgr.hide(testTemplate.key, { releaseRes: true });
-        expect(uiMgr["_viewStateMap"][testTemplate.key].isRetainTemplateRes).toBeFalsy();
+        expect(uiMgr["_viewStateMap"][testTemplate.key].isHoldTemplateResRef).toBeTruthy();
+        uiMgr.hide(testTemplate.key, { decTemplateResRef: true });
+        expect(uiMgr["_viewStateMap"][testTemplate.key].isHoldTemplateResRef).toBeFalsy();
         expect(uiMgrReleaseResSpy).toBeCalledTimes(1);
         uiMgr.destroy(testTemplate.key);
         expect(spyOnViewHideEnd).toBeCalledTimes(2);
@@ -163,9 +163,9 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
         expect(spyOnBeforeViewShow).toBeCalledTimes(2);
 
         expect(spyOnViewShow).toBeCalledTimes(2);
-        expect(uiMgr["_viewStateMap"][testViewId].isRetainTemplateRes).toBeTruthy();
+        expect(uiMgr["_viewStateMap"][testViewId].isHoldTemplateResRef).toBeTruthy();
         uiMgr.hideById(testViewId, { releaseRes: true });
-        expect(uiMgr["_viewStateMap"][testViewId].isRetainTemplateRes).toBeFalsy();
+        expect(uiMgr["_viewStateMap"][testViewId].isHoldTemplateResRef).toBeFalsy();
 
         uiMgr.destroyById(testViewId);
         expect(spyOnViewHideEnd).toBeCalledTimes(2);
@@ -312,14 +312,14 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
             },
             showedCb: () => {
                 const isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                    .isRetainTemplateRes;
+                    .isHoldTemplateResRef;
                 expect(isRetainTemplateRes).toBe(true);
             },
             showEndCb: () => {}
         } as akView.IShowConfig;
         uiMgr.show<akView.IView>(showCfg);
         uiMgr.hide(testTemplate.key, {
-            releaseRes: true,
+            decTemplateResRef: true,
             hideEndCb() {
                 expect(spyOnViewInit).toBeCalledTimes(0);
                 expect(spyOnBeforeViewShow).toBeCalledTimes(0);
@@ -327,7 +327,7 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
                 expect(spyOnViewHide).toBeCalledTimes(0);
                 expect(spyOnViewHideEnd).toBeCalledTimes(1);
                 const isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                    .isRetainTemplateRes;
+                    .isHoldTemplateResRef;
                 expect(isRetainTemplateRes).toBe(false);
 
                 testDone();
@@ -397,12 +397,12 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
             },
             showedCb: () => {
                 const isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                    .isRetainTemplateRes;
+                    .isHoldTemplateResRef;
                 expect(isRetainTemplateRes).toBe(true);
                 spyOnShowAbortCb = jest.spyOn(showCfg, "showAbortCb");
                 setTimeout(() => {
                     uiMgr.hide(testTemplate.key, {
-                        releaseRes: true,
+                        decTemplateResRef: true,
                         hideEndCb() {
                             expect(spyOnViewInit).toBeCalledTimes(1);
                             expect(spyOnBeforeViewShow).toBeCalledTimes(1);
@@ -411,7 +411,7 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
                             expect(spyOnViewHideEnd).toBeCalledTimes(1);
                             expect(spyOnShowAbortCb).toBeCalledTimes(1);
                             const isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                                .isRetainTemplateRes;
+                                .isHoldTemplateResRef;
                             expect(isRetainTemplateRes).toBe(false);
 
                             testDone();
@@ -487,7 +487,7 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
             },
             showedCb: () => {
                 let isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                    .isRetainTemplateRes;
+                    .isHoldTemplateResRef;
                 expect(isRetainTemplateRes).toBe(true);
                 spyOnShowAbortCb = jest.spyOn(showCfg, "showAbortCb");
                 setTimeout(() => {
@@ -500,7 +500,7 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
                     expect(spyOnShowAbortCb).toBeCalledTimes(1);
                     expect(spyOnViewDestroy).toBeCalledTimes(1);
                     isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                        .isRetainTemplateRes;
+                        .isHoldTemplateResRef;
                     expect(isRetainTemplateRes).toBeFalsy();
 
                     testDone();
@@ -554,14 +554,14 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
             },
             showedCb: () => {
                 const isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                    .isRetainTemplateRes;
+                    .isHoldTemplateResRef;
                 expect(isRetainTemplateRes).toBe(true);
             },
             showEndCb: () => {
                 expect(spyOnBeforeViewShow).toBeCalledTimes(1);
                 expect(spyOnViewShow).toBeCalledTimes(1);
                 const isRetainTemplateRes = (uiMgr.getViewState(testTemplate.key) as akView.IViewState)
-                    .isRetainTemplateRes;
+                    .isHoldTemplateResRef;
                 expect(isRetainTemplateRes).toBe(true);
                 testDone();
             }

@@ -36,6 +36,11 @@ declare global {
             /**需要销毁，给加载完后消费用 */
             needDestroy?: boolean;
             /**
+             * viewState的配置
+             * 如果是DefaultViewState，会与@type {IBaseViewStateInitOption}.config 进行合并
+             */
+            viewStateConfig?: any;
+            /**
              * 获取预加载资源信息
              */
             getPreloadResInfo?(): ITemplateResInfoType;
@@ -82,21 +87,24 @@ declare global {
              */
             cancelLoad(templateKey: string): void;
             /**
-             * 资源引用
-             * @param template
-             */
-            retainRes?(resInfo: ITemplateResInfoType): void;
-            /**
-             * 资源引用
+             * 持有资源引用
+             * @param id
              * @param resInfo
              */
-            releaseRes?(resInfo: ITemplateResInfoType): void;
+            addResRef?(id: string, resInfo: ITemplateResInfoType): void;
             /**
-             * 销毁模板资源
-             * @param template
+             * 释放资源引用
+             * @param id
+             * @param resInfo
+             */
+            decResRef?(id: string, resInfo: ITemplateResInfoType): void;
+            /**
+             * 销毁资源
+             * @param id
+             * @param resInfo
              * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
              */
-            destroyRes?(template: akView.ITemplate): boolean;
+            destroyRes?(id: string, resInfo: ITemplateResInfoType): boolean;
         }
         interface ITemplateLayerHandler extends ITemplateBaseHandler {
             /**
@@ -200,17 +208,30 @@ declare global {
              */
             viewStateHandler?: ITemplateViewStateHandler;
         }
-        interface IBaseViewState {
+        interface IBaseViewStateInitOption {
+            id: string;
+            template: akView.ITemplate;
+            viewMgr: akView.IMgr;
+            /**一些配置，可用于自定义ViewState的行为 */
+            config?: any;
+        }
+        interface IBaseViewState<OptionType extends IBaseViewStateInitOption = IBaseViewStateInitOption> {
             id: string;
             /**持有模板资源引用 */
-            isRetainTemplateRes?: boolean;
+            isHoldTemplateResRef?: boolean;
             /**模板 */
             template: akView.ITemplate;
             /**控制器实例 */
             viewIns?: akView.IView;
             viewMgr?: akView.IMgr;
+            /**
+             * 初始化
+             * @param option 初始化配置
+             *  */
+            onInit(option: OptionType): void;
         }
-        interface IViewState extends IBaseViewState {
+        interface IViewState<OptionType extends IBaseViewStateInitOption = IBaseViewStateInitOption>
+            extends IBaseViewState<OptionType> {
             isInited: boolean;
             isShowed: boolean;
             isShowEnd: boolean;
@@ -249,20 +270,9 @@ declare global {
             onHide(hideCfg?: akView.IHideConfig): void;
             /**
              * 销毁
+             * @param destroyRes 销毁资源
              */
-            onDestroy(): void;
-            /**
-             * 如果 viewState.isRetainTemplateRes = false
-             * 则
-             * 持有模板资源引用
-             */
-            retainTemplateRes(): void;
-            /**
-             * 如果 viewState.isRetainTemplateRes = true
-             * 则
-             * 释放模板资源引用
-             */
-            releaseTemplateRes(): void;
+            onDestroy(destroyRes?: boolean): void;
         }
         /**
          * 加载资源完成回调，如果加载失败会error不为空
@@ -360,7 +370,7 @@ declare global {
         }
         interface IHideConfig {
             /**释放资源引用 默认false */
-            releaseRes?: boolean;
+            decTemplateResRef?: boolean;
             /**隐藏后销毁 */
             destroyAfterHide?: boolean;
         }
@@ -433,21 +443,49 @@ declare global {
             getNode(): NodeType;
         }
         type ReturnCtrlType<T> = T extends akView.IView ? T : akView.IView;
-
+        /**
+         * 默认ViewState的配置
+         */
+        interface IDefaultViewStateConfig {
+            /**
+             * 是否能在渲染节点隐藏后释放模板资源引用,默认false
+             */
+            canDecTemplateResRefOnHide?: boolean;
+            /**
+             * 在onDestroy时销毁资源，默认false
+             *
+             */
+            destroyResOnDestroy?: boolean;
+        }
+        /**
+         * 管理器初始化配置
+         */
+        interface IMgrInitOption {
+            /**
+             * 事件处理器
+             */
+            eventHandler: akView.IEventHandler;
+            /**
+             * 默认ViewState的配置
+             */
+            defaultViewStateConfig?: IDefaultViewStateConfig;
+            /**
+             * 模板处理器字典
+             */
+            templateHandlerMap?: TemplateHandlersMap;
+            /**
+             * 模板字典
+             */
+            templateMap?: akView.TemplateMap;
+        }
         interface IMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any> {
             /**事件处理器 */
             eventHandler: IEventHandler;
             /**
              * 初始化
-             * @param eventHandler 事件处理器
-             * @param templateHandlerMap 模板处理器字典
-             * @param templateMap 模板字典
+             * @param option 初始化配置
              */
-            init(
-                eventHandler: akView.IEventHandler,
-                templateHandlerMap?: TemplateHandlersMap,
-                templateMap?: akView.TemplateMap
-            ): void;
+            init(option: IMgrInitOption): void;
             /**
              * 使用插件，可在插件声明周期中对Mgr进行扩展：addTemplate,addTemplateHandler等
              * @param plugin
@@ -484,7 +522,7 @@ declare global {
              * @param key 模板key
              * @returns
              */
-            getPreloadResInfo(key: keyType | String): akView.ITemplateResInfoType;
+            getPreloadResInfo(key: keyType): akView.ITemplateResInfoType;
             /**
              * 加载控制器模版依赖的资源
              * @param key
@@ -557,9 +595,9 @@ declare global {
             /**
              * 销毁单例控制器
              * @param key
-             * @param releaseRes 释放资源
+             * @param destroyRes 释放资源
              */
-            destroy(key: keyType, releaseRes?: boolean): void;
+            destroy(key: keyType | String, destroyRes?: boolean): void;
             /**
              * 模板是否正在加载中
              * @param keyOrId template.key 或者 id
@@ -608,14 +646,14 @@ declare global {
             ): akView.ITemplateHandlerMap[HandlerKeyType];
             /**
              * 模板资源引用持有处理
-             * @param template
+             * @param viewState
              */
-            retainTemplateRes(template: akView.ITemplate): void;
+            addTemplateResRef(viewState: akView.IBaseViewState): void;
             /**
              * 模板资源引用释放处理
-             * @param template
+             * @param viewState
              */
-            releaseTemplateRes(template: akView.ITemplate): void;
+            decTemplateResRef(viewState: akView.IBaseViewState): void;
             /**
              * 从id中解析出key
              * @param id
