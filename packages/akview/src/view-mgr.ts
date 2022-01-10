@@ -192,27 +192,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             }
         }
     }
-    showView(viewState: akView.IBaseViewState) {
-        if (viewState.template) {
-            const layerHandler = this.getTemplateHandler(viewState.template, "layerHandler");
-            if (!layerHandler?.addToLayer) {
-                console.error(`${viewState.template.key} 没有取到添加到层级的方法`);
-            } else {
-                layerHandler.addToLayer(viewState);
-            }
-        }
-    }
-    hideView(viewState: akView.IBaseViewState): void {
-        if (viewState.template) {
-            const layerHandler = this.getTemplateHandler(viewState.template, "layerHandler");
-
-            if (!layerHandler?.removeFromLayer) {
-                console.error(`${viewState.template.key} 没有取到从层级移除的方法`);
-            } else {
-                layerHandler.removeFromLayer(viewState);
-            }
-        }
-    }
+    
     isPreloadResLoading(keyOrId: keyType): boolean {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);

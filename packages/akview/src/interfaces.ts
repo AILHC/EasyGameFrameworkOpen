@@ -542,16 +542,16 @@ declare global {
              * @param key
              */
             destroyRes(key: keyType): void;
-            /**
-             * 显示渲染节点(添加到层级并active=true)
-             * @param viewState
-             */
-            showView(viewState: akView.IBaseViewState): void;
-            /**
-             * 隐藏渲染节点(从层级移除或者active=false)
-             * @param viewState
-             */
-            hideView(viewState: akView.IBaseViewState): void;
+            // /**
+            //  * 显示渲染节点(添加到层级并active=true)
+            //  * @param viewState
+            //  */
+            // showView(viewState: akView.IBaseViewState): void;
+            // /**
+            //  * 隐藏渲染节点(从层级移除或者active=false)
+            //  * @param viewState
+            //  */
+            // hideView(viewState: akView.IBaseViewState): void;
 
             /**
              * 创建实例
