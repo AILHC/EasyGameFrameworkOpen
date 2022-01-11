@@ -24,22 +24,26 @@ declare global {
             /**key */
             key: string;
             /**
-             * 类型,让对应的处理器进行处理
+             * 处理类型,让对应的处理器进行处理
              */
-            type?: string;
+            handleType?: string;
+            /**
+             * 缓存模式
+             * 默认“FOREVER”
+             */
+            cacheMode?: ViewStateCacheModeType;
             /**
              * 处理参数
              */
             handlerParam?: any;
             /**是否正在加载 */
             isLoading?: boolean;
-            /**需要销毁，给加载完后消费用 */
-            needDestroy?: boolean;
+
             /**
              * viewState的配置
-             * 如果是DefaultViewState，会与@type {IBaseViewStateInitOption}.config 进行合并
+             * 如果是DefaultViewState，会与进行合并
              */
-            viewStateConfig?: any;
+            viewStateInitOption?: any;
             /**
              * 获取预加载资源信息
              */
@@ -78,33 +82,37 @@ declare global {
             isLoaded(resInfo: ITemplateResInfoType): boolean;
             /**
              * 加载资源
+             * 为了防止所有资源没下载完时，加载完成的单项资源被别的逻辑释放掉
+             * 资源处理需要在加载时就对资源进行锁定，加载完成之后再解锁。
+             * 总体加载完成后的资源引用则由业务处理了。
              * @param config
              */
             loadRes?(config?: IResLoadConfig): void;
             /**
              * 取消资源下载，将会立刻调用complete回调，并且传递isCancel=true,不再调用progress回调
-             * @param templateKey
+             * @param id
+             * @param resInfo
+             * @param template
              */
-            cancelLoad(templateKey: string): void;
+            cancelLoad(id: string, resInfo: akView.ITemplateResInfoType, template: akView.ITemplate): void;
             /**
              * 持有资源引用
              * @param id
-             * @param resInfo
+             * @param template
              */
-            addResRef?(id: string, resInfo: ITemplateResInfoType): void;
+            addResRef?(id: string, template: akView.ITemplate): void;
             /**
              * 释放资源引用
              * @param id
-             * @param resInfo
+             * @param template
              */
-            decResRef?(id: string, resInfo: ITemplateResInfoType): void;
+            decResRef?(id: string, template: akView.ITemplate): void;
             /**
              * 销毁资源
-             * @param id
-             * @param resInfo
+             * @param template
              * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
              */
-            destroyRes?(id: string, resInfo: ITemplateResInfoType): boolean;
+            destroyRes?(template: akView.ITemplate): boolean;
         }
         interface ITemplateLayerHandler extends ITemplateBaseHandler {
             /**
@@ -147,38 +155,51 @@ declare global {
              */
             destroy?(id: string, template: akView.ITemplate): void;
         }
-        type DefaultEventKeyType = "onViewShowEnd" | "onViewHideEnd" | "onViewShow" | "onViewHide";
+
+        interface IViewEventKeys {
+            /**
+             * @deprecated
+             */
+            onViewInit;
+            onViewShow;
+            onViewShowEnd;
+            onViewHide;
+            onViewHideEnd;
+            onViewDestroyed;
+        }
+        type ViewEventKeyType = keyof IViewEventKeys;
+
         interface IEventHandler extends ITemplateBaseHandler {
             /**
              * 监听
-             * @param templateKey
+             * @param viewId
              * @param eventKey
              * @param method
              */
-            on(templateKey: string, eventKey: DefaultEventKeyType | String, method: akView.ICallableFunction): void;
+            on(viewId: string, eventKey: ViewEventKeyType | String, method: akView.ICallableFunction): void;
             /**
              * 监听一次，执行完后取消监听
-             * @param templateKey
+             * @param viewId
              * @param eventKey
              * @param method
              */
-            once(templateKey: string, eventKey: DefaultEventKeyType | String, method: akView.ICallableFunction): void;
+            once(viewId: string, eventKey: ViewEventKeyType | String, method: akView.ICallableFunction): void;
             /**
              * 取消监听
-             * @param templateKey
+             * @param viewId
              * @param eventKey
              * @param method
              */
-            off(templateKey: string, eventKey: DefaultEventKeyType | String, method: akView.ICallableFunction): void;
+            off(viewId: string, eventKey: ViewEventKeyType | String, method: akView.ICallableFunction): void;
             /**
              * 触发事件
-             * @param templateKey
+             * @param viewId
              * @param eventKey
              * @param eventData 事件数据，作为回调参数中的最后的传入，比如method.apply(method._caller,method._args,eventData);
              */
             emit<EventDataType = any>(
-                templateKey: string,
-                eventKey: DefaultEventKeyType | String,
+                viewId: string,
+                eventKey: ViewEventKeyType | String,
                 eventData?: EventDataType
             ): void;
         }
@@ -208,30 +229,93 @@ declare global {
              */
             viewStateHandler?: ITemplateViewStateHandler;
         }
-        interface IBaseViewStateInitOption {
-            id: string;
-            template: akView.ITemplate;
-            viewMgr: akView.IMgr;
-            /**一些配置，可用于自定义ViewState的行为 */
-            config?: any;
-        }
-        interface IBaseViewState<OptionType extends IBaseViewStateInitOption = IBaseViewStateInitOption> {
+
+        interface IBaseViewState<OptionType = any> extends akView.ICache {
             id: string;
             /**持有模板资源引用 */
             isHoldTemplateResRef?: boolean;
             /**模板 */
             template: akView.ITemplate;
-            /**控制器实例 */
+            /**
+             * 默认使用template.cacheMode,可动态修改
+             * 缓存模式
+             */
+            cacheMode?: akView.ViewStateCacheModeType;
+            /**渲染逻辑实例 */
             viewIns?: akView.IView;
+            /**
+             * 控制器实例
+             */
             viewMgr?: akView.IMgr;
+            /**
+             * 销毁
+             */
+            destroyed?: boolean;
             /**
              * 初始化
              * @param option 初始化配置
              *  */
             onInit(option: OptionType): void;
+            /**
+             * 显示
+             */
+            onShow(showCfg: akView.IShowConfig): void;
+            /**
+             * 更新
+             * @param updateState
+             */
+            onUpdate(updateState?: any): void;
+            /**
+             * 隐藏
+             */
+            onHide(hideCfg?: akView.IHideConfig): void;
+            /**
+             * 销毁
+             * @param destroyRes 销毁资源
+             */
+            onDestroy(destroyRes?: boolean): void;
         }
-        interface IViewState<OptionType extends IBaseViewStateInitOption = IBaseViewStateInitOption>
-            extends IBaseViewState<OptionType> {
+        interface ICache {
+            /**
+             * 获取缓存大小，如果方法没实现，默认size为1
+             */
+            getSize?(): number;
+        }
+        interface ICacheHandler {
+            viewMgr: akView.IMgr;
+            onViewStateShow(viewState: akView.IBaseViewState): void;
+            onViewStateUpdate(viewState: akView.IBaseViewState): void;
+            onViewStateHide(viewState: akView.IBaseViewState): void;
+            onViewStateDestroy(viewState: akView.IBaseViewState): void;
+            // /**
+            //  * 获取缓存大小
+            //  */
+            // getCachedSize(): number;
+            // /**
+            //  * 获取
+            //  * @param id
+            //  */
+            // get(id: string): akView.ICache;
+            // /**
+            //  * 放入
+            //  * @param viewState
+            //  */
+            // put(id: string, cache: akView.ICache): void;
+            // /**
+            //  * 主动移除
+            //  * @param id
+            //  */
+            // remove(id: string): void
+            // /**
+            //  * 清理所有缓存
+            //  */
+            // clear(): void;
+            // /**
+            //  * 主动清理长时间没有使用的
+            //  */
+            // removeLongTimeNoUse(): void
+        }
+        interface IViewState<OptionType = any> extends IBaseViewState<OptionType> {
             isInited: boolean;
             isShowed: boolean;
             isShowEnd: boolean;
@@ -254,25 +338,6 @@ declare global {
             updateState?: any;
             /**hide 传参 */
             hideCfg?: akView.IHideConfig;
-
-            /**
-             * 显示
-             */
-            onShow(showCfg: akView.IShowConfig): void;
-            /**
-             * 更新
-             * @param updateState
-             */
-            onUpdate(updateState?: any): void;
-            /**
-             * 隐藏
-             */
-            onHide(hideCfg?: akView.IHideConfig): void;
-            /**
-             * 销毁
-             * @param destroyRes 销毁资源
-             */
-            onDestroy(destroyRes?: boolean): void;
         }
         /**
          * 加载资源完成回调，如果加载失败会error不为空
@@ -295,9 +360,11 @@ declare global {
         type ViewInsCb<T = unknown> = (view?: T extends akView.IView ? T : akView.IView) => void;
         interface IResLoadConfig<LoadParam = any> {
             /**页面key */
-            key: string | any;
+            id: string;
             /**资源数组 */
             resInfo?: ITemplateResInfoType;
+            /**模板 */
+            template?: akView.ITemplate;
             /**完成回调 */
             complete?: akView.LoadResCompleteCallback;
             /**加载进度回调 */
@@ -330,11 +397,6 @@ declare global {
              */
             onInitData?: any;
             /**
-             * 强制重新加载
-             * @deprecated
-             */
-            forceLoad?: boolean;
-            /**
              * 加载后是否显示
              * 由mgr自动赋值
              */
@@ -346,17 +408,6 @@ declare global {
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
              * 或自定义加载透传给CtrlDefine.loadRes */
             loadParam?: any;
-
-            /**
-             * 加载完成回调,返回实例为空则加载失败，返回实例则成功
-             * 由view-mgr调用，禁止在view逻辑中调用
-             */
-            loadCb?: (ins: any, ...args) => void;
-            /**
-             * 中断回调
-             * 在show的过程中，可能会调用hide,destroy等
-             */
-            showAbortCb?: () => void;
         }
         interface ICreateConfig<keyType extends keyof any = any> extends akView.IShowConfig<keyType> {
             /**自动显示 */
@@ -371,18 +422,18 @@ declare global {
         interface IHideConfig {
             /**释放资源引用 默认false */
             decTemplateResRef?: boolean;
-            /**隐藏后销毁 */
+            /**
+             * 隐藏后销毁
+             * 由缓存模式决定，自动赋值
+             */
             destroyAfterHide?: boolean;
         }
 
-        interface IView<NodeType = any> {
+        interface IView<NodeType = any, ViewStateType extends akView.IBaseViewState = akView.IBaseViewState> {
             /**
-             * 控制器实例唯一id
-             * ViewMgr自动生成
+             * 状态
              */
-            id?: string;
-            key?: string | any;
-
+            viewState: ViewStateType;
             /**已经初始化 */
             isInited?: boolean;
             /**已经显示 */
@@ -424,19 +475,7 @@ declare global {
              * 当销毁时，默认是需要进行资源引用释放的
              */
             onViewDestroy?(): void;
-            /**
-             * 异步资源加载进度
-             * @param resInfo 资源信息
-             * @param resItem 资源
-             * @param total 最大数
-             * @param loadedCount 已加载数
-             */
-            onAsyncResLoadProgress?(
-                resInfo: akView.ITemplateResInfo,
-                resItem: any,
-                total: number,
-                loadedCount: number
-            ): void;
+
             /**
              * 获取显示节点
              */
@@ -444,9 +483,31 @@ declare global {
         }
         type ReturnCtrlType<T> = T extends akView.IView ? T : akView.IView;
         /**
+         * 缓存类型枚举
+         */
+        type ViewStateCacheModeType = keyof IViewStateCacheMode;
+        interface IViewStateCacheMode {
+            /**
+             * 内置
+             * 永远
+             *  */
+            FOREVER: string;
+            /**
+             * 内存
+             * 不缓存
+             */
+            NONE: string;
+            /**
+             * 自定义
+             * 按使用频率淘汰式缓存
+             * 使用频率小的就会被淘汰
+             */
+            LRU: string;
+        }
+        /**
          * 默认ViewState的配置
          */
-        interface IDefaultViewStateConfig {
+        interface IDefaultViewStateOption {
             /**
              * 是否能在渲染节点隐藏后释放模板资源引用,默认false
              */
@@ -466,9 +527,13 @@ declare global {
              */
             eventHandler: akView.IEventHandler;
             /**
+             * 缓存处理
+             */
+            cacheHandler: akView.ICacheHandler;
+            /**
              * 默认ViewState的配置
              */
-            defaultViewStateConfig?: IDefaultViewStateConfig;
+            defaultViewStateOption?: IDefaultViewStateOption;
             /**
              * 模板处理器字典
              */
@@ -481,6 +546,10 @@ declare global {
         interface IMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any> {
             /**事件处理器 */
             eventHandler: IEventHandler;
+            /**
+             * 缓存处理器
+             */
+            cacheHandler: akView.ICacheHandler;
             /**
              * 初始化
              * @param option 初始化配置
@@ -500,7 +569,7 @@ declare global {
              * 批量注册控制器模版
              * @param templates 定义字典，单个定义，定义数组
              */
-            template(templates: ITemplate[] | ITemplate | akView.TemplateMap): void;
+            template(templates: akView.ITemplate[] | akView.ITemplate | akView.TemplateMap): void;
             /**
              * 添加模板处理器
              * @param templateHandler
@@ -556,48 +625,48 @@ declare global {
             /**
              * 创建实例
              * @param keyOrConfig key或者配置
+             * @param onShowData 显示数据
              * @param onInitData 初始化
              * @param autoShow 是否自动显示
-             * @param createCb 创建完成回调
              */
             create(
-                keyOrConfig: keyType | akView.ICreateConfig<keyType>,
+                keyOrConfig: (keyType | String) | akView.IShowConfig<keyType>,
+                onShowData?: any,
                 onInitData?: any,
-                autoShow?: boolean,
-                createCb?: akView.ViewInsCb
+                autoShow?: boolean
             ): string;
 
             /**
              * 显示单例显示控制器
              * @param keyOrConfig 类key或者显示配置IShowConfig
              * @param onShowData 显示透传数据
-             * @param showedCb 显示完成回调(onShow调用之后)
+             * @param onInitData 初始化数据
              */
-            show<T = any>(
-                keyOrConfig: keyType | akView.IShowConfig<keyType>,
+            show(
+                keyOrConfig: (keyType | String) | akView.IShowConfig<keyType>,
                 onShowData?: any,
-                showedCb?: akView.ViewInsCb<T>
-            ): void;
+                onInitData?: any
+            ): string;
             /**
              * 更新控制器
-             * @param key UIkey
+             * @param keyOrId 界面id
              * @param updateState 更新数据
              */
-            update(key: keyType, updateState?: any): void;
+            update(keyOrId: keyType | String, updateState?: any): void;
 
             /**
              * 隐藏单例控制器
-             * @param key
-             * @param hideParam
+             * @param keyOrId 界面id
+             * @param hideCfg
              */
-            hide<T = any>(key: keyType, hideParam?: T): void;
+            hide(keyOrId: keyType | String, hideCfg?: akView.IHideConfig): void;
 
             /**
              * 销毁单例控制器
-             * @param key
+             * @param keyOrId 界面id
              * @param destroyRes 释放资源
              */
-            destroy(key: keyType | String, destroyRes?: boolean): void;
+            destroy(keyOrId: keyType | String, destroyRes?: boolean): void;
             /**
              * 模板是否正在加载中
              * @param keyOrId template.key 或者 id

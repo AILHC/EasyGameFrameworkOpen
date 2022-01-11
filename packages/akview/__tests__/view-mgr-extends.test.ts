@@ -76,7 +76,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
 
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
@@ -122,7 +122,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
@@ -142,7 +142,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
@@ -162,7 +162,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             isLoaded: false
         };
         uiMgr.template(hasTypeTemplate);
@@ -188,7 +188,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             isLoaded: true
         };
         uiMgr.template(hasTypeTemplate);
@@ -228,7 +228,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             isLoaded: true
         };
         let viewState;
@@ -254,7 +254,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         let viewState;
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             isLoaded: true,
             createViewState(id, viewMgr) {
                 viewState = { id: id, template: hasTypeTemplate, viewMgr: viewMgr };

@@ -6,7 +6,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init();
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             getPreloadResInfo() {
                 return { type: "any", info: {} };
             }
@@ -42,7 +42,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeTemplate: akView.ITemplate = {
             key: "hasTypeTemplate",
-            type: "hasTypeTemplateHandler",
+            handleType: "hasTypeTemplateHandler",
             getPreloadResInfo() {
                 return { type: "any", info: {} };
             }
@@ -171,7 +171,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeCanDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeCanDestroyResTemplate",
-            type: "hasTypeTemplateHandlerReturnDestroyTrue"
+            handleType: "hasTypeTemplateHandlerReturnDestroyTrue"
         };
         uiMgr.template(hasTypeCanDestroyResTemplate);
 
@@ -197,7 +197,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const hasTypeNoDestroyResTemplate: akView.ITemplate = {
             key: "hasTypeNoDestroyResTemplate",
-            type: "hasTypeTemplateHandlerReturnDestroyFalse"
+            handleType: "hasTypeTemplateHandlerReturnDestroyFalse"
         };
         uiMgr.template(hasTypeNoDestroyResTemplate);
 
@@ -252,7 +252,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         uiMgr.init(null, null);
         const testTemplate: akView.ITemplate = {
             key: "testTemplate",
-            type: "testTemplate",
+            handleType: "testTemplate",
             loadRes(config) {
                 setTimeout(() => {
                     config.complete();
