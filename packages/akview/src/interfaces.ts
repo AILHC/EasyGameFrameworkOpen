@@ -44,6 +44,7 @@ declare global {
              * 如果是DefaultViewState，会与进行合并
              */
             viewStateInitOption?: any;
+
             /**
              * 获取预加载资源信息
              */
@@ -359,12 +360,10 @@ declare global {
         type TemplateLoadedCb = (isOk: boolean) => void;
         type ViewInsCb<T = unknown> = (view?: T extends akView.IView ? T : akView.IView) => void;
         interface IResLoadConfig<LoadParam = any> {
-            /**页面key */
             id: string;
             /**资源数组 */
             resInfo?: ITemplateResInfoType;
-            /**模板 */
-            template?: akView.ITemplate;
+
             /**完成回调 */
             complete?: akView.LoadResCompleteCallback;
             /**加载进度回调 */
@@ -593,14 +592,43 @@ declare global {
              */
             getPreloadResInfo(key: keyType): akView.ITemplateResInfoType;
             /**
-             * 加载控制器模版依赖的资源
+             * 根据id加载模板固定资源
+             * @param idOrConfig
+             * @returns
+             */
+            loadPreloadResById<LoadParam = any>(idOrConfig: string | akView.IResLoadConfig<LoadParam>): void;
+            /**
+             * 根据id加载模板固定资源
+             * @param id
+             * @param complete
+             * @param loadParam
+             * @param progress
+             * @returns
+             */
+            loadPreloadResById<LoadParam = any>(
+                idOrConfig: string,
+                complete?: akView.LoadResCompleteCallback,
+                loadParam?: LoadParam,
+                progress?: akView.LoadResProgressCallback
+            ): void;
+            /**
+             * 预加载模板固定资源,给业务使用，用于预加载
+             * 会自动创建id，判断key是否为id
+             * @param key
+             * @param config
+             * @returns
+             */
+            preloadRes<LoadParam = any>(key: keyType, config?: akView.IResLoadConfig<LoadParam>): string;
+            /**
+             * 预加载模板固定资源,给业务使用，用于预加载
+             * 会自动创建id，判断key是否为id
              * @param key
              * @param complate 加载资源完成回调，如果加载失败会error不为空
-             * @param forceLoad 强制加载
-             * @param loadParam 加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
-             * 或自定义加载透传给CtrlDefine.loadRes
+             * @param loadParam 加载资源透传参数，可选透传给资源加载处理器
+             * @param progress 加载资源进度回调
+             *
              */
-            loadPreloadRes<LoadParam = any>(
+            preloadRes<LoadParam = any>(
                 key: keyType,
                 complete?: akView.LoadResCompleteCallback,
                 loadParam?: LoadParam,

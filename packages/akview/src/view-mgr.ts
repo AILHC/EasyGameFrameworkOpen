@@ -24,7 +24,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
     /**
      * 模板加载完成回调数组
      */
-    protected _templateLoadResCompletesMap: { [key: string]: akView.LoadResCompleteCallback[] };
+    protected _templateLoadResConfigsMap: { [key: string]: { [key: string]: akView.IResLoadConfig } };
     /**
      * 模板处理器字典
      */
@@ -45,7 +45,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         this._eventHandler = option.eventHandler;
         this._cacheHandler = option.cacheHandler;
         this._viewStateMap = {};
-        this._templateLoadResCompletesMap = {} as any;
+        this._templateLoadResConfigsMap = {} as any;
         this._templateHandlersMap = option.templateHandlerMap ? option.templateHandlerMap : {};
         let templateHandlers: akView.ITemplateHandlers;
         for (let key in this._templateHandlersMap) {
@@ -120,59 +120,145 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
 
         return resInfo;
     }
-    loadPreloadRes<LoadParam = any>(keyOrConfig: (keyType | String) | akView.IResLoadConfig<LoadParam>): void {
+    /**
+     * 根据id加载模板固定资源
+     * @param idOrConfig
+     * @returns
+     */
+    loadPreloadResById<LoadParam = any>(idOrConfig: string | akView.IResLoadConfig<LoadParam>, ...args): void {
         if (!this._inited) {
-            console.error(`[viewMgr](loadRess): is no inited`);
+            console.error(`viewMgr is no inited`);
             return;
         }
         let key: string;
         let config: akView.IResLoadConfig;
-
-        if (typeof keyOrConfig === "object") {
-            config = keyOrConfig as akView.IResLoadConfig;
+        if (typeof idOrConfig === "object") {
+            config = idOrConfig as akView.IResLoadConfig;
         } else {
-            config = { id: this.createViewId(key as keyType) };
+            config = { id: idOrConfig };
         }
         key = this.getKeyById(config.id) as string;
         const template = this.getTemplate(key as any);
-        if (!template) return;
+        if (!template) {
+            return;
+        }
+
+        const complete = args[0];
+        const loadParam = args[1];
+        const progress = args[2];
+        config.complete === undefined && (config.complete = complete);
+        config.progress === undefined && (config.progress = progress);
+        config.loadParam === loadParam && (config.loadParam = loadParam);
         const resHandler = this.getTemplateHandler(template, "resHandler");
         const resInfo = template.getPreloadResInfo?.();
         if (resHandler.isLoaded(resInfo)) {
             config.complete?.();
             return;
         }
-        let loadCompletes = this._templateLoadResCompletesMap[key];
-        if (!loadCompletes) {
-            loadCompletes = [];
-            this._templateLoadResCompletesMap[key] = loadCompletes;
-        }
-        config.complete && loadCompletes.push(config.complete);
-        if (template.isLoading) {
+        if (!resHandler?.loadRes) {
+            const error = `[loadPreloadResById] ${
+                "template: " + template.key + ("==type:" + template.handleType + "no handler")
+            }`;
+            console.error(error);
+            config.complete?.(error);
             return;
         }
+        let loadConfigs = this._templateLoadResConfigsMap[key];
+        let isLoading = false;
+        if (!loadConfigs) {
+            loadConfigs = {};
+            this._templateLoadResConfigsMap[key] = loadConfigs;
+        } else {
+            isLoading = true;
+        }
+        (config.complete || config.progress) && (loadConfigs[config.id] = config);
+        if (isLoading) return;
 
         template.isLoading = true;
         const loadResComplete = (error?: any) => {
-            const loadCompletes = this._templateLoadResCompletesMap[key];
+            const loadConfigs = this._templateLoadResConfigsMap[key];
             template.isLoading = false;
-            error && console.error(`[loadPreloadRes]: templateKey ${key} load error:`, error);
-
-            loadCompletes.reverse();
-            loadCompletes.forEach((complete) => {
-                complete(error);
-            });
-            loadCompletes.length = 0;
+            error && console.error(` templateKey ${key} load error:`, error);
+            let loadConfig: akView.IResLoadConfig;
+            for (let id in loadConfigs) {
+                loadConfig = loadConfigs[id];
+                if (loadConfig) {
+                    loadConfig.complete?.(error);
+                    loadConfigs[id] = undefined;
+                }
+            }
+            this._templateHandlersMap[key] = undefined;
+        };
+        const loadProgress = (...args: any[]) => {
+            const loadConfigs = this._templateLoadResConfigsMap[key];
+            let loadConfig: akView.IResLoadConfig;
+            for (let id in loadConfigs) {
+                loadConfig = loadConfigs[id];
+                if (loadConfig?.progress) {
+                    loadConfig.progress.call(null, args);
+                }
+            }
         };
 
-        if (resHandler?.loadRes) {
-            const loadConfig = Object.assign({}, config, { complete: loadResComplete });
-            resHandler.loadRes(loadConfig);
-        } else if (resInfo) {
-            loadResComplete(`== ${"template: " + template.key + ("==type:" + template.handleType + "no handler")}`);
-        } else {
-            loadResComplete();
+        const loadConfig = Object.assign({}, config, { complete: loadResComplete, progress: loadProgress });
+        resHandler.loadRes(loadConfig);
+    }
+    /**
+     * 预加载模板固定资源,给业务使用，用于预加载
+     * 会自动创建id，判断key是否为id
+     * @param key
+     * @param config
+     * @returns
+     */
+    preloadRes(key: keyType, ...args): string {
+        if (!this._inited) {
+            console.error(`[viewMgr](loadRess): is no inited`);
+            return;
         }
+        if ((key as string).includes(IdSplitChars)) {
+            const error = `key:${key} is id`;
+            console.error(error);
+            return;
+        }
+        let config: akView.IResLoadConfig;
+        const configOrComplete = args[0];
+        if (typeof configOrComplete === "object") {
+            config = config;
+        } else if (typeof configOrComplete === "function") {
+            config = { complete: configOrComplete, id: undefined };
+        }
+        const loadParam = args[1];
+        const progress = args[2];
+        if (!config) {
+            config = {} as any;
+        }
+        config.progress = progress;
+        config.loadParam = loadParam;
+        config.id = this.createViewId(key as keyType);
+
+        const template = this.getTemplate(key as any);
+        if (!template) {
+            const errorMsg = `template:${key} not registed`;
+            config?.complete?.(errorMsg);
+            return;
+        }
+        this.loadPreloadResById(config);
+        return config.id;
+    }
+    /**
+     * 取消加载
+     * @param id
+     */
+    cancelLoadPreloadRes(id: string): void {
+        if (!id) return;
+        const key = this.getKeyById(id);
+        const configs = this._templateLoadResConfigsMap[key as string];
+        const template = this.getTemplate(key);
+        const resHandler = this.getTemplateHandler(template, "resHandler");
+        resHandler?.cancelLoad(id, template.getPreloadResInfo(), template);
+        const config = configs[id];
+        configs[id] = undefined;
+        config?.complete?.(`cancel load res`, true);
     }
     destroyRes(key: keyType): void {
         const template = this.getTemplate(key as any);
@@ -431,9 +517,18 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @returns
      */
     getTemplateHandler<HandlerKeyType extends keyof akView.ITemplateHandlerMap>(
-        template: akView.ITemplate,
+        templateOrKey: keyType | akView.ITemplate,
         handlerKey: HandlerKeyType
     ): akView.ITemplateHandlerMap[HandlerKeyType] {
+        let template: akView.ITemplate;
+        if (typeof templateOrKey === "object") {
+            template = templateOrKey;
+        } else if (typeof templateOrKey === "string") {
+            template = this.getTemplate(templateOrKey);
+        }
+        if (!template) {
+            return;
+        }
         let handler = template.customHandlers && template.customHandlers[handlerKey];
         if (!handler) {
             const handlers = this._templateHandlersMap[template.handleType];
@@ -477,7 +572,6 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             const key = this.getKeyById(id);
             const template = this.getTemplate(key);
             if (!template) {
-                console.error(`template:${key}  is null`);
                 return;
             }
             let handler = this.getTemplateHandler(template, "viewStateHandler");

@@ -177,7 +177,7 @@ export class DefaultViewState implements akView.IViewState {
                 }
             };
             this.isLoading = true;
-            this.viewMgr.loadPreloadRes(this.id, onLoadedCb, showCfg.loadParam);
+            this.viewMgr.preloadRes(this.id, onLoadedCb, showCfg.loadParam);
         }
     }
     onUpdate(updateState: any) {

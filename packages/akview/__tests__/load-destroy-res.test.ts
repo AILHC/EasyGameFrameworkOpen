@@ -25,7 +25,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.loadPreloadRes(hasTypeTemplate.key, (error) => {
+        uiMgr.preloadRes(hasTypeTemplate.key, (error) => {
             expect(error).toBeUndefined();
             expect(hasTypeTemplate.isLoaded).toBe(true);
             expect(hasTypeTemplate.isLoading).toBe(false);
@@ -34,8 +34,8 @@ describe(`模板资源加载销毁单元测试`, function () {
         //isLoading=true
         expect(hasTypeTemplate.isLoading).toBe(true);
         //重复加载,加载回调=2
-        uiMgr.loadPreloadRes(hasTypeTemplate.key, () => {});
-        expect(uiMgr["_templateLoadResCompletesMap"][hasTypeTemplate.key].length).toBe(2);
+        uiMgr.preloadRes(hasTypeTemplate.key, () => {});
+        expect(uiMgr["_templateLoadResConfigsMap"][hasTypeTemplate.key].length).toBe(2);
     });
     test(`测试加载有Type模板依赖的资源-失败`, function (testDone) {
         const uiMgr = new ViewMgr();
@@ -61,7 +61,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.loadPreloadRes(hasTypeTemplate.key, (error) => {
+        uiMgr.preloadRes(hasTypeTemplate.key, (error) => {
             expect(error).toBeDefined();
             expect(hasTypeTemplate.isLoaded).toBe(false);
             expect(hasTypeTemplate.isLoading).toBe(false);
@@ -80,7 +80,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             }
         };
         uiMgr.template(noTypeTemplate);
-        uiMgr.loadPreloadRes(noTypeTemplate.key, (error) => {
+        uiMgr.preloadRes(noTypeTemplate.key, (error) => {
             expect(error).toBeDefined();
             expect(noTypeTemplate.isLoaded).toBe(false);
             expect(noTypeTemplate.isLoading).toBe(false);
@@ -95,7 +95,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             key: "noTypeTemplate"
         };
         uiMgr.template(noTypeTemplate);
-        uiMgr.loadPreloadRes(noTypeTemplate.key, (error) => {
+        uiMgr.preloadRes(noTypeTemplate.key, (error) => {
             expect(error).toBeUndefined();
             expect(noTypeTemplate.isLoaded).toBe(true);
             expect(noTypeTemplate.isLoading).toBe(false);
@@ -120,7 +120,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             }
         };
         uiMgr.template(noTypeCustomLoadResTemplate);
-        uiMgr.loadPreloadRes(noTypeCustomLoadResTemplate.key, (error) => {
+        uiMgr.preloadRes(noTypeCustomLoadResTemplate.key, (error) => {
             expect(error).toBeUndefined();
             expect(noTypeCustomLoadResTemplate.isLoaded).toBe(true);
             expect(noTypeCustomLoadResTemplate.isLoading).toBe(false);
@@ -144,7 +144,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             }
         };
         uiMgr.template(noTypeCustomLoadResTemplate);
-        uiMgr.loadPreloadRes(noTypeCustomLoadResTemplate.key, (error) => {
+        uiMgr.preloadRes(noTypeCustomLoadResTemplate.key, (error) => {
             expect(error).toBeDefined();
             expect(noTypeCustomLoadResTemplate.isLoaded).toBe(false);
             expect(noTypeCustomLoadResTemplate.isLoading).toBe(false);
@@ -185,7 +185,7 @@ describe(`模板资源加载销毁单元测试`, function () {
 
         uiMgr.addTemplateHandler(hasTypeTemplateHandlerReturnDestroyTrue);
 
-        uiMgr.loadPreloadRes(hasTypeCanDestroyResTemplate.key);
+        uiMgr.preloadRes(hasTypeCanDestroyResTemplate.key);
         expect(hasTypeCanDestroyResTemplate.isLoaded).toBeTruthy();
         //销毁成功所以会是false
         uiMgr.destroyRes(hasTypeCanDestroyResTemplate.key);
@@ -210,7 +210,7 @@ describe(`模板资源加载销毁单元测试`, function () {
         };
         uiMgr.addTemplateHandler(hasTypeTemplateHandlerReturnDestroyFalse);
 
-        uiMgr.loadPreloadRes(hasTypeNoDestroyResTemplate.key);
+        uiMgr.preloadRes(hasTypeNoDestroyResTemplate.key);
         expect(hasTypeNoDestroyResTemplate.isLoaded).toBeTruthy();
         //销毁失败，所以会是true
         uiMgr.destroyRes(hasTypeNoDestroyResTemplate.key);
@@ -263,7 +263,7 @@ describe(`模板资源加载销毁单元测试`, function () {
             }
         };
         uiMgr.template(testTemplate);
-        uiMgr.loadPreloadRes(testTemplate.key, (error) => {
+        uiMgr.preloadRes(testTemplate.key, (error) => {
             expect(error).toBeTruthy();
             done();
         });

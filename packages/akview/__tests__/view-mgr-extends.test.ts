@@ -178,7 +178,7 @@ describe(`ViewMgr扩展相关单元测试`, function () {
         const spyHandlerFunc = jest.spyOn(hasTypeTemplateHandler, "loadRes");
         uiMgr.addTemplateHandler(hasTypeTemplateHandler);
 
-        uiMgr.loadPreloadRes(hasTypeTemplate.key, function () {
+        uiMgr.preloadRes(hasTypeTemplate.key, function () {
             done();
         });
         expect(spyHandlerFunc).toBeCalledTimes(1);
