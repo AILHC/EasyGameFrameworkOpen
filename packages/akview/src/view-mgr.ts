@@ -1,8 +1,16 @@
 import { DefaultViewState } from "./default-view-state";
 import { globalViewTemplateMap } from "./view-template";
+/**
+ * id拼接字符
+ */
 const IdSplitChars = "_$_";
-export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
-    implements akView.IMgr<ViewKeyType, keyType>
+export class ViewMgr<
+    InitDataTypeMap = any,
+    ShowDataTypeMap = any,
+    UpdateTypeMap = any,
+    ViewKeyType = any,
+    keyType extends keyof ViewKeyType = keyof ViewKeyType
+> implements akView.IMgr<InitDataTypeMap, ShowDataTypeMap, UpdateTypeMap, ViewKeyType, keyType>
 {
     /**
      * 缓存处理器
@@ -60,7 +68,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
     use(plugin: akView.IPlugin): void {
-        plugin.onUse(this);
+        plugin.onUse(this as any);
     }
     template(templates: akView.ITemplate | akView.ITemplate[]): void {
         if (!templates) return;
@@ -125,7 +133,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param idOrConfig
      * @returns
      */
-    loadPreloadResById<LoadParam = any>(idOrConfig: string | akView.IResLoadConfig<LoadParam>, ...args): void {
+    loadPreloadResById(idOrConfig: string | akView.IResLoadConfig, ...args): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
@@ -143,12 +151,24 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             return;
         }
 
-        const complete = args[0];
-        const loadParam = args[1];
-        const progress = args[2];
-        config.complete === undefined && (config.complete = complete);
-        config.progress === undefined && (config.progress = progress);
-        config.loadParam === loadParam && (config.loadParam = loadParam);
+        const complete: akView.LoadResCompleteCallback = args[0];
+        if (complete) {
+            if (typeof complete !== "function") {
+                console.error(`arg complete is not a function`);
+                return;
+            }
+            config.complete = complete;
+        }
+        const progress: akView.LoadResProgressCallback = args[2];
+        if (progress) {
+            if (typeof progress !== "function") {
+                console.error(`arg progress is not a function`);
+                return;
+            }
+            config.progress = progress;
+        }
+        const loadOption = args[1];
+        config.loadOption === loadOption && (config.loadOption = loadOption);
         const resHandler = this.getTemplateHandler(template, "resHandler");
         const resInfo = template.getPreloadResInfo?.();
         if (resHandler.isLoaded(resInfo)) {
@@ -174,10 +194,9 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         (config.complete || config.progress) && (loadConfigs[config.id] = config);
         if (isLoading) return;
 
-        template.isLoading = true;
         const loadResComplete = (error?: any) => {
             const loadConfigs = this._templateLoadResConfigsMap[key];
-            template.isLoading = false;
+
             error && console.error(` templateKey ${key} load error:`, error);
             let loadConfig: akView.IResLoadConfig;
             for (let id in loadConfigs) {
@@ -204,48 +223,6 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         resHandler.loadRes(loadConfig);
     }
     /**
-     * 预加载模板固定资源,给业务使用，用于预加载
-     * 会自动创建id，判断key是否为id
-     * @param key
-     * @param config
-     * @returns
-     */
-    preloadRes(key: keyType, ...args): string {
-        if (!this._inited) {
-            console.error(`[viewMgr](loadRess): is no inited`);
-            return;
-        }
-        if ((key as string).includes(IdSplitChars)) {
-            const error = `key:${key} is id`;
-            console.error(error);
-            return;
-        }
-        let config: akView.IResLoadConfig;
-        const configOrComplete = args[0];
-        if (typeof configOrComplete === "object") {
-            config = config;
-        } else if (typeof configOrComplete === "function") {
-            config = { complete: configOrComplete, id: undefined };
-        }
-        const loadParam = args[1];
-        const progress = args[2];
-        if (!config) {
-            config = {} as any;
-        }
-        config.progress = progress;
-        config.loadParam = loadParam;
-        config.id = this.createViewId(key as keyType);
-
-        const template = this.getTemplate(key as any);
-        if (!template) {
-            const errorMsg = `template:${key} not registed`;
-            config?.complete?.(errorMsg);
-            return;
-        }
-        this.loadPreloadResById(config);
-        return config.id;
-    }
-    /**
      * 取消加载
      * @param id
      */
@@ -260,9 +237,60 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         configs[id] = undefined;
         config?.complete?.(`cancel load res`, true);
     }
+    /**
+     * 预加载模板固定资源,给业务使用，用于预加载
+     * 会自动创建id，判断key是否为id
+     * @param key
+     * @param config
+     * @returns id
+     */
+    preloadRes(key: keyType, ...args): string {
+        if (!this._inited) {
+            console.error(`[viewMgr](loadRess): is no inited`);
+            return;
+        }
+        if ((key as string).includes(IdSplitChars)) {
+            const error = `key:${key} is id`;
+            console.error(error);
+            return;
+        }
+        let config: akView.IResLoadConfig;
+        const configOrComplete = args[1];
+        if (typeof configOrComplete === "object") {
+            config = config;
+        } else if (typeof configOrComplete === "function") {
+            config = { complete: configOrComplete, id: undefined };
+        }
+        const loadOption = args[2];
+
+        if (!config) {
+            config = {} as any;
+        }
+        const progress: akView.LoadResProgressCallback = args[3];
+        if (progress) {
+            if (typeof progress !== "function") {
+                console.error(`arg progress is not a function`);
+                return;
+            }
+            config.progress = progress;
+        }
+
+        config.loadOption = loadOption;
+        config.id = this.createViewId(key as keyType);
+
+        const template = this.getTemplate(key as any);
+        if (!template) {
+            const errorMsg = `template:${key} not registed`;
+            config?.complete?.(errorMsg);
+            return;
+        }
+        this.loadPreloadResById(config);
+        return config.id;
+    }
+
     destroyRes(key: keyType): void {
         const template = this.getTemplate(key as any);
-        if (template) {
+        if (template && !this.isPreloadResLoading(template.key)) {
             const resHandler = this.getTemplateHandler(template, "resHandler");
             if (resHandler?.destroyRes) {
                 resHandler.destroyRes(template);
@@ -272,13 +300,14 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
     }
 
-    isPreloadResLoading(keyOrId: keyType): boolean {
+    isPreloadResLoading(keyOrId: keyType | String): boolean {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
         keyOrId = this.getKeyById(keyOrId);
-        return this.getTemplate(keyOrId)?.isLoading;
+        const configs = this._templateLoadResConfigsMap[keyOrId as string];
+        return !!configs;
     }
     isPreloadResLoaded(keyOrTemplate: (keyType | String) | akView.ITemplate): boolean {
         if (!this._inited) {
@@ -299,43 +328,43 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         return resHandler.isLoaded(template.getPreloadResInfo());
     }
 
-    create(
-        keyOrConfig: keyType | akView.IShowConfig<keyType>,
+    create<T extends akView.IBaseViewState = akView.IBaseViewState>(
+        keyOrConfig: keyType | akView.IShowConfig<keyType, InitDataTypeMap, ShowDataTypeMap>,
         onShowData?: any,
         onInitData?: any,
-        autoShow?: boolean
-    ): string {
+        autoShow?: boolean,
+        cacheMode: akView.ViewStateCacheModeType = "NONE"
+    ): T {
         if (!this._inited) {
             console.error(`[viewMgr](show) is no inited`);
             return;
         }
-        let showCfg: akView.IShowConfig<keyType>;
+        let showCfg: akView.IShowConfig;
         if (typeof keyOrConfig == "string") {
             showCfg = {
-                id: this.createViewId(keyOrConfig),
                 key: keyOrConfig,
                 onInitData: onInitData,
                 onShowData: onShowData
             };
         } else if (typeof keyOrConfig === "object") {
             showCfg = keyOrConfig as any;
-            showCfg.id = this.createViewId(showCfg.key);
             onShowData !== undefined && (showCfg.onShowData = onShowData);
             onInitData !== undefined && (showCfg.onInitData = onInitData);
         } else {
-            console.warn(`[viewMgr](show) unknown param`, keyOrConfig);
+            console.warn(`(create) unknown param`, keyOrConfig);
             return;
         }
+        showCfg.id = this.createViewId(showCfg.key);
         showCfg.needShow = !!autoShow;
 
         const viewState = this.getOrCreateViewState(showCfg.id);
         if (!viewState) return;
-        viewState.cacheMode = "NONE";
+        viewState.cacheMode = cacheMode;
         this._show(showCfg);
-        return viewState.id;
+        return viewState as T;
     }
-    show(keyOrConfig: (keyType | String) | akView.IShowConfig<keyType>, onShowData?: any, onInitData?: any): string {
-        let showCfg: akView.IShowConfig<keyType>;
+    show(keyOrConfig: string | akView.IShowConfig, onShowData?: any, onInitData?: any): string {
+        let showCfg: akView.IShowConfig;
         if (typeof keyOrConfig == "string") {
             showCfg = {
                 id: keyOrConfig,
@@ -353,6 +382,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
         showCfg.needShow = true;
         const viewState = this._show(showCfg);
+        viewState.template;
         return viewState?.id;
     }
     /**
@@ -360,7 +390,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
      * @param showCfg
      * @returns
      */
-    protected _show(showCfg: akView.IShowConfig<keyType>): akView.IBaseViewState {
+    protected _show(showCfg: akView.IShowConfig): akView.IBaseViewState {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
@@ -373,7 +403,10 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
         return viewState;
     }
-    update(keyOrId: keyType | String, updateState?: any): void {
+    update<KeyOrIdType extends keyType>(
+        keyOrId: KeyOrIdType | String,
+        updateState?: GetTypeMapType<KeyOrIdType, UpdateTypeMap>
+    ): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
@@ -420,13 +453,13 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         this.destroyViewState(keyOrId as string);
     }
     isInited(keyOrId: keyType | String): boolean {
-        return this.getViewState(keyOrId as string)?.isInited;
+        return this.getViewState(keyOrId as string)?.viewIns?.isInited;
     }
     isShowed(keyOrId: keyType | String): boolean {
-        return this.getViewState(keyOrId as string)?.isShowed;
+        return this.getViewState(keyOrId as string)?.viewIns?.isShowed;
     }
     isShowEnd(keyOrId: keyType | String): boolean {
-        return this.getViewState(keyOrId as string)?.isShowEnd;
+        return this.getViewState(keyOrId as string)?.viewIns?.isShowEnd;
     }
 
     /**
@@ -442,7 +475,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         if (ins) return ins;
         const viewHandler = this.getTemplateHandler(template, "viewHandler");
 
-        ins = viewHandler && viewHandler.create?.(template);
+        ins = viewHandler?.create?.(template);
 
         if (ins) {
             ins.viewState = viewState;
@@ -530,6 +563,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             return;
         }
         let handler = template.customHandlers && template.customHandlers[handlerKey];
+
         if (!handler) {
             const handlers = this._templateHandlersMap[template.handleType];
             if (!handlers) {
@@ -559,13 +593,18 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
         }
     }
     /**
-     * 根据viewid获取ViewState
+     * 根据id获取缓存中的ViewState
      * @param id
      * @returns
      */
-    getViewState<T extends akView.IBaseViewState = any>(id: string): T {
+    getViewState<T extends akView.IBaseViewState = akView.IBaseViewState>(id: string): T {
         return this._viewStateMap[id] as T;
     }
+    /**
+     * 根据id获取缓存中的ViewState，没有就创建
+     * @param id
+     * @returns
+     */
     getOrCreateViewState<T extends akView.IBaseViewState = akView.IBaseViewState>(id: string): T {
         let viewState = this._viewStateMap[id];
         if (!viewState) {
@@ -582,7 +621,7 @@ export class ViewMgr<ViewKeyType = any, keyType extends keyof ViewKeyType = any>
             }
             viewState.onInit(Object.assign(this._defaultViewStateOption, template.viewStateInitOption));
             viewState.id = id;
-            viewState.viewMgr = this;
+            viewState.viewMgr = this as any;
             viewState.template = template;
             if (!viewState.cacheMode) {
                 viewState.cacheMode = template.cacheMode ? template.cacheMode : "FOREVER";
