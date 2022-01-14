@@ -1,9 +1,10 @@
-import { ViewMgr } from "../src";
+import { ViewMgr } from "../../src";
+
 describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, function () {
     test(`测试无资源加载的单例View相关接口测试(show、hide、update、destroy)`, function (testDone) {
         const uiMgr = new ViewMgr();
         uiMgr.init();
-        const uiMgrRetainResSpy = jest.spyOn(uiMgr, "retainTemplateRes");
+        const uiMgrRetainResSpy = jest.spyOn(uiMgr, "");
         const uiMgrReleaseResSpy = jest.spyOn(uiMgr, "releaseTemplateRes");
         const testTemplate: akView.ITemplate = {
             key: "testTemplate",
@@ -42,7 +43,7 @@ describe(`显示(show)-创建(create)-销毁(destroy)相关接口单元测试`, 
         let spyOnViewHideEnd: jest.SpyInstance;
         let spyOnViewDestroy: jest.SpyInstance;
 
-        uiMgr.show<akView.IView>({
+        uiMgr.show({
             key: testTemplate.key,
             onShowData: { test: "a" },
             loadCb: (viewIns) => {

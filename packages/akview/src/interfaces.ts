@@ -17,6 +17,9 @@ declare global {
      * 获取类型字典中的类型
      */
     type GetTypeMapType<IndexKey, TypeMap> = TypeMap[ToAnyIndexKey<IndexKey, TypeMap>];
+    interface IAkViewTemplateHandlerTypes {
+        Default: string;
+    }
     namespace akView {
         interface ICallableFunction extends Function {
             _caller?: any;
@@ -30,7 +33,12 @@ declare global {
 
         type ViewStateConstructor<T extends akView.IBaseViewState = any> = { new (...args): T };
         interface IPlugin {
-            onUse(mgr: akView.IMgr): void;
+            /**
+             * 管理器
+             * 自动赋值
+             */
+            viewMgr: akView.IMgr;
+            onUse(): void;
         }
         /**
          * 加载配置，业务透传到资源加载层
@@ -42,8 +50,9 @@ declare global {
             key: string;
             /**
              * 处理类型,让对应的处理器进行处理
+             * 默认为Default
              */
-            handleType?: string;
+            handleType?: keyof IAkViewTemplateHandlerTypes;
             /**
              * 缓存模式
              * 默认“FOREVER”
@@ -52,7 +61,7 @@ declare global {
             /**
              * 处理参数
              */
-            handlerParam?: any;
+            handlerOption?: any;
 
             /**
              * viewState的配置
@@ -69,9 +78,10 @@ declare global {
              */
             getAsyncloadResInfo?(): ITemplateResInfoType;
             /**
-             * 自定义处理(自己处理)
+             * 自定义处理
+             * 会和预先注册的类型合并（如果通过handleType获取得到的话）
              */
-            customHandlers?: ITemplateHandlerMap;
+            customTemplateHandler?: ITemplateHandler;
 
             /**
              * 自定义生命周期函数映射,主要用于兼容
@@ -79,18 +89,40 @@ declare global {
             viewLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<akView.IView>>]?: string };
         }
 
-        /**
-         * 模板字典
-         *  */
-        type TemplateHandlersMap<keyType extends keyof any = any> = { [P in keyType]: ITemplateHandlers };
-        interface ITemplateBaseHandler {
+        type TemplateHandlerMap = { [key in keyof IAkViewTemplateHandlerTypes]?: ITemplateHandler };
+        interface ITemplateHandler {
+            /**类型 */
+            type: keyof IAkViewTemplateHandlerTypes;
             /**
-             * 注册
-             * @param viewMgr
+             * 创建akView.IView实例
+             * @param template
              */
-            onRegist?(viewMgr: akView.IMgr): void;
-        }
-        interface ITemplateResHandler extends ITemplateBaseHandler {
+            createViewIns?<T extends akView.IView>(template: akView.ITemplate): T;
+            /**
+             * 销毁渲染实例
+             * @param viewIns
+             */
+            destroyViewIns?<T extends akView.IView>(viewIns: T, template: akView.ITemplate): void;
+            /**
+             * 创建ViewState , 如果没实现这个方法，则会默认 new DefaultViewState();
+             * @param template
+             * @param id viewState的id
+             * @returns
+             */
+            createViewState?<T extends akView.IBaseViewState>(template: akView.ITemplate): T;
+            /**
+             * 添加到层级
+             * @param viewState
+             */
+            addToLayer?(viewState: akView.IBaseViewState): void;
+
+            /**
+             * 从层级移除
+             * @param viewState
+             */
+            removeFromLayer?(viewState: akView.IBaseViewState): void;
+            //#region 资源处理
+
             /**
              * 判断资源是否已经加载
              * @param resInfo
@@ -103,7 +135,7 @@ declare global {
              * 总体加载完成后的资源引用则由业务处理了。
              * @param config
              */
-            loadRes?(config?: IResLoadConfig): void;
+            loadRes?(config: IResLoadConfig): void;
             /**
              * 取消资源下载，将会立刻调用complete回调，并且传递isCancel=true,不再调用progress回调
              * @param id
@@ -129,47 +161,8 @@ declare global {
              * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
              */
             destroyRes?(template: akView.ITemplate): boolean;
-        }
-        interface ITemplateLayerHandler extends ITemplateBaseHandler {
-            /**
-             * 添加到层级
-             * @param viewState
-             */
-            addToLayer?(viewState: akView.IBaseViewState): void;
 
-            /**
-             * 从层级移除
-             * @param viewState
-             */
-            removeFromLayer?(viewState: akView.IBaseViewState): void;
-        }
-        interface ITemplateViewHandler extends ITemplateBaseHandler {
-            /**
-             * 创建akView.IView实例
-             * @param template
-             */
-            create?<T extends akView.IView>(template: akView.ITemplate): T;
-            /**
-             * 销毁实例
-             * @param ins
-             * @param template
-             */
-            destroy?<T extends akView.IView>(ins: T, template: akView.ITemplate): void;
-        }
-        interface ITemplateViewStateHandler extends ITemplateBaseHandler {
-            /**
-             * 创建ViewState , 如果没实现这个方法，则会默认 new DefaultViewState();
-             * @param template
-             * @param id viewState的id
-             * @returns
-             */
-            create?<T extends akView.IBaseViewState>(template: akView.ITemplate, id: string): T;
-            /**
-             * 销毁实例
-             * @param ins
-             * @param template
-             */
-            destroy?(id: string, template: akView.ITemplate): void;
+            //#endregion
         }
         /**
          * View事件key
@@ -190,7 +183,7 @@ declare global {
         }
         type ViewEventKeyType = keyof IViewEventKeys;
 
-        interface IEventHandler extends ITemplateBaseHandler {
+        interface IEventHandler {
             /**
              * 监听
              * @param viewId
@@ -223,32 +216,6 @@ declare global {
                 eventKey: ViewEventKeyType | String,
                 eventData?: EventDataType
             ): void;
-        }
-        /**
-         * 模版处理器
-         */
-        interface ITemplateHandlers extends ITemplateHandlerMap {
-            /**类型 */
-            type: string;
-        }
-
-        interface ITemplateHandlerMap {
-            /**
-             * 资源管理
-             */
-            resHandler?: ITemplateResHandler;
-            /**
-             * 层级管理
-             */
-            layerHandler?: ITemplateLayerHandler;
-            /**
-             * 渲染控制
-             */
-            viewHandler?: ITemplateViewHandler;
-            /**
-             * 状态控制
-             */
-            viewStateHandler?: ITemplateViewStateHandler;
         }
 
         interface IBaseViewState<OptionType = any> extends akView.ICache {
@@ -304,6 +271,7 @@ declare global {
              */
             getSize?(): number;
         }
+
         interface ICacheHandler {
             viewMgr: akView.IMgr;
             onViewStateShow(viewState: akView.IBaseViewState): void;
@@ -546,12 +514,18 @@ declare global {
         interface IMgrInitOption {
             /**
              * 事件处理器
+             * 默认使用 default-event-handler
              */
-            eventHandler: akView.IEventHandler;
+            eventHandler?: akView.IEventHandler;
             /**
              * 缓存处理
+             * 默认使用 lru-cache-handler
              */
-            cacheHandler: akView.ICacheHandler;
+            cacheHandler?: akView.ICacheHandler;
+            /**
+             * 默认缓存处理配置
+             */
+            defaultCacheHandlerOption?: akView.ILRUCacheHandlerOption;
             /**
              * 默认ViewState的配置
              */
@@ -559,17 +533,17 @@ declare global {
             /**
              * 模板处理器字典
              */
-            templateHandlerMap?: TemplateHandlersMap;
+            templateHandlerMap?: akView.TemplateHandlerMap;
             /**
              * 模板字典
              */
             templateMap?: akView.TemplateMap;
         }
         interface IMgr<
+            ViewKeyType = any,
             InitDataTypeMap = any,
             ShowDataTypeMap = any,
             UpdateTypeMap = any,
-            ViewKeyType = any,
             keyType extends keyof ViewKeyType = keyof ViewKeyType
         > {
             /**事件处理器 */
@@ -578,6 +552,10 @@ declare global {
              * 缓存处理器
              */
             cacheHandler: akView.ICacheHandler;
+            /**
+             * 初始化参数(只读)
+             */
+            option: akView.IMgrInitOption;
             /**
              * 初始化
              * @param option 初始化配置
@@ -602,7 +580,7 @@ declare global {
              * 添加模板处理器
              * @param templateHandler
              */
-            addTemplateHandler(templateHandler: ITemplateHandlerMap): void;
+            addTemplateHandler(templateHandler: akView.ITemplateHandler): void;
 
             /**
              * 是否注册了
@@ -774,26 +752,11 @@ declare global {
             isShowEnd(keyOrId: keyType | String): boolean;
 
             /**
-             * 获取模板处理器，优先获取template.customHandlerMap中的handler，如果没有再获取注册的handler
-             * @param type
-             * @param handlerKey 处理器key
-             * @param funcKey 方法key
+             * 获取模板处理器，template.customTemplateHandler和预先注册的TemplateHandler合并
+             * @param templateOrKey
              * @returns
              */
-            getTemplateHandler<HandlerKeyType extends keyof akView.ITemplateHandlerMap>(
-                templateOrKey: keyType | akView.ITemplate,
-                handlerKey: HandlerKeyType
-            ): akView.ITemplateHandlerMap[HandlerKeyType];
-            /**
-             * 获取注册的模板处理器,主要是用于重写和自定义
-             * @param type
-             * @param handlerKey 处理器key
-             * @returns
-             */
-            getRegistedTemplateHandler<HandlerKeyType extends keyof akView.ITemplateHandlerMap>(
-                template: akView.ITemplate,
-                handlerKey: HandlerKeyType
-            ): akView.ITemplateHandlerMap[HandlerKeyType];
+            getTemplateHandler(templateOrKey: keyType | akView.ITemplate): akView.ITemplateHandler;
             /**
              * 模板资源引用持有处理
              * @param viewState
