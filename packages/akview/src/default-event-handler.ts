@@ -1,5 +1,5 @@
 export class DefaultEventHandler implements akView.IEventHandler {
-    viewMgr: akView.IMgr<any, any, any, any, string | number | symbol>;
+    viewMgr: akView.IMgr;
     handleMethodMap: Map<string, akView.ICallableFunction[]> = new Map();
     onRegist(): void {}
     on(viewId: string, eventKey: String | keyof akView.IViewEventKeys, method: akView.ICallableFunction): void {

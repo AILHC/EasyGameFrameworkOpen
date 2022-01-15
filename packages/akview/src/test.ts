@@ -67,64 +67,7 @@ import { ViewMgr } from "./view-mgr";
 //     },
 
 // }
-interface ViewKeyMap {
-    /**dasfas */
-    typeTest: "typeTest";
-    typeTest2: "typeTest2";
-}
-interface ViewShowDataTypeMap {
-    /**dasfas */
-    typeTest: number;
-    typeTest2: { a: number; b: number };
-}
-interface ViewInitDataTypeMap {
-    /**dasfas */
-    typeTest: Date;
-    typeTest2: { m: number; n: number };
-}
-interface ViewUpdateDataTypeMap {
-    /**dasfas */
-    typeTest: string;
-    typeTest2: { c: number; d: number };
-}
-const viewMgr: akView.IMgr<ViewKeyMap, ViewInitDataTypeMap, ViewShowDataTypeMap, ViewUpdateDataTypeMap> = new ViewMgr<
-    ViewKeyMap,
-    ViewInitDataTypeMap,
-    ViewShowDataTypeMap,
-    ViewUpdateDataTypeMap
->();
-viewMgr.show("typeTest2", ""); //提示类型错误
 
-viewMgr.show({ key: "typeTest", onInitData: new Date() });
-//获取viewMgr中指定View的ShowConfig类型信息，类型错误会报错
-const config: GetShowConfigType<typeof viewMgr, "typeTest"> = { key: "typeTest", onInitData: "" };
-
-viewMgr.show(config);
-let id = "typeTest_$_1";
-//会做合并类型检查
-viewMgr.show(id, "");
-//如果不想检查
-viewMgr.show<any>(id, "");
-//精确检查,第二个参数应该是number
-viewMgr.show<GetViewKeyType<ViewKeyMap, "typeTest">>(id, "", new Date());
-
-//参数应该是string
-viewMgr.update("typeTest", 1);
-
-//会做合并类型检查
-viewMgr.update(id, 1);
-//如果不想检查
-viewMgr.update<any>(id, 1);
-//精确检查,第二个参数应该是string
-viewMgr.update<GetViewKeyType<ViewKeyMap, "typeTest">>(id, 1);
-
-//可以获得类型提示,对于字符串变量也不会报错
-viewMgr.isPreloadResLoading();
-viewMgr.isPreloadResLoaded("");
-viewMgr.hide("typeTest", {});
-viewMgr.destroy("typeTest");
-viewMgr.isInited("typeTes");
-viewMgr.isShowed("typeTest2");
 interface IModules {
     hero: {
         BagView;
@@ -298,3 +241,53 @@ interface ITestVueT {
 }
 const vueT: ITestVueT = {} as any;
 vueT.show("detail");
+interface TestViewKeyType3 {
+    testViewKey1: "testViewKey1";
+    testViewKey2: string;
+}
+
+type AddViewDataType<
+    ViewKeyType,
+    Key extends keyof ViewKeyType,
+    T extends { showData?; initData?; updateData?; hideOption? }
+> = { [key in any as Key]: T };
+type ToViewDataType<T extends { showData?; initData?; updateData?; hideOption? }> = T;
+type TestKey1DataType = AddViewDataType<
+    TestViewKeyType3,
+    "testViewKey1",
+    { showData: { a: number; b: boolean }; initData: { c: string } }
+>;
+
+/**
+ * ssss
+ */
+interface TestKeyDataTypeMapType {
+    testViewKey2: ToViewDataType<{ showData: { ddd: "ddd" } }>;
+}
+interface TestKeyDataTypeMapType
+    extends AddViewDataType<
+        TestViewKeyType3,
+        "testViewKey1",
+        { showData: { a: number; b: boolean }; initData: { c: string } }
+    > {}
+
+/**
+ * dfsafda
+ */
+interface ITestViewMgr3<ViewKeyType, KeyDataTypeMapType, keyType extends keyof ViewKeyType = keyof ViewKeyType> {
+    show<KeyOrIdType extends keyType>(
+        idOrkeyOrConfig: KeyOrIdType,
+        onShowData?: KeyDataTypeMapType[ToAnyIndexKey<KeyOrIdType, KeyDataTypeMapType>] extends {
+            showData: infer ShowDataType;
+        }
+            ? ShowDataType
+            : any,
+        onInitData?: KeyDataTypeMapType[ToAnyIndexKey<KeyOrIdType, KeyDataTypeMapType>] extends {
+            initData: infer InitDataType;
+        }
+            ? InitDataType
+            : any
+    ): string;
+}
+var testViewMgr3: ITestViewMgr3<TestViewKeyType3, TestKeyDataTypeMapType>;
+testViewMgr3.show("testViewKey2");

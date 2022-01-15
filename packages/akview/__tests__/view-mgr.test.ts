@@ -7,6 +7,12 @@ declare global {
     interface IAkViewTemplateHandlerTypes {
         TestTemplateHandler;
     }
+    interface IAkViewKeyTypes {
+        testViewKey1?: "testViewKey1";
+    }
+    interface IAkViewDataTypes {
+        testViewKey1: ToAkViewDataType<{ showData: { a: number } }>;
+    }
 }
 //初始化测试
 describe(`ViewMgr初始化测试`, function () {
@@ -19,6 +25,7 @@ describe(`ViewMgr初始化测试`, function () {
             "cacheHandler",
             "_templateLoadResConfigsMap",
             "_templateHandlerMap",
+            "_templateKeyHandlerMap",
             "_templateMap",
             "option"
         ];
@@ -47,10 +54,28 @@ describe(`ViewMgr初始化测试`, function () {
         expect(
             mgr["_templateHandlerMap"]["TestTemplateHandler"].loadRes({
                 id: "abc",
+                template: { key: "abc" },
                 complete: () => {
                     done();
                 }
             })
         );
+    });
+    test(`测试:use(plugin)注册插件`, function () {
+        const mgr = new ViewMgr();
+        mgr.init();
+        mgr.use({
+            onUse() {
+                expect((this as akView.IPlugin).viewMgr).toBeDefined();
+                (this as akView.IPlugin).viewMgr.addTemplateHandler({ type: "TestTemplateHandler" });
+            }
+        });
+
+        expect(mgr["_templateHandlerMap"]["TestTemplateHandler"]).toBeDefined();
+    });
+    test(`测试:template()注册view模板`, function () {
+        const mgr = new ViewMgr();
+        mgr.template("testViewKey1");
+        mgr.template({ key: "" });
     });
 });
