@@ -1,38 +1,39 @@
-import { DefaultViewState } from "./default-view-state";
-
 declare global {
     namespace akView {
         interface IDefaultTemplateHandlerOption {
             viewClass: new (...args) => any;
         }
     }
+    interface IAkViewTemplateHandlerTypes {
+        TestTemplateHandler: "TestTemplateHandler";
+    }
+    interface IAkViewTemplateHandlerOptionTypes {
+        TestTemplateHandler: akView.IDefaultTemplateHandlerOption;
+    }
 }
-// export class DefaultTemplateHandler<Handle> implements akView.ITemplateHandler<"Default">{}
-export class DefaultTemplateHandler implements akView.ITemplateHandler {
-    type: "Default" = "Default";
+export class TestTemplateHandler implements akView.ITemplateHandler {
+    type: "TestTemplateHandler" = "TestTemplateHandler";
     createViewIns?<T extends akView.IView<akView.IBaseViewState<any>>>(template: akView.ITemplate): T {
-        const option: akView.IDefaultTemplateHandlerOption = template.handlerOption as any;
-        if (option?.viewClass) {
-            return new option.viewClass();
+        const option: akView.IDefaultTemplateHandlerOption = template?.handlerOption as any;
+        if (option) {
+            const clas = option.viewClass;
+            return new clas();
         }
     }
     destroyViewIns?<T extends akView.IView<akView.IBaseViewState<any>>>(viewIns: T, template: akView.ITemplate): void {}
-    createViewState?<T extends akView.IBaseViewState<any>>(template: akView.ITemplate): T {
-        return new DefaultViewState() as unknown as T;
-    }
     addToLayer?(viewState: akView.IBaseViewState<any>): void {}
     removeFromLayer?(viewState: akView.IBaseViewState<any>): void {}
     getPreloadResInfo?(template: akView.ITemplate): akView.ITemplateResInfoType {
         return template.key;
     }
-    isLoaded(template: akView.ITemplate): boolean {
+    isLoaded?(template: akView.ITemplate): boolean {
         return true;
     }
-    loadRes?(config: akView.IResLoadConfig): void {
-        console.log(`loadRes id:${config.id},resInfo`, this.getPreloadResInfo(config.template));
+    loadRes?(config: akView.IResLoadConfig<any>): void {
+        console.log(`loadRes id:${config.id},resInfo`, this.getPreloadResInfo(config.template as any));
         config.complete();
     }
-    cancelLoad(id: string, template: akView.ITemplate): void {
+    cancelLoad?(id: string, template: akView.ITemplate): void {
         console.log(`cancelLoad id:${id},resInfo`, this.getPreloadResInfo(template));
     }
     addResRef?(id: string, template: akView.ITemplate): void {

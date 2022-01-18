@@ -3,7 +3,8 @@ const isPromise = <T = any>(val: any): val is Promise<T> => {
 };
 declare global {
     namespace akView {
-        interface IDefaultView<ViewStateType extends akView.IBaseViewState> extends akView.IView<ViewStateType> {
+        interface IDefaultView<ViewStateType extends akView.IBaseViewState = akView.IBaseViewState>
+            extends akView.IView<ViewStateType> {
             /**
              * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
              * @param showData
@@ -100,20 +101,20 @@ export class DefaultViewState implements akView.IViewState {
         }
     }
     entryShowEnd(): void {
-        this.showCfg = undefined;
         this.viewMgr.eventHandler.emit(this.id, "onViewShowEnd");
     }
     hideViewIns(): void {
         this.needHide = false;
         this.removeFromLayer(this);
+        const hideCfg = this.hideCfg;
         if (this.viewIns) {
-            this.viewIns.onViewHide?.(this.hideCfg.hideOption);
+            this.viewIns.onViewHide?.(hideCfg?.hideOption);
         }
 
         if (this.needDestroy) {
             this.entryDestroyed();
         } else {
-            if (this._option.canDecTemplateResRefOnHide && this.hideCfg?.decTemplateResRef) {
+            if (this._option.canDecTemplateResRefOnHide && hideCfg?.decTemplateResRef) {
                 this.viewMgr.decTemplateResRef(this);
             }
             this.hideCfg = undefined;
@@ -174,7 +175,6 @@ export class DefaultViewState implements akView.IViewState {
             //立刻隐藏
             this.hideViewIns();
         }
-        const template = this.template;
 
         if (this.isHoldTemplateResRef) {
             //持有的情况，资源不可能被释放
@@ -182,12 +182,12 @@ export class DefaultViewState implements akView.IViewState {
         } else if (!this.isLoading) {
             const onLoadedCb = (error?) => {
                 this.isLoading = false;
-                if (!error && this.destroyed) {
+                if (!error && !this.destroyed) {
                     this.entryLoaded();
                 }
             };
             this.isLoading = true;
-            this.viewMgr.loadPreloadResById(this.id, onLoadedCb, showCfg.loadParam);
+            this.viewMgr.preloadResById(this.id, onLoadedCb, showCfg.loadOption);
         }
     }
     onUpdate(updateState: any) {

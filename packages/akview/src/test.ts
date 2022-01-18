@@ -291,3 +291,17 @@ interface ITestViewMgr3<ViewKeyType, KeyDataTypeMapType, keyType extends keyof V
 }
 var testViewMgr3: ITestViewMgr3<TestViewKeyType3, TestKeyDataTypeMapType>;
 testViewMgr3.show("testViewKey2");
+
+type GetPluginOptionType<Plugin> = Plugin extends { onUse(...args: infer P): void } ? P[0] : any;
+interface TestPluginUseType {
+    use<Plugin extends akView.IPlugin>(plugin: Plugin, option: GetPluginOptionType<Plugin>);
+}
+const pluginUse: TestPluginUseType = {} as any;
+interface ITestPlugin extends akView.IPlugin {
+    onUse(option: { ab: number }): void;
+}
+pluginUse.use({} as ITestPlugin, { ab: 1 });
+
+// type GetKeyType<idType> = idType extends `${infer KeyType}_$_${number}` ? KeyType : string;
+
+// function showById<idType extends string>(id:idType,keyType:)
