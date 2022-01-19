@@ -13,34 +13,33 @@ export class ViewMgr<
     keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
 > implements akView.IMgr<ViewKeyTypes, ViewDataTypes, keyType>
 {
+    private _cacheHandler: akView.ICacheHandler;
     /**
      * 缓存处理器
      */
     public get cacheHandler(): akView.ICacheHandler {
         return this._cacheHandler;
     }
-    private _cacheHandler: akView.ICacheHandler;
+
+    private _eventHandler: akView.IEventHandler;
     /**事件处理器 */
     public get eventHandler(): akView.IEventHandler {
         return this._eventHandler;
     }
-    private _eventHandler: akView.IEventHandler;
+    private _templateHandler: akView.ITemplateHandler;
+    /**
+     * 模板处理器
+     */
+    public get templateHandler(): akView.ITemplateHandler {
+        return this._templateHandler;
+    }
+
     /**模版字典 */
     protected _templateMap: akView.TemplateMap<keyType>;
 
     /**状态缓存 */
     protected _viewStateMap: akView.ViewStateMap;
 
-    /**
-     * 模板处理器字典
-     * key为handleType,value为akView.ITemplateHandler
-     */
-    protected _templateHandlerMap: akView.TemplateHandlerMap;
-    /**
-     * 模板处理器字典
-     * key为templateKey,value为akView.ITemplateHandler
-     */
-    protected _templateKeyHandlerMap: { [key: string]: akView.ITemplateHandler };
     /**是否初始化 */
     protected _inited: boolean;
     /**实例数，用于创建id */
@@ -63,11 +62,11 @@ export class ViewMgr<
             ? option?.cacheHandler
             : new LRUCacheHandler(option?.defaultCacheHandlerOption);
         this._viewStateMap = {};
-        this._templateHandlerMap = option?.templateHandlerMap ? option?.templateHandlerMap : ({} as any);
-        if (!this._templateHandlerMap["Default"]) {
-            this._templateHandlerMap["Default"] = new DefaultTemplateHandler();
+        let templateHandler = option?.templateHandler;
+        if (!templateHandler) {
+            templateHandler = new DefaultTemplateHandler(option.defaultTemplateHandlerInitOption);
         }
-        this._templateKeyHandlerMap = {};
+        this._templateHandler = templateHandler;
 
         this._defaultViewStateOption = option?.defaultViewStateOption ? option?.defaultViewStateOption : {};
         this._inited = true;
@@ -108,27 +107,6 @@ export class ViewMgr<
             }
         }
     }
-    addTemplateHandler(templateHandler: akView.ITemplateHandler): boolean {
-        if (!this._inited) {
-            console.error(`[viewMgr](addTemplateHandler): is no inited`);
-            return;
-        }
-        if (templateHandler) {
-            const type = templateHandler.type;
-            if (typeof type === "string") {
-                if (!this._templateHandlerMap[type]) {
-                    this._templateHandlerMap[type] = templateHandler;
-                    return true;
-                } else {
-                    console.error(`[viewMgr](addTemplateHandler): [type:${type}] handler is exit `);
-                }
-            } else {
-                console.error(`[viewMgr](addTemplateHandler) handler type is null`);
-            }
-        } else {
-            console.error(`[viewMgr](addTemplateHandler) handler is null`);
-        }
-    }
     hasTemplate(key: keyType): boolean {
         return !!this._templateMap[key as any];
     }
@@ -149,8 +127,7 @@ export class ViewMgr<
         if (!template) {
             return;
         }
-        const handler = this.getTemplateHandler(template);
-        return handler?.getPreloadResInfo(template);
+        return this._templateHandler.getPreloadResInfo(template);
     }
     /**
      * 根据id加载模板固定资源
@@ -197,8 +174,8 @@ export class ViewMgr<
             config.progress = progress;
         }
         config.loadOption === undefined && (config.loadOption = loadOption);
-        const handler = this.getTemplateHandler(template);
-        if (!handler || !handler.loadRes || handler.isLoaded?.(template)) {
+        const handler = this._templateHandler;
+        if (!handler.loadRes || handler.isLoaded?.(template)) {
             config.complete?.();
             return;
         } else {
@@ -213,8 +190,8 @@ export class ViewMgr<
         if (!id) return;
         const key = this.getKeyById(id);
         const template = this.getTemplate(key);
-        const handler = this.getTemplateHandler(template);
-        handler?.cancelLoad(id, template);
+
+        this._templateHandler.cancelLoad(id, template);
     }
     /**
      * 预加载模板固定资源,给业务使用，用于预加载
@@ -293,9 +270,8 @@ export class ViewMgr<
     destroyRes(key: keyType): void {
         const template = this.getTemplate(key as any);
         if (template) {
-            const resHandler = this.getTemplateHandler(template);
-            if (resHandler?.destroyRes) {
-                resHandler.destroyRes(template);
+            if (this._templateHandler.destroyRes) {
+                this._templateHandler.destroyRes(template);
             } else {
                 console.warn(`can not handle template:${template.key} destroyRes`);
             }
@@ -312,12 +288,7 @@ export class ViewMgr<
         } else {
             template = this.getTemplate(this.getKeyById(keyOrIdOrTemplate));
         }
-        const resHandler = this.getTemplateHandler(template);
-        if (!resHandler || !resHandler.isLoaded) {
-            //没有加载处理器等于加载完成
-            return true;
-        }
-        return resHandler.isLoaded(template);
+        return this._templateHandler.isLoaded(template);
     }
     /**
      * 模板资源引用持有处理
@@ -327,13 +298,7 @@ export class ViewMgr<
         if (viewState && !viewState.isHoldTemplateResRef) {
             const id = viewState.id;
             const template = viewState.template;
-
-            const resHandler = this.getTemplateHandler(template);
-            if (resHandler?.addResRef) {
-                resHandler.addResRef(id, template);
-            } else {
-                console.warn(`没有资源处理方法:resHandler.addTemplateResRef`);
-            }
+            this._templateHandler.addResRef(id, template);
             viewState.isHoldTemplateResRef = true;
         }
     }
@@ -345,12 +310,7 @@ export class ViewMgr<
         if (viewState && viewState.isHoldTemplateResRef) {
             const template = viewState.template;
             const id = viewState.id;
-            const resHandler = this.getTemplateHandler(template);
-            if (resHandler?.decResRef) {
-                resHandler.decResRef(id, template);
-            } else {
-                console.warn(`没有资源处理方法:resHandler.decTemplateResRef`);
-            }
+            this._templateHandler.decResRef(id, template);
             viewState.isHoldTemplateResRef = false;
         }
     }
@@ -609,9 +569,8 @@ export class ViewMgr<
         if (!this.isPreloadResLoaded(template)) return;
         let ins = viewState.viewIns;
         if (ins) return ins;
-        const handler = this.getTemplateHandler(template);
 
-        ins = handler?.createView?.(template);
+        ins = this._templateHandler.createView(template);
 
         if (ins) {
             ins.viewState = viewState;
@@ -647,37 +606,6 @@ export class ViewMgr<
         }
     }
     /**
-     * 获取模板处理器，template.customTemplateHandler和预先注册的TemplateHandler合并
-     * @param templateOrKey
-     * @returns
-     */
-    getTemplateHandler(templateOrKey: keyType | akView.ITemplate): akView.ITemplateHandler {
-        let template: akView.ITemplate;
-        if (typeof templateOrKey === "object") {
-            template = templateOrKey;
-        } else if (typeof templateOrKey === "string") {
-            template = this.getTemplate(templateOrKey);
-        }
-        if (!template) {
-            return;
-        }
-
-        let handler: akView.ITemplateHandler = this._templateKeyHandlerMap[template.key];
-        if (!handler) {
-            const registedHandler = this._templateHandlerMap[template.handleType];
-            handler = template.customTemplateHandler && template.customTemplateHandler;
-            if (!handler) {
-                handler = registedHandler;
-            } else {
-                handler = Object.assign({}, registedHandler, handler);
-            }
-            this._templateKeyHandlerMap[template.key] = handler;
-        }
-
-        return handler;
-    }
-
-    /**
      * 根据id获取缓存中的ViewState
      * @param id
      * @returns
@@ -709,12 +637,8 @@ export class ViewMgr<
         if (!template) {
             return;
         }
-        let handler = this.getTemplateHandler(key);
-        if (handler?.createViewState) {
-            viewState = handler.createViewState(template);
-        } else {
-            viewState = new DefaultViewState();
-        }
+        viewState = this._templateHandler.createViewState?.(template);
+        if (!viewState) viewState = new DefaultViewState();
         if (viewState) {
             viewState.onCreate(Object.assign(this._defaultViewStateOption, template.viewStateInitOption));
             viewState.id = id;

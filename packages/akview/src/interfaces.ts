@@ -56,7 +56,7 @@ declare global {
         Default: string;
     }
     interface IAkViewTemplateHandlerOptionTypes {
-        Default: akView.IDefaultTemplateHandlerOption;
+        Default: akView.IDefaultTemplateHandlerHandleOption;
     }
     /**
      * 加载配置，业务透传到资源加载层
@@ -108,7 +108,7 @@ declare global {
             /**
              * 处理参数
              */
-            handlerOption?: GetTypeMapType<HandleType, IAkViewTemplateHandlerOptionTypes>;
+            handleOption?: GetTypeMapType<HandleType, IAkViewTemplateHandlerOptionTypes>;
 
             /**
              * viewState的配置
@@ -129,13 +129,11 @@ declare global {
 
         type TemplateHandlerMap = { [key in keyof IAkViewTemplateHandlerTypes]?: ITemplateHandler };
         interface ITemplateHandler {
-            /**类型 */
-            type: keyof IAkViewTemplateHandlerTypes;
             /**
              * 创建akView.IView实例
              * @param template
              */
-            createView?<T extends akView.IView>(template: akView.ITemplate): T;
+            createView<T extends akView.IView>(template: akView.ITemplate): T;
             /**
              * 销毁渲染实例
              * @param viewIns
@@ -164,12 +162,12 @@ declare global {
              * 获取预加载资源
              * @param template
              */
-            getPreloadResInfo?(template: akView.ITemplate): akView.ITemplateResInfoType;
+            getPreloadResInfo(template: akView.ITemplate): akView.ITemplateResInfoType;
             /**
              * 判断资源是否已经加载
              * @param template
              */
-            isLoaded?(template: akView.ITemplate): boolean;
+            isLoaded(template: akView.ITemplate): boolean;
             /**
              * 加载资源
              * 为了防止所有资源没下载完时，加载完成的单项资源被别的逻辑释放掉
@@ -177,31 +175,31 @@ declare global {
              * 总体加载完成后的资源引用则由业务处理了。
              * @param config
              */
-            loadRes?(config: IResLoadConfig): void;
+            loadRes(config: IResLoadConfig): void;
             /**
              * 取消模板资源下载
              * @param id
              * @param template
              */
-            cancelLoad?(id: string, template: akView.ITemplate): void;
+            cancelLoad(id: string, template: akView.ITemplate): void;
             /**
              * 持有模板资源引用
              * @param id
              * @param template
              */
-            addResRef?(id: string, template: akView.ITemplate): void;
+            addResRef(id: string, template: akView.ITemplate): void;
             /**
              * 释放模板资源引用
              * @param id
              * @param template
              */
-            decResRef?(id: string, template: akView.ITemplate): void;
+            decResRef(id: string, template: akView.ITemplate): void;
             /**
              * 销毁模板资源
              * @param template
              * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
              */
-            destroyRes?(template: akView.ITemplate): boolean;
+            destroyRes(template: akView.ITemplate): boolean;
 
             //#endregion
         }
@@ -535,14 +533,23 @@ declare global {
         interface IMgrInitOption {
             /**
              * 事件处理器
-             * 默认使用 default-event-handler
+             * 默认使用 default-event-handler.ts
              */
             eventHandler?: akView.IEventHandler;
             /**
              * 缓存处理
-             * 默认使用 lru-cache-handler
+             * 默认使用 lru-cache-handler.ts
              */
             cacheHandler?: akView.ICacheHandler;
+            /**
+             * 模板处理器
+             * 默认使用 default-template-handler.ts
+             */
+            templateHandler?: akView.ITemplateHandler;
+            /**
+             * 默认模板处理配置
+             */
+            defaultTemplateHandlerInitOption?: akView.IDefaultTemplateHandlerInitOption;
             /**
              * 默认缓存处理配置
              */
@@ -603,6 +610,10 @@ declare global {
              */
             cacheHandler: akView.ICacheHandler;
             /**
+             * 模板处理器
+             */
+            templateHandler: akView.ITemplateHandler;
+            /**
              * 初始化参数(只读)
              */
             option: akView.IMgrInitOption;
@@ -635,11 +646,6 @@ declare global {
                     | akView.ITemplate<ViewKeyTypes, HandleType>
                     | Array<akView.ITemplate<ViewKeyTypes, HandleType> | keyType>
             ): void;
-            /**
-             * 添加模板处理器
-             * @param templateHandler
-             */
-            addTemplateHandler(templateHandler: akView.ITemplateHandler): boolean;
 
             /**
              * 是否注册了
@@ -818,13 +824,6 @@ declare global {
              * @param keyOrViewState
              */
             isViewShowed<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean;
-
-            /**
-             * 获取模板处理器，template.customTemplateHandler和预先注册的TemplateHandler合并
-             * @param templateOrKey
-             * @returns
-             */
-            getTemplateHandler(templateOrKey: keyType | akView.ITemplate): akView.ITemplateHandler;
             /**
              * 模板资源引用持有处理
              * @param viewState

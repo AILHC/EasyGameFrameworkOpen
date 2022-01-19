@@ -189,7 +189,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         mgr.init();
         const viewKey = mgr.getKey("regitstTestViewKey8");
-        mgr.template({ key: viewKey, handlerOption: { viewClass: TestWithAnimView } });
+        mgr.template({ key: viewKey, handleOption: { viewClass: TestWithAnimView } });
         const showViewStateFuncSpyOn = jest.spyOn(mgr, "showViewState");
 
         //创建
@@ -216,7 +216,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         mgr.init();
         const viewKey = "regitstTestViewKey9";
-        mgr.template({ key: viewKey, handlerOption: { viewClass: TestView } });
+        mgr.template({ key: viewKey, handleOption: { viewClass: TestView } });
 
         const sigViewState = mgr.getOrCreateViewState(viewKey);
 
@@ -246,7 +246,7 @@ describe(`ViewMgr初始化测试`, function () {
         mgr.init();
 
         const viewKey = mgr.getKey("regitstTestViewKey10");
-        mgr.template({ key: viewKey, handleType: "TestTemplateHandler", handlerOption: { viewClass: TestView } });
+        mgr.template({ key: viewKey, handleType: "TestTemplateHandler", handleOption: { viewClass: TestView } });
         let handler = new TestTemplateHandler();
         mgr.addTemplateHandler(handler);
         let isTestLoaded = false;
@@ -302,7 +302,7 @@ describe(`ViewMgr初始化测试`, function () {
         mgr.template({
             key: viewKey,
             handleType: "TestTemplateHandler",
-            handlerOption: { viewClass: TestWithAnimView }
+            handleOption: { viewClass: TestWithAnimView }
         });
         let handler = new TestTemplateHandler();
         mgr.addTemplateHandler(handler);

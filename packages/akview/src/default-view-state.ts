@@ -253,8 +253,8 @@ export class DefaultViewState implements akView.IDefaultViewState {
             this.viewIns = undefined;
         }
         const template = this.template;
-        const viewHandler = viewMgr.getTemplateHandler(template);
-        viewHandler?.destroyView(viewIns, template);
+        const handler = viewMgr.templateHandler;
+        handler?.destroyView(viewIns, template);
         //释放引用
         viewMgr.decTemplateResRef(this);
         //销毁资源
@@ -264,22 +264,22 @@ export class DefaultViewState implements akView.IDefaultViewState {
     }
     addToLayer(viewState: akView.IViewState) {
         if (viewState.template) {
-            const layerHandler = this.viewMgr.getTemplateHandler(viewState.template);
-            if (!layerHandler?.addToLayer) {
+            const handler = this.viewMgr.templateHandler;
+            if (!handler?.addToLayer) {
                 console.error(`${viewState.template.key} 没有取到添加到层级的方法`);
             } else {
-                layerHandler.addToLayer(viewState);
+                handler.addToLayer(viewState);
             }
         }
     }
     removeFromLayer(viewState: akView.IViewState): void {
         if (viewState.template) {
-            const layerHandler = this.viewMgr.getTemplateHandler(viewState.template);
+            const handler = this.viewMgr.templateHandler;
 
-            if (!layerHandler?.removeFromLayer) {
+            if (!handler?.removeFromLayer) {
                 console.error(`${viewState.template.key} 没有取到从层级移除的方法`);
             } else {
-                layerHandler.removeFromLayer(viewState);
+                handler.removeFromLayer(viewState);
             }
         }
     }
