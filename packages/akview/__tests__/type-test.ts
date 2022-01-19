@@ -31,14 +31,17 @@ interface CustomViewDataTypes extends TypeTest2DataType {}
 const viewMgr: akView.IMgr<CustomViewKeys, CustomViewDataTypes> = new ViewMgr<CustomViewKeys, CustomViewDataTypes>();
 //注册Template测试
 viewMgr.template("typeTest");
+//类型不对报错
 viewMgr.template("typeTes");
 
 viewMgr.template({ key: "typeTest" });
-
+//key类型不对，报错
 viewMgr.template({ key: "typeTes" });
 
 viewMgr.template([{ key: "typeTest" }, "typeTest2", { key: "typeTest3" }]);
+//key类型不对报错
 viewMgr.template([{ key: "ypeTest" }, "typeTest5", { key: "typeTes" }]);
+
 //提示handlerOption类型
 viewMgr.template({ key: "typeTest", handleType: "Default", handlerOption: { viewClass } });
 
@@ -79,7 +82,7 @@ viewMgr.show({ key: "typeTest", onShowData: 1 });
 const config: GetShowConfigType<typeof viewMgr, "typeTest"> = { key: "typeTest", onInitData: "" };
 
 viewMgr.show(config);
-let viewState = {} as akView.IBaseViewState;
+let viewState = {} as akView.IViewState;
 //会做合并类型检查
 viewMgr.show(viewState, {});
 //如果不想检查
@@ -124,8 +127,8 @@ viewMgr.isPreloadResLoading("typeTest3");
 viewMgr.isPreloadResLoaded("");
 viewMgr.hide("typeTest", {});
 viewMgr.destroy("typeTest");
-viewMgr.isInited(viewState);
-viewMgr.isShowed("typeTest2");
+viewMgr.isViewInited(viewState);
+viewMgr.isViewShowed("typeTest2");
 
 //扩展IAkViewKeys和IAkViewDataTypes的类型
 declare global {
@@ -162,9 +165,9 @@ viewMgr2.show("testKey1", "");
 //类型正确
 viewMgr2.show({ key: "testKey1", onInitData: new Date() });
 //获取viewMgr中指定View的ShowConfig类型信息，类型错误会报错
-const config: GetShowConfigType<typeof viewMgr2, "testKey1"> = { key: "testKey1", onInitData: "" };
+const config2: GetShowConfigType<typeof viewMgr2, "testKey1"> = { key: "testKey1", onInitData: "" };
 
-viewMgr2.show(config);
+viewMgr2.show(config2);
 let viewState2 = {} as DefaultViewState;
 //会做合并类型检查
 viewMgr2.show(viewState2, "");
@@ -191,8 +194,8 @@ viewMgr2.isPreloadResLoading();
 viewMgr2.isPreloadResLoaded("");
 viewMgr2.hide("testKey1", {});
 viewMgr2.destroy("testKey1");
-viewMgr2.isInited("testKey1");
-viewMgr2.isShowed("testKey1");
+viewMgr2.isViewInited("testKey1");
+viewMgr2.isViewShowed("testKey1");
 
 //报错，key不对
 viewMgr2.template("testKey5");

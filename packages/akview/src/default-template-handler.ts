@@ -10,18 +10,18 @@ declare global {
 // export class DefaultTemplateHandler<Handle> implements akView.ITemplateHandler<"Default">{}
 export class DefaultTemplateHandler implements akView.ITemplateHandler {
     type: "Default" = "Default";
-    createViewIns?<T extends akView.IView<akView.IBaseViewState<any>>>(template: akView.ITemplate): T {
+    createView?<T extends akView.IView<akView.IViewState<any>>>(template: akView.ITemplate): T {
         const option: akView.IDefaultTemplateHandlerOption = template.handlerOption as any;
         if (option?.viewClass) {
             return new option.viewClass();
         }
     }
-    destroyViewIns?<T extends akView.IView<akView.IBaseViewState<any>>>(viewIns: T, template: akView.ITemplate): void {}
-    createViewState?<T extends akView.IBaseViewState<any>>(template: akView.ITemplate): T {
+    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: akView.ITemplate): void {}
+    createViewState?<T extends akView.IViewState<any>>(template: akView.ITemplate): T {
         return new DefaultViewState() as unknown as T;
     }
-    addToLayer?(viewState: akView.IBaseViewState<any>): void {}
-    removeFromLayer?(viewState: akView.IBaseViewState<any>): void {}
+    addToLayer?(viewState: akView.IViewState<any>): void {}
+    removeFromLayer?(viewState: akView.IViewState<any>): void {}
     getPreloadResInfo?(template: akView.ITemplate): akView.ITemplateResInfoType {
         return template.key;
     }
@@ -29,11 +29,11 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
         return true;
     }
     loadRes?(config: akView.IResLoadConfig): void {
-        console.log(`loadRes id:${config.id},resInfo`, this.getPreloadResInfo(config.template));
+        console.log(`loadRes key:${config.template.key},resInfo`, this.getPreloadResInfo(config.template));
         config.complete();
     }
     cancelLoad(id: string, template: akView.ITemplate): void {
-        console.log(`cancelLoad id:${id},resInfo`, this.getPreloadResInfo(template));
+        console.log(`cancelLoad key:${template.key},resInfo`, this.getPreloadResInfo(template));
     }
     addResRef?(id: string, template: akView.ITemplate): void {
         console.log(`addResRef id:${id},resInfo`, this.getPreloadResInfo(template));

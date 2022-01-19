@@ -5,27 +5,27 @@ export class TestWithAnimView implements akView.IDefaultView {
             setTimeout(res, 10);
         });
     }
-    viewState: akView.IBaseViewState<any>;
+    viewState: akView.IViewState<any>;
     isInited?: boolean;
     isShowed?: boolean;
     isShowEnd?: boolean;
-    onViewInit?(initData?: any): void {}
-    onViewShow?(showData?: any): void {}
-    onViewUpdate?(updateData?: any): void {}
-    onViewHide?(hideOption: any): void {}
-    onViewDestroy?(): void {}
+    onInitView?(initData?: any): void {}
+    onShowView?(showData?: any): void {}
+    onUpdateView?(updateData?: any): void {}
+    onHideView?(hideOption: any): void {}
+    onDestroyView?(): void {}
     getNode() {}
 }
 export class TestView implements akView.IDefaultView {
     onBeforeViewShow?(showData?: any): void {}
-    viewState: akView.IBaseViewState<any>;
+    viewState: akView.IViewState<any>;
     isInited?: boolean;
     isShowed?: boolean;
     isShowEnd?: boolean;
-    onViewInit?(initData?: any): void {}
-    onViewShow?(showData?: any): void {}
-    onViewUpdate?(updateData?: any): void {}
-    onViewHide?(hideOption: any): void {}
-    onViewDestroy?(): void {}
+    onInitView?(initData?: any): void {}
+    onShowView?(showData?: any): void {}
+    onUpdateView?(updateData?: any): void {}
+    onHideView?(hideOption: any): void {}
+    onDestroyView?(): void {}
     getNode() {}
 }

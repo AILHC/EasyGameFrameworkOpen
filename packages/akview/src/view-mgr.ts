@@ -30,10 +30,7 @@ export class ViewMgr<
 
     /**状态缓存 */
     protected _viewStateMap: akView.ViewStateMap;
-    /**
-     * 模板加载完成回调数组
-     */
-    protected _templateLoadResConfigsMap: { [key: string]: { [key: string]: akView.IResLoadConfig } };
+
     /**
      * 模板处理器字典
      * key为handleType,value为akView.ITemplateHandler
@@ -66,7 +63,6 @@ export class ViewMgr<
             ? option?.cacheHandler
             : new LRUCacheHandler(option?.defaultCacheHandlerOption);
         this._viewStateMap = {};
-        this._templateLoadResConfigsMap = {} as any;
         this._templateHandlerMap = option?.templateHandlerMap ? option?.templateHandlerMap : ({} as any);
         if (!this._templateHandlerMap["Default"]) {
             this._templateHandlerMap["Default"] = new DefaultTemplateHandler();
@@ -164,7 +160,7 @@ export class ViewMgr<
     preloadResById(
         idOrConfig: string | akView.IResLoadConfig,
         complete?: akView.LoadResCompleteCallback,
-        loadOption?: akView.ILoadOption,
+        loadOption?: IAkViewLoadOption,
         progress?: akView.LoadResProgressCallback
     ): void {
         if (!this._inited) {
@@ -200,88 +196,39 @@ export class ViewMgr<
             }
             config.progress = progress;
         }
-        config.loadOption === loadOption && (config.loadOption = loadOption);
+        config.loadOption === undefined && (config.loadOption = loadOption);
         const handler = this.getTemplateHandler(template);
-        if (handler.isLoaded(template)) {
+        if (!handler || !handler.loadRes || handler.isLoaded?.(template)) {
             config.complete?.();
             return;
-        }
-        if (!handler?.loadRes) {
-            const error = `[loadPreloadResById] ${
-                "template: " + template.key + ("==type:" + template.handleType + "no handler")
-            }`;
-            console.error(error);
-            config.complete?.(error);
-            return;
-        }
-        let loadConfigs = this._templateLoadResConfigsMap[key];
-        let isLoading = false;
-        if (!loadConfigs) {
-            loadConfigs = {};
-            this._templateLoadResConfigsMap[key] = loadConfigs;
         } else {
-            isLoading = true;
+            handler.loadRes(config);
         }
-        (config.complete || config.progress) && (loadConfigs[config.id] = config);
-        if (isLoading) return;
-
-        const loadResComplete = (error?: any) => {
-            const loadConfigs = this._templateLoadResConfigsMap[key];
-
-            error && console.error(` templateKey ${key} load error:`, error);
-            let loadConfig: akView.IResLoadConfig;
-            this._templateLoadResConfigsMap[key] = undefined;
-            for (let id in loadConfigs) {
-                loadConfig = loadConfigs[id];
-                if (loadConfig) {
-                    loadConfig.complete?.(error);
-                    loadConfigs[id] = undefined;
-                }
-            }
-        };
-        const loadProgress = (...args: any[]) => {
-            const loadConfigs = this._templateLoadResConfigsMap[key];
-            let loadConfig: akView.IResLoadConfig;
-            for (let id in loadConfigs) {
-                loadConfig = loadConfigs[id];
-                if (loadConfig?.progress) {
-                    loadConfig.progress.apply(null, args);
-                }
-            }
-        };
-
-        const loadConfig = Object.assign({}, config, { complete: loadResComplete, progress: loadProgress });
-        handler.loadRes(loadConfig);
     }
     /**
      * 取消加载
      * @param id
      */
-    cancelLoadPreloadRes(id: string): void {
+    cancelPreloadRes(id: string): void {
         if (!id) return;
         const key = this.getKeyById(id);
-
         const template = this.getTemplate(key);
         const handler = this.getTemplateHandler(template);
         handler?.cancelLoad(id, template);
-        const configs = this._templateLoadResConfigsMap[key as string];
-        const config = configs[id];
-        delete configs[id];
-        config?.complete?.(`cancel load res`, true);
     }
     /**
      * 预加载模板固定资源,给业务使用，用于预加载
      * 会自动创建id，判断key是否为id
      * @param key
      * @param complate 加载资源完成回调，如果加载失败会error不为空
-     * @param loadParam 加载资源透传参数，可选透传给资源加载处理器
+     * @param loadOption 加载资源透传参数，可选透传给资源加载处理器
      * @param progress 加载资源进度回调
      *
      */
-    preloadRes<LoadParam = any>(
+    preloadRes(
         key: keyType,
         complete?: akView.LoadResCompleteCallback,
-        loadParam?: LoadParam,
+        loadOption?: IAkViewLoadOption,
         progress?: akView.LoadResProgressCallback
     ): string;
     /**
@@ -345,7 +292,7 @@ export class ViewMgr<
 
     destroyRes(key: keyType): void {
         const template = this.getTemplate(key as any);
-        if (template && !this.isPreloadResLoading(template.key)) {
+        if (template) {
             const resHandler = this.getTemplateHandler(template);
             if (resHandler?.destroyRes) {
                 resHandler.destroyRes(template);
@@ -353,16 +300,6 @@ export class ViewMgr<
                 console.warn(`can not handle template:${template.key} destroyRes`);
             }
         }
-    }
-
-    isPreloadResLoading(keyOrId: keyType | String): boolean {
-        if (!this._inited) {
-            console.error(`viewMgr is no inited`);
-            return;
-        }
-        keyOrId = this.getKeyById(keyOrId);
-        const configs = this._templateLoadResConfigsMap[keyOrId as string];
-        return !!(configs && Object.keys(configs).length > 0);
     }
     isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | akView.ITemplate): boolean {
         if (!this._inited) {
@@ -382,26 +319,60 @@ export class ViewMgr<
         }
         return resHandler.isLoaded(template);
     }
-
     /**
-     * 创建View
+     * 模板资源引用持有处理
+     * @param viewState
+     */
+    addTemplateResRef(viewState: akView.IViewState): void {
+        if (viewState && !viewState.isHoldTemplateResRef) {
+            const id = viewState.id;
+            const template = viewState.template;
+
+            const resHandler = this.getTemplateHandler(template);
+            if (resHandler?.addResRef) {
+                resHandler.addResRef(id, template);
+            } else {
+                console.warn(`没有资源处理方法:resHandler.addTemplateResRef`);
+            }
+            viewState.isHoldTemplateResRef = true;
+        }
+    }
+    /**
+     * 模板资源引用释放处理
+     * @param viewState
+     */
+    decTemplateResRef(viewState: akView.IViewState): void {
+        if (viewState && viewState.isHoldTemplateResRef) {
+            const template = viewState.template;
+            const id = viewState.id;
+            const resHandler = this.getTemplateHandler(template);
+            if (resHandler?.decResRef) {
+                resHandler.decResRef(id, template);
+            } else {
+                console.warn(`没有资源处理方法:resHandler.decTemplateResRef`);
+            }
+            viewState.isHoldTemplateResRef = false;
+        }
+    }
+    /**
+     * 创建新的ViewState并显示
      * @param keyOrConfig 配置
      * @returns 返回ViewState
      */
-    create<T extends akView.IBaseViewState = akView.IBaseViewState, ConfigKeyType extends keyType = keyType>(
+    create<T extends akView.IViewState = akView.IViewState, ConfigKeyType extends keyType = keyType>(
         keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>
     ): T;
     /**
-     * 创建View
+     * 创建新的ViewState并显示
      * @param keyOrConfig 字符串key
      * @param onShowData 显示数据
      * @param onInitData 初始化数据
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
-     * @param needShow 需要渲染到舞台，默认false
+     * @param needShowView 需要显示View到场景，默认false
      * @returns 返回ViewState
      */
-    create<T extends akView.IBaseViewState = akView.IBaseViewState, ViewKey extends keyType = keyType>(
+    create<T extends akView.IViewState = akView.IViewState, ViewKey extends keyType = keyType>(
         keyOrConfig: ViewKey,
         onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>,
@@ -409,20 +380,20 @@ export class ViewMgr<
         cacheMode?: akView.ViewStateCacheModeType
     ): T;
     /**
-     * 创建View
+     * 创建新的ViewState并显示
      * @param keyOrConfig 字符串key|配置
      * @param onShowData 显示数据
      * @param onInitData 初始化数据
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
-     * @param needShow 需要渲染到舞台，默认false
+     * @param needShowView 需要显示View到场景，默认false
      * @returns 返回ViewState
      */
-    create<CreateKeyType extends keyType, T extends akView.IBaseViewState = akView.IBaseViewState>(
+    create<CreateKeyType extends keyType, T extends akView.IViewState = akView.IViewState>(
         keyOrConfig: string | akView.IShowConfig<CreateKeyType, ViewDataTypes>,
         onShowData?: akView.GetShowDataType<CreateKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>,
-        needShow?: boolean,
+        needShowView?: boolean,
         cacheMode?: akView.ViewStateCacheModeType
     ): T {
         if (!this._inited) {
@@ -440,7 +411,7 @@ export class ViewMgr<
             showCfg = keyOrConfig as any;
             onShowData !== undefined && (showCfg.onShowData = onShowData);
             onInitData !== undefined && (showCfg.onInitData = onInitData);
-            needShow !== undefined && (showCfg.needShow = needShow);
+            needShowView !== undefined && (showCfg.needShowView = needShowView);
         } else {
             console.warn(`(create) unknown param`, keyOrConfig);
             return;
@@ -463,7 +434,7 @@ export class ViewMgr<
      * @param onShowData 显示透传数据
      * @param onInitData 初始化数据
      */
-    show<TKeyType extends keyType, ViewStateType extends akView.IBaseViewState>(
+    show<TKeyType extends keyType, ViewStateType extends akView.IViewState>(
         keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>,
         onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>
@@ -517,15 +488,15 @@ export class ViewMgr<
      * @returns
      */
     public showViewState(
-        viewState: akView.IBaseViewState,
+        viewState: akView.IViewState,
         showCfg: akView.IShowConfig<keyType, ViewKeyTypes>
-    ): akView.IBaseViewState {
+    ): akView.IViewState {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
         if (!viewState) return;
-        showCfg.needShow = true;
+        showCfg.needShowView = true;
         viewState.onShow(showCfg as any);
         const cacheMode = viewState.cacheMode;
         if (cacheMode && cacheMode !== "FOREVER") {
@@ -539,14 +510,14 @@ export class ViewMgr<
      * @param updateState 更新数据
      */
     update<K extends keyType>(
-        keyOrViewState: K | akView.IBaseViewState,
+        keyOrViewState: K | akView.IViewState,
         updateState?: akView.GetUpdateDataType<K, ViewDataTypes>
     ): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let viewState: akView.IBaseViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
+        let viewState: akView.IViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
         if (typeof keyOrViewState === "object") {
             viewState = keyOrViewState;
         } else {
@@ -567,14 +538,14 @@ export class ViewMgr<
      * @param hideCfg
      */
     hide<KeyOrIdType extends keyType>(
-        keyOrViewState: KeyOrIdType | akView.IBaseViewState,
+        keyOrViewState: KeyOrIdType | akView.IViewState,
         hideCfg?: akView.IHideConfig<KeyOrIdType, ViewDataTypes>
     ): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let viewState: akView.IBaseViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
+        let viewState: akView.IViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
         if (typeof keyOrViewState === "object") {
             viewState = keyOrViewState;
         } else {
@@ -589,12 +560,12 @@ export class ViewMgr<
             this.deleteViewState(viewState.id);
         }
     }
-    destroy(keyOrViewState: keyType | akView.IBaseViewState, destroyRes?: boolean): void {
+    destroy(keyOrViewState: keyType | akView.IViewState, destroyRes?: boolean): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let viewState: akView.IBaseViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
+        let viewState: akView.IViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
         if (typeof keyOrViewState === "object") {
             viewState = keyOrViewState;
         } else {
@@ -608,32 +579,23 @@ export class ViewMgr<
         //从缓存中移除
         this.deleteViewState(keyOrViewState as string);
     }
-    isInited<ViewStateType extends akView.IBaseViewState>(keyOrViewState: keyType | ViewStateType): boolean {
+    isViewInited<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean {
         let viewState: ViewStateType;
         if (typeof keyOrViewState !== "object") {
             viewState = this.getViewState(keyOrViewState as string);
         } else {
             viewState = keyOrViewState;
         }
-        return viewState?.viewIns?.isInited;
+        return viewState?.isViewInited;
     }
-    isShowed<ViewStateType extends akView.IBaseViewState>(keyOrViewState: keyType | ViewStateType): boolean {
+    isViewShowed<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean {
         let viewState: ViewStateType;
         if (typeof keyOrViewState !== "object") {
             viewState = this.getViewState(keyOrViewState as string);
         } else {
             viewState = keyOrViewState;
         }
-        return viewState?.viewIns?.isShowed;
-    }
-    isShowEnd<ViewStateType extends akView.IBaseViewState>(keyOrViewState: keyType | ViewStateType): boolean {
-        let viewState: ViewStateType;
-        if (typeof keyOrViewState !== "object") {
-            viewState = this.getViewState(keyOrViewState as string);
-        } else {
-            viewState = keyOrViewState;
-        }
-        return viewState?.viewIns?.isShowEnd;
+        return viewState?.isViewShowed;
     }
 
     /**
@@ -642,14 +604,14 @@ export class ViewMgr<
      * @param template 模板
      * @returns
      */
-    insView(viewState: akView.IBaseViewState): akView.IView {
+    createView(viewState: akView.IViewState): akView.IView {
         const template = viewState.template;
         if (!this.isPreloadResLoaded(template)) return;
         let ins = viewState.viewIns;
         if (ins) return ins;
-        const viewHandler = this.getTemplateHandler(template);
+        const handler = this.getTemplateHandler(template);
 
-        ins = viewHandler?.createViewIns?.(template);
+        ins = handler?.createView?.(template);
 
         if (ins) {
             ins.viewState = viewState;
@@ -660,41 +622,7 @@ export class ViewMgr<
 
         return ins;
     }
-    /**
-     * 模板资源引用持有处理
-     * @param viewState
-     */
-    addTemplateResRef(viewState: akView.IBaseViewState): void {
-        if (viewState && !viewState.isHoldTemplateResRef) {
-            const id = viewState.id;
-            const template = viewState.template;
 
-            const resHandler = this.getTemplateHandler(template);
-            if (resHandler?.addResRef) {
-                resHandler.addResRef(id, template);
-            } else {
-                console.warn(`没有资源处理方法:resHandler.addTemplateResRef`);
-            }
-            viewState.isHoldTemplateResRef = true;
-        }
-    }
-    /**
-     * 模板资源引用释放处理
-     * @param viewState
-     */
-    decTemplateResRef(viewState: akView.IBaseViewState): void {
-        if (viewState && viewState.isHoldTemplateResRef) {
-            const template = viewState.template;
-            const id = viewState.id;
-            const resHandler = this.getTemplateHandler(template);
-            if (resHandler?.decResRef) {
-                resHandler.decResRef(id, template);
-            } else {
-                console.warn(`没有资源处理方法:resHandler.decTemplateResRef`);
-            }
-            viewState.isHoldTemplateResRef = false;
-        }
-    }
     /**
      * 添加模板到模板字典
      * @param template
@@ -754,7 +682,7 @@ export class ViewMgr<
      * @param id
      * @returns
      */
-    getViewState<T extends akView.IBaseViewState = akView.IBaseViewState>(id: string): T {
+    getViewState<T extends akView.IViewState = akView.IViewState>(id: string): T {
         return this._viewStateMap[id] as T;
     }
     /**
@@ -762,7 +690,7 @@ export class ViewMgr<
      * @param id
      * @returns
      */
-    getOrCreateViewState<T extends akView.IBaseViewState = akView.IBaseViewState>(id: string): T {
+    getOrCreateViewState<T extends akView.IViewState = akView.IViewState>(id: string): T {
         let viewState = this._viewStateMap[id];
         if (!viewState) {
             viewState = this.createViewState(id);
@@ -775,20 +703,20 @@ export class ViewMgr<
         return viewState as T;
     }
     createViewState(id: string) {
-        let viewState: akView.IBaseViewState;
+        let viewState: akView.IViewState;
         const key = this.getKeyById(id);
         const template = this.getTemplate(key);
         if (!template) {
             return;
         }
         let handler = this.getTemplateHandler(key);
-        if (handler) {
+        if (handler?.createViewState) {
             viewState = handler.createViewState(template);
         } else {
             viewState = new DefaultViewState();
         }
         if (viewState) {
-            viewState.onInit(Object.assign(this._defaultViewStateOption, template.viewStateInitOption));
+            viewState.onCreate(Object.assign(this._defaultViewStateOption, template.viewStateInitOption));
             viewState.id = id;
             viewState.viewMgr = this as any;
             viewState.template = template;

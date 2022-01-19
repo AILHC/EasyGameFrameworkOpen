@@ -6,7 +6,7 @@ declare global {
     }
 }
 
-export class LRUCacheHandler<ValueType extends akView.IBaseViewState> implements akView.ICacheHandler {
+export class LRUCacheHandler<ValueType extends akView.IViewState> implements akView.ICacheHandler {
     cache: Map<string, ValueType>;
     constructor(private _option?: akView.ILRUCacheHandlerOption) {
         if (!this._option) {
@@ -14,14 +14,14 @@ export class LRUCacheHandler<ValueType extends akView.IBaseViewState> implements
         }
     }
     viewMgr: akView.IMgr;
-    onViewStateShow(viewState: akView.IBaseViewState<any>): void {
+    onViewStateShow(viewState: akView.IViewState<any>): void {
         this.put(viewState.id, viewState as any);
     }
-    onViewStateUpdate(viewState: akView.IBaseViewState<any>): void {
+    onViewStateUpdate(viewState: akView.IViewState<any>): void {
         this.get(viewState.id);
     }
-    onViewStateHide(viewState: akView.IBaseViewState<any>): void {}
-    onViewStateDestroy(viewState: akView.IBaseViewState<any>): void {
+    onViewStateHide(viewState: akView.IViewState<any>): void {}
+    onViewStateDestroy(viewState: akView.IViewState<any>): void {
         this.cache.delete(viewState.id);
     }
     protected get(key: string): ValueType {

@@ -16,6 +16,11 @@ declare global {
         regitstTestViewKey6?: "regitstTestViewKey6";
         regitstTestViewKey7?: "regitstTestViewKey7";
         regitstTestViewKey8?: "regitstTestViewKey8";
+        regitstTestViewKey9?: "regitstTestViewKey9";
+        regitstTestViewKey10?: "regitstTestViewKey10";
+        regitstTestViewKey11?: "regitstTestViewKey11";
+        regitstTestViewKey12?: "regitstTestViewKey12";
+        regitstTestViewKey13?: "regitstTestViewKey13";
     }
     interface ITestViewDataTypes {
         regitstTestViewKey1: ToAkViewDataType<{
@@ -45,7 +50,7 @@ describe(`ViewMgr初始化测试`, function () {
             expect(mgr[value]).toBeDefined();
         });
         expect(mgr["_templateHandlerMap"]["Default"]).toBeDefined();
-        expect(mgr.isInited).toBeTruthy();
+        expect(mgr.isViewInited).toBeTruthy();
     });
     test(`测试:使用自定义cacheHandler和eventHandler初始化ViewMgr`, function () {
         const mgr = new ViewMgr();
@@ -130,7 +135,7 @@ describe(`ViewMgr初始化测试`, function () {
             }, 500);
             config.progress("", {}, 5, 5);
             expect(config.loadOption).toBeDefined();
-            expect(config.loadOption.a).toEqual(1);
+            expect(config.loadOption["a"]).toEqual(1);
         };
         const viewKey = mgr.getKey("regitstTestViewKey6");
         mgr.template({ key: viewKey, handleType: "TestTemplateHandler" });
@@ -138,7 +143,6 @@ describe(`ViewMgr初始化测试`, function () {
             viewKey,
             (err, isCancel) => {
                 expect(isCancel).toBeFalsy();
-                expect(mgr.isPreloadResLoading(loadId)).toBeFalsy();
                 expect(mgr.isPreloadResLoaded(loadId)).toBeTruthy();
                 done();
             },
@@ -152,7 +156,6 @@ describe(`ViewMgr初始化测试`, function () {
                 expect(typeof loadedCount).toEqual("number");
             }
         );
-        expect(mgr.isPreloadResLoading(loadId)).toBeTruthy();
     });
     test("测试: 取消加载cancelLoadPreloadRes", function (done) {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -160,11 +163,13 @@ describe(`ViewMgr初始化测试`, function () {
 
         let handler = new TestTemplateHandler();
         mgr.addTemplateHandler(handler);
+        let isTestLoaded = false;
         handler["isLoaded"] = function () {
-            return false;
+            return isTestLoaded;
         };
         handler["loadRes"] = function (this: TestTemplateHandler, config) {
             setTimeout(() => {
+                isTestLoaded = true;
                 config.complete();
             }, 500);
         };
@@ -172,11 +177,13 @@ describe(`ViewMgr初始化测试`, function () {
         mgr.template({ key: viewKey, handleType: "TestTemplateHandler" });
         const loadId = mgr.preloadRes(viewKey, (err, isCancel) => {
             expect(isCancel).toBeTruthy();
-            done();
         });
-        expect(mgr.isPreloadResLoading(loadId)).toBeTruthy();
-        mgr.cancelLoadPreloadRes(loadId);
-        expect(mgr.isPreloadResLoading(loadId)).toBeFalsy();
+        setTimeout(() => {
+            expect(mgr.isPreloadResLoaded(loadId)).toBeFalsy();
+            done();
+        }, 520);
+
+        mgr.cancelPreloadRes(loadId);
     });
     test("测试：创建View create", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -208,7 +215,7 @@ describe(`ViewMgr初始化测试`, function () {
     test("测试: show单例View和create创建的View", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         mgr.init();
-        const viewKey = "regitstTestViewKey9" as "regitstTestViewKey1";
+        const viewKey = "regitstTestViewKey9";
         mgr.template({ key: viewKey, handlerOption: { viewClass: TestView } });
 
         const sigViewState = mgr.getOrCreateViewState(viewKey);
@@ -234,24 +241,121 @@ describe(`ViewMgr初始化测试`, function () {
         expect((createViewState as DefaultViewState).showCfg.onShowData).toBeDefined();
         expect(createViewState.cacheMode).toEqual(undefined);
     });
-    // test("测试：单例UI和多实例UI的update、hide、destroy", function () {
-    //     const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-    //     mgr.init();
-    //     mgr.template("regitstTestViewKey1");
-    //     const viewKey = mgr.getKey("regitstTestViewKey1");
-    //     const sigViewState = mgr.getOrCreateViewState(viewKey);
-    //     const createViewState = mgr.create(viewKey);
+    test("测试：单例UI的正常show、update、hide、destroy", function (done) {
+        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        mgr.init();
 
-    //     const sigViewStateOnHideSpy = jest.spyOn(sigViewState, "onHide");
-    //     const sigViewStateOnDestroySpy = jest.spyOn(sigViewState, "onDestroy");
+        const viewKey = mgr.getKey("regitstTestViewKey10");
+        mgr.template({ key: viewKey, handleType: "TestTemplateHandler", handlerOption: { viewClass: TestView } });
+        let handler = new TestTemplateHandler();
+        mgr.addTemplateHandler(handler);
+        let isTestLoaded = false;
+        handler["isLoaded"] = function () {
+            return isTestLoaded;
+        };
+        handler["loadRes"] = function (this: TestTemplateHandler, config) {
+            setTimeout(() => {
+                isTestLoaded = true;
+                config.complete();
+            }, 500);
+        };
+        const sigViewState = mgr.getOrCreateViewState(viewKey);
 
-    //     mgr.hide(viewKey, { hideOption: { p: false } })
+        const sigViewStateOnShowSpy = jest.spyOn(sigViewState, "onShow");
+        const sigViewStateOnUpdateSpy = jest.spyOn(sigViewState, "onUpdate");
+        const sigViewStateOnHideSpy = jest.spyOn(sigViewState, "onHide");
+        const sigViewStateOnDestroySpy = jest.spyOn(sigViewState, "onDestroy");
 
-    //     expect(mgr.getViewState(viewKey)).toBeDefined();
+        const handlerAddResRefSpy = jest.spyOn(handler, "addResRef");
+        const handlerDecResRefSpy = jest.spyOn(handler, "decResRef");
+        const handlerAddToLayerSpy = jest.spyOn(handler, "addToLayer");
+        const handlerRemoveFromLayerSpy = jest.spyOn(handler, "removeFromLayer");
+        mgr.show(viewKey);
+        expect(mgr.getViewState(viewKey)).toBeDefined();
+        mgr.update(viewKey, { b: "a" });
+        expect(sigViewStateOnShowSpy).toBeCalledTimes(1);
+        expect(sigViewStateOnUpdateSpy).toBeCalledTimes(1);
+        expect((sigViewState as DefaultViewState).updateState).toBeDefined();
+        expect(sigViewState.viewIns).toBeUndefined();
 
-    //     const viewId = mgr.show(viewKey, { a: 1 }, { init: "init" });
+        setTimeout(() => {
+            expect(mgr.isPreloadResLoaded(viewKey)).toBeTruthy();
+            expect(sigViewState.viewIns).toBeDefined();
+            expect((sigViewState as DefaultViewState).updateState).toBeUndefined();
+            mgr.hide(viewKey, { hideOption: { p: false } });
+            expect(sigViewStateOnHideSpy).toBeCalledTimes(1);
+            mgr.destroy(viewKey);
+            expect(sigViewStateOnDestroySpy).toBeCalledTimes(1);
+            expect(mgr.getViewState(viewKey)).toBeUndefined();
+            expect(handlerAddResRefSpy).toBeCalledTimes(1);
+            expect(handlerDecResRefSpy).toBeCalledTimes(1);
+            expect(handlerAddToLayerSpy).toBeCalledTimes(1);
+            expect(handlerRemoveFromLayerSpy).toBeCalledTimes(1);
+            done();
+        }, 600);
+    });
+    test("测试：单例UI的hide中断show", function (done) {
+        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        mgr.init();
 
-    // })
+        const viewKey = mgr.getKey("regitstTestViewKey11");
+        mgr.template({
+            key: viewKey,
+            handleType: "TestTemplateHandler",
+            handlerOption: { viewClass: TestWithAnimView }
+        });
+        let handler = new TestTemplateHandler();
+        mgr.addTemplateHandler(handler);
+        let isTestLoaded = false;
+        handler["isLoaded"] = function () {
+            return isTestLoaded;
+        };
+        handler["loadRes"] = function (this: TestTemplateHandler, config) {
+            setTimeout(() => {
+                isTestLoaded = true;
+                config.complete();
+            }, 500);
+        };
+        const sigViewState = mgr.getOrCreateViewState(viewKey);
+
+        const sigViewStateOnShowSpy = jest.spyOn(sigViewState, "onShow");
+        const sigViewStateOnHideSpy = jest.spyOn(sigViewState, "onHide");
+        mgr.show(viewKey);
+
+        expect(sigViewStateOnShowSpy).toBeCalledTimes(1);
+
+        expect(sigViewState.viewIns).toBeUndefined();
+
+        setTimeout(() => {
+            expect(mgr.isPreloadResLoaded(viewKey)).toBeTruthy();
+            expect(sigViewState.viewIns).toBeUndefined();
+
+            done();
+        }, 600);
+        expect(sigViewState.isLoading).toBeTruthy();
+        mgr.hide(viewKey, { hideOption: { p: false } });
+
+        expect(sigViewStateOnHideSpy).toBeCalledTimes(1);
+    });
+    test("测试：多实例View的show、update、hide、destroy", function () {
+        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        mgr.init();
+
+        // const viewKey = mgr.getKey("regitstTestViewKey10");
+        // mgr.template(viewKey);
+
+        // const sigViewState = mgr.getOrCreateViewState(viewKey);
+        // const createViewState = mgr.create(viewKey);
+
+        // const sigViewStateOnHideSpy = jest.spyOn(sigViewState, "onHide");
+        // const sigViewStateOnDestroySpy = jest.spyOn(sigViewState, "onDestroy");
+
+        // mgr.hide(viewKey, { hideOption: { p: false } })
+
+        // expect(mgr.getViewState(viewKey)).toBeDefined();
+
+        // const viewId = mgr.show(viewKey, { a: 1 }, { init: "init" });
+    });
     test("测试：cacheMode=NONE时的hide", function () {});
     test("测试：cacheMode=LRU时的show、update、hide、destroy", function () {});
 });

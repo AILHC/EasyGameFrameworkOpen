@@ -13,23 +13,23 @@ declare global {
 }
 export class TestTemplateHandler implements akView.ITemplateHandler {
     type: "TestTemplateHandler" = "TestTemplateHandler";
-    createViewIns?<T extends akView.IView<akView.IBaseViewState<any>>>(template: akView.ITemplate): T {
+    createView?<T extends akView.IView<akView.IViewState<any>>>(template: akView.ITemplate): T {
         const option: akView.IDefaultTemplateHandlerOption = template?.handlerOption as any;
         if (option) {
             const clas = option.viewClass;
             return new clas();
         }
     }
-    destroyViewIns?<T extends akView.IView<akView.IBaseViewState<any>>>(viewIns: T, template: akView.ITemplate): void {}
-    addToLayer?(viewState: akView.IBaseViewState<any>): void {}
-    removeFromLayer?(viewState: akView.IBaseViewState<any>): void {}
+    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: akView.ITemplate): void {}
+    addToLayer?(viewState: akView.IViewState<any>): void {}
+    removeFromLayer?(viewState: akView.IViewState<any>): void {}
     getPreloadResInfo?(template: akView.ITemplate): akView.ITemplateResInfoType {
         return template.key;
     }
     isLoaded?(template: akView.ITemplate): boolean {
         return true;
     }
-    loadRes?(config: akView.IResLoadConfig<any>): void {
+    loadRes?(config: akView.IResLoadConfig): void {
         console.log(`loadRes id:${config.id},resInfo`, this.getPreloadResInfo(config.template as any));
         config.complete();
     }
