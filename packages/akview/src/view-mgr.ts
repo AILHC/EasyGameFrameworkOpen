@@ -64,7 +64,7 @@ export class ViewMgr<
         this._viewStateMap = {};
         let templateHandler = option?.templateHandler;
         if (!templateHandler) {
-            templateHandler = new DefaultTemplateHandler(option.defaultTemplateHandlerInitOption);
+            templateHandler = new DefaultTemplateHandler(option?.defaultTplHandlerInitOption);
         }
         this._templateHandler = templateHandler;
 
@@ -75,14 +75,13 @@ export class ViewMgr<
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
     use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void {
-        plugin.viewMgr = this as any;
-        plugin.onUse(option);
+        if (plugin) {
+            plugin.viewMgr = this as any;
+            plugin.onUse?.(option);
+        }
     }
-    template<HandleType extends keyof IAkViewTemplateHandlerTypes = "Default">(
-        templateOrKey:
-            | keyType
-            | akView.ITemplate<ViewKeyTypes, HandleType>
-            | Array<akView.ITemplate<ViewKeyTypes, HandleType> | keyType>
+    template(
+        templateOrKey: keyType | akView.ITemplate<ViewKeyTypes> | Array<akView.ITemplate<ViewKeyTypes> | keyType>
     ): void {
         if (!templateOrKey) return;
         if (!this._inited) {
@@ -96,14 +95,14 @@ export class ViewMgr<
                 if (typeof template === "object") {
                     this._addTemplate(template);
                 } else {
-                    this._addTemplate({ key: template, handleType: "Default" });
+                    this._addTemplate({ key: template });
                 }
             }
         } else {
             if (typeof templateOrKey === "object") {
                 this._addTemplate(templateOrKey as any);
             } else if (typeof templateOrKey === "string") {
-                this._addTemplate({ key: templateOrKey as any, handleType: "Default" });
+                this._addTemplate({ key: templateOrKey as any });
             }
         }
     }
@@ -118,11 +117,33 @@ export class ViewMgr<
         return template;
     }
     /**
+     * 添加模板到模板字典
+     * @param template
+     * @returns
+     */
+    protected _addTemplate(template: akView.ITemplate<ViewKeyTypes>): void {
+        if (!template) return;
+        if (!this._inited) {
+            console.error(`[viewMgr](_addTemplate): is no inited`);
+            return;
+        }
+        const key = template.key as any;
+        if (typeof key === "string" && (key as string) !== "") {
+            if (!this._templateMap[key]) {
+                this._templateMap[key] = template;
+            } else {
+                console.error(`[viewMgr](_addTemplate): [key:${key}] is exit`);
+            }
+        } else {
+            console.error(`[viewMgr](_addTemplate): key is null`);
+        }
+    }
+    /**
      * 获取预加载资源信息
      * @param key 模板key
      * @returns
      */
-    getPreloadResInfo(key: keyType): akView.ITemplateResInfoType {
+    getPreloadResInfo(key: keyType): akView.TemplateResInfoType {
         const template = this.getTemplate(key);
         if (!template) {
             return;
@@ -159,21 +180,17 @@ export class ViewMgr<
 
         config.template = template;
 
-        if (complete) {
-            if (typeof complete !== "function") {
-                console.error(`arg complete is not a function`);
-                return;
-            }
+        if (complete && typeof complete === "function") {
             config.complete = complete;
         }
-        if (progress) {
-            if (typeof progress !== "function") {
-                console.error(`arg progress is not a function`);
-                return;
-            }
+        if (progress && typeof progress === "function") {
             config.progress = progress;
         }
-        config.loadOption === undefined && (config.loadOption = loadOption);
+
+        loadOption !== undefined && (config.loadOption = loadOption);
+        if (template.loadOption) {
+            config.loadOption = Object.assign({}, template.loadOption, config.loadOption);
+        }
         const handler = this._templateHandler;
         if (!handler.loadRes || handler.isLoaded?.(template)) {
             config.complete?.();
@@ -253,8 +270,6 @@ export class ViewMgr<
             }
             config.progress = progress;
         }
-
-        config.loadOption = loadOption;
         config.id = this.createViewId(key as keyType);
 
         const template = this.getTemplate(key as any);
@@ -263,6 +278,7 @@ export class ViewMgr<
             config?.complete?.(errorMsg);
             return;
         }
+        loadOption !== undefined && (config.loadOption = loadOption);
         this.preloadResById(config);
         return config.id;
     }
@@ -324,36 +340,39 @@ export class ViewMgr<
     ): T;
     /**
      * 创建新的ViewState并显示
-     * @param keyOrConfig 字符串key
+     * @param keyOrConfig 字符串key|配置
+     * @param onInitData 初始化数据 
+     * @param needShowView 需要显示View到场景，默认false 
      * @param onShowData 显示数据
-     * @param onInitData 初始化数据
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
-     * @param needShowView 需要显示View到场景，默认false
+     
      * @returns 返回ViewState
      */
     create<T extends akView.IViewState = akView.IViewState, ViewKey extends keyType = keyType>(
         keyOrConfig: ViewKey,
-        onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>,
-        needShow?: boolean,
+        needShowView?: boolean,
+        onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>,
+
         cacheMode?: akView.ViewStateCacheModeType
     ): T;
     /**
      * 创建新的ViewState并显示
      * @param keyOrConfig 字符串key|配置
+     * @param onInitData 初始化数据 
+     * @param needShowView 需要显示View到场景，默认false 
      * @param onShowData 显示数据
-     * @param onInitData 初始化数据
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
-     * @param needShowView 需要显示View到场景，默认false
+     
      * @returns 返回ViewState
      */
     create<CreateKeyType extends keyType, T extends akView.IViewState = akView.IViewState>(
         keyOrConfig: string | akView.IShowConfig<CreateKeyType, ViewDataTypes>,
-        onShowData?: akView.GetShowDataType<CreateKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>,
         needShowView?: boolean,
+        onShowData?: akView.GetShowDataType<CreateKeyType, ViewDataTypes>,
         cacheMode?: akView.ViewStateCacheModeType
     ): T {
         if (!this._inited) {
@@ -365,7 +384,8 @@ export class ViewMgr<
             showCfg = {
                 key: keyOrConfig,
                 onInitData: onInitData,
-                onShowData: onShowData
+                onShowData: onShowData,
+                needShowView: needShowView
             };
         } else if (typeof keyOrConfig === "object") {
             showCfg = keyOrConfig as any;
@@ -384,7 +404,7 @@ export class ViewMgr<
             if (viewState.cacheMode && viewState.cacheMode === "FOREVER") {
                 this._viewStateMap[viewState.id] = viewState;
             }
-            this.showViewState(viewState, showCfg as any);
+            this._showViewState(viewState, showCfg as any);
             return viewState as T;
         }
     }
@@ -436,8 +456,8 @@ export class ViewMgr<
             if (isSig && !viewState.cacheMode) {
                 viewState.cacheMode = "FOREVER";
             }
-
-            this.showViewState(viewState, showCfg as any);
+            showCfg.needShowView = true;
+            this._showViewState(viewState, showCfg as any);
             return viewState?.id;
         }
     }
@@ -447,22 +467,18 @@ export class ViewMgr<
      * @param showCfg
      * @returns
      */
-    public showViewState(
-        viewState: akView.IViewState,
-        showCfg: akView.IShowConfig<keyType, ViewKeyTypes>
-    ): akView.IViewState {
+    protected _showViewState(viewState: akView.IViewState, showCfg: akView.IShowConfig<keyType, ViewKeyTypes>): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
         if (!viewState) return;
-        showCfg.needShowView = true;
+
         viewState.onShow(showCfg as any);
         const cacheMode = viewState.cacheMode;
         if (cacheMode && cacheMode !== "FOREVER") {
             this._cacheHandler?.onViewStateShow?.(viewState);
         }
-        return viewState;
     }
     /**
      * 更新View
@@ -516,7 +532,7 @@ export class ViewMgr<
         if (cacheMode && cacheMode !== "FOREVER") {
             this._cacheHandler?.onViewStateHide?.(viewState);
         }
-        if (hideCfg.destroyAfterHide) {
+        if (hideCfg?.destroyAfterHide) {
             this.deleteViewState(viewState.id);
         }
     }
@@ -582,29 +598,6 @@ export class ViewMgr<
         return ins;
     }
 
-    /**
-     * 添加模板到模板字典
-     * @param template
-     * @returns
-     */
-    protected _addTemplate(template: akView.ITemplate<ViewKeyTypes>): void {
-        if (!template) return;
-        if (!this._inited) {
-            console.error(`[viewMgr](_addTemplate): is no inited`);
-            return;
-        }
-        template.handleType = template.handleType || "Default";
-        const key = template.key as any;
-        if (typeof key === "string" && (key as string) !== "") {
-            if (!this._templateMap[key]) {
-                this._templateMap[key] = template;
-            } else {
-                console.error(`[viewMgr](_addTemplate): [key:${key}] is exit`);
-            }
-        } else {
-            console.error(`[viewMgr](_addTemplate): key is null`);
-        }
-    }
     /**
      * 根据id获取缓存中的ViewState
      * @param id

@@ -6,9 +6,6 @@ export class TestWithAnimView implements akView.IDefaultView {
         });
     }
     viewState: akView.IViewState<any>;
-    isInited?: boolean;
-    isShowed?: boolean;
-    isShowEnd?: boolean;
     onInitView?(initData?: any): void {}
     onShowView?(showData?: any): void {}
     onUpdateView?(updateData?: any): void {}
@@ -19,9 +16,6 @@ export class TestWithAnimView implements akView.IDefaultView {
 export class TestView implements akView.IDefaultView {
     onBeforeViewShow?(showData?: any): void {}
     viewState: akView.IViewState<any>;
-    isInited?: boolean;
-    isShowed?: boolean;
-    isShowEnd?: boolean;
     onInitView?(initData?: any): void {}
     onShowView?(showData?: any): void {}
     onUpdateView?(updateData?: any): void {}

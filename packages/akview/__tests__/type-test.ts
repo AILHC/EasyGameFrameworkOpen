@@ -42,10 +42,10 @@ viewMgr.template([{ key: "typeTest" }, "typeTest2", { key: "typeTest3" }]);
 //key类型不对报错
 viewMgr.template([{ key: "ypeTest" }, "typeTest5", { key: "typeTes" }]);
 
-//提示handlerOption类型
-viewMgr.template({ key: "typeTest", handleType: "Default", handleOption: { viewClass } });
-
-viewMgr.template({ key: "typeTest", handleType: "Default", handleOption: { viewClass: {} as any } });
+// //提示handlerOption类型,类型不对会报错
+// viewMgr.template({ key: "typeTest", handleOption:});
+// //自定义handlerOption类型
+// viewMgr.template({ key: "typeTest", handleOption: {ab:{bc:""}} as {ab:{bc:string},viewStateClass:string}});
 declare global {
     interface IAkViewTemplateHandlerTypes {
         TypeTest1: "TypeTest1";
@@ -54,13 +54,6 @@ declare global {
         TypeTest1: { typeTest: string };
     }
 }
-
-//handleType默认 Default,所以类型错误
-// 使用这种方式锁定默认类型template<HandleType extends keyof IAkViewTemplateHandlerTypes = "Default">
-// 可以避免使用合并类型进行类型检查
-
-viewMgr.template({ key: "typeTest", handleOption: { typeTest: "" } });
-viewMgr.template({ key: "typeTest", handleOption: { viewClass: {} as any } });
 
 //插件类型提示
 interface ITestPlugin {

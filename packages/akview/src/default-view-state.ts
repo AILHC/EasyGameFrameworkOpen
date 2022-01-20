@@ -26,7 +26,8 @@ export class DefaultViewState implements akView.IDefaultViewState {
     template: akView.ITemplate;
 
     isViewInited?: boolean;
-
+    isViewShowed?: boolean;
+    isViewShowEnd?: boolean;
     isHoldTemplateResRef?: boolean;
     needDestroy?: boolean;
     /**
@@ -48,7 +49,7 @@ export class DefaultViewState implements akView.IDefaultViewState {
 
     private _needDestroyRes: any;
     isLoading: boolean;
-    isViewShowed?: boolean;
+
     private _isConstructed: boolean;
 
     onCreate(option: akView.IDefaultViewStateOption): void {
@@ -124,8 +125,9 @@ export class DefaultViewState implements akView.IDefaultViewState {
         this.viewMgr.eventHandler.emit(this.id, "onViewHide");
         let promise: Promise<void>;
         this.isViewShowed = false;
+        this.isViewShowEnd = false;
         if (viewIns) {
-            promise = viewIns.onPlayAnim?.(false, hideCfg.hideOption);
+            promise = viewIns.onPlayAnim?.(false, hideCfg?.hideOption);
 
             this.hidingPromise = promise;
         }
@@ -215,6 +217,7 @@ export class DefaultViewState implements akView.IDefaultViewState {
         }
     }
     entryShowEnd(): void {
+        this.isViewShowEnd = true;
         this.viewMgr.eventHandler.emit(this.id, "onViewShowEnd");
     }
     hideViewIns(): void {

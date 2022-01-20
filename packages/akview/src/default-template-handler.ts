@@ -1,35 +1,117 @@
 import { DefaultViewState } from "./default-view-state";
 
 declare global {
+    /**
+     * 创建和显示参数
+     * 可扩展
+     */
+    interface IAkViewTemplateCASParam {
+        Default: any;
+    }
+    /**
+     * 模板处理参数
+     * 可扩展
+     */
+    interface IAkViewTemplateHandleOption<Type extends keyof IAkViewTemplateCASParam = keyof IAkViewTemplateCASParam> {
+        /**
+         * 创建和显示类型
+         */
+        createAndShowType?: Type;
+        /**
+         * View类
+         */
+        viewClass?: new (...args) => any;
+        /**
+         * ViewState类
+         */
+        viewStateClass?: new (...args) => any;
+        /**
+         *
+         */
+        createAndShowParam?: IAkViewTemplateCASParam[Type];
+        /**
+         * 创建和显示处理钩子
+         */
+        createAndShowHandlerHook?: IAkViewTemplateCreateAndShowHandler;
+    }
+    /**
+     * 创建和显示处理器
+     * 可扩展
+     */
+    interface IAkViewTemplateCreateAndShowHandler {
+        /**
+         * 创建View
+         * @param template
+         */
+        createView?(template: akView.ITemplate): akView.IView;
+        /**
+         * 创建ViewState
+         * @param template
+         */
+        createViewState?(template: akView.ITemplate): akView.IViewState;
+        /**
+         * 添加到层级
+         * @param viewState
+         */
+        addToLayer?(viewState: akView.IViewState): void;
+        /**
+         * 从层级移除
+         * @param viewState
+         */
+        removeFromLayer?(viewState: akView.IViewState): void;
+    }
     namespace akView {
-        interface IDefaultTemplateHandlerHandleOption {
-            viewClass: new (...args) => any;
-        }
-        interface IDefaultTemplateHandlerInitOption {
+        interface IDefaultTplHandlerInitOption {
             /**
-             * 创建View
+             * 创建和显示处理器
+             */
+            createAndShowHandler?: IAkViewTemplateCreateAndShowHandler;
+            /**
+             * 资源是否加载
+             * @param resInfo
+             */
+            isLoaded(resInfo: akView.TemplateResInfoType): boolean;
+            /**
+             * 获取资源信息
              * @param template
              */
-            createView(template: akView.ITemplate): akView.IView;
-            /**获取资源信息 */
-            getResInfo(template: akView.ITemplate): akView.ITemplateResInfo;
+            getPreloadResInfo(template: akView.ITemplate): akView.ITemplateResInfo;
             /**
              * 加载资源
-             *
+             * @param resInfo
+             * @param complete
+             * @param progress
+             * @param loadOption 加载配置，会=Object.assign(IResLoadConfig.loadOption,ITemplate.loadOption);
              */
             loadRes(
-                resInfo: akView.ITemplateResInfoType,
-                complete: (error?) => void,
-                progress: akView.LoadResProgressCallback
-            ): void;
-            /**取消资源加载 */
-            cancelLoadRes(resInfo: akView.ITemplateResInfoType): void;
-            /**销毁资源 */
-            destroyRes(resInfo: akView.ITemplateResInfoType): void;
-            /**增加资源引用 */
-            addResRef(resInfo: akView.ITemplateResInfoType): void;
-            /**减少资源引用 */
-            decResRef(resInfo: akView.ITemplateResInfoType): void;
+                resInfo: akView.TemplateResInfoType,
+                complete: akView.LoadResCompleteCallback,
+                progress: akView.LoadResProgressCallback,
+                loadOption?: IAkViewLoadOption
+            ): string;
+            /**
+             * 销毁资源
+             * @param resInfo
+             */
+            destroyRes?(resInfo: akView.TemplateResInfoType): void;
+
+            /**
+             * 取消资源加载
+             * @param loadResId 加载资源id
+             * @param resInfo
+             */
+            cancelLoadRes?(loadResId: string, resInfo: akView.TemplateResInfoType): void;
+
+            /**
+             * 增加资源引用
+             * @param resInfo
+             */
+            addResRef?(resInfo: akView.TemplateResInfoType): void;
+            /**
+             * 减少资源引用
+             * @param resInfo
+             */
+            decResRef?(resInfo: akView.TemplateResInfoType): void;
         }
     }
 }
@@ -44,24 +126,89 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
      */
     protected _loadedMap: { [key: string]: boolean } = {};
     /**
+     * 加载资源返回的id字典，用来标记。key为template.key
+     */
+    protected _loadResIdMap: { [key: string]: string } = {};
+    /**
      * 引用字典,key为template.key,value为id数组
      */
     protected _resRefMap: { [key: string]: string[] } = {};
-    constructor(public _option: akView.IDefaultTemplateHandlerInitOption) {}
+    /**
+     * 资源信息字典缓存
+     */
+    protected _resInfoMap: { [key: string]: akView.TemplateResInfoType } = {};
+    constructor(public _option?: akView.IDefaultTplHandlerInitOption) {
+        if (!this._option) this._option = {} as any;
+    }
     createView<T extends akView.IView<akView.IViewState<any>>>(template: akView.ITemplate): T {
-        return this._option.createView(template) as T;
+        //先使用自定义
+
+        const handleOption = template.handleOption as IAkViewTemplateHandleOption<"Default">;
+        let viewIns = undefined;
+        if (handleOption) {
+            viewIns = handleOption.createAndShowHandlerHook?.createView?.(template);
+            const casType = handleOption.createAndShowType;
+            if (!viewIns && (!casType || casType === "Default") && handleOption.viewClass) {
+                viewIns = new handleOption.viewClass();
+            }
+        }
+        if (!viewIns) {
+            viewIns = this._option.createAndShowHandler?.createView?.(template);
+        }
+        return viewIns;
+    }
+
+    createViewState?<T extends akView.IViewState<any>>(template: akView.ITemplate): T {
+        const handleOption = template.handleOption as IAkViewTemplateHandleOption<"Default">;
+        let viewState = undefined;
+        if (handleOption) {
+            const casType = handleOption.createAndShowType;
+            viewState = handleOption.createAndShowHandlerHook?.createViewState?.(template);
+            if (!viewState && (!casType || casType === "Default") && handleOption?.viewStateClass) {
+                viewState = new handleOption.viewStateClass();
+            }
+        }
+        if (!viewState) {
+            viewState = this._option.createAndShowHandler?.createViewState?.(template);
+        }
+        return viewState;
+    }
+    addToLayer?(viewState: akView.IViewState<any>): void {
+        const handleOption = viewState.template.handleOption as IAkViewTemplateHandleOption;
+        if (handleOption?.createAndShowHandlerHook?.addToLayer) {
+            handleOption.createAndShowHandlerHook.addToLayer(viewState);
+        } else {
+            this._option.createAndShowHandler?.addToLayer?.(viewState);
+        }
+    }
+    removeFromLayer?(viewState: akView.IViewState<any>): void {
+        const handleOption = viewState.template.handleOption as IAkViewTemplateHandleOption;
+        if (handleOption?.createAndShowHandlerHook?.removeFromLayer) {
+            handleOption.createAndShowHandlerHook.removeFromLayer(viewState);
+        } else {
+            this._option.createAndShowHandler?.removeFromLayer?.(viewState);
+        }
     }
     destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: akView.ITemplate): void {}
-    createViewState?<T extends akView.IViewState<any>>(template: akView.ITemplate): T {
-        return new DefaultViewState() as unknown as T;
-    }
-    addToLayer?(viewState: akView.IViewState<any>): void {}
-    removeFromLayer?(viewState: akView.IViewState<any>): void {}
-    getPreloadResInfo(template: akView.ITemplate): akView.ITemplateResInfoType {
-        return this._option.getResInfo(template);
+
+    getPreloadResInfo(template: akView.ITemplate): akView.TemplateResInfoType {
+        let resInfo = this._resInfoMap[template.key];
+        if (!resInfo) {
+            resInfo = this._option.getPreloadResInfo?.(template);
+            this._resInfoMap[template.key] = resInfo;
+        }
+        return resInfo;
     }
     isLoaded(template: akView.ITemplate): boolean {
-        return this._loadedMap[template.key];
+        let isLoaded = this._loadedMap[template.key];
+        if (!isLoaded) {
+            if (!this._option.isLoaded) {
+                isLoaded = true;
+            } else {
+                isLoaded = this._option.isLoaded(this.getPreloadResInfo(template));
+            }
+        }
+        return isLoaded;
     }
     loadRes(config: akView.IResLoadConfig): void {
         const id = config.id;
@@ -82,8 +229,14 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
             const loadConfigs = this._templateLoadResConfigsMap[key];
 
             error && console.error(` templateKey ${key} load error:`, error);
+
             let loadConfig: akView.IResLoadConfig;
             this._templateLoadResConfigsMap[key] = undefined;
+            if (Object.keys(loadConfigs).length > 0) {
+                if (!error) {
+                    this._loadedMap[key] = true;
+                }
+            }
             for (let id in loadConfigs) {
                 loadConfig = loadConfigs[id];
                 if (loadConfig) {
@@ -102,11 +255,18 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
                 }
             }
         };
-        this._option.loadRes(this.getPreloadResInfo(config.template), loadComplete, loadProgress);
+        let loadResId = this._option.loadRes?.(
+            this.getPreloadResInfo(config.template),
+            loadComplete,
+            loadProgress,
+            config.loadOption
+        );
+        this._loadResIdMap[key] = loadResId;
     }
 
     cancelLoad(id: string, template: akView.ITemplate): void {
-        const configs = this._templateLoadResConfigsMap[template.key];
+        let templateKey = template.key;
+        const configs = this._templateLoadResConfigsMap[templateKey];
 
         if (configs) {
             const config = configs[id];
@@ -114,7 +274,11 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
             delete configs[id];
         }
         if (!Object.keys(configs).length) {
-            this._option.cancelLoadRes(this.getPreloadResInfo(template));
+            let loadResId = this._loadResIdMap[templateKey];
+            if (loadResId) {
+                delete this._loadResIdMap[templateKey];
+                this._option.cancelLoadRes?.(loadResId, this.getPreloadResInfo(template));
+            }
         }
     }
     addResRef(id: string, template: akView.ITemplate): void {
@@ -124,7 +288,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
             this._resRefMap[id] = refIds;
         }
         refIds.push(id);
-        this._option.addResRef(template);
+        this._option.addResRef?.(template);
     }
     decResRef(id: string, template: akView.ITemplate): void {
         //移除引用
@@ -132,10 +296,17 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
         if (refIds) {
             const index = refIds.indexOf(id);
             if (index > -1) {
-                refIds[index] = refIds.pop();
+                if (index === 0) {
+                    refIds.pop();
+                } else {
+                    refIds[index] = refIds.pop();
+                }
             }
         }
-        this._option.decResRef(this.getPreloadResInfo(template));
+        this._option.decResRef?.(this.getPreloadResInfo(template));
+        if (refIds.length <= 0) {
+            this._loadedMap[template.key] = false;
+        }
     }
     destroyRes(template: akView.ITemplate): boolean {
         const configs = this._templateLoadResConfigsMap[template.key];
@@ -148,7 +319,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
             return false;
         }
         this._loadedMap[template.key] = false;
-        this._option.destroyRes(this.getPreloadResInfo(template));
+        this._option.destroyRes?.(this.getPreloadResInfo(template));
         return true;
     }
 }
