@@ -43,7 +43,7 @@ export class ViewMgr<
     /**是否初始化 */
     protected _inited: boolean;
     /**实例数，用于创建id */
-    protected _insCount: number = 0;
+    protected _viewCount: number = 0;
     /**
      * 默认ViewState的配置
      */
@@ -245,7 +245,7 @@ export class ViewMgr<
             console.error(`[viewMgr](loadRess): is no inited`);
             return;
         }
-        if ((key as string).includes(IdSplitChars)) {
+        if (!key || (key as string).includes(IdSplitChars)) {
             const error = `key:${key} is id`;
             console.error(error);
             return;
@@ -283,11 +283,12 @@ export class ViewMgr<
         return config.id;
     }
 
-    destroyRes(key: keyType): void {
+    destroyRes(key: keyType): boolean {
         const template = this.getTemplate(key as any);
         if (template) {
-            if (this._templateHandler.destroyRes) {
-                this._templateHandler.destroyRes(template);
+            const handler = this._templateHandler;
+            if (handler.destroyRes) {
+                return handler.destroyRes(template);
             } else {
                 console.warn(`can not handle template:${template.key} destroyRes`);
             }
@@ -304,7 +305,12 @@ export class ViewMgr<
         } else {
             template = this.getTemplate(this.getKeyById(keyOrIdOrTemplate));
         }
-        return this._templateHandler.isLoaded(template);
+        const templateHandler = this._templateHandler;
+        if (!templateHandler.isLoaded) {
+            return true;
+        } else {
+            return templateHandler.isLoaded(template);
+        }
     }
     /**
      * 模板资源引用持有处理
@@ -633,7 +639,7 @@ export class ViewMgr<
         viewState = this._templateHandler.createViewState?.(template);
         if (!viewState) viewState = new DefaultViewState();
         if (viewState) {
-            viewState.onCreate(Object.assign(this._defaultViewStateOption, template.viewStateInitOption));
+            viewState.onCreate(Object.assign({}, this._defaultViewStateOption, template.viewStateInitOption));
             viewState.id = id;
             viewState.viewMgr = this as any;
             viewState.template = template;
@@ -668,8 +674,8 @@ export class ViewMgr<
      */
     createViewId(key: keyType): string {
         if (!(key as string).includes(IdSplitChars)) {
-            this._insCount++;
-            return `${key}${IdSplitChars}${this._insCount}`;
+            this._viewCount++;
+            return `${key}${IdSplitChars}${this._viewCount}`;
         }
         return key as string;
     }

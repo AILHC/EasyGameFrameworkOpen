@@ -305,3 +305,11 @@ pluginUse.use({} as ITestPlugin, { ab: 1 });
 // type GetKeyType<idType> = idType extends `${infer KeyType}_$_${number}` ? KeyType : string;
 
 // function showById<idType extends string>(id:idType,keyType:)
+
+export namespace abc {
+    export class ccc {
+        constructor() {
+            console.log();
+        }
+    }
+}

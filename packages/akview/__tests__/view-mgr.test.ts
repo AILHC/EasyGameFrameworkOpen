@@ -70,7 +70,7 @@ describe(`ViewMgr初始化测试`, function () {
         expect(mgr3.templateHandler["_option"]).toBeDefined();
     });
 
-    test(`测试:ViewMgr.template 注册view模板`, function () {
+    test(`测试:ViewMgr.template 注册view模板,以及相关函数:ViewMgr.getTempalte,ViewMgr.hasTemplate`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
         mgr.init();
@@ -217,6 +217,279 @@ describe(`ViewMgr初始化测试`, function () {
 
         mgr6.template(testKey);
         mgr6.preloadResById(testConfig6);
+    });
+    test("测试：ViewMgr.createViewId", function () {
+        const mgr = new ViewMgr();
+        const viewId = mgr.createViewId("testKey1");
+        expect(viewId).toEqual("testKey1" + "_$_" + 1);
+        const viewId2 = mgr.createViewId("testKey2");
+        expect(viewId2).toEqual("testKey2" + "_$_" + 2);
+        expect(mgr["_viewCount"]).toEqual(2);
+    });
+    test("测试：ViewMgr.getKeyById", function () {
+        const mgr = new ViewMgr();
+        //传key
+        const key = mgr.getKeyById("testKey1");
+        expect(key).toEqual("testKey1");
+        //传id
+        const key2 = mgr.getKeyById("testKey1_$_1");
+        expect(key2).toEqual("testKey1");
+        //传非字符串
+        const key3 = mgr.getKeyById(1 as any);
+        expect(key3).toEqual(undefined);
+        //传空字符串
+        const key4 = mgr.getKeyById("");
+        expect(key4).toEqual(undefined);
+    });
+    test("测试：ViewMgr.createViewState", function () {
+        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        mgr.init();
+        //传递空id，返回undefined
+        const viewState1 = mgr.createViewState("");
+        expect(viewState1).toBeUndefined();
+
+        //没有templateHandler的createViewState方法，mgr.createViewState返回DefaultViewState的实例
+        const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        mgr2.init({
+            templateHandler: {} as any
+        });
+        const viewKey: any = "test_createViewState";
+        mgr2.template(viewKey);
+        const viewState2 = mgr2.createViewState(viewKey);
+        expect(viewState2 instanceof DefaultViewState).toBeTruthy();
+        expect(viewState2.id).toEqual(viewKey);
+        expect(viewState2.viewMgr).toEqual(mgr2);
+        expect(viewState2.template).toEqual(mgr2.getTemplate(viewKey));
+        expect(viewState2.cacheMode).toEqual(undefined);
+
+        //有templateHandler的createViewState方法,createViewState返回testCreateViewStateReturnObj
+        const mgr3 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        let testCreateViewStateReturnObj = {
+            onCreate(option) {
+                expect(option.a).toEqual(1);
+            }
+        };
+        mgr3.init({
+            templateHandler: {
+                createViewState() {
+                    return testCreateViewStateReturnObj;
+                }
+            } as any
+        });
+        //传递viewStateInitOption，onCreate可以读取到option.a=1
+        mgr3.template({ key: viewKey, viewStateInitOption: { a: 1 } });
+        const viewState3 = mgr3.createViewState(viewKey);
+        expect(viewState3).toEqual(testCreateViewStateReturnObj);
+    });
+    test("测试：ViewMgr.getOrCreateViewState", function () {
+        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        mgr.init();
+        const viewKey: any = "test_ViewMgr.getOrCreateViewState";
+        const viewKey2: any = "test_ViewMgr.getOrCreateViewState2";
+        mgr.template(viewKey);
+        mgr.template(viewKey2);
+        //传空值id,返回undefined
+        const viewState1 = mgr.getOrCreateViewState("");
+        expect(viewState1).toBeUndefined();
+
+        //放入测试viewState，getOrCreateViewState返回测试viewState
+        const testViewStateObj = {};
+        mgr["_viewStateMap"][viewKey] = testViewStateObj as any;
+        const viewState2 = mgr.getOrCreateViewState(viewKey);
+        expect(viewState2).toEqual(testViewStateObj);
+        //传入key，返回DefaultViewState实例
+        const viewState3 = mgr.getOrCreateViewState(viewKey2);
+        expect(viewState3 instanceof DefaultViewState).toBeTruthy();
+        expect(viewState3.id).toEqual(viewKey2);
+    });
+    test("测试：ViewMgr.getViewState", function () {
+        const mgr = new ViewMgr();
+        mgr.init();
+        const viewKey: any = "testKey1_ViewMgr.getViewState";
+        //放入测试ViewState,返回
+        const testViewState = new DefaultViewState();
+        mgr["_viewStateMap"][viewKey] = testViewState;
+        const viewState = mgr.getViewState(viewKey);
+        expect(viewState).toEqual(testViewState);
+
+        //传入不存在的id
+        const viewState2 = mgr.getViewState(viewKey + 1);
+        expect(viewState2).toBeUndefined();
+    });
+    test("测试：ViewMgr.getViewIns", function () {
+        const mgr = new ViewMgr();
+        mgr.init();
+        const viewState = (mgr["_viewStateMap"]["testKey1"] = new DefaultViewState());
+        const viewIns = mgr.getViewIns("testKey1");
+        expect(viewIns).toBeUndefined();
+        viewState.viewIns = {} as any;
+        expect(mgr.getViewIns("testKey1")).toBeDefined();
+        expect(mgr.getViewIns("")).toBeUndefined();
+    });
+    test("测试：ViewMgr.deleteViewState", function () {
+        const mgr = new ViewMgr();
+        mgr.init();
+        const viewState = (mgr["_viewStateMap"]["testKey1"] = new DefaultViewState());
+        mgr.deleteViewState("testKey1");
+        expect(Object.keys(mgr["_viewStateMap"]).length).toEqual(0);
+    });
+    test("测试: ViewMgr.preloadRes", function () {
+        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+
+        const handler = {
+            loadRes(config: akView.IResLoadConfig) {}
+        } as any;
+        mgr.init({
+            templateHandler: handler
+        });
+        const loadResSpy = jest.spyOn(handler, "loadRes");
+        //传空值
+        mgr.preloadRes(undefined);
+        expect(loadResSpy).toBeCalledTimes(0);
+        let testKey: any = "testKey_ViewMgr.preloadRes";
+        mgr.template(testKey);
+        const viewId = mgr.preloadRes(testKey);
+        expect(viewId).toEqual("testKey_ViewMgr.preloadRes" + "_$_" + 1);
+
+        expect(loadResSpy).toBeCalledTimes(1);
+        //已经加载
+        const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        const handler2 = {
+            loadRes(config: akView.IResLoadConfig) {},
+            isLoaded() {
+                return true;
+            }
+        } as any;
+        mgr2.init({
+            templateHandler: handler2
+        });
+        mgr2.template(testKey);
+        const completeMockFunc = jest.fn();
+        mgr2.preloadRes(testKey, completeMockFunc);
+        expect(completeMockFunc).toBeCalledTimes(1);
+        //没有加载方法
+        const mgr3 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        const handler3 = {} as any;
+        mgr3.init({
+            templateHandler: handler3
+        });
+        mgr3.template(testKey);
+        const completeMockFunc3 = jest.fn();
+        mgr3.preloadResById(testKey, completeMockFunc3);
+        expect(completeMockFunc3).toBeCalledTimes(1);
+        //progress不是函数
+        const mgr4 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        const testLoadOption4 = {};
+        const handler4 = {
+            loadRes(config: akView.IResLoadConfig) {
+                expect(typeof config.complete === "function").toBeTruthy();
+                expect(config.progress).toBeUndefined();
+                expect(config.loadOption).toEqual(testLoadOption4);
+            }
+        } as any;
+
+        mgr4.init({
+            templateHandler: handler4
+        });
+        mgr4.template(testKey);
+        mgr4.preloadResById(testKey, () => {}, testLoadOption4, {} as any);
+
+        //loadOption合并,参数loadOption会和template.loadOption合并
+        const mgr5 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+
+        const testLoadOption5 = { a: 1 };
+        const handler5 = {
+            loadRes(config: akView.IResLoadConfig) {
+                expect(config.loadOption["a"]).toEqual(1);
+                expect(config.loadOption["b"]).toEqual(1);
+            }
+        } as any;
+        mgr5.init({
+            templateHandler: handler5
+        });
+        mgr5.template({ key: testKey, loadOption: { b: 1 } });
+        mgr5.preloadResById(testKey, undefined, testLoadOption5);
+        //传递config对象，其中的loadOption也会合并
+        mgr5.preloadResById({ id: testKey, loadOption: testLoadOption5 });
+
+        //传递config对象,config会传到loadRes方法的第一个参数
+        const mgr6 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        const testConfig6 = { id: "", complete: function () {}, progress: function () {}, loadOption: {} };
+        const handler6 = {
+            loadRes(config: akView.IResLoadConfig) {
+                expect(config).toEqual(testConfig6);
+            }
+        } as any;
+        mgr6.init({ templateHandler: handler6 });
+
+        mgr6.template(testKey);
+        mgr6.preloadResById(testConfig6);
+    });
+    test("测试：ViewMgr.isPreloadResLoaded", function () {
+        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        //没有实现templateHandler.isLoaded方法，返回true(没有实现就当作不处理资源加载，不阻碍没资源加载的流程)
+        mgr.init({
+            templateHandler: {} as any
+        });
+        const viewKey = "test_ViewMgr.isPreloadResLoaded" as any;
+        mgr.template(viewKey);
+
+        //传key
+        const isLoaded11 = mgr.isPreloadResLoaded(viewKey);
+        //传id
+        const isLoaded12 = mgr.isPreloadResLoaded(mgr.createViewId(viewKey));
+        //传template对象
+        const isLoaded13 = mgr.isPreloadResLoaded(mgr.getTemplate(viewKey));
+        expect(isLoaded11).toBeTruthy();
+        expect(isLoaded12).toBeTruthy();
+        expect(isLoaded13).toBeTruthy();
+        //实现templateHandler.isLoaded方法，都返回false
+        const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        const templateHandler: akView.ITemplateHandler = {
+            isLoaded() {
+                return false;
+            }
+        } as any;
+        const isLoadedSpy = jest.spyOn(templateHandler, "isLoaded");
+        mgr2.init({
+            templateHandler: templateHandler
+        });
+
+        const isLoaded21 = mgr2.isPreloadResLoaded(viewKey);
+        expect(isLoaded21).toBeFalsy();
+        expect(isLoadedSpy).toBeCalledTimes(1);
+    });
+    test("测试：ViewMgr.destroyRes", function () {
+        const mgr = new ViewMgr();
+        mgr.init();
+        const viewKey: any = "test_ViewMgr.destroyRes";
+        mgr.template(viewKey);
+        const destroyResSpy = jest.spyOn(mgr.templateHandler, "destroyRes");
+        mgr.destroyRes(viewKey);
+        expect(destroyResSpy).toBeCalledTimes(1);
+        //传空viewKey
+        const isDestroy = mgr.destroyRes("" as any);
+        expect(isDestroy).toBeFalsy();
+    });
+    test("测试：ViewMgr.addTemplateResRef & ViewMgr.decTemplateResRef", function () {
+        const mgr = new ViewMgr();
+        mgr.init();
+        const viewKey: any = "test_ViewMgr.addTemplateResRef";
+        mgr.template(viewKey);
+        const handlerAddResRefSpy = jest.spyOn(mgr.templateHandler, "addResRef");
+        const handlerDecResRefSpy = jest.spyOn(mgr.templateHandler, "decResRef");
+        const viewState1 = mgr.createViewState(viewKey);
+        mgr.addTemplateResRef(viewState1);
+
+        expect(viewState1.isHoldTemplateResRef).toBeTruthy();
+        //不会重复调用addResRef
+        mgr.addTemplateResRef(viewState1);
+        expect(handlerAddResRefSpy).toBeCalledTimes(1);
+        mgr.decTemplateResRef(viewState1);
+        expect(viewState1.isHoldTemplateResRef).toBeFalsy();
+        //不会重复调用decResRef
+        mgr.decTemplateResRef(viewState1);
+        expect(handlerDecResRefSpy).toBeCalledTimes(1);
     });
     test("测试: 资源加载loadOption & progressCallback & isPreloadResLoading & isPreloadResLoaded", function (done) {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
