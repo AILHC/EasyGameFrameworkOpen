@@ -11,7 +11,7 @@ export class ViewMgr<
     ViewKeyTypes = IAkViewKeyTypes,
     ViewDataTypes = IAkViewDataTypes,
     keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-> implements akView.IMgr<ViewKeyTypes, ViewDataTypes, keyType>
+    > implements akView.IMgr<ViewKeyTypes, ViewDataTypes, keyType>
 {
     private _cacheHandler: akView.ICacheHandler;
     /**
@@ -406,8 +406,8 @@ export class ViewMgr<
 
         const viewState = this.createViewState(showCfg.id);
         if (viewState) {
-            viewState.cacheMode = cacheMode ? cacheMode : undefined;
-            if (viewState.cacheMode && viewState.cacheMode === "FOREVER") {
+            cacheMode && (viewState.cacheMode = cacheMode);
+            if (viewState.cacheMode === "FOREVER") {
                 this._viewStateMap[viewState.id] = viewState;
             }
             this._showViewState(viewState, showCfg as any);
@@ -457,7 +457,6 @@ export class ViewMgr<
         if (!viewState) {
             viewState = this.getOrCreateViewState(showCfg.id);
         }
-
         if (viewState) {
             if (isSig && !viewState.cacheMode) {
                 viewState.cacheMode = "FOREVER";

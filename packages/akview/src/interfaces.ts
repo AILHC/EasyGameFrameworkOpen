@@ -9,12 +9,12 @@ declare global {
     type AppendArgument<F extends (...args: any) => any, A> = (x: A, ...args: Parameters<F>) => ReturnType<F>;
 
     type GetShowConfigType<
-        MgrType extends { MgrTypeParams? },
+        MgrType extends { MgrTypeParams?},
         ConfigKeyType extends MgrType["MgrTypeParams"][2]
-    > = akView.IShowConfig<ConfigKeyType, MgrType["MgrTypeParams"][1]>;
+        > = akView.IShowConfig<ConfigKeyType, MgrType["MgrTypeParams"][1]>;
     type GetViewKeyType<ViewKeyMap, keyType extends keyof ViewKeyMap> = keyType;
-    interface IAkViewKeyTypes {}
-    interface IAkViewDataTypes {}
+    interface IAkViewKeyTypes { }
+    interface IAkViewDataTypes { }
     /**
      * 类型工具函数，扩展
      * @type {IAkViewDataTypes} 时
@@ -33,7 +33,7 @@ declare global {
         ViewKeyType,
         Key extends keyof ViewKeyType = keyof ViewKeyType,
         T extends akView.IViewDataFields = akView.IViewDataFields
-    > = { [key in any as Key]: T };
+        > = { [key in any as Key]: T };
     /**
      * 类型工具函数,扩展
      * @type {IAkViewDataTypes} 时
@@ -57,7 +57,7 @@ declare global {
      * 加载配置，业务透传到资源加载层
      * 可定制，比如透传加载时进度显示样式类型参数
      */
-    interface IAkViewLoadOption {}
+    interface IAkViewLoadOption { }
     namespace akView {
         interface ICallableFunction extends Function {
             _caller?: any;
@@ -69,7 +69,7 @@ declare global {
         }
         type TemplateResInfoType = Array<ITemplateResInfo | string> | ITemplateResInfo | string;
 
-        type ViewStateConstructor<T extends akView.IViewState = any> = { new (...args): T };
+        type ViewStateConstructor<T extends akView.IViewState = any> = { new(...args): T };
         /**
          * 获取插件配置参数
          */
@@ -86,9 +86,10 @@ declare global {
         interface ITemplate<
             ViewKeyTypes = IAkViewKeyTypes,
             ViewKeyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-        > {
+            > {
             /**key */
             key: ViewKeyType;
+            
             /**
              * 缓存模式
              * 默认“FOREVER”
@@ -276,7 +277,6 @@ declare global {
              * @param option 初始化配置
              *  */
             onCreate(option: OptionType): void;
-
             /**
              * 加载并实例化(如果没加载和实例化)，然后显示到舞台
              */
@@ -581,7 +581,7 @@ declare global {
             ViewKeyTypes = IAkViewKeyTypes,
             ViewDataTypes = IAkViewDataTypes,
             keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-        > {
+            > {
             /**
              * 类型参数
              */
@@ -865,4 +865,4 @@ declare global {
         }
     }
 }
-export {};
+export { };

@@ -132,7 +132,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
         const handler = {
-            loadRes(config: akView.IResLoadConfig) {}
+            loadRes(config: akView.IResLoadConfig) { }
         } as any;
         mgr.init({
             templateHandler: handler
@@ -148,7 +148,7 @@ describe(`ViewMgr初始化测试`, function () {
         //已经加载
         const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         const handler2 = {
-            loadRes(config: akView.IResLoadConfig) {},
+            loadRes(config: akView.IResLoadConfig) { },
             isLoaded() {
                 return true;
             }
@@ -185,7 +185,7 @@ describe(`ViewMgr初始化测试`, function () {
             templateHandler: handler4
         });
         mgr4.template(testKey);
-        mgr4.preloadResById(testKey, () => {}, testLoadOption4, {} as any);
+        mgr4.preloadResById(testKey, () => { }, testLoadOption4, {} as any);
 
         //loadOption合并,参数loadOption会和template.loadOption合并
         const mgr5 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -207,7 +207,7 @@ describe(`ViewMgr初始化测试`, function () {
 
         //传递config对象,config会传到loadRes方法的第一个参数
         const mgr6 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        const testConfig6 = { id: "", complete: function () {}, progress: function () {}, loadOption: {} };
+        const testConfig6 = { id: "", complete: function () { }, progress: function () { }, loadOption: {} };
         const handler6 = {
             loadRes(config: akView.IResLoadConfig) {
                 expect(config).toEqual(testConfig6);
@@ -337,7 +337,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
         const handler = {
-            loadRes(config: akView.IResLoadConfig) {}
+            loadRes(config: akView.IResLoadConfig) { }
         } as any;
         mgr.init({
             templateHandler: handler
@@ -355,7 +355,7 @@ describe(`ViewMgr初始化测试`, function () {
         //已经加载
         const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         const handler2 = {
-            loadRes(config: akView.IResLoadConfig) {},
+            loadRes(config: akView.IResLoadConfig) { },
             isLoaded() {
                 return true;
             }
@@ -392,7 +392,7 @@ describe(`ViewMgr初始化测试`, function () {
             templateHandler: handler4
         });
         mgr4.template(testKey);
-        mgr4.preloadResById(testKey, () => {}, testLoadOption4, {} as any);
+        mgr4.preloadResById(testKey, () => { }, testLoadOption4, {} as any);
 
         //loadOption合并,参数loadOption会和template.loadOption合并
         const mgr5 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -414,7 +414,7 @@ describe(`ViewMgr初始化测试`, function () {
 
         //传递config对象,config会传到loadRes方法的第一个参数
         const mgr6 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        const testConfig6 = { id: "", complete: function () {}, progress: function () {}, loadOption: {} };
+        const testConfig6 = { id: "", complete: function () { }, progress: function () { }, loadOption: {} };
         const handler6 = {
             loadRes(config: akView.IResLoadConfig) {
                 expect(config).toEqual(testConfig6);
@@ -491,6 +491,41 @@ describe(`ViewMgr初始化测试`, function () {
         mgr.decTemplateResRef(viewState1);
         expect(handlerDecResRefSpy).toBeCalledTimes(1);
     });
+    test("测试：ViewMgr.create", function () {
+        const mgr = new ViewMgr();
+        mgr.init();
+        const cacheHandler = mgr.cacheHandler;
+        const onStateShowSpy = jest.spyOn(cacheHandler, "onViewStateShow");
+        const viewKey: any = "testKey_ViewMgr.create"
+        mgr.template(viewKey);
+        const viewState1 = mgr.create(viewKey);
+        expect(viewState1).toBeDefined();
+        expect(mgr.getViewState(viewState1.id)).toBeUndefined();
+        const testInitData = {};
+        const testShowData = {};
+        const viewState2 = mgr.create(viewKey, testInitData, false, testShowData);
+        expect(onStateShowSpy).toBeCalledTimes(0);
+        expect((viewState2 as DefaultViewState)["showCfg"].onInitData).toEqual(testInitData);
+        expect((viewState2 as DefaultViewState)["showCfg"].onShowData).toEqual(testShowData);
+
+        const viewState3 = mgr.create(viewKey, undefined, false, undefined, "FOREVER");
+
+        expect(mgr.getViewState(viewState3.id)).toBeDefined();
+
+        const viewState4 = mgr.create(viewKey, undefined, false, undefined, "LRU");
+        expect(onStateShowSpy).toBeCalledTimes(1);
+        const viewState5 = mgr.create(viewKey, undefined, true);
+        expect((viewState5 as DefaultViewState)["showCfg"].needShowView).toBeTruthy();
+        const viewKey2: any = "testKey_ViewMgr.create2";
+        mgr.template({ key: viewKey2, cacheMode: "FOREVER" });
+        const viewState6 = mgr.create(viewKey2);
+        expect(viewState6.cacheMode ==="FOREVER").toBeTruthy()
+        expect(mgr.getViewState(viewState6.id)).toBeDefined();
+        
+    })
+    test("测试：ViewMgr.show", function () {
+
+    })
     test("测试: 资源加载loadOption & progressCallback & isPreloadResLoading & isPreloadResLoaded", function (done) {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
@@ -810,5 +845,5 @@ describe(`ViewMgr初始化测试`, function () {
             });
         });
     }, 10000);
-    test("测试：cacheMode=LRU时的show、update、hide、destroy", function () {});
+    test("测试：cacheMode=LRU时的show、update、hide、destroy", function () { });
 });

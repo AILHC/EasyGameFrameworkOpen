@@ -12,6 +12,7 @@ export class LRUCacheHandler<ValueType extends akView.IViewState> implements akV
         if (!this._option) {
             this._option = { maxSize: 5 };
         }
+        this.cache = new Map();
     }
     viewMgr: akView.IMgr;
     onViewStateShow(viewState: akView.IViewState<any>): void {

@@ -59,6 +59,16 @@ export class DefaultViewState implements akView.IDefaultViewState {
         this._isConstructed = true;
         this._option = option;
     }
+    initAndShowView(): void {
+
+        this.initView();
+        if (!this.needShowView) return;
+        if (this.isViewInited) {
+            this.showView();
+        } else {
+            console.error(`id:${this.id} isViewInited is false`);
+        }
+    }
     onShow(showCfg: akView.IShowConfig) {
         //在不同状态下进行处理
         //未加载,去加载
@@ -88,12 +98,12 @@ export class DefaultViewState implements akView.IDefaultViewState {
 
         if (this.isHoldTemplateResRef || this.viewMgr.isPreloadResLoaded(this.id)) {
             //持有的情况，资源不可能被释放,或者资源已经加载的
-            this.entryLoaded();
+            this.initAndShowView();
         } else if (!this.isLoading) {
             const onLoadedCb = (error?) => {
                 this.isLoading = false;
                 if (!error && !this.destroyed) {
-                    this.entryLoaded();
+                    this.initAndShowView();
                 }
             };
             this.isLoading = true;
@@ -109,7 +119,7 @@ export class DefaultViewState implements akView.IDefaultViewState {
             this.updateState = updateState;
         }
     }
-    onHide(hideCfg?: akView.IHideConfig) {
+    async onHide(hideCfg?: akView.IHideConfig) {
         const viewIns = this.viewIns;
 
         this.hideCfg = hideCfg;
@@ -128,19 +138,16 @@ export class DefaultViewState implements akView.IDefaultViewState {
         this.isViewShowEnd = false;
         if (viewIns) {
             promise = viewIns.onPlayAnim?.(false, hideCfg?.hideOption);
-
             this.hidingPromise = promise;
         }
-
+        //TODO 需要单元测试验证多次调用会怎么样
         if (promise) {
-            promise.then(() => {
-                if (this.hidingPromise !== promise) return;
-                this.hidingPromise = undefined;
-                this.hideViewIns();
-            });
-        } else {
-            this.hideViewIns();
+            await promise;
+            if (this.hidingPromise !== promise) return;
+            this.hidingPromise = undefined;
         }
+        this.hideViewIns();
+        this.needDestroy && this.entryDestroyed();
     }
     onDestroy(destroyRes?: boolean) {
         if (this.hidingPromise) {
@@ -153,44 +160,27 @@ export class DefaultViewState implements akView.IDefaultViewState {
             this.isLoading = false;
             this.viewMgr.cancelPreloadRes(this.id);
         }
-        this.destroyed = true;
-        this._needDestroyRes = destroyRes;
-        if (this.viewIns && this.needHide) {
-            this.needDestroy = true;
-            this.hideViewIns();
-        } else {
-            //已经隐藏了
-            this.entryDestroyed();
-        }
-    }
-    entryLoaded(): void {
-        let viewIns: akView.IView = this.viewIns;
 
-        if (!viewIns) {
-            viewIns = this.viewMgr.createView(this);
-        }
-        if (this.needHide) {
-            this.hideViewIns();
-        } else if (viewIns) {
-            this.initAndShowView();
-        } else {
-            console.error(`id:${this.id} viewIns is null`);
-        }
+        this._needDestroyRes = destroyRes;
+        this.hideViewIns();
+
+        this.entryDestroyed();
     }
-    initAndShowView(): void {
-        const viewIns = this.viewIns;
-        //持有模板资源
-        this.viewMgr.addTemplateResRef(this);
+
+    initView() {
+
         if (!this.isViewInited) {
-            viewIns.onInitView?.(this.showCfg.onInitData);
-            this.isViewInited = true;
-            this.viewMgr.eventHandler.emit(this.id, "onViewInit");
-        }
-        if (this.needShowView) {
-            this.entryShowing();
+            const viewIns = this.viewMgr.createView(this);
+            //持有模板资源
+            this.viewMgr.addTemplateResRef(this);
+            if (!this.isViewInited && viewIns) {
+                viewIns.onInitView?.(this.showCfg.onInitData);
+                this.isViewInited = true;
+                this.viewMgr.eventHandler.emit(this.id, "onViewInit");
+            }
         }
     }
-    entryShowing(): void {
+    showView(): void {
         const ins = this.viewIns;
         ins.onBeforeViewShow?.(this.showCfg.onShowData);
         this.addToLayer(this);
@@ -222,20 +212,16 @@ export class DefaultViewState implements akView.IDefaultViewState {
     }
     hideViewIns(): void {
         this.needHide = false;
-        this.removeFromLayer(this);
+
         const hideCfg = this.hideCfg;
         if (this.viewIns) {
+            this.removeFromLayer(this);
             this.viewIns.onHideView?.(hideCfg?.hideOption);
         }
-
-        if (this.needDestroy) {
-            this.entryDestroyed();
-        } else {
-            if (this._option.canDecTemplateResRefOnHide && hideCfg?.decTemplateResRef) {
-                this.viewMgr.decTemplateResRef(this);
-            }
-            this.hideCfg = undefined;
+        if (this._option.canDecTemplateResRefOnHide && hideCfg?.decTemplateResRef) {
+            this.viewMgr.decTemplateResRef(this);
         }
+        this.hideCfg = undefined;
         this.viewMgr.eventHandler.emit(this.id, "onViewHideEnd");
     }
 
@@ -243,6 +229,7 @@ export class DefaultViewState implements akView.IDefaultViewState {
         const viewMgr = this.viewMgr;
         const viewIns = this.viewIns;
         this.needDestroy = false;
+        this.destroyed = true;
         this.isViewInited = false;
         if (viewIns) {
             // const template = viewState.template;
