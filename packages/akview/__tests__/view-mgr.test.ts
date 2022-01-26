@@ -1,5 +1,5 @@
 import { ViewMgr } from "../src";
-import { DefaultEventHandler } from "../src/default-event-handler";
+import { DefaultEventBus } from "../src/default-event-bus";
 import { DefaultTemplateHandler } from "../src/default-template-handler";
 import { DefaultViewState } from "../src/default-view-state";
 import { LRUCacheHandler } from "../src/lru-cache-handler";
@@ -37,7 +37,7 @@ describe(`ViewMgr初始化测试`, function () {
         mgr.init();
         let expectDefindFields: Array<keyof ViewMgr> | Array<string> = [
             "_viewStateMap",
-            "eventHandler",
+            "eventBus",
             "cacheHandler",
             "templateHandler",
             "_templateMap",
@@ -59,11 +59,11 @@ describe(`ViewMgr初始化测试`, function () {
         //传递自定义handler
         const mgr3 = new ViewMgr();
         mgr3.init({
-            eventHandler: new DefaultEventHandler(),
+            eventBus: new DefaultEventBus(),
             cacheHandler: new LRUCacheHandler({ maxSize: 18 }),
             templateHandler: new DefaultTemplateHandler()
         });
-        expect(mgr3.eventHandler).toBeDefined();
+        expect(mgr3.eventBus).toBeDefined();
         expect(mgr3.cacheHandler).toBeDefined();
         expect(mgr3.templateHandler).toBeDefined();
         expect(mgr3.cacheHandler["_option"].maxSize).toEqual(18);
@@ -132,7 +132,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
         const handler = {
-            loadRes(config: akView.IResLoadConfig) { }
+            loadRes(config: akView.IResLoadConfig) {}
         } as any;
         mgr.init({
             templateHandler: handler
@@ -148,7 +148,7 @@ describe(`ViewMgr初始化测试`, function () {
         //已经加载
         const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         const handler2 = {
-            loadRes(config: akView.IResLoadConfig) { },
+            loadRes(config: akView.IResLoadConfig) {},
             isLoaded() {
                 return true;
             }
@@ -185,7 +185,7 @@ describe(`ViewMgr初始化测试`, function () {
             templateHandler: handler4
         });
         mgr4.template(testKey);
-        mgr4.preloadResById(testKey, () => { }, testLoadOption4, {} as any);
+        mgr4.preloadResById(testKey, () => {}, testLoadOption4, {} as any);
 
         //loadOption合并,参数loadOption会和template.loadOption合并
         const mgr5 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -207,7 +207,7 @@ describe(`ViewMgr初始化测试`, function () {
 
         //传递config对象,config会传到loadRes方法的第一个参数
         const mgr6 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        const testConfig6 = { id: "", complete: function () { }, progress: function () { }, loadOption: {} };
+        const testConfig6 = { id: "", complete: function () {}, progress: function () {}, loadOption: {} };
         const handler6 = {
             loadRes(config: akView.IResLoadConfig) {
                 expect(config).toEqual(testConfig6);
@@ -240,6 +240,9 @@ describe(`ViewMgr初始化测试`, function () {
         //传空字符串
         const key4 = mgr.getKeyById("");
         expect(key4).toEqual(undefined);
+    });
+    test("测试：ViewMgr.createView", function () {
+        //TODO
     });
     test("测试：ViewMgr.createViewState", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -277,7 +280,7 @@ describe(`ViewMgr初始化测试`, function () {
             } as any
         });
         //传递viewStateInitOption，onCreate可以读取到option.a=1
-        mgr3.template({ key: viewKey, viewStateInitOption: { a: 1 } });
+        mgr3.template({ key: viewKey, viewStateCreateOption: { a: 1 } });
         const viewState3 = mgr3.createViewState(viewKey);
         expect(viewState3).toEqual(testCreateViewStateReturnObj);
     });
@@ -337,7 +340,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
         const handler = {
-            loadRes(config: akView.IResLoadConfig) { }
+            loadRes(config: akView.IResLoadConfig) {}
         } as any;
         mgr.init({
             templateHandler: handler
@@ -355,7 +358,7 @@ describe(`ViewMgr初始化测试`, function () {
         //已经加载
         const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         const handler2 = {
-            loadRes(config: akView.IResLoadConfig) { },
+            loadRes(config: akView.IResLoadConfig) {},
             isLoaded() {
                 return true;
             }
@@ -392,7 +395,7 @@ describe(`ViewMgr初始化测试`, function () {
             templateHandler: handler4
         });
         mgr4.template(testKey);
-        mgr4.preloadResById(testKey, () => { }, testLoadOption4, {} as any);
+        mgr4.preloadResById(testKey, () => {}, testLoadOption4, {} as any);
 
         //loadOption合并,参数loadOption会和template.loadOption合并
         const mgr5 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -414,7 +417,7 @@ describe(`ViewMgr初始化测试`, function () {
 
         //传递config对象,config会传到loadRes方法的第一个参数
         const mgr6 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        const testConfig6 = { id: "", complete: function () { }, progress: function () { }, loadOption: {} };
+        const testConfig6 = { id: "", complete: function () {}, progress: function () {}, loadOption: {} };
         const handler6 = {
             loadRes(config: akView.IResLoadConfig) {
                 expect(config).toEqual(testConfig6);
@@ -496,7 +499,7 @@ describe(`ViewMgr初始化测试`, function () {
         mgr.init();
         const cacheHandler = mgr.cacheHandler;
         const onStateShowSpy = jest.spyOn(cacheHandler, "onViewStateShow");
-        const viewKey: any = "testKey_ViewMgr.create"
+        const viewKey: any = "testKey_ViewMgr.create";
         mgr.template(viewKey);
         const viewState1 = mgr.create(viewKey);
         expect(viewState1).toBeDefined();
@@ -519,13 +522,32 @@ describe(`ViewMgr初始化测试`, function () {
         const viewKey2: any = "testKey_ViewMgr.create2";
         mgr.template({ key: viewKey2, cacheMode: "FOREVER" });
         const viewState6 = mgr.create(viewKey2);
-        expect(viewState6.cacheMode ==="FOREVER").toBeTruthy()
+        expect(viewState6.cacheMode === "FOREVER").toBeTruthy();
         expect(mgr.getViewState(viewState6.id)).toBeDefined();
-        
-    })
+    });
     test("测试：ViewMgr.show", function () {
-
-    })
+        const viewMgr = new ViewMgr();
+        viewMgr.init();
+        const viewKey1: any = "viewKey_ViewMgr.show1";
+        const viewKey2: any = "viewKey_ViewMgr.show2";
+        const viewKey3: any = "viewKey_ViewMgr.show3";
+        const viewKey4: any = "viewKey_ViewMgr.show4";
+        viewMgr.template(viewKey1);
+        viewMgr.template(viewKey2);
+        viewMgr.template(viewKey3);
+        viewMgr.template(viewKey4);
+        //传key,返回id===key
+        const id = viewMgr.show(viewKey1);
+        expect(id).toEqual(viewKey1);
+        //传ViewState,返回viewState.showCfg.id === id;
+        const viewState2 = viewMgr.create(viewKey2);
+        const id2 = viewMgr.show(viewState2);
+        expect(viewState2["showCfg"].id).toEqual(viewState2.id);
+        expect(viewState2["showCfg"].key).toEqual(viewState2.template.key);
+        //传config,返回id=key
+        const id3 = viewMgr.show({ key: viewKey3 });
+        expect(id3).toEqual(viewKey3);
+    });
     test("测试: 资源加载loadOption & progressCallback & isPreloadResLoading & isPreloadResLoaded", function (done) {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
@@ -610,7 +632,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         mgr.init();
         const viewKey = mgr.getKey("regitstTestViewKey8");
-        mgr.template({ key: viewKey, handleOption: { viewClass: TestWithAnimView } as IAkViewTemplateHandleOption });
+        mgr.template({ key: viewKey, viewClass: TestWithAnimView });
 
         //创建
         const viewState1 = mgr.create(viewKey);
@@ -635,7 +657,7 @@ describe(`ViewMgr初始化测试`, function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         mgr.init();
         const viewKey = "regitstTestViewKey9";
-        mgr.template({ key: viewKey, handleOption: { viewClass: TestView } as IAkViewTemplateHandleOption });
+        mgr.template({ key: viewKey, viewClass: TestView });
 
         const sigViewState = mgr.getOrCreateViewState(viewKey);
 
@@ -684,9 +706,7 @@ describe(`ViewMgr初始化测试`, function () {
         const viewKey = mgr.getKey("regitstTestViewKey10");
         mgr.template({
             key: viewKey,
-            handleOption: {
-                viewClass: TestWithAnimView
-            } as IAkViewTemplateHandleOption
+            viewClass: TestWithAnimView
         });
 
         const sigViewState = mgr.getOrCreateViewState(viewKey);
@@ -750,9 +770,7 @@ describe(`ViewMgr初始化测试`, function () {
         const viewKey = mgr.getKey("regitstTestViewKey11");
         mgr.template({
             key: viewKey,
-            handleOption: {
-                viewClass: TestView
-            } as IAkViewTemplateHandleOption
+            viewClass: TestView
         });
 
         const sigViewState = mgr.getOrCreateViewState(viewKey);
@@ -801,8 +819,8 @@ describe(`ViewMgr初始化测试`, function () {
         const viewKey1 = mgr.getKey("regitstTestViewKey12");
         const viewKey2 = mgr.getKey("regitstTestViewKey13");
 
-        mgr.template({ key: viewKey1, handleOption: { viewClass: TestView } as IAkViewTemplateHandleOption });
-        mgr.template({ key: viewKey2, handleOption: { viewClass: TestWithAnimView } as IAkViewTemplateHandleOption });
+        mgr.template({ key: viewKey1, viewClass: TestView });
+        mgr.template({ key: viewKey2, viewClass: TestWithAnimView });
         mgr.preloadRes(viewKey1, () => {
             expect(mgr.isPreloadResLoaded(viewKey1)).toBeTruthy();
             const viewState1 = mgr.create<akView.IDefaultViewState>(viewKey1, null, true, { a: 1 });
@@ -845,5 +863,5 @@ describe(`ViewMgr初始化测试`, function () {
             });
         });
     }, 10000);
-    test("测试：cacheMode=LRU时的show、update、hide、destroy", function () { });
+    test("测试：cacheMode=LRU时的show、update、hide、destroy", function () {});
 });

@@ -7,14 +7,14 @@ declare global {
 }
 
 export class LRUCacheHandler<ValueType extends akView.IViewState> implements akView.ICacheHandler {
-    cache: Map<string, ValueType>;
+    cache: Map<string, ValueType> = new Map();
+    viewMgr: akView.IMgr;
     constructor(private _option?: akView.ILRUCacheHandlerOption) {
         if (!this._option) {
             this._option = { maxSize: 5 };
         }
-        this.cache = new Map();
     }
-    viewMgr: akView.IMgr;
+
     onViewStateShow(viewState: akView.IViewState<any>): void {
         this.put(viewState.id, viewState as any);
     }
@@ -36,13 +36,26 @@ export class LRUCacheHandler<ValueType extends akView.IViewState> implements akV
         return undefined;
     }
     protected put(key: string, value: ValueType): void {
-        if (this.cache.has(key)) {
-            this.cache.delete(key);
-        } else if (this.cache.size >= this._option.maxSize) {
-            this.cache.delete(this.cache.keys().next().value);
+        const maxSize = this._option.maxSize;
+        const cache = this.cache;
+        if (cache.has(key)) {
+            cache.delete(key);
+        } else if (cache.size >= maxSize) {
+            let needDeleteCount = cache.size - maxSize;
+            let forCount = 0;
+            for (let key of cache.keys()) {
+                if (forCount < needDeleteCount) {
+                    if (!cache.get(key).isViewShowed) {
+                        cache.delete(key);
+                    }
+                } else {
+                    break;
+                }
+                forCount++;
+            }
             console.log(`refresh: key:${key} , value:${value}`);
         }
-        this.cache.set(key, value);
+        cache.set(key, value);
     }
     protected toString() {
         console.log("maxSize", this._option.maxSize);

@@ -1,5 +1,3 @@
-import { DefaultViewState } from "./default-view-state";
-
 declare global {
     /**
      * 创建和显示参数
@@ -8,15 +6,39 @@ declare global {
     interface IAkViewTemplateCASParam {
         Default: any;
     }
+
     /**
-     * 模板处理参数
+     * 创建和显示处理器
      * 可扩展
      */
-    interface IAkViewTemplateHandleOption<Type extends keyof IAkViewTemplateCASParam = keyof IAkViewTemplateCASParam> {
+    interface IAkViewTemplateCreateHandler {
         /**
-         * 创建和显示类型
+         * 创建View
+         * @param template
          */
-        createAndShowType?: Type;
+        createView?(template: IAkViewDefaultTemplate): akView.IView;
+        /**
+         * 创建ViewState
+         * @param template
+         */
+        createViewState?(template: IAkViewDefaultTemplate): akView.IViewState;
+    }
+    interface IAkViewLayerHandler {
+        /**
+         * 添加到层级
+         * @param viewState
+         */
+        addToLayer?(viewState: akView.IViewState<any, IAkViewDefaultTemplate>): void;
+        /**
+         * 从层级移除
+         * @param viewState
+         */
+        removeFromLayer?(viewState: akView.IViewState<any, IAkViewDefaultTemplate>): void;
+    }
+    interface IAkViewDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes>
+        extends akView.ITemplate<ViewKeyTypes>,
+            IAkViewTemplateCreateHandler,
+            IAkViewLayerHandler {
         /**
          * View类
          */
@@ -26,46 +48,13 @@ declare global {
          */
         viewStateClass?: new (...args) => any;
         /**
-         *
+         * 获取预加载资源信息
          */
-        createAndShowParam?: IAkViewTemplateCASParam[Type];
-        /**
-         * 创建和显示处理钩子
-         */
-        createAndShowHandlerHook?: IAkViewTemplateCreateAndShowHandler;
+        getPreloadResInfo?(): akView.TemplateResInfoType;
     }
-    /**
-     * 创建和显示处理器
-     * 可扩展
-     */
-    interface IAkViewTemplateCreateAndShowHandler {
-        /**
-         * 创建View
-         * @param template
-         */
-        createView?(template: akView.ITemplate): akView.IView;
-        /**
-         * 创建ViewState
-         * @param template
-         */
-        createViewState?(template: akView.ITemplate): akView.IViewState;
-        /**
-         * 添加到层级
-         * @param viewState
-         */
-        addToLayer?(viewState: akView.IViewState): void;
-        /**
-         * 从层级移除
-         * @param viewState
-         */
-        removeFromLayer?(viewState: akView.IViewState): void;
-    }
+
     namespace akView {
-        interface IDefaultTplHandlerInitOption {
-            /**
-             * 创建和显示处理器
-             */
-            createAndShowHandler?: IAkViewTemplateCreateAndShowHandler;
+        interface IDefaultTplHandlerInitOption extends IAkViewTemplateCreateHandler, IAkViewLayerHandler {
             /**
              * 资源是否加载
              * @param resInfo
@@ -75,7 +64,7 @@ declare global {
              * 获取资源信息
              * @param template
              */
-            getPreloadResInfo(template: akView.ITemplate): akView.ITemplateResInfo;
+            getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType;
             /**
              * 加载资源
              * @param resInfo
@@ -116,7 +105,7 @@ declare global {
     }
 }
 // export class DefaultTemplateHandler<Handle> implements akView.ITemplateHandler<"Default">{}
-export class DefaultTemplateHandler implements akView.ITemplateHandler {
+export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDefaultTemplate> {
     /**
      * 模板加载config字典，key为模板key，value为{id:config}的字典
      */
@@ -140,66 +129,63 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
     constructor(public _option?: akView.IDefaultTplHandlerInitOption) {
         if (!this._option) this._option = {} as any;
     }
-    createView<T extends akView.IView<akView.IViewState<any>>>(template: akView.ITemplate): T {
+    createView<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T {
         //先使用自定义
-
-        const handleOption = template.handleOption as IAkViewTemplateHandleOption<"Default">;
         let viewIns = undefined;
-        if (handleOption) {
-            viewIns = handleOption.createAndShowHandlerHook?.createView?.(template);
-            const casType = handleOption.createAndShowType;
-            if (!viewIns && (!casType || casType === "Default") && handleOption.viewClass) {
-                viewIns = new handleOption.viewClass();
-            }
+        if (template.viewClass) {
+            viewIns = new template.viewClass();
+        } else {
+            viewIns = template?.createView?.(template);
         }
         if (!viewIns) {
-            viewIns = this._option.createAndShowHandler?.createView?.(template);
+            viewIns = this._option.createView?.(template);
         }
         return viewIns;
     }
 
-    createViewState?<T extends akView.IViewState<any>>(template: akView.ITemplate): T {
-        const handleOption = template.handleOption as IAkViewTemplateHandleOption<"Default">;
+    createViewState?<T extends akView.IViewState<any>>(template: IAkViewDefaultTemplate): T {
         let viewState = undefined;
-        if (handleOption) {
-            const casType = handleOption.createAndShowType;
-            viewState = handleOption.createAndShowHandlerHook?.createViewState?.(template);
-            if (!viewState && (!casType || casType === "Default") && handleOption?.viewStateClass) {
-                viewState = new handleOption.viewStateClass();
-            }
+        if (template.viewStateClass) {
+            viewState = new template.viewStateClass();
+        } else {
+            viewState = template?.createViewState?.(template);
         }
         if (!viewState) {
-            viewState = this._option.createAndShowHandler?.createViewState?.(template);
+            viewState = this._option.createViewState?.(template);
         }
         return viewState;
     }
     addToLayer?(viewState: akView.IViewState<any>): void {
-        const handleOption = viewState.template.handleOption as IAkViewTemplateHandleOption;
-        if (handleOption?.createAndShowHandlerHook?.addToLayer) {
-            handleOption.createAndShowHandlerHook.addToLayer(viewState);
+        const template = viewState.template;
+        if (template?.layerHandler?.addToLayer) {
+            template.layerHandler.addToLayer(viewState);
         } else {
-            this._option.createAndShowHandler?.addToLayer?.(viewState);
+            this._option.addToLayer?.(viewState);
         }
     }
-    removeFromLayer?(viewState: akView.IViewState<any>): void {
-        const handleOption = viewState.template.handleOption as IAkViewTemplateHandleOption;
-        if (handleOption?.createAndShowHandlerHook?.removeFromLayer) {
-            handleOption.createAndShowHandlerHook.removeFromLayer(viewState);
+    removeFromLayer?(viewState: akView.IDefaultViewState): void {
+        const template = viewState.template;
+        if (template.removeFromLayer) {
+            template.removeFromLayer(viewState);
         } else {
-            this._option.createAndShowHandler?.removeFromLayer?.(viewState);
+            this._option.removeFromLayer?.(viewState);
         }
     }
-    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: akView.ITemplate): void {}
+    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: IAkViewDefaultTemplate): void {}
 
-    getPreloadResInfo(template: akView.ITemplate): akView.TemplateResInfoType {
+    getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType {
         let resInfo = this._resInfoMap[template.key];
         if (!resInfo) {
-            resInfo = this._option.getPreloadResInfo?.(template);
+            resInfo = template.getPreloadResInfo?.();
+            if (!resInfo) {
+                resInfo = this._option.getPreloadResInfo?.(template);
+            }
+
             this._resInfoMap[template.key] = resInfo;
         }
         return resInfo;
     }
-    isLoaded(template: akView.ITemplate): boolean {
+    isLoaded(template: IAkViewDefaultTemplate): boolean {
         let isLoaded = this._loadedMap[template.key];
         if (!isLoaded) {
             if (!this._option.isLoaded) {
@@ -264,7 +250,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
         this._loadResIdMap[key] = loadResId;
     }
 
-    cancelLoad(id: string, template: akView.ITemplate): void {
+    cancelLoad(id: string, template: IAkViewDefaultTemplate): void {
         let templateKey = template.key;
         const configs = this._templateLoadResConfigsMap[templateKey];
 
@@ -281,7 +267,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
             }
         }
     }
-    addResRef(id: string, template: akView.ITemplate): void {
+    addResRef(id: string, template: IAkViewDefaultTemplate): void {
         let refIds = this._resRefMap[id];
         if (!refIds) {
             refIds = [];
@@ -290,7 +276,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
         refIds.push(id);
         this._option.addResRef?.(template);
     }
-    decResRef(id: string, template: akView.ITemplate): void {
+    decResRef(id: string, template: IAkViewDefaultTemplate): void {
         //移除引用
         let refIds = this._resRefMap[id];
         if (refIds) {
@@ -308,7 +294,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler {
             this._loadedMap[template.key] = false;
         }
     }
-    destroyRes(template: akView.ITemplate): boolean {
+    destroyRes(template: IAkViewDefaultTemplate): boolean {
         const configs = this._templateLoadResConfigsMap[template.key];
         if (configs && Object.keys(configs).length) {
             return false;

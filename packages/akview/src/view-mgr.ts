@@ -1,4 +1,4 @@
-import { DefaultEventHandler } from "./default-event-handler";
+import { DefaultEventBus } from "./default-event-bus";
 import { DefaultTemplateHandler } from "./default-template-handler";
 import { DefaultViewState } from "./default-view-state";
 import { LRUCacheHandler } from "./lru-cache-handler";
@@ -10,8 +10,9 @@ const IdSplitChars = "_$_";
 export class ViewMgr<
     ViewKeyTypes = IAkViewKeyTypes,
     ViewDataTypes = IAkViewDataTypes,
+    TemplateType extends akView.ITemplate<ViewKeyTypes> = IAkViewDefaultTemplate<ViewKeyTypes>,
     keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-    > implements akView.IMgr<ViewKeyTypes, ViewDataTypes, keyType>
+> implements akView.IMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>
 {
     private _cacheHandler: akView.ICacheHandler;
     /**
@@ -21,21 +22,21 @@ export class ViewMgr<
         return this._cacheHandler;
     }
 
-    private _eventHandler: akView.IEventHandler;
+    private _eventBus: akView.IEventBus;
     /**事件处理器 */
-    public get eventHandler(): akView.IEventHandler {
-        return this._eventHandler;
+    public get eventBus(): akView.IEventBus {
+        return this._eventBus;
     }
-    private _templateHandler: akView.ITemplateHandler;
+    private _templateHandler: akView.ITemplateHandler<TemplateType>;
     /**
      * 模板处理器
      */
-    public get templateHandler(): akView.ITemplateHandler {
+    public get templateHandler(): akView.ITemplateHandler<TemplateType> {
         return this._templateHandler;
     }
 
     /**模版字典 */
-    protected _templateMap: akView.TemplateMap<keyType>;
+    protected _templateMap: akView.TemplateMap<TemplateType, keyType>;
 
     /**状态缓存 */
     protected _viewStateMap: akView.ViewStateMap;
@@ -47,17 +48,17 @@ export class ViewMgr<
     /**
      * 默认ViewState的配置
      */
-    private _defaultViewStateOption: any;
-    private _option: akView.IMgrInitOption;
-    public get option(): akView.IMgrInitOption {
+    private _viewStateCreateOption: any;
+    private _option: akView.IMgrInitOption<TemplateType>;
+    public get option(): akView.IMgrInitOption<TemplateType> {
         return this._option;
     }
     getKey(key: keyType): keyType {
         return key as any;
     }
-    init(option?: akView.IMgrInitOption): void {
+    init(option?: akView.IMgrInitOption<TemplateType>): void {
         if (this._inited) return;
-        this._eventHandler = option?.eventHandler ? option?.eventHandler : new DefaultEventHandler();
+        this._eventBus = option?.eventBus ? option?.eventBus : new DefaultEventBus();
         this._cacheHandler = option?.cacheHandler
             ? option?.cacheHandler
             : new LRUCacheHandler(option?.defaultCacheHandlerOption);
@@ -68,7 +69,7 @@ export class ViewMgr<
         }
         this._templateHandler = templateHandler;
 
-        this._defaultViewStateOption = option?.defaultViewStateOption ? option?.defaultViewStateOption : {};
+        this._viewStateCreateOption = option?.viewStateCreateOption ? option?.viewStateCreateOption : {};
         this._inited = true;
         this._option = option ? option : {};
         const templateMap = option?.templateMap ? option?.templateMap : globalViewTemplateMap;
@@ -80,9 +81,7 @@ export class ViewMgr<
             plugin.onUse?.(option);
         }
     }
-    template(
-        templateOrKey: keyType | akView.ITemplate<ViewKeyTypes> | Array<akView.ITemplate<ViewKeyTypes> | keyType>
-    ): void {
+    template(templateOrKey: keyType | TemplateType | Array<TemplateType | keyType>): void {
         if (!templateOrKey) return;
         if (!this._inited) {
             console.error(`[viewMgr](template): is no inited`);
@@ -95,33 +94,33 @@ export class ViewMgr<
                 if (typeof template === "object") {
                     this._addTemplate(template);
                 } else {
-                    this._addTemplate({ key: template });
+                    this._addTemplate({ key: template } as any);
                 }
             }
         } else {
             if (typeof templateOrKey === "object") {
                 this._addTemplate(templateOrKey as any);
             } else if (typeof templateOrKey === "string") {
-                this._addTemplate({ key: templateOrKey as any });
+                this._addTemplate({ key: templateOrKey } as any);
             }
         }
     }
     hasTemplate(key: keyType): boolean {
         return !!this._templateMap[key as any];
     }
-    getTemplate(key: keyType): akView.ITemplate {
+    getTemplate(key: keyType): TemplateType {
         const template = this._templateMap[key];
         if (!template) {
             console.warn(`template is not exit:${key}`);
         }
-        return template;
+        return template as any;
     }
     /**
      * 添加模板到模板字典
      * @param template
      * @returns
      */
-    protected _addTemplate(template: akView.ITemplate<ViewKeyTypes>): void {
+    protected _addTemplate(template: TemplateType): void {
         if (!template) return;
         if (!this._inited) {
             console.error(`[viewMgr](_addTemplate): is no inited`);
@@ -294,12 +293,12 @@ export class ViewMgr<
             }
         }
     }
-    isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | akView.ITemplate): boolean {
+    isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | TemplateType): boolean {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let template: akView.ITemplate;
+        let template: TemplateType;
         if (typeof keyOrIdOrTemplate === "object") {
             template = keyOrIdOrTemplate as any;
         } else {
@@ -341,7 +340,7 @@ export class ViewMgr<
      * @param keyOrConfig 配置
      * @returns 返回ViewState
      */
-    create<T extends akView.IViewState = akView.IViewState, ConfigKeyType extends keyType = keyType>(
+    create<T extends akView.IViewState = akView.IDefaultViewState, ConfigKeyType extends keyType = keyType>(
         keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>
     ): T;
     /**
@@ -355,7 +354,7 @@ export class ViewMgr<
      
      * @returns 返回ViewState
      */
-    create<T extends akView.IViewState = akView.IViewState, ViewKey extends keyType = keyType>(
+    create<T extends akView.IViewState = akView.IDefaultViewState, ViewKey extends keyType = keyType>(
         keyOrConfig: ViewKey,
         onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>,
         needShowView?: boolean,
@@ -374,7 +373,7 @@ export class ViewMgr<
      
      * @returns 返回ViewState
      */
-    create<CreateKeyType extends keyType, T extends akView.IViewState = akView.IViewState>(
+    create<CreateKeyType extends keyType, T extends akView.IViewState = akView.IDefaultViewState>(
         keyOrConfig: string | akView.IShowConfig<CreateKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>,
         needShowView?: boolean,
@@ -437,8 +436,11 @@ export class ViewMgr<
         } else if (typeof keyOrViewStateOrConfig === "object") {
             if (keyOrViewStateOrConfig["__$flag"]) {
                 viewState = keyOrViewStateOrConfig as any;
+                id = viewState.id;
+                key = viewState.template.key;
             } else {
                 showCfg = keyOrViewStateOrConfig as any;
+                showCfg.id = showCfg.key;
                 onShowData !== undefined && (showCfg.onShowData = onShowData);
                 onInitData !== undefined && (showCfg.onInitData = onInitData);
             }
@@ -532,6 +534,7 @@ export class ViewMgr<
         } else {
             viewState = this.getViewState(keyOrViewState as string);
         }
+        if (!viewState) return;
         const cacheMode = viewState.cacheMode;
         viewState.onHide(hideCfg);
         if (cacheMode && cacheMode !== "FOREVER") {
@@ -586,8 +589,7 @@ export class ViewMgr<
      * @returns
      */
     createView(viewState: akView.IViewState): akView.IView {
-        const template = viewState.template;
-        if (!this.isPreloadResLoaded(template)) return;
+        const template: TemplateType = viewState.template;
         let ins = viewState.viewIns;
         if (ins) return ins;
 
@@ -596,6 +598,7 @@ export class ViewMgr<
         if (ins) {
             ins.viewState = viewState;
             viewState.viewIns = ins;
+            ins.key = template.key as string;
         } else {
             console.warn(`key:${template.key} ins fail`);
         }
@@ -638,7 +641,7 @@ export class ViewMgr<
         viewState = this._templateHandler.createViewState?.(template);
         if (!viewState) viewState = new DefaultViewState();
         if (viewState) {
-            viewState.onCreate(Object.assign({}, this._defaultViewStateOption, template.viewStateInitOption));
+            viewState.onCreate(Object.assign({}, this._viewStateCreateOption, template.viewStateCreateOption));
             viewState.id = id;
             viewState.viewMgr = this as any;
             viewState.template = template;
@@ -693,4 +696,5 @@ export class ViewMgr<
             return id as keyType;
         }
     }
+    on;
 }

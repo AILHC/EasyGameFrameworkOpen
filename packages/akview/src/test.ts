@@ -87,21 +87,6 @@ interface IViewKeys {
     BagView;
     GroupView;
 }
-type ModuleViewKey<
-    ModuleKeys,
-    ModuleKey extends string & keyof ModuleKeys = any,
-    ViewKey extends string & keyof ModuleKeys[ModuleKey] = string & keyof ModuleKeys[ModuleKey]
-> = `${ModuleKey}.${ViewKey}`;
-interface tstKeys<Modules, ViewKey> {
-    h: `${ModuleKey}.${ViewKey}`;
-    hero_HeroGrowUpView: "hero.HeroShowView";
-    login_LoginView: "login.LoginView";
-}
-type tstKeyType = tstKeys[keyof tstKeys];
-
-let key2: tstKeyType = "hero.HeroShowView";
-let key3: tstKeyType = "login.LoginView";
-let key4: keyof tstKeys = "hero.HeroShowView";
 interface ITestMgr<ModuleKeys> {
     show<ModuleKey extends keyof ModuleKeys, ViewKey extends keyof ModuleKeys[ModuleKey]>(
         key: `${ModuleKey}.${ViewKey}`

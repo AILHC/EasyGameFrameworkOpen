@@ -46,14 +46,6 @@ viewMgr.template([{ key: "ypeTest" }, "typeTest5", { key: "typeTes" }]);
 // viewMgr.template({ key: "typeTest", handleOption:});
 // //自定义handlerOption类型
 // viewMgr.template({ key: "typeTest", handleOption: {ab:{bc:""}} as {ab:{bc:string},viewStateClass:string}});
-declare global {
-    interface IAkViewTemplateHandlerTypes {
-        TypeTest1: "TypeTest1";
-    }
-    interface IAkViewTemplateHandlerOptionTypes {
-        TypeTest1: { typeTest: string };
-    }
-}
 
 //插件类型提示
 interface ITestPlugin {
