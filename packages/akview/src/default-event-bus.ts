@@ -2,7 +2,13 @@ export class DefaultEventBus implements akView.IEventBus {
     viewMgr: akView.IMgr;
     handleMethodMap: Map<String | string, akView.ICallableFunction[]> = new Map();
     onRegist(): void {}
-    on(eventKey: AkViewEventKeyType | String, method: Function, caller?: any, args?: any[], offBefore?: boolean): void {
+    onAkEvent<EventDataType extends unknown = IAkViewEventData>(
+        eventKey: String | keyof IAkViewEventKeys,
+        method: akView.EventCallBack<EventDataType>,
+        caller?: any,
+        args?: any[],
+        offBefore?: boolean
+    ): void {
         let methods = this.handleMethodMap.get(eventKey);
         if (!methods) {
             methods = [];
@@ -20,11 +26,16 @@ export class DefaultEventBus implements akView.IEventBus {
             };
         }
         if (offBefore) {
-            this.off(eventKey, callableFunction.method, callableFunction.caller);
+            this.offAkEvent(eventKey, callableFunction.method, callableFunction.caller);
         }
         methods.push(callableFunction);
     }
-    once(eventKey: AkViewEventKeyType | String, method: Function, caller?: any, args?: any[]): void {
+    onceAkEvent<EventDataType extends unknown = IAkViewEventData>(
+        eventKey: String | keyof IAkViewEventKeys,
+        method: akView.EventCallBack<EventDataType>,
+        caller?: any,
+        args?: any[]
+    ): void {
         const callableFunction: akView.ICallableFunction = {
             method: method,
             caller: caller,
@@ -32,9 +43,9 @@ export class DefaultEventBus implements akView.IEventBus {
             once: true
         };
 
-        this.on(eventKey, callableFunction as any, null, null, true);
+        this.onAkEvent(eventKey, callableFunction as any, null, null, true);
     }
-    off(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void {
+    offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void {
         let callableFuncs = this.handleMethodMap.get(eventKey);
         if (callableFuncs) {
             let cfunc: akView.ICallableFunction;
@@ -47,7 +58,7 @@ export class DefaultEventBus implements akView.IEventBus {
             }
         }
     }
-    emit<EventDataType = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void {
+    emitAkEvent<EventDataType = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void {
         let methods = this.handleMethodMap.get(eventKey);
         if (methods) {
             let cfunc: akView.ICallableFunction;
@@ -57,59 +68,38 @@ export class DefaultEventBus implements akView.IEventBus {
                     methods[i] = methods[methods.length - 1];
                     methods.pop();
                 }
-                cfunc.method.call(cfunc.caller, cfunc.args, eventData);
+                cfunc.method.call(cfunc.caller, eventData, cfunc.args);
             }
         }
     }
-    /**
-     * 监听
-     * @param viewId
-     * @param eventKey
-     * @param method
-     */
-    onViewEvent(
+    onAkViewEvent<EventDataType extends unknown = IAkViewEventData>(
         viewId: string,
-        eventKey: AkViewEventKeyType | String,
-        method: Function,
+        eventKey: String | keyof IAkViewEventKeys,
+        method: akView.EventCallBack<EventDataType>,
+        caller?: any,
+        args?: any[],
+        offBefore?: boolean
+    ): void {
+        const idKey = this.getIdEventKey(viewId, eventKey);
+        this.onAkEvent(idKey, method, caller, args);
+    }
+    onceAkViewEvent<EventDataType extends unknown = IAkViewEventData>(
+        viewId: string,
+        eventKey: String | keyof IAkViewEventKeys,
+        method: akView.EventCallBack<EventDataType>,
         caller?: any,
         args?: any[]
     ): void {
         const idKey = this.getIdEventKey(viewId, eventKey);
-        this.on(idKey, method, caller, args);
+        this.onceAkEvent(idKey, method, caller, args);
     }
-    /**
-     * 监听一次，执行完后取消监听
-     * @param viewId
-     * @param eventKey
-     * @param method
-     */
-    onceViewEvent(
-        viewId: string,
-        eventKey: AkViewEventKeyType | String,
-        method: Function,
-        caller?: any,
-        args?: any[]
-    ): void {
+
+    offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void {
         const idKey = this.getIdEventKey(viewId, eventKey);
-        this.once(idKey, method, caller, args);
+        this.offAkEvent(idKey, method, caller);
     }
-    /**
-     * 取消监听
-     * @param viewId
-     * @param eventKey
-     * @param method
-     */
-    offViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void {
-        const idKey = this.getIdEventKey(viewId, eventKey);
-        this.off(idKey, method, caller);
-    }
-    /**
-     * 触发事件
-     * @param viewId
-     * @param eventKey
-     * @param eventData 事件数据，作为回调参数中的最后的传入，比如method.apply(method._caller,method._args,eventData);
-     */
-    emitViewEvent<EventDataType extends any = any>(
+
+    emitAkViewEvent<EventDataType extends any = any>(
         viewId: string,
         eventKey: AkViewEventKeyType | String,
         eventData?: EventDataType
@@ -119,10 +109,10 @@ export class DefaultEventBus implements akView.IEventBus {
             !(eventData as IAkViewEventData).viewId && ((eventData as IAkViewEventData).viewId = viewId);
         }
 
-        this.emit(idKey, eventData);
+        this.emitAkEvent(idKey, eventData);
 
         // this.emit(eventKey, Object.assign({ viewId: viewId }, eventData));
-        this.emit(eventKey, eventData);
+        this.emitAkEvent(eventKey, eventData);
     }
     protected getIdEventKey(viewId: string, eventKey: any) {
         return viewId + "_*_" + eventKey;

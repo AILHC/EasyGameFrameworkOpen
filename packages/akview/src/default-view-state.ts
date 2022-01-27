@@ -2,52 +2,64 @@ const isPromise = <T = any>(val: any): val is Promise<T> => {
     return val !== null && typeof val === "object" && typeof val.then === "function" && typeof val.catch === "function";
 };
 declare global {
-    namespace akView {
-        interface IDefaultView<ViewStateType extends akView.IViewState = akView.IViewState>
-            extends akView.IView<ViewStateType> {
-            /**
-             * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
-             * @param showData
-             */
-            onBeforeViewShow?(showData?: any): void;
+    /**
+     * 默认ViewState的配置
+     */
+    interface IAkViewDefaultViewStateOption {
+        /**
+         * 是否能在渲染节点隐藏后释放模板资源引用,默认false
+         */
+        canDecTemplateResRefOnHide?: boolean;
+        /**
+         * 在onDestroy时销毁资源，默认false
+         *
+         */
+        destroyResOnDestroy?: boolean;
+    }
+    interface IAkViewDefaultView<ViewStateType extends akView.IViewState = akView.IViewState>
+        extends akView.IView<ViewStateType> {
+        /**
+         * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
+         * @param showData
+         */
+        onBeforeViewShow?(showData?: any): void;
 
-            /**
-             * 当播放出现或者消失动画时
-             * @param isShowAnim
-             * @param hideOption 隐藏时透传数据
-             * @returns 返回promise
-             */
-            onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void>;
-        }
-        interface IDefaultViewState extends IViewState<akView.IDefaultViewStateOption, IAkViewDefaultTemplate> {
-            /**
-             * 显示结束(动画播放完)
-             */
-            isViewShowEnd?: boolean;
+        /**
+         * 当播放出现或者消失动画时
+         * @param isShowAnim
+         * @param hideOption 隐藏时透传数据
+         * @returns 返回promise
+         */
+        onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void>;
+    }
+    interface IAkViewDefaultViewState extends akView.IViewState<IAkViewDefaultViewStateOption, IAkViewDefaultTemplate> {
+        /**
+         * 显示结束(动画播放完)
+         */
+        isViewShowEnd?: boolean;
 
-            /**是否需要销毁 */
-            needDestroy?: boolean;
-            /**是否需要显示View到场景 */
-            needShowView?: boolean;
+        /**是否需要销毁 */
+        needDestroy?: boolean;
+        /**是否需要显示View到场景 */
+        needShowView?: boolean;
 
-            /**是否需要隐藏 */
-            hiding?: boolean;
-            /**显示配置 */
-            showCfg?: akView.IShowConfig;
-            /**显示过程中的Promise */
-            showingPromise?: Promise<void> | void;
-            /**隐藏中的Promise */
-            hidingPromise?: Promise<void> | void;
-            /**
-             * 未显示之前调用update接口的传递的数据
-             */
-            updateState?: any;
-            /**hide 传参 */
-            hideCfg?: akView.IHideConfig;
-        }
+        /**是否需要隐藏 */
+        hiding?: boolean;
+        /**显示配置 */
+        showCfg?: akView.IShowConfig;
+        /**显示过程中的Promise */
+        showingPromise?: Promise<void> | void;
+        /**隐藏中的Promise */
+        hidingPromise?: Promise<void> | void;
+        /**
+         * 未显示之前调用update接口的传递的数据
+         */
+        updateState?: any;
+        /**hide 传参 */
+        hideCfg?: akView.IHideConfig;
     }
 }
-export class DefaultViewState implements akView.IDefaultViewState {
+export class DefaultViewState implements IAkViewDefaultViewState {
     id: string;
     template: IAkViewDefaultTemplate;
 
@@ -67,18 +79,18 @@ export class DefaultViewState implements akView.IDefaultViewState {
     updateState?: any;
 
     hideCfg?: akView.IHideConfig;
-    viewIns?: akView.IDefaultView<DefaultViewState>;
+    viewIns?: IAkViewDefaultView<DefaultViewState>;
     viewMgr: akView.IMgr;
     public destroyed: boolean;
 
-    private _option: akView.IDefaultViewStateOption;
+    private _option: IAkViewDefaultViewStateOption;
 
     private _needDestroyRes: any;
     isLoading: boolean;
 
     private _isConstructed: boolean;
 
-    onCreate(option: akView.IDefaultViewStateOption): void {
+    onCreate(option: IAkViewDefaultViewStateOption): void {
         if (this._isConstructed) {
             return;
         }
@@ -95,15 +107,6 @@ export class DefaultViewState implements akView.IDefaultViewState {
         }
     }
     onShow(showCfg: akView.IShowConfig) {
-        //在不同状态下进行处理
-        //未加载,去加载
-        //加载中,更新showCfg,并调用hideEndCb
-        //加载了,show,showing
-        //显示中,走hideEnd,再show,showing
-        //显示结束,走hideEnd,再show,showing
-        //隐藏中,走hideEnd,再show,showing
-        //隐藏结束,show,showing
-        //showUI
         this.showCfg = showCfg;
         this.needDestroy = false;
         this.needShowView = showCfg.needShowView;
@@ -157,7 +160,7 @@ export class DefaultViewState implements akView.IDefaultViewState {
             this.isLoading = false;
             this.viewMgr.cancelPreloadRes(this.id);
         }
-        this.viewMgr.eventBus.emitViewEvent("onViewHide", this.id);
+        this.viewMgr.eventBus.emitAkViewEvent("onViewHide", this.id);
         let promise: Promise<void>;
         this.isViewShowed = false;
         this.isViewShowEnd = false;
@@ -194,23 +197,24 @@ export class DefaultViewState implements akView.IDefaultViewState {
     initView() {
         if (!this.isViewInited) {
             const viewIns = this.viewMgr.createView(this);
+
             //持有模板资源
             this.viewMgr.addTemplateResRef(this);
             if (!this.isViewInited && viewIns) {
                 viewIns.onInitView?.(this.showCfg.onInitData);
                 this.isViewInited = true;
-                this.viewMgr.eventBus.emitViewEvent("onViewInit", this.id);
+                this.viewMgr.eventBus.emitAkViewEvent("onViewInit", this.id);
             }
         }
     }
     showView(): void {
         const ins = this.viewIns;
         ins.onBeforeViewShow?.(this.showCfg.onShowData);
-        this.viewMgr.eventBus.on("onWindowResize", ins.onWindowResize, ins);
-        this.addToLayer(this);
+        this.viewMgr.eventBus.onAkEvent("onWindowResize", ins.onWindowResize, ins);
+        this.viewMgr.tplHandler?.addToLayer?.(this);
 
         ins.onShowView?.(this.showCfg.onShowData);
-        this.viewMgr.eventBus.emitViewEvent("onViewShow", this.id);
+        this.viewMgr.eventBus.emitAkViewEvent("onViewShow", this.id);
         const promise = ins.onPlayAnim?.(true);
         this.showingPromise = promise;
         this.isViewShowed = true;
@@ -232,7 +236,7 @@ export class DefaultViewState implements akView.IDefaultViewState {
     }
     entryShowEnd(): void {
         this.isViewShowEnd = true;
-        this.viewMgr.eventBus.emitViewEvent("onViewShowEnd", this.id);
+        this.viewMgr.eventBus.emitAkViewEvent("onViewShowEnd", this.id);
     }
     hideViewIns(): void {
         this.hiding = false;
@@ -241,15 +245,15 @@ export class DefaultViewState implements akView.IDefaultViewState {
         const hideCfg = this.hideCfg;
         const ins = this.viewIns;
         if (ins) {
-            this.removeFromLayer(this);
+            this.viewMgr.tplHandler?.removeFromLayer?.(this);
             ins.onHideView?.(hideCfg?.hideOption);
-            this.viewMgr.eventBus.off("onWindowResize", ins.onWindowResize, ins);
+            this.viewMgr.eventBus.offAkEvent("onWindowResize", ins.onWindowResize, ins);
         }
         if (this._option.canDecTemplateResRefOnHide && hideCfg?.decTemplateResRef) {
             this.viewMgr.decTemplateResRef(this);
         }
         this.hideCfg = undefined;
-        this.viewMgr.eventBus.emitViewEvent("onViewHideEnd", this.id);
+        this.viewMgr.eventBus.emitAkViewEvent("onViewHideEnd", this.id);
     }
 
     entryDestroyed(): void {
@@ -270,34 +274,13 @@ export class DefaultViewState implements akView.IDefaultViewState {
             this.viewIns = undefined;
         }
         const template = this.template;
-        const handler = viewMgr.templateHandler;
+        const handler = viewMgr.tplHandler;
         handler?.destroyView(viewIns, template);
         //释放引用
         viewMgr.decTemplateResRef(this);
         //销毁资源
         (this._needDestroyRes || this._option.destroyResOnDestroy) && viewMgr.destroyRes(template.key);
         this._needDestroyRes = false;
-        viewMgr.eventBus.emitViewEvent("onViewDestroyed", this.id);
-    }
-    addToLayer(viewState: akView.IViewState) {
-        if (viewState.template) {
-            const handler = this.viewMgr.templateHandler;
-            if (!handler?.addToLayer) {
-                console.error(`${viewState.template.key} 没有取到添加到层级的方法`);
-            } else {
-                handler.addToLayer(viewState);
-            }
-        }
-    }
-    removeFromLayer(viewState: akView.IViewState): void {
-        if (viewState.template) {
-            const handler = this.viewMgr.templateHandler;
-
-            if (!handler?.removeFromLayer) {
-                console.error(`${viewState.template.key} 没有取到从层级移除的方法`);
-            } else {
-                handler.removeFromLayer(viewState);
-            }
-        }
+        viewMgr.eventBus.emitAkViewEvent("onViewDestroyed", this.id);
     }
 }

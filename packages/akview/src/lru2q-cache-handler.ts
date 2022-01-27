@@ -1,8 +1,8 @@
 declare global {
     namespace akView {
         interface ILRU2QCacheHandlerOption {
-            fifoMaxSize: number;
-            lruMaxSize: number;
+            fifoMaxSize?: number;
+            lruMaxSize?: number;
         }
     }
 }
@@ -18,8 +18,10 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewState> implements a
     viewMgr: akView.IMgr;
     constructor(private _option?: akView.ILRU2QCacheHandlerOption) {
         if (!this._option) {
-            this._option = { fifoMaxSize: 5, lruMaxSize: 5 };
+            this._option = {} as any;
         }
+        isNaN(this._option.fifoMaxSize) && (this._option.fifoMaxSize = 5);
+        isNaN(this._option.lruMaxSize) && (this._option.lruMaxSize = 5);
         this.fifoQueue = new Map();
         this.lruQueue = new Map();
     }

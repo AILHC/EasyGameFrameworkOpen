@@ -133,7 +133,7 @@ declare global {
             /**资源标识，可以是路径、url等,其他附加信息可以通过扩展akView.ITemplateResInfo来添加 */
             key: string;
         }
-        type TemplateResInfoType = Array<ITemplateResInfo | string> | ITemplateResInfo | string;
+        type TemplateResInfoType = Array<ITemplateResInfo> | ITemplateResInfo | string | string[];
 
         type ViewStateConstructor<T extends akView.IViewState = any> = { new (...args): T };
         /**
@@ -254,57 +254,77 @@ declare global {
             //#endregion
         }
 
+        type EventCallBack<EventDataType extends any = IAkViewEventData> = (eventData: EventDataType, ...args) => void;
         interface IEventBus {
             /**
              * 监听
              * @param eventKey
              * @param method
+             * @param args
+             * @param offBefore 是否覆盖上次监听，默认false
              */
-            on(eventKey: AkViewEventKeyType | String, method: Function, caller?: any, args?: any[]): void;
+            onAkEvent<EventDataType extends any = IAkViewEventData>(
+                eventKey: AkViewEventKeyType | String,
+                method: akView.EventCallBack<EventDataType>,
+                caller?: any,
+                args?: any[],
+                offBefore?: boolean
+            ): void;
             /**
-             * 监听一次，执行完后取消监听
+             * 监听一次，执行完后取消监听,会覆盖上次监听
              * @param eventKey
              * @param method
              */
-            once(eventKey: AkViewEventKeyType | String, method: Function, caller?: any, args?: any[]): void;
+            onceAkEvent<EventDataType extends any = IAkViewEventData>(
+                eventKey: AkViewEventKeyType | String,
+                method: akView.EventCallBack<EventDataType>,
+                caller?: any,
+                args?: any[]
+            ): void;
             /**
              * 取消监听
              * @param eventKey
              * @param method
              */
-            off(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+            offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
             /**
              * 触发事件
              * @param eventKey
-             * @param eventData 事件数据，作为回调参数中的最后的传入，比如method.apply(method._caller,method._args,eventData);
+             * @param eventData 事件数据，作为回调参数中的第一个;
              */
-            emit<EventDataType extends any = any>(
+            emitAkEvent<EventDataType extends any = any>(
                 eventKey: AkViewEventKeyType | String,
                 eventData?: EventDataType
             ): void;
             /**
-             * 监听
+             * 监听指定ViewId的事件
              * @param viewId
              * @param eventKey
              * @param method
+             * @param caller
+             * @param args 自定义透传参数
+             * @param offBefore 是否覆盖上次监听，默认false
              */
-            onViewEvent(
+            onAkViewEvent<EventDataType extends any = IAkViewEventData>(
                 viewId: string,
                 eventKey: AkViewEventKeyType | String,
-                method: Function,
+                method: akView.EventCallBack<EventDataType>,
                 caller?: any,
-                args?: any[]
+                args?: any[],
+                offBefore?: boolean
             ): void;
             /**
-             * 监听一次，执行完后取消监听
+             * 监听指定ViewId的事件一次，执行完后取消监听,会覆盖上次监听
              * @param viewId
              * @param eventKey
              * @param method
+             * @param caller
+             * @param args 自定义透传参数
              */
-            onceViewEvent(
+            onceAkViewEvent<EventDataType extends any = IAkViewEventData>(
                 viewId: string,
                 eventKey: AkViewEventKeyType | String,
-                method: Function,
+                method: akView.EventCallBack<EventDataType>,
                 caller?: any,
                 args?: any[]
             ): void;
@@ -314,14 +334,14 @@ declare global {
              * @param eventKey
              * @param method
              */
-            offViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+            offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
             /**
-             * 触发事件
+             * 触发指定ViewId的事件,同时也会以eventKey再派发一次，eventData合并{viewId:viewId}
              * @param viewId
              * @param eventKey
-             * @param eventData 事件数据，作为回调参数中的最后的传入，比如method.apply(method._caller,method._args,eventData);
+             * @param eventData 事件数据，作为回调参数中的第一个;
              */
-            emitViewEvent<EventDataType extends any = any>(
+            emitAkViewEvent<EventDataType extends any = any>(
                 viewId: string,
                 eventKey: AkViewEventKeyType | String,
                 eventData?: EventDataType
@@ -567,27 +587,14 @@ declare global {
              */
             LRU: string;
         }
-        /**
-         * 默认ViewState的配置
-         */
-        interface IDefaultViewStateOption {
-            /**
-             * 是否能在渲染节点隐藏后释放模板资源引用,默认false
-             */
-            canDecTemplateResRefOnHide?: boolean;
-            /**
-             * 在onDestroy时销毁资源，默认false
-             *
-             */
-            destroyResOnDestroy?: boolean;
-        }
+
         /**
          * 管理器初始化配置
          */
         interface IMgrInitOption<TemplateType extends akView.ITemplate<any>> {
             /**
              * 事件处理器
-             * 默认使用 default-event-handler.ts
+             * 默认使用 default-event-bus.ts
              */
             eventBus?: akView.IEventBus;
             /**
@@ -599,19 +606,23 @@ declare global {
              * 模板处理器
              * 默认使用 default-template-handler.ts
              */
-            templateHandler?: akView.ITemplateHandler;
+            tplHandler?: akView.ITemplateHandler;
+            /**
+             * 默认ViewState类
+             */
+            defaultViewStateClass?: new (...args) => any;
             /**
              * 默认模板处理配置
              */
-            defaultTplHandlerInitOption?: akView.IDefaultTplHandlerInitOption;
+            // defaultTplHandlerOption?: IAkViewDefaultTplHandlerOption;
+            // /**
+            //  * 默认缓存处理配置
+            //  */
+            // defaultCacheHandlerOption?: akView.ILRUCacheHandlerOption;
             /**
-             * 默认缓存处理配置
+             * 默认ViewState的配置，在viewState.onCreate时合并传入
              */
-            defaultCacheHandlerOption?: akView.ILRUCacheHandlerOption;
-            /**
-             * 默认ViewState的配置
-             */
-            viewStateCreateOption?: IDefaultViewStateOption;
+            vsCreateOpt?: IAkViewDefaultViewStateOption;
             /**
              * 模板字典
              */
@@ -643,7 +654,6 @@ declare global {
         }
             ? DataType
             : any;
-
         interface IMgr<
             ViewKeyTypes = IAkViewKeyTypes,
             ViewDataTypes = IAkViewDataTypes,
@@ -655,15 +665,28 @@ declare global {
              */
             MgrTypeParams?: [ViewKeyTypes, ViewDataTypes, keyType];
             /**事件处理器 */
-            eventBus: IEventBus;
+            eventBus: akView.IEventBus;
+            // /**
+            //  * 获取事件处理器，可类型转换
+            //  */
+            // getEventBus<T extends akView.IEventBus>(): T;
             /**
              * 缓存处理器
              */
             cacheHandler: akView.ICacheHandler;
+            // /**
+            //  * 获取缓存处理器，可类型转换
+            //  */
+            // getCacheHandler<T extends akView.ICacheHandler = akView.ICacheHandler>(): T;
+
             /**
              * 模板处理器
              */
-            templateHandler: akView.ITemplateHandler<TemplateType>;
+            tplHandler: akView.ITemplateHandler<TemplateType>;
+            // /**
+            //  * 获取模块处理器,可类型转换
+            //  */
+            // getTplHandler<T extends akView.ITemplateHandler = akView.ITemplateHandler<TemplateType>>(): T;
             /**
              * 初始化参数(只读)
              */
@@ -769,7 +792,7 @@ declare global {
              * @param keyOrConfig 配置
              * @returns 返回ViewState
              */
-            create<T extends akView.IViewState = akView.IDefaultViewState, ConfigKeyType extends keyType = keyType>(
+            create<T extends akView.IViewState = IAkViewDefaultViewState, ConfigKeyType extends keyType = keyType>(
                 keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>
             ): T;
             /**
@@ -783,7 +806,7 @@ declare global {
              
             * @returns 返回ViewState
             */
-            create<T extends akView.IViewState = akView.IDefaultViewState, ViewKey extends keyType = keyType>(
+            create<T extends akView.IViewState = IAkViewDefaultViewState, ViewKey extends keyType = keyType>(
                 keyOrConfig: ViewKey,
                 onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>,
                 needShowView?: boolean,
@@ -801,7 +824,7 @@ declare global {
              
             * @returns 返回ViewState
             */
-            create<CreateKeyType extends keyType, T extends akView.IViewState = akView.IDefaultViewState>(
+            create<CreateKeyType extends keyType, T extends akView.IViewState = IAkViewDefaultViewState>(
                 keyOrConfig: string,
                 onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>,
                 needShowView?: boolean,
@@ -816,20 +839,20 @@ declare global {
              * @param onShowData 显示透传数据
              * @param onInitData 初始化数据
              */
-            show<ConfigKeyType extends keyType>(
+            show<ConfigKeyType extends keyType, ViewStateType extends akView.IViewState = IAkViewDefaultViewState>(
                 idOrkeyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>
-            ): string;
+            ): ViewStateType;
             /**
              * 显示View
              * @param keyOrViewStateOrConfig 类key或者ViewState对象或者显示配置IShowConfig
              * @param onShowData 显示透传数据
              * @param onInitData 初始化数据
              */
-            show<TKeyType extends keyType, ViewStateType extends akView.IViewState = any>(
+            show<TKeyType extends keyType, ViewStateType extends akView.IViewState = IAkViewDefaultViewState>(
                 keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>,
                 onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>,
                 onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>
-            ): string;
+            ): ViewStateType;
 
             /**
              * 更新View

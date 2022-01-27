@@ -27,12 +27,12 @@ export class ViewMgr<
     public get eventBus(): akView.IEventBus {
         return this._eventBus;
     }
-    private _templateHandler: akView.ITemplateHandler<TemplateType>;
+    private _tplHandler: akView.ITemplateHandler<TemplateType>;
     /**
      * 模板处理器
      */
-    public get templateHandler(): akView.ITemplateHandler<TemplateType> {
-        return this._templateHandler;
+    public get tplHandler(): akView.ITemplateHandler<TemplateType> {
+        return this._tplHandler;
     }
 
     /**模版字典 */
@@ -48,8 +48,12 @@ export class ViewMgr<
     /**
      * 默认ViewState的配置
      */
-    private _viewStateCreateOption: any;
+    private _vsCreateOpt: any;
     private _option: akView.IMgrInitOption<TemplateType>;
+    /**
+     * 默认ViewState类
+     */
+    protected _defaultViewStateClass: new (...arg) => any;
     public get option(): akView.IMgrInitOption<TemplateType> {
         return this._option;
     }
@@ -58,21 +62,17 @@ export class ViewMgr<
     }
     init(option?: akView.IMgrInitOption<TemplateType>): void {
         if (this._inited) return;
-        this._eventBus = option?.eventBus ? option?.eventBus : new DefaultEventBus();
-        this._cacheHandler = option?.cacheHandler
-            ? option?.cacheHandler
-            : new LRUCacheHandler(option?.defaultCacheHandlerOption);
+        option = option || {};
+        this._eventBus = option.eventBus || ({} as any);
+        this._cacheHandler = option.cacheHandler || ({} as any);
         this._viewStateMap = {};
-        let templateHandler = option?.templateHandler;
-        if (!templateHandler) {
-            templateHandler = new DefaultTemplateHandler(option?.defaultTplHandlerInitOption);
-        }
-        this._templateHandler = templateHandler;
-
-        this._viewStateCreateOption = option?.viewStateCreateOption ? option?.viewStateCreateOption : {};
+        this._tplHandler = option.tplHandler || ({} as any);
+        this._option = option;
+        this._vsCreateOpt = option.vsCreateOpt || {};
+        this._defaultViewStateClass = option.defaultViewStateClass;
         this._inited = true;
-        this._option = option ? option : {};
-        const templateMap = option?.templateMap ? option?.templateMap : globalViewTemplateMap;
+
+        const templateMap = option.templateMap || globalViewTemplateMap;
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
     use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void {
@@ -147,7 +147,7 @@ export class ViewMgr<
         if (!template) {
             return;
         }
-        return this._templateHandler.getPreloadResInfo(template);
+        return this._tplHandler.getPreloadResInfo(template);
     }
     /**
      * 根据id加载模板固定资源
@@ -190,7 +190,7 @@ export class ViewMgr<
         if (template.loadOption) {
             config.loadOption = Object.assign({}, template.loadOption, config.loadOption);
         }
-        const handler = this._templateHandler;
+        const handler = this._tplHandler;
         if (!handler.loadRes || handler.isLoaded?.(template)) {
             config.complete?.();
             return;
@@ -207,7 +207,7 @@ export class ViewMgr<
         const key = this.getKeyById(id);
         const template = this.getTemplate(key);
 
-        this._templateHandler.cancelLoad(id, template);
+        this._tplHandler.cancelLoad(id, template);
     }
     /**
      * 预加载模板固定资源,给业务使用，用于预加载
@@ -274,7 +274,7 @@ export class ViewMgr<
         const template = this.getTemplate(key as any);
         if (!template) {
             const errorMsg = `template:${key} not registed`;
-            config?.complete?.(errorMsg);
+            config.complete?.(errorMsg);
             return;
         }
         loadOption !== undefined && (config.loadOption = loadOption);
@@ -284,14 +284,7 @@ export class ViewMgr<
 
     destroyRes(key: keyType): boolean {
         const template = this.getTemplate(key as any);
-        if (template) {
-            const handler = this._templateHandler;
-            if (handler.destroyRes) {
-                return handler.destroyRes(template);
-            } else {
-                console.warn(`can not handle template:${template.key} destroyRes`);
-            }
-        }
+        return this._tplHandler.destroyRes(template);
     }
     isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | TemplateType): boolean {
         if (!this._inited) {
@@ -304,7 +297,7 @@ export class ViewMgr<
         } else {
             template = this.getTemplate(this.getKeyById(keyOrIdOrTemplate));
         }
-        const templateHandler = this._templateHandler;
+        const templateHandler = this._tplHandler;
         if (!templateHandler.isLoaded) {
             return true;
         } else {
@@ -319,7 +312,7 @@ export class ViewMgr<
         if (viewState && !viewState.isHoldTemplateResRef) {
             const id = viewState.id;
             const template = viewState.template;
-            this._templateHandler.addResRef(id, template);
+            this._tplHandler.addResRef(id, template);
             viewState.isHoldTemplateResRef = true;
         }
     }
@@ -331,7 +324,7 @@ export class ViewMgr<
         if (viewState && viewState.isHoldTemplateResRef) {
             const template = viewState.template;
             const id = viewState.id;
-            this._templateHandler.decResRef(id, template);
+            this._tplHandler.decResRef(id, template);
             viewState.isHoldTemplateResRef = false;
         }
     }
@@ -340,7 +333,7 @@ export class ViewMgr<
      * @param keyOrConfig 配置
      * @returns 返回ViewState
      */
-    create<T extends akView.IViewState = akView.IDefaultViewState, ConfigKeyType extends keyType = keyType>(
+    create<T extends akView.IViewState = IAkViewDefaultViewState, ConfigKeyType extends keyType = keyType>(
         keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>
     ): T;
     /**
@@ -354,7 +347,7 @@ export class ViewMgr<
      
      * @returns 返回ViewState
      */
-    create<T extends akView.IViewState = akView.IDefaultViewState, ViewKey extends keyType = keyType>(
+    create<T extends akView.IViewState = IAkViewDefaultViewState, ViewKey extends keyType = keyType>(
         keyOrConfig: ViewKey,
         onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>,
         needShowView?: boolean,
@@ -373,7 +366,7 @@ export class ViewMgr<
      
      * @returns 返回ViewState
      */
-    create<CreateKeyType extends keyType, T extends akView.IViewState = akView.IDefaultViewState>(
+    create<CreateKeyType extends keyType, T extends akView.IViewState = IAkViewDefaultViewState>(
         keyOrConfig: string | akView.IShowConfig<CreateKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>,
         needShowView?: boolean,
@@ -419,11 +412,11 @@ export class ViewMgr<
      * @param onShowData 显示透传数据
      * @param onInitData 初始化数据
      */
-    show<TKeyType extends keyType, ViewStateType extends akView.IViewState>(
+    show<TKeyType extends keyType, ViewStateType extends akView.IViewState = IAkViewDefaultViewState>(
         keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>,
         onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>
-    ): string {
+    ): ViewStateType {
         let showCfg: akView.IShowConfig;
         let isSig: boolean;
         let viewState: ViewStateType;
@@ -465,8 +458,8 @@ export class ViewMgr<
             }
             showCfg.needShowView = true;
             this._showViewState(viewState, showCfg as any);
-            return viewState?.id;
         }
+        return viewState;
     }
     /**
      * 显示
@@ -484,7 +477,7 @@ export class ViewMgr<
         viewState.onShow(showCfg as any);
         const cacheMode = viewState.cacheMode;
         if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler?.onViewStateShow?.(viewState);
+            this._cacheHandler.onViewStateShow?.(viewState);
         }
     }
     /**
@@ -512,7 +505,7 @@ export class ViewMgr<
         viewState.onUpdate(updateState);
         const cacheMode = viewState.cacheMode;
         if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler?.onViewStateUpdate?.(viewState);
+            this._cacheHandler.onViewStateUpdate?.(viewState);
         }
     }
     /**
@@ -538,7 +531,7 @@ export class ViewMgr<
         const cacheMode = viewState.cacheMode;
         viewState.onHide(hideCfg);
         if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler?.onViewStateHide?.(viewState);
+            this._cacheHandler.onViewStateHide?.(viewState);
         }
         if (hideCfg?.destroyAfterHide) {
             this.deleteViewState(viewState.id);
@@ -558,7 +551,7 @@ export class ViewMgr<
         const cacheMode = viewState.cacheMode;
         viewState.onDestroy(destroyRes);
         if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler?.onViewStateDestroy?.(viewState);
+            this._cacheHandler.onViewStateDestroy?.(viewState);
         }
         //从缓存中移除
         this.deleteViewState(keyOrViewState as string);
@@ -570,7 +563,7 @@ export class ViewMgr<
         } else {
             viewState = keyOrViewState;
         }
-        return viewState?.isViewInited;
+        return viewState && viewState.isViewInited;
     }
     isViewShowed<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean {
         let viewState: ViewStateType;
@@ -579,7 +572,7 @@ export class ViewMgr<
         } else {
             viewState = keyOrViewState;
         }
-        return viewState?.isViewShowed;
+        return viewState && viewState.isViewShowed;
     }
 
     /**
@@ -593,7 +586,7 @@ export class ViewMgr<
         let ins = viewState.viewIns;
         if (ins) return ins;
 
-        ins = this._templateHandler.createView(template);
+        ins = this._tplHandler.createView(template);
 
         if (ins) {
             ins.viewState = viewState;
@@ -615,7 +608,8 @@ export class ViewMgr<
         return this._viewStateMap[id] as T;
     }
     /**
-     * 根据id获取缓存中的ViewState，没有就创建
+     * 根据id获取缓存中的ViewState
+     * 没有就创建并放到缓存viewStateMap中需要手动清理
      * @param id
      * @returns
      */
@@ -624,10 +618,8 @@ export class ViewMgr<
         if (!viewState) {
             viewState = this.createViewState(id);
         }
-        if (!viewState) {
-            console.error(`id:${id},viewState is null`);
-        } else {
-            this._viewStateMap[id] = viewState;
+        if (viewState) {
+            this._viewStateMap[viewState.id] = viewState;
         }
         return viewState as T;
     }
@@ -638,10 +630,10 @@ export class ViewMgr<
         if (!template) {
             return;
         }
-        viewState = this._templateHandler.createViewState?.(template);
-        if (!viewState) viewState = new DefaultViewState();
+        viewState = this._tplHandler.createViewState?.(template);
+        if (!viewState) viewState = new this._defaultViewStateClass();
         if (viewState) {
-            viewState.onCreate(Object.assign({}, this._viewStateCreateOption, template.viewStateCreateOption));
+            viewState.onCreate(Object.assign({}, this._vsCreateOpt, template.viewStateCreateOption));
             viewState.id = id;
             viewState.viewMgr = this as any;
             viewState.template = template;
@@ -666,7 +658,7 @@ export class ViewMgr<
      */
     getViewIns(id: string): akView.IView {
         const viewState = this._viewStateMap[id];
-        return viewState?.viewIns;
+        return viewState && viewState.viewIns;
     }
 
     /**
@@ -696,5 +688,4 @@ export class ViewMgr<
             return id as keyType;
         }
     }
-    on;
 }
