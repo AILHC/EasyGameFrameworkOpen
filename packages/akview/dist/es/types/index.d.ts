@@ -165,6 +165,13 @@ declare module '@ailhc/akview' {
 	    interface IAkViewLoadOption {
 	    }
 	    /**
+	     * ViewState类型
+	     */
+	    interface IAkViewStateClassTypes {
+	        Default: "Default";
+	    }
+	    type AkViewStateClassTypeType = keyof IAkViewStateClassTypes;
+	    /**
 	     * View事件key
 	     */
 	    interface IAkViewEventKeys {
@@ -197,6 +204,9 @@ declare module '@ailhc/akview' {
 	         */
 	        onWindowResize: "onWindowResize";
 	    }
+	    /**
+	     * AkView事件Key类型
+	     */
 	    type AkViewEventKeyType = keyof IAkViewEventKeys;
 	    /**
 	     * 通用View事件数据接口,
@@ -252,10 +262,27 @@ declare module '@ailhc/akview' {
 	             */
 	            cacheMode?: ViewStateCacheModeType;
 	            /**
-	             * viewState的配置
-	             * 会mgr.viewStateCreateOption与进行合并
+	             * 获取显示前预加载资源信息
 	             */
-	            viewStateCreateOption?: any;
+	            getResInfo?(): akView.TemplateResInfoType;
+	            /**
+	             * ViewState类型
+	             * 默认Default
+	             */
+	            vsClassType?: AkViewStateClassTypeType;
+	            /**
+	             * ViewState类或者方法
+	             */
+	            vsClass?: (new (...args: any[]) => any) | FunctionConstructor;
+	            /**
+	             * viewState的onCreate参数
+	             * 会mgr._vsCreateOpt与进行合并
+	             */
+	            vsCreateOpt?: any;
+	            /**
+	             * View类或者方法
+	             */
+	            viewClass?: (new (...args: any[]) => any) | FunctionConstructor;
 	            /**
 	             * 加载配置
 	             * 可对IAkViewLoadOption进行扩展
@@ -275,13 +302,6 @@ declare module '@ailhc/akview' {
 	             */
 	            destroyView?<T extends akView.IView>(viewIns: T, template: TemplateType): void;
 	            /**
-	             * 创建ViewState , 如果没实现这个方法，则会默认 new DefaultViewState();
-	             * @param template
-	             * @param id viewState的id
-	             * @returns
-	             */
-	            createViewState?<T extends akView.IViewState>(template: TemplateType): T;
-	            /**
 	             * 添加到层级
 	             * @param viewState
 	             */
@@ -292,10 +312,10 @@ declare module '@ailhc/akview' {
 	             */
 	            removeFromLayer?(viewState: akView.IViewState): void;
 	            /**
-	             * 获取预加载资源
+	             * 获取模板预加载资源
 	             * @param template
 	             */
-	            getPreloadResInfo(template: TemplateType): akView.TemplateResInfoType;
+	            getResInfo(template: TemplateType): akView.TemplateResInfoType;
 	            /**
 	             * 判断资源是否已经加载
 	             * @param template
@@ -706,11 +726,17 @@ declare module '@ailhc/akview' {
 	             */
 	            getTemplate(key: keyType): TemplateType;
 	            /**
+	             * 注册ViewState类
+	             * @param type
+	             * @param vsClas ViewState类型
+	             */
+	            registViewStateClass(type: AkViewStateClassTypeType, vsClas: any): void;
+	            /**
 	             * 获取预加载资源信息
 	             * @param key 模板key
 	             * @returns
 	             */
-	            getPreloadResInfo(key: keyType): akView.TemplateResInfoType;
+	            getTemplateResInfo(key: keyType): akView.TemplateResInfoType;
 	            /**
 	             * 根据id加载模板固定资源
 	             * @param idOrConfig
@@ -938,23 +964,11 @@ declare module '@ailhc/akview' {
 	    /**
 	     * 默认模板接口
 	     */
-	    interface IAkViewDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes> extends akView.ITemplate<ViewKeyTypes>, IAkViewTemplateCreateAdapter {
+	    interface IAkViewDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes> extends akView.ITemplate<ViewKeyTypes> {
 	        /**
-	         * 自定义处理层级
+	         * 自定义处理层级,如果自定义处理层级，则自行在onViewShow阶段进行显示添加层级处理
 	         */
 	        customHandleLayer?: boolean;
-	        /**
-	         * View类
-	         */
-	        viewClass?: new (...args: any[]) => any;
-	        /**
-	         * ViewState类
-	         */
-	        viewStateClass?: new (...args: any[]) => any;
-	        /**
-	         * 获取预加载资源信息
-	         */
-	        getPreloadResInfo?(): akView.TemplateResInfoType;
 	    }
 	    interface IAkViewDefaultTplHandlerOption extends IAkViewTemplateCreateAdapter, IAkViewLayerHandler {
 	        /**
@@ -1035,11 +1049,10 @@ declare module '@ailhc/akview' {
 	    };
 	    constructor(_option?: IAkViewDefaultTplHandlerOption);
 	    createView<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T;
-	    createViewState?<T extends akView.IViewState<any>>(template: IAkViewDefaultTemplate): T;
 	    addToLayer?(viewState: IAkViewDefaultViewState): void;
 	    removeFromLayer?(viewState: IAkViewDefaultViewState): void;
 	    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: IAkViewDefaultTemplate): void;
-	    getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType;
+	    getResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType;
 	    isLoaded(template: IAkViewDefaultTemplate): boolean;
 	    loadRes(config: akView.IResLoadConfig): void;
 	    cancelLoad(id: string, template: IAkViewDefaultTemplate): void;
@@ -1101,6 +1114,9 @@ declare module '@ailhc/akview' {
 	    protected _templateMap: akView.TemplateMap<TemplateType, keyType>;
 	    /**状态缓存 */
 	    protected _viewStateMap: akView.ViewStateMap;
+	    protected _vsClassMap: {
+	        [key in AkViewStateClassTypeType]: any;
+	    };
 	    /**是否初始化 */
 	    protected _inited: boolean;
 	    /**实例数，用于创建id */
@@ -1110,17 +1126,19 @@ declare module '@ailhc/akview' {
 	     */
 	    private _vsCreateOpt;
 	    private _option;
-	    /**
-	     * 默认ViewState类
-	     */
-	    protected _defaultViewStateClass: new (...arg: any[]) => any;
 	    get option(): akView.IMgrInitOption<TemplateType>;
 	    getKey(key: keyType): keyType;
 	    init(option?: akView.IMgrInitOption<TemplateType>): void;
 	    use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void;
-	    template(templateOrKey: keyType | TemplateType | Array<TemplateType | keyType>): void;
+	    template(templateOrKey: keyType | TemplateType | Array<TemplateType> | Array<keyType>): void;
 	    hasTemplate(key: keyType): boolean;
 	    getTemplate(key: keyType): TemplateType;
+	    /**
+	     * 注册ViewState类
+	     * @param type
+	     * @param vsClas ViewState类型
+	     */
+	    registViewStateClass(type: AkViewStateClassTypeType, vsClas: any): void;
 	    /**
 	     * 添加模板到模板字典
 	     * @param template
@@ -1128,11 +1146,11 @@ declare module '@ailhc/akview' {
 	     */
 	    protected _addTemplate(template: TemplateType): void;
 	    /**
-	     * 获取预加载资源信息
+	     * 获取模板预加载资源信息，用于自行加载
 	     * @param key 模板key
 	     * @returns
 	     */
-	    getPreloadResInfo(key: keyType): akView.TemplateResInfoType;
+	    getTemplateResInfo(key: keyType): akView.TemplateResInfoType;
 	    /**
 	     * 根据id加载模板固定资源
 	     * @param idOrConfig

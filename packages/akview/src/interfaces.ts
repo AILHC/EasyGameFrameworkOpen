@@ -72,6 +72,13 @@ declare global {
      */
     interface IAkViewLoadOption {}
     /**
+     * ViewState类型
+     */
+    interface IAkViewStateClassTypes {
+        Default: "Default";
+    }
+    type AkViewStateClassTypeType = keyof IAkViewStateClassTypes;
+    /**
      * View事件key
      */
     interface IAkViewEventKeys {
@@ -105,6 +112,9 @@ declare global {
         onWindowResize: "onWindowResize";
     }
 
+    /**
+     * AkView事件Key类型
+     */
     type AkViewEventKeyType = keyof IAkViewEventKeys;
     /**
      * 通用View事件数据接口,
@@ -162,10 +172,27 @@ declare global {
              */
             cacheMode?: ViewStateCacheModeType;
             /**
-             * viewState的配置
-             * 会mgr.viewStateCreateOption与进行合并
+             * 获取显示前预加载资源信息
              */
-            viewStateCreateOption?: any;
+            getResInfo?(): akView.TemplateResInfoType;
+            /**
+             * ViewState类型
+             * 默认Default
+             */
+            vsClassType?: AkViewStateClassTypeType;
+            /**
+             * ViewState类或者方法
+             */
+            vsClass?: (new (...args) => any) | FunctionConstructor;
+            /**
+             * viewState的onCreate参数
+             * 会mgr._vsCreateOpt与进行合并
+             */
+            vsCreateOpt?: any;
+            /**
+             * View类或者方法
+             */
+            viewClass?: (new (...args) => any) | FunctionConstructor;
             /**
              * 加载配置
              * 可对IAkViewLoadOption进行扩展
@@ -190,13 +217,6 @@ declare global {
              */
             destroyView?<T extends akView.IView>(viewIns: T, template: TemplateType): void;
             /**
-             * 创建ViewState , 如果没实现这个方法，则会默认 new DefaultViewState();
-             * @param template
-             * @param id viewState的id
-             * @returns
-             */
-            createViewState?<T extends akView.IViewState>(template: TemplateType): T;
-            /**
              * 添加到层级
              * @param viewState
              */
@@ -209,10 +229,10 @@ declare global {
             removeFromLayer?(viewState: akView.IViewState): void;
             //#region 资源处理
             /**
-             * 获取预加载资源
+             * 获取模板预加载资源
              * @param template
              */
-            getPreloadResInfo(template: TemplateType): akView.TemplateResInfoType;
+            getResInfo(template: TemplateType): akView.TemplateResInfoType;
             /**
              * 判断资源是否已经加载
              * @param template
@@ -727,11 +747,17 @@ declare global {
              */
             getTemplate(key: keyType): TemplateType;
             /**
+             * 注册ViewState类
+             * @param type
+             * @param vsClas ViewState类型
+             */
+            registViewStateClass(type: AkViewStateClassTypeType, vsClas): void;
+            /**
              * 获取预加载资源信息
              * @param key 模板key
              * @returns
              */
-            getPreloadResInfo(key: keyType): akView.TemplateResInfoType;
+            getTemplateResInfo(key: keyType): akView.TemplateResInfoType;
             /**
              * 根据id加载模板固定资源
              * @param idOrConfig

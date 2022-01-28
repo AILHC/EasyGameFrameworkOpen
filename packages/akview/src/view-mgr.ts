@@ -41,6 +41,8 @@ export class ViewMgr<
     /**状态缓存 */
     protected _viewStateMap: akView.ViewStateMap;
 
+    protected _vsClassMap: { [key in AkViewStateClassTypeType]: any };
+
     /**是否初始化 */
     protected _inited: boolean;
     /**实例数，用于创建id */
@@ -50,10 +52,7 @@ export class ViewMgr<
      */
     private _vsCreateOpt: any;
     private _option: akView.IMgrInitOption<TemplateType>;
-    /**
-     * 默认ViewState类
-     */
-    protected _defaultViewStateClass: new (...arg) => any;
+
     public get option(): akView.IMgrInitOption<TemplateType> {
         return this._option;
     }
@@ -69,7 +68,8 @@ export class ViewMgr<
         this._tplHandler = option.tplHandler || ({} as any);
         this._option = option;
         this._vsCreateOpt = option.vsCreateOpt || {};
-        this._defaultViewStateClass = option.defaultViewStateClass;
+        this._vsClassMap = {} as any;
+        this._vsClassMap["Default"] = option.defaultViewStateClass;
         this._inited = true;
 
         const templateMap = option.templateMap || globalViewTemplateMap;
@@ -81,7 +81,8 @@ export class ViewMgr<
             plugin.onUse?.(option);
         }
     }
-    template(templateOrKey: keyType | TemplateType | Array<TemplateType | keyType>): void {
+
+    template(templateOrKey: keyType | TemplateType | Array<TemplateType> | Array<keyType>): void {
         if (!templateOrKey) return;
         if (!this._inited) {
             console.error(`[viewMgr](template): is no inited`);
@@ -105,6 +106,7 @@ export class ViewMgr<
             }
         }
     }
+
     hasTemplate(key: keyType): boolean {
         return !!this._templateMap[key as any];
     }
@@ -114,6 +116,14 @@ export class ViewMgr<
             console.warn(`template is not exit:${key}`);
         }
         return template as any;
+    }
+    /**
+     * 注册ViewState类
+     * @param type
+     * @param vsClas ViewState类型
+     */
+    registViewStateClass(type: AkViewStateClassTypeType, vsClas): void {
+        this._vsClassMap[type] = vsClas;
     }
     /**
      * 添加模板到模板字典
@@ -138,16 +148,16 @@ export class ViewMgr<
         }
     }
     /**
-     * 获取预加载资源信息
+     * 获取模板预加载资源信息，用于自行加载
      * @param key 模板key
      * @returns
      */
-    getPreloadResInfo(key: keyType): akView.TemplateResInfoType {
+    getTemplateResInfo(key: keyType): akView.TemplateResInfoType {
         const template = this.getTemplate(key);
         if (!template) {
             return;
         }
-        return this._tplHandler.getPreloadResInfo(template);
+        return this._tplHandler.getResInfo(template);
     }
     /**
      * 根据id加载模板固定资源
@@ -241,11 +251,11 @@ export class ViewMgr<
      */
     preloadRes(key: keyType, ...args): string {
         if (!this._inited) {
-            console.error(`[viewMgr](loadRess): is no inited`);
+            console.error(`[ViewMgr.preloadRes] is no inited`);
             return;
         }
         if (!key || (key as string).includes(IdSplitChars)) {
-            const error = `key:${key} is id`;
+            const error = `[ViewMgr.preloadRes] key:${key} is id`;
             console.error(error);
             return;
         }
@@ -583,20 +593,21 @@ export class ViewMgr<
      */
     createView(viewState: akView.IViewState): akView.IView {
         const template: TemplateType = viewState.template;
-        let ins = viewState.viewIns;
-        if (ins) return ins;
+        let viewIns = viewState.viewIns;
+        if (viewIns) return viewIns;
+        let tplHandler = this._tplHandler;
+        viewIns = template.viewClass && new template.viewClass();
+        viewIns = viewIns || (tplHandler.createView && tplHandler.createView(template));
 
-        ins = this._tplHandler.createView(template);
-
-        if (ins) {
-            ins.viewState = viewState;
-            viewState.viewIns = ins;
-            ins.key = template.key as string;
+        if (viewIns) {
+            viewIns.viewState = viewState;
+            viewState.viewIns = viewIns;
+            viewIns.key = template.key as string;
         } else {
             console.warn(`key:${template.key} ins fail`);
         }
 
-        return ins;
+        return viewIns;
     }
 
     /**
@@ -624,16 +635,19 @@ export class ViewMgr<
         return viewState as T;
     }
     createViewState(id: string) {
-        let viewState: akView.IViewState;
         const key = this.getKeyById(id);
         const template = this.getTemplate(key);
         if (!template) {
             return;
         }
-        viewState = this._tplHandler.createViewState?.(template);
-        if (!viewState) viewState = new this._defaultViewStateClass();
+        const viewStateClass = template.vsClass || this._vsClassMap[template.vsClassType || "Default"];
+        if (!viewStateClass) {
+            console.error(`viewStateType not regist`);
+            return;
+        }
+        let viewState: akView.IViewState = new viewStateClass();
         if (viewState) {
-            viewState.onCreate(Object.assign({}, this._vsCreateOpt, template.viewStateCreateOption));
+            viewState.onCreate(Object.assign({}, this._vsCreateOpt, template.vsCreateOpt));
             viewState.id = id;
             viewState.viewMgr = this as any;
             viewState.template = template;

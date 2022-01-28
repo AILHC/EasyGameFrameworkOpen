@@ -30,25 +30,11 @@ declare global {
     /**
      * 默认模板接口
      */
-    interface IAkViewDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes>
-        extends akView.ITemplate<ViewKeyTypes>,
-            IAkViewTemplateCreateAdapter {
+    interface IAkViewDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes> extends akView.ITemplate<ViewKeyTypes> {
         /**
-         * 自定义处理层级
+         * 自定义处理层级,如果自定义处理层级，则自行在onViewShow阶段进行显示添加层级处理
          */
         customHandleLayer?: boolean;
-        /**
-         * View类
-         */
-        viewClass?: new (...args) => any;
-        /**
-         * ViewState类
-         */
-        viewStateClass?: new (...args) => any;
-        /**
-         * 获取预加载资源信息
-         */
-        getPreloadResInfo?(): akView.TemplateResInfoType;
     }
 
     interface IAkViewDefaultTplHandlerOption extends IAkViewTemplateCreateAdapter, IAkViewLayerHandler {
@@ -128,75 +114,51 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
     }
     createView<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T {
         //先使用自定义
-        let viewIns = undefined;
-        if (template.viewClass) {
-            viewIns = new template.viewClass();
-        } else {
-            viewIns = template?.createView?.(template);
-        }
-        if (!viewIns) {
-            viewIns = this._option.createView?.(template);
-        }
-        return viewIns;
-    }
-
-    createViewState?<T extends akView.IViewState<any>>(template: IAkViewDefaultTemplate): T {
-        let viewState = undefined;
-        if (template.viewStateClass) {
-            viewState = new template.viewStateClass();
-        } else {
-            viewState = template?.createViewState?.(template);
-        }
-        if (!viewState) {
-            viewState = this._option.createViewState?.(template);
-        }
-        return viewState;
+        const option = this._option;
+        let viewIns = option.createView && option.createView(template);
+        return viewIns as T;
     }
     addToLayer?(viewState: IAkViewDefaultViewState): void {
         const template = viewState.template;
-        if (!template.customHandleLayer) {
-            this._option.addToLayer?.(viewState.viewIns);
-        }
+        const option = this._option;
+        template.customHandleLayer || (option.addToLayer && option.addToLayer(viewState.viewIns));
     }
     removeFromLayer?(viewState: IAkViewDefaultViewState): void {
         const template = viewState.template;
-        if (!template.customHandleLayer) {
-            this._option.removeFromLayer?.(viewState.viewIns);
-        }
+        const option = this._option;
+        template.customHandleLayer || (option.removeFromLayer && option.removeFromLayer(viewState.viewIns));
     }
     destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: IAkViewDefaultTemplate): void {}
 
-    getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType {
-        let resInfo = this._resInfoMap[template.key];
+    getResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType {
+        const key = template.key;
+        const resInfoMap = this._resInfoMap;
+        let resInfo = resInfoMap[key];
         if (!resInfo) {
-            resInfo = template.getPreloadResInfo?.();
-            if (!resInfo) {
-                resInfo = this._option.getPreloadResInfo?.(template);
-            }
-
-            this._resInfoMap[template.key] = resInfo;
+            resInfo = template.getResInfo && template.getResInfo();
+            const option = this._option;
+            resInfo = resInfo || (option.getPreloadResInfo && option.getPreloadResInfo(template));
+            resInfoMap[key] = resInfo;
         }
         return resInfo;
     }
     isLoaded(template: IAkViewDefaultTemplate): boolean {
         let isLoaded = this._loadedMap[template.key];
         if (!isLoaded) {
-            if (!this._option.isLoaded) {
-                isLoaded = true;
-            } else {
-                isLoaded = this._option.isLoaded(this.getPreloadResInfo(template));
-            }
+            let option = this._option;
+            isLoaded = !option.isLoaded ? true : option.isLoaded(this.getResInfo(template));
         }
         return isLoaded;
     }
     loadRes(config: akView.IResLoadConfig): void {
         const id = config.id;
         const key = config.template.key;
-        let configs = this._templateLoadResConfigsMap[key];
+        let templateLoadResConfigsMap = this._templateLoadResConfigsMap;
+        let configs = templateLoadResConfigsMap[key];
         let isLoading: boolean;
         if (!configs) {
             configs = {};
-            this._templateLoadResConfigsMap[key] = configs;
+            templateLoadResConfigsMap[key] = configs;
         } else {
             isLoading = Object.keys(configs).length > 0;
         }
@@ -205,12 +167,12 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
             return;
         }
         const loadComplete = (error) => {
-            const loadConfigs = this._templateLoadResConfigsMap[key];
+            const loadConfigs = templateLoadResConfigsMap[key];
 
             error && console.error(` templateKey ${key} load error:`, error);
 
             let loadConfig: akView.IResLoadConfig;
-            this._templateLoadResConfigsMap[key] = undefined;
+            templateLoadResConfigsMap[key] = undefined;
             if (Object.keys(loadConfigs).length > 0) {
                 if (!error) {
                     this._loadedMap[key] = true;
@@ -229,18 +191,19 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
             let loadConfig: akView.IResLoadConfig;
             for (let id in loadConfigs) {
                 loadConfig = loadConfigs[id];
-                if (loadConfig?.progress) {
-                    loadConfig.progress.apply(null, args);
-                }
+                loadConfig && loadConfig.progress && loadConfig.progress.apply(null, args);
             }
         };
-        let loadResId = this._option.loadRes?.(
-            this.getPreloadResInfo(config.template),
-            loadComplete,
-            loadProgress,
-            config.loadOption
-        );
-        this._loadResIdMap[key] = loadResId;
+        const option = this._option;
+        if (option.loadRes) {
+            let loadResId = option.loadRes?.(
+                this.getResInfo(config.template),
+                loadComplete,
+                loadProgress,
+                config.loadOption
+            );
+            this._loadResIdMap[key] = loadResId;
+        }
     }
 
     cancelLoad(id: string, template: IAkViewDefaultTemplate): void {
@@ -249,14 +212,15 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
 
         if (configs) {
             const config = configs[id];
-            config?.complete?.(`cancel load`, true);
+            config && config.complete && config.complete(`cancel load`, true);
             delete configs[id];
         }
         if (!Object.keys(configs).length) {
-            let loadResId = this._loadResIdMap[templateKey];
+            const loadResIdMap = this._loadResIdMap;
+            let loadResId = loadResIdMap[templateKey];
             if (loadResId) {
-                delete this._loadResIdMap[templateKey];
-                this._option.cancelLoadRes?.(loadResId, this.getPreloadResInfo(template));
+                loadResIdMap[templateKey];
+                this._option.cancelLoadRes?.(loadResId, this.getResInfo(template));
             }
         }
     }
@@ -282,7 +246,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
                 }
             }
         }
-        this._option.decResRef?.(this.getPreloadResInfo(template));
+        this._option.decResRef?.(this.getResInfo(template));
         if (refIds.length <= 0) {
             this._loadedMap[template.key] = false;
         }
@@ -299,7 +263,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
             return false;
         }
         this._loadedMap[template.key] = false;
-        this._option.destroyRes?.(this.getPreloadResInfo(template));
+        this._option.destroyRes?.(this.getResInfo(template));
         return true;
     }
 }

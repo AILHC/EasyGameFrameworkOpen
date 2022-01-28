@@ -22,6 +22,6 @@ export class DefaultPlugin implements akView.IPlugin {
         this.viewMgr["_tplHandler"] = new DefaultTemplateHandler(opt.tplHandlerOption);
         this.viewMgr["_eventBus"] = new DefaultEventBus();
         this.viewMgr["_cacheHandler"] = new LRU2QCacheHandler(opt.cacheHandlerOption);
-        this.viewMgr["_defaultViewStateClass"] = DefaultViewState;
+        this.viewMgr.registViewStateClass("Default", DefaultViewState);
     }
 }

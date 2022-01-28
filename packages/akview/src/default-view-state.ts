@@ -210,12 +210,15 @@ export class DefaultViewState implements IAkViewDefaultViewState {
     showView(): void {
         const ins = this.viewIns;
         ins.onBeforeViewShow?.(this.showCfg.onShowData);
-        this.viewMgr.eventBus.onAkEvent("onWindowResize", ins.onWindowResize, ins);
-        this.viewMgr.tplHandler?.addToLayer?.(this);
+        const viewMgr = this.viewMgr;
+        const { tplHandler, eventBus } = viewMgr;
+        eventBus.onAkEvent("onWindowResize", ins.onWindowResize, ins);
 
-        ins.onShowView?.(this.showCfg.onShowData);
-        this.viewMgr.eventBus.emitAkViewEvent("onViewShow", this.id);
-        const promise = ins.onPlayAnim?.(true);
+        tplHandler && tplHandler.addToLayer && tplHandler.addToLayer(this);
+
+        ins.onShowView && ins.onShowView(this.showCfg.onShowData);
+        eventBus.emitAkViewEvent("onViewShow", this.id);
+        const promise = ins.onPlayAnim && ins.onPlayAnim(true);
         this.showingPromise = promise;
         this.isViewShowed = true;
         this.needShowView = false;
@@ -244,16 +247,19 @@ export class DefaultViewState implements IAkViewDefaultViewState {
         this.isViewShowEnd = false;
         const hideCfg = this.hideCfg;
         const ins = this.viewIns;
+        const viewMgr = this.viewMgr;
+        const { eventBus, tplHandler } = viewMgr;
         if (ins) {
-            this.viewMgr.tplHandler?.removeFromLayer?.(this);
-            ins.onHideView?.(hideCfg?.hideOption);
-            this.viewMgr.eventBus.offAkEvent("onWindowResize", ins.onWindowResize, ins);
+            tplHandler && tplHandler.removeFromLayer && tplHandler.removeFromLayer(this);
+
+            ins.onHideView && ins.onHideView(hideCfg && hideCfg.hideOption);
+            eventBus.offAkEvent("onWindowResize", ins.onWindowResize, ins);
         }
-        if (this._option.canDecTemplateResRefOnHide && hideCfg?.decTemplateResRef) {
-            this.viewMgr.decTemplateResRef(this);
+        if (this._option.canDecTemplateResRefOnHide && hideCfg && hideCfg.decTemplateResRef) {
+            viewMgr.decTemplateResRef(this);
         }
         this.hideCfg = undefined;
-        this.viewMgr.eventBus.emitAkViewEvent("onViewHideEnd", this.id);
+        eventBus.emitAkViewEvent("onViewHideEnd", this.id);
     }
 
     entryDestroyed(): void {

@@ -42,6 +42,7 @@ describe(`ViewMgr初始化测试`, function () {
             "cacheHandler",
             "tplHandler",
             "_templateMap",
+            "_vsClassMap",
             "option"
         ];
         expectDefindFields.forEach((value) => {
@@ -70,7 +71,7 @@ describe(`ViewMgr初始化测试`, function () {
         //传递自定义ViewState
         const mgr4 = new ViewMgr();
         mgr4.init({ defaultViewStateClass: TestViewState });
-        expect(mgr4["_defaultViewStateClass"]).toEqual(TestViewState);
+        expect(mgr4["_vsClassMap"]["Default"]).toEqual(TestViewState);
     });
 
     test(`测试:ViewMgr.template 注册view模板,以及相关函数:ViewMgr.getTempalte,ViewMgr.hasTemplate`, function () {
@@ -83,13 +84,16 @@ describe(`ViewMgr初始化测试`, function () {
         //单个template对象
         mgr.template({ key: "regitstTestViewKey2" });
         //数组
-        mgr.template([{ key: "regitstTestViewKey3" }, "regitstTestViewKey1", { key: "regitstTestViewKey4" }]);
+        mgr.template([{ key: "regitstTestViewKey3" }, { key: "regitstTestViewKey4" }]);
+        mgr.template(["regitstTestViewKey3_1", "regitstTestViewKey4_1"] as any);
 
         expect(mgr.getTemplate(viewKey1)).toBeDefined();
         expect(mgr.getTemplate(viewKey1).key).toEqual(viewKey1);
         expect(mgr.hasTemplate("regitstTestViewKey2")).toBeTruthy();
         expect(mgr.getTemplate("regitstTestViewKey3")).toBeDefined();
+        expect(mgr.getTemplate("regitstTestViewKey3_1" as any)).toBeDefined();
         expect(mgr.getTemplate("regitstTestViewKey4")).toBeDefined();
+        expect(mgr.getTemplate("regitstTestViewKey4_1" as any)).toBeDefined();
         expect(mgr.hasTemplate("regitstTestViewKey5" as any)).toBeFalsy();
         //测试重复注册
         mgr.template({ key: viewKey1, obj: {} } as any);
@@ -114,22 +118,23 @@ describe(`ViewMgr初始化测试`, function () {
         //注册空值
         mgr.use(undefined, { a: "a", b: 1 });
     });
-    test("测试: ViewMgr.getPreloadResInfo", function () {
+    test("测试: ViewMgr.getResInfo", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
+        const tplHandler = {
+            getResInfo(template) {
+                return template.key;
+            }
+        } as Partial<akView.ITemplateHandler>;
         mgr.init({
-            tplHandler: {
-                getPreloadResInfo(template) {
-                    return template.key;
-                }
-            } as any
+            tplHandler: tplHandler as any
         });
         const viewKey1 = "regitstTestViewKey2";
         mgr.template(viewKey1);
-        expect(mgr.getPreloadResInfo(viewKey1)).toEqual(viewKey1);
+        expect(mgr.getTemplateResInfo(viewKey1)).toEqual(viewKey1);
         //传还未注册的templatekey
-        expect(mgr.getPreloadResInfo("regitstTestViewKey10")).toEqual(undefined);
+        expect(mgr.getTemplateResInfo("regitstTestViewKey10")).toEqual(undefined);
         //传空值
-        expect(mgr.getPreloadResInfo(undefined)).toEqual(undefined);
+        expect(mgr.getTemplateResInfo(undefined)).toEqual(undefined);
     });
     test("测试: ViewMgr.preloadResById", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -257,7 +262,6 @@ describe(`ViewMgr初始化测试`, function () {
         //没有templateHandler的createViewState方法，mgr.createViewState返回DefaultViewState的实例
         const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         mgr2.init({
-            tplHandler: {} as any,
             defaultViewStateClass: DefaultViewState
         });
         const viewKey: any = "test_ViewMgr.createViewState";
@@ -279,15 +283,12 @@ describe(`ViewMgr初始化测试`, function () {
                 expect(option.a).toEqual(1);
             }
         };
-        mgr4.init({
-            tplHandler: {
-                createViewState() {
-                    return testCreateViewStateReturnObj;
-                }
-            } as any
+        mgr4.init();
+        mgr4.registViewStateClass("Default", function () {
+            return testCreateViewStateReturnObj;
         });
         //传递viewStateInitOption，onCreate可以读取到option.a=1
-        mgr4.template({ key: viewKey, viewStateCreateOption: { a: 1 } });
+        mgr4.template({ key: viewKey, vsCreateOpt: { a: 1 } });
         const viewState4 = mgr4.createViewState(viewKey);
         expect(viewState4).toEqual(testCreateViewStateReturnObj);
     });
