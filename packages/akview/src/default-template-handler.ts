@@ -112,7 +112,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
     constructor(public _option?: IAkViewDefaultTplHandlerOption) {
         if (!this._option) this._option = {} as any;
     }
-    createView<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T {
+    createViewIns<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T {
         //先使用自定义
         const option = this._option;
         let viewIns = option.createView && option.createView(template);

@@ -210,7 +210,7 @@ declare global {
              * 创建akView.IView实例
              * @param template
              */
-            createView<T extends akView.IView>(template: TemplateType): T;
+            createViewIns<T extends akView.IView>(template: TemplateType): T;
             /**
              * 销毁渲染实例
              * @param viewIns
@@ -961,7 +961,7 @@ declare global {
              * @param viewState
              * @returns
              */
-            createView(viewState: akView.IViewState): akView.IView;
+            createViewIns(viewState: akView.IViewState): akView.IView;
             /**
              * 根据id获取缓存中的ViewState，没有就创建
              * @param id

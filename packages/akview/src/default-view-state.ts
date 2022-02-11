@@ -196,7 +196,7 @@ export class DefaultViewState implements IAkViewDefaultViewState {
 
     initView() {
         if (!this.isViewInited) {
-            const viewIns = this.viewMgr.createView(this);
+            const viewIns = this.viewMgr.createViewIns(this);
 
             //持有模板资源
             this.viewMgr.addTemplateResRef(this);

@@ -591,13 +591,13 @@ export class ViewMgr<
      * @param template 模板
      * @returns
      */
-    createView(viewState: akView.IViewState): akView.IView {
+    createViewIns(viewState: akView.IViewState): akView.IView {
         const template: TemplateType = viewState.template;
         let viewIns = viewState.viewIns;
         if (viewIns) return viewIns;
         let tplHandler = this._tplHandler;
         viewIns = template.viewClass && new template.viewClass();
-        viewIns = viewIns || (tplHandler.createView && tplHandler.createView(template));
+        viewIns = viewIns || (tplHandler.createViewIns && tplHandler.createViewIns(template));
 
         if (viewIns) {
             viewIns.viewState = viewState;
@@ -654,6 +654,7 @@ export class ViewMgr<
             if (!viewState.cacheMode) {
                 viewState.cacheMode = template.cacheMode;
             }
+            //ViewState标记，用于和config做区分
             viewState["__$flag"] = 1;
         }
         return viewState;
