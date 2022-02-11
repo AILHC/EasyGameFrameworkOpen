@@ -249,8 +249,28 @@ describe(`ViewMgr初始化测试`, function () {
         const key4 = mgr.getKeyById("");
         expect(key4).toEqual(undefined);
     });
-    test("测试：ViewMgr.createView", function () {
+    test("测试：ViewMgr.createViewIns", function () {
         //TODO
+        const mgr = new ViewMgr();
+        mgr.init({ defaultViewStateClass: DefaultViewState });
+        const testViewKey1 = "test_ViewMgr.createViewIns1" as any;
+        mgr.template(testViewKey1);
+        const viewState1 = mgr.createViewState(testViewKey1);
+
+        const viewIns1 = mgr.createViewIns(viewState1);
+
+        expect(viewIns1).toBeUndefined();
+
+        const testViewKey2 = "test_ViewMgr.createViewIns2" as any;
+        mgr.template({ key: testViewKey2, viewClass: Object });
+        const viewState2 = mgr.createViewState(testViewKey2);
+
+        const viewIns2 = mgr.createViewIns(viewState2);
+
+        expect(viewIns2).toBeDefined();
+        expect(viewIns2.viewState).toBe(viewState2);
+        expect(viewState2.viewIns).toBe(viewIns2);
+        expect(viewIns2.key).toBe(testViewKey2);
     });
     test("测试：ViewMgr.createViewState", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
