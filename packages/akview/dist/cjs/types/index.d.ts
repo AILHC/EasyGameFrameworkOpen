@@ -1,4 +1,21 @@
 declare module '@ailhc/akview' {
+	export class DefaultEventBus implements akView.IEventBus {
+	    viewMgr: akView.IMgr;
+	    handleMethodMap: Map<String | string, akView.ICallableFunction[]>;
+	    onRegist(): void;
+	    onAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
+	    onceAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
+	    offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+	    emitAkEvent<EventDataType = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
+	    onAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
+	    onceAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
+	    offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+	    emitAkViewEvent<EventDataType extends any = any>(viewId: string, eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
+	    protected getIdEventKey(viewId: string, eventKey: any): string;
+	}
+
+}
+declare module '@ailhc/akview' {
 	 global {
 	    /**
 	     * 默认ViewState的配置
@@ -295,7 +312,7 @@ declare module '@ailhc/akview' {
 	             * 创建akView.IView实例
 	             * @param template
 	             */
-	            createView<T extends akView.IView>(template: TemplateType): T;
+	            createViewIns<T extends akView.IView>(template: TemplateType): T;
 	            /**
 	             * 销毁渲染实例
 	             * @param viewIns
@@ -896,7 +913,7 @@ declare module '@ailhc/akview' {
 	             * @param viewState
 	             * @returns
 	             */
-	            createView(viewState: akView.IViewState): akView.IView;
+	            createViewIns(viewState: akView.IViewState): akView.IView;
 	            /**
 	             * 根据id获取缓存中的ViewState，没有就创建
 	             * @param id
@@ -912,23 +929,6 @@ declare module '@ailhc/akview' {
 	    }
 	}
 	export {};
-
-}
-declare module '@ailhc/akview' {
-	export class DefaultEventBus implements akView.IEventBus {
-	    viewMgr: akView.IMgr;
-	    handleMethodMap: Map<String | string, akView.ICallableFunction[]>;
-	    onRegist(): void;
-	    onAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
-	    onceAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
-	    offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
-	    emitAkEvent<EventDataType = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
-	    onAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
-	    onceAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
-	    offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
-	    emitAkViewEvent<EventDataType extends any = any>(viewId: string, eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
-	    protected getIdEventKey(viewId: string, eventKey: any): string;
-	}
 
 }
 declare module '@ailhc/akview' {
@@ -1048,7 +1048,7 @@ declare module '@ailhc/akview' {
 	        [key: string]: akView.TemplateResInfoType;
 	    };
 	    constructor(_option?: IAkViewDefaultTplHandlerOption);
-	    createView<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T;
+	    createViewIns<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T;
 	    addToLayer?(viewState: IAkViewDefaultViewState): void;
 	    removeFromLayer?(viewState: IAkViewDefaultViewState): void;
 	    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: IAkViewDefaultTemplate): void;
@@ -1245,7 +1245,7 @@ declare module '@ailhc/akview' {
 	     * @param template 模板
 	     * @returns
 	     */
-	    createView(viewState: akView.IViewState): akView.IView;
+	    createViewIns(viewState: akView.IViewState): akView.IView;
 	    /**
 	     * 根据id获取缓存中的ViewState
 	     * @param id

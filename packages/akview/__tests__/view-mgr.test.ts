@@ -31,8 +31,8 @@ declare global {
         }>;
     }
 }
-//初始化测试
-describe(`ViewMgr初始化测试`, function () {
+
+describe(`ViewMgr相关测试`, function () {
     test(`测试:ViewMgr.init`, function () {
         const mgr = new ViewMgr();
         mgr.init();
