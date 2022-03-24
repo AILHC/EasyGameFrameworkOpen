@@ -44,7 +44,7 @@
   "dependencies": {
     "@ailhc/display-ctrl": "^1.1.9",
     "@ailhc/layer": "^0.1.9",
-    "fairygui-cc": "^1.0.5"
+    "fairygui-cc": "1.1.1"
   },
   "devDependencies": {
     "tslib": "^2.3.0"
