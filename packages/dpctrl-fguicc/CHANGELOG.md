@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.4](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/dpctrl-fguicc@0.3.3...@ailhc/dpctrl-fguicc@0.3.4) (2022-03-24)
+
+
+### Bug Fixes
+
+* 1. 修复GComponent cannot be invoked without 'new'2. 升级fairygui-cc库到1.1.1版本，具体修改内容，到fgui官方creator ([778b979](https://github.com/AILHC/EasyGameFrameworkOpen/commit/778b979974fdd2e68bdae0a8f6e99ef2062b7fd4))
+
+
+
+
+
 ## [0.3.3](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/dpctrl-fguicc@0.3.2...@ailhc/dpctrl-fguicc@0.3.3) (2021-11-12)
 
 
