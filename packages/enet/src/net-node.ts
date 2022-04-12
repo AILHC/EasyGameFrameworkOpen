@@ -365,7 +365,7 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
      */
     protected _heartbeatTimeoutCb() {
         var gap = this._nextHeartbeatTimeoutTime - Date.now();
-        if (gap > this._reConnectCfg) {
+        if (gap > this._gapThreashold) {
             this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), gap) as any;
         } else {
             console.error("server heartbeat timeout");
