@@ -1,4 +1,4 @@
-import { DpcMgr } from "../src"
+import { DpcMgr } from "../src";
 import { NoResDpCtrl } from "./no-res-dpctrl";
 import { NoTypeKeyDpCtrl } from "./no-typekey-dpctrl";
 import { WithResDpCtrl } from "./with-res-dpctrl";
@@ -7,31 +7,28 @@ import { CustomResHandlerDpc } from "./custom-res-handler-dpc";
 import { AsyncShowDpCtrl } from "./async-show-dpctrl";
 import { RessInClassDpc } from "./ress-in-class-dpc";
 
-describe(
-    `管理器属性测试 DpcMgr property test`, function () {
-        test(`管理器的属性 单例控制器缓存字典是等于空字典 {}
+describe(`管理器属性测试 DpcMgr property test`, function () {
+    test(`管理器的属性 单例控制器缓存字典是等于空字典 {}
     dpc-mgr property sigCtrlCache is toEqual {}`, function () {
-            const dpcMgr = new DpcMgr();
-            dpcMgr.init({
-                loadRes: (config) => {
-                    config.complete();
-                }
-            });
-            expect(dpcMgr.sigCtrlCache).toEqual({})
-
+        const dpcMgr = new DpcMgr();
+        dpcMgr.init({
+            loadRes: (config) => {
+                config.complete();
+            }
         });
-        test(`管理器的属性 单例控制器类字典是等于空字典 {}
+        expect(dpcMgr.sigCtrlCache).toEqual({});
+    });
+    test(`管理器的属性 单例控制器类字典是等于空字典 {}
     dpc-mgr property ctrlClassMap is toEqual {}`, function () {
-            const dpcMgr = new DpcMgr();
-            dpcMgr.init({
-                loadRes: (config) => {
-                    config.complete();
-                }
-            });
-            expect(dpcMgr["_ctrlClassMap"]).toEqual({})
-
+        const dpcMgr = new DpcMgr();
+        dpcMgr.init({
+            loadRes: (config) => {
+                config.complete();
+            }
         });
-    })
+        expect(dpcMgr["_ctrlClassMap"]).toEqual({});
+    });
+});
 
 describe(`注册类测试, DpcMgr regist and registTypes test`, function () {
     test(`注册有typeKey的类，会在管理器的控制器类字典里
@@ -66,9 +63,8 @@ describe(`注册类测试, DpcMgr regist and registTypes test`, function () {
         dpcMgr.registTypes(classMap);
         expect(dpcMgr.getCtrlClass(NoResDpCtrl.typeKey)).toEqual(NoResDpCtrl);
         expect(dpcMgr.getCtrlClass("NoTypeKeyDpCtrl")).toEqual(NoTypeKeyDpCtrl);
-
-    })
-})
+    });
+});
 test(`可以预加载已经注册的控制器资源,
     而且 
     1. 未加载成功时 : isLoaded=false,isInited=false,isShowed=false
@@ -86,19 +82,18 @@ test(`可以预加载已经注册的控制器资源,
     });
     dpcMgr.regist(WithResDpCtrl);
 
-    const ctrlIns: displayCtrl.ICtrl = dpcMgr.loadSigDpc(WithResDpCtrl.typeKey,
-        {
-            loadCb: (ctrlIns2) => {
-                expect(ctrlIns2.isLoaded).toBeTruthy();
-                expect(ctrlIns2.isInited).toBeFalsy();
-                expect(ctrlIns2.isShowed).toBeFalsy();
-                done()
-            }
-        });
+    const ctrlIns: displayCtrl.ICtrl = dpcMgr.loadSigDpc(WithResDpCtrl.typeKey, {
+        loadCb: (ctrlIns2) => {
+            expect(ctrlIns2.isLoaded).toBeTruthy();
+            expect(ctrlIns2.isInited).toBeFalsy();
+            expect(ctrlIns2.isShowed).toBeFalsy();
+            done();
+        }
+    });
     expect(ctrlIns.isLoaded).toBeFalsy();
     expect(ctrlIns.isInited).toBeFalsy();
     expect(ctrlIns.isShowed).toBeFalsy();
-})
+});
 test(`通过dpcMgr.showDpc显示WithResDpCtrl,控制器的isLoaded,isInited,isShowed为true`, function (done) {
     const dpcMgr = new DpcMgr();
     dpcMgr.init({
@@ -113,7 +108,7 @@ test(`通过dpcMgr.showDpc显示WithResDpCtrl,控制器的isLoaded,isInited,isSh
         expect(ctrlIns2.isLoaded).toBeTruthy();
         expect(ctrlIns2.isInited).toBeTruthy();
         expect(ctrlIns2.isShowed).toBeTruthy();
-        done()
+        done();
     });
 });
 
@@ -144,7 +139,7 @@ test("测试预加载显示控制器 test preload display ctrl", function (done)
             done();
         }
     });
-})
+});
 test("测试隐藏显示控制器 test hide display ctrl", function (done) {
     const dpcMgr = new DpcMgr();
     dpcMgr.init({
@@ -161,7 +156,7 @@ test("测试隐藏显示控制器 test hide display ctrl", function (done) {
         expect(ctrlOnHideSpy).toBeCalledTimes(1);
         done();
     });
-})
+});
 test("测试传参更新显示控制器 test transfer param update display ctrl", function (done) {
     const dpcMgr = new DpcMgr<ITestCtrlKeyType, any, any, ITestCtrlUpdateDataMap>();
     dpcMgr.init({
@@ -207,7 +202,7 @@ test("测试传参显示 显示控制器 test transfer param show display ctrl",
         typeKey: "OnShowDpc",
         onShowData: 2,
         showedCb: (ctrlIns: OnShowDpc) => {
-            console.log("hahhaha")
+            console.log("hahhaha");
             expect(ctrlIns.showData).toBe(2);
             expect(ctrlOnShowSpy).toBeCalledTimes(1);
             done();
@@ -225,13 +220,9 @@ test("测试销毁显示控制器资源和实例 test destroy display ctrl", fun
         loadRes: (config) => {
             config.complete();
         },
-        releaseRes: () => {
-
-        }
+        releaseRes: () => {}
     });
     dpcMgr.regist(WithResDpCtrl);
-
-
 
     dpcMgr.showDpc(WithResDpCtrl.typeKey, undefined, (ctrlIns: WithResDpCtrl) => {
         const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
@@ -247,7 +238,6 @@ test("测试销毁显示控制器资源和实例 test destroy display ctrl", fun
         expect(ctrlIns.isShowed).toBeFalsy();
         done();
     });
-
 });
 test("测试加载和销毁实现了自定义资源处理接口的dpc", function (done) {
     const dpcMgr = new DpcMgr();
@@ -255,9 +245,7 @@ test("测试加载和销毁实现了自定义资源处理接口的dpc", function
         loadRes: (config) => {
             config.complete();
         },
-        releaseRes: () => {
-
-        }
+        releaseRes: () => {}
     });
     dpcMgr.regist(CustomResHandlerDpc);
 
@@ -268,10 +256,9 @@ test("测试加载和销毁实现了自定义资源处理接口的dpc", function
     const dpcMgrResHandlerReleaseResSpy = jest.spyOn(dpcMgr["_resHandler"], "releaseRes");
     const dpcMgrResHandlerloadResSpy = jest.spyOn(dpcMgr["_resHandler"], "loadRes");
     dpcMgr.showDpc(CustomResHandlerDpc.typeKey, undefined, (ctrlIns: CustomResHandlerDpc) => {
-
         const ctrlOnDestroySpy = jest.spyOn(ctrlIns, "onDestroy");
         expect(dpcMgrResHandlerloadResSpy).toBeCalledTimes(0);
-        expect(ctrlCustomLoadResSpy).toBeCalledTimes(1)
+        expect(ctrlCustomLoadResSpy).toBeCalledTimes(1);
         dpcMgr.destroyDpc(CustomResHandlerDpc.typeKey, true);
         expect(dpcMgrResHandlerReleaseResSpy).toBeCalledTimes(0);
         expect(ctrlCustomReleaseResSpy).toBeCalledTimes(1);
@@ -325,17 +312,26 @@ test("测试异步显示完成回调  ", function (done) {
         }
     });
     dpcMgr.regist(AsyncShowDpCtrl, "AsyncShowDpCtrl");
-    dpcMgr.showDpc<AsyncShowDpCtrl>("AsyncShowDpCtrl", undefined, (ctrl) => {
-        expect(ctrl.isShowed).toBeTruthy();
-        expect(ctrl.isShowing).toBeTruthy();
-    }, undefined, undefined, undefined, undefined, () => {
-        expect(ctrl.isShowing).toBeFalsy();
-        done();
-    });
+    dpcMgr.showDpc<AsyncShowDpCtrl>(
+        "AsyncShowDpCtrl",
+        undefined,
+        (ctrl) => {
+            expect(ctrl.isShowed).toBeTruthy();
+            expect(ctrl.isShowEnd).toBeFalsy();
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        () => {
+            expect(ctrl.isShowEnd).toBeTruthy();
+            done();
+        }
+    );
     const ctrl: displayCtrl.ICtrl = dpcMgr.getSigDpcIns<AsyncShowDpCtrl>("AsyncShowDpCtrl");
 
-    dpcMgr.getSigDpcRess("AsyncShowDpCtrl")
-}, 5000)
+    dpcMgr.getSigDpcRess("AsyncShowDpCtrl");
+}, 5000);
 
 test("getDpcRessInClass test", function () {
     const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
@@ -348,7 +344,7 @@ test("getDpcRessInClass test", function () {
     const ress = dpcMgr.getDpcRessInClass("RessInClassDpc");
     expect(ress[0]).toBe("res1");
     expect(ress.length).toBe(2);
-})
+});
 
 test("loadDpcByIns test", function (done) {
     const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
@@ -359,17 +355,16 @@ test("loadDpcByIns test", function (done) {
     });
     dpcMgr.regist(WithResDpCtrl, "WithResDpCtrl");
     const ins = dpcMgr.getSigDpcIns("WithResDpCtrl");
-    
+
     const handlerLoadResSpy = jest.spyOn(dpcMgr["_resHandler"], "loadRes");
     dpcMgr.loadDpcByIns(ins, {
         loadCb: (ctrlIns) => {
-            
             expect(ctrlIns.isLoaded).toBe(true);
-            done()
+            done();
         }
-    })
+    });
     expect(handlerLoadResSpy).toBeCalledTimes(1);
-})
+});
 
 test("initDpcByIns test", function () {
     const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
@@ -383,8 +378,7 @@ test("initDpcByIns test", function () {
     const ctrlOnInitSpy = jest.spyOn(ins, "onInit");
     dpcMgr.initDpcByIns(ins);
     expect(ctrlOnInitSpy).toBeCalledTimes(1);
-
-})
+});
 test("showDpcByIns test", function (done) {
     const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
     dpcMgr.init({
@@ -400,13 +394,11 @@ test("showDpcByIns test", function (done) {
             expect(ctrlIns).toBe(ins);
             expect(ctrlIns.isInited).toBeFalsy();
             expect(ctrlIns.isShowed).toBeTruthy();
-            done()
+            done();
         }
-    })
+    });
     expect(ctrlOnShowSpy).toBeCalledTimes(1);
-
-    
-})
+});
 test("hideDpcByIns test", function () {
     const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
     dpcMgr.init({
@@ -415,12 +407,11 @@ test("hideDpcByIns test", function () {
         }
     });
     dpcMgr.regist(RessInClassDpc, "RessInClassDpc");
-    const ins:RessInClassDpc = dpcMgr.getSigDpcIns("RessInClassDpc");
+    const ins: RessInClassDpc = dpcMgr.getSigDpcIns("RessInClassDpc");
     const ctrlOnHideSpy = jest.spyOn(ins, "onHide");
     dpcMgr.hideDpcByIns(ins);
     expect(ctrlOnHideSpy).toBeCalledTimes(1);
-
-})
+});
 test("destroyDpcByIns test", function () {
     const dpcMgr = new DpcMgr<ITestCtrlKeyType>();
     dpcMgr.init({
@@ -433,5 +424,4 @@ test("destroyDpcByIns test", function () {
     const ctrlOnDestroySpy = jest.spyOn(ins, "onDestroy");
     dpcMgr.destroyDpcByIns(ins);
     expect(ctrlOnDestroySpy).toBeCalledTimes(1);
-
-})
+});

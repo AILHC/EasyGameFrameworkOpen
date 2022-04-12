@@ -7,16 +7,25 @@ export class FDpctrl<T extends fairygui.GComponent = fairygui.GComponent> implem
     isShowed?: boolean;
     needShow?: boolean;
     needLoad?: boolean;
-    isShowing?: boolean;
+    isShowEnd?: boolean;
     onLoadData?: any;
+    protected node: T;
+
+    setVisible(visible: boolean) {
+        if (this.node && this.node.visible !== !!visible) {
+            this.node.visible = !!visible;
+        }
+    }
+    getNode(): T {
+        return this.node;
+    }
     public getRess?(): any[] | string[] {
         return undefined;
     }
     public onInit(config?: displayCtrl.IInitConfig<any, any>): void {}
+
     public onShow(config?: displayCtrl.IShowConfig<any, any, any>): void {
-        if (this.node) {
-            this.node.visible = true;
-        }
+        this.setVisible(true);
     }
     onUpdate(updateData: any): void {}
     getFace<T>(): displayCtrl.ReturnCtrlType<T> {
@@ -25,20 +34,10 @@ export class FDpctrl<T extends fairygui.GComponent = fairygui.GComponent> implem
     onDestroy(destroyRes?: boolean): void {
         this.node.dispose();
     }
-    getNode(): T {
-        return this.node;
-    }
-    protected node: T;
 
     onHide() {
-        if (this.node) {
-            this.node.removeFromParent();
-            this.node.visible = false;
-        }
-    }
-    forceHide() {
-        this.node && (this.node.visible = false);
-        this.isShowed = false;
+        this.setVisible(false);
+        if (this.node) this.node.removeFromParent();
     }
     onResize() {
         if (this.node) {

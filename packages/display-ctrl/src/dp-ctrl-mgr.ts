@@ -6,19 +6,17 @@ export class DpcMgr<
     CtrlKeyMapType = any,
     InitDataTypeMapType = any,
     ShowDataTypeMapType = any,
-    UpdateDataTypeMapType = any>
-    implements displayCtrl.IMgr<
-    CtrlKeyMapType,
-    InitDataTypeMapType,
-    ShowDataTypeMapType,
-    UpdateDataTypeMapType> {
-
-
-    keys: CtrlKeyMapType = new Proxy({}, {
-        get(target, key) {
-            return key;
+    UpdateDataTypeMapType = any
+> implements displayCtrl.IMgr<CtrlKeyMapType, InitDataTypeMapType, ShowDataTypeMapType, UpdateDataTypeMapType>
+{
+    keys: CtrlKeyMapType = new Proxy(
+        {},
+        {
+            get(target, key) {
+                return key;
+            }
         }
-    }) as any;
+    ) as any;
     /**
      * 单例缓存字典 key:ctrlKey,value:egf.IDpCtrl
      */
@@ -49,12 +47,10 @@ export class DpcMgr<
                 }
             } else {
                 for (const typeKey in classes) {
-                    this.regist(classes[typeKey], typeKey as any)
+                    this.regist(classes[typeKey], typeKey as any);
                 }
             }
-
         }
-
     }
     public regist(ctrlClass: displayCtrl.CtrlClassType, typeKey?: keyof CtrlKeyMapType): void {
         const classMap = this._ctrlClassMap;
@@ -86,21 +82,26 @@ export class DpcMgr<
     }
     //单例操作
 
-    public getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType,): string[] {
+    public getSigDpcRess<keyType extends keyof CtrlKeyMapType>(typeKey: keyType): string[] {
         const ctrlIns = this.getSigDpcIns(typeKey);
         if (ctrlIns) {
             return ctrlIns.getRess();
         }
         return null;
     }
-    public loadSigDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType, loadCfg?: displayCtrl.ILoadConfig): displayCtrl.ReturnCtrlType<T> {
+    public loadSigDpc<T, keyType extends keyof CtrlKeyMapType = any>(
+        typeKey: keyType,
+        loadCfg?: displayCtrl.ILoadConfig
+    ): displayCtrl.ReturnCtrlType<T> {
         const ctrlIns = this.getSigDpcIns(typeKey);
         if (ctrlIns) {
             this.loadDpcByIns(ctrlIns, loadCfg);
         }
         return ctrlIns as any;
     }
-    public getSigDpcIns<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T> {
+    public getSigDpcIns<T, keyType extends keyof CtrlKeyMapType = any>(
+        typeKey: keyType
+    ): displayCtrl.ReturnCtrlType<T> {
         const sigCtrlCache = this._sigCtrlCache;
         if (!typeKey) return null;
         let ctrlIns = sigCtrlCache[typeKey];
@@ -142,7 +143,7 @@ export class DpcMgr<
                 showEndCb: showEndCb,
                 loadCb: loadCb,
                 onCancel: onCancel
-            }
+            };
         } else if (typeof typeKey === "object") {
             showCfg = typeKey;
             onShowData !== undefined && (showCfg.onShowData = onShowData);
@@ -161,7 +162,7 @@ export class DpcMgr<
         if (!ins) {
             console.error(`There is no registration :typeKey:${showCfg.typeKey}`);
             return null;
-        };
+        }
         ins.needShow = true;
         const sigCtrlShowCfgMap = this._sigCtrlShowCfgMap;
         const oldShowCfg = sigCtrlShowCfgMap[showCfg.typeKey];
@@ -192,7 +193,7 @@ export class DpcMgr<
                     }
                 }
                 delete sigCtrlShowCfgMap[showCfg.typeKey];
-            }
+            };
             ins.needLoad = false;
             this._loadRess(ins, preloadCfg);
         } else {
@@ -203,7 +204,6 @@ export class DpcMgr<
             if (ins.isInited) {
                 this.showDpcByIns(ins, showCfg);
                 ins.needShow = false;
-
             }
         }
         return ins as any;
@@ -220,7 +220,7 @@ export class DpcMgr<
         if (ctrlIns && ctrlIns.isInited) {
             ctrlIns.onUpdate(updateData);
         } else {
-            console.warn(` updateDpc key:${key}, The instance is not initialized`);;
+            console.warn(` updateDpc key:${key}, The instance is not initialized`);
         }
     }
     public hideDpc<keyType extends keyof CtrlKeyMapType>(key: keyType): void {
@@ -233,7 +233,7 @@ export class DpcMgr<
             console.warn(`${key} Not instantiate`);
             return;
         }
-        this.hideDpcByIns(dpcIns)
+        this.hideDpcByIns(dpcIns);
     }
 
     public destroyDpc<keyType extends keyof CtrlKeyMapType>(key: keyType, destroyRes?: boolean): void {
@@ -277,7 +277,14 @@ export class DpcMgr<
         const ins = this._sigCtrlCache[key];
         return ins ? ins.isShowed : false;
     }
-
+    public isShowEnd<keyType extends keyof CtrlKeyMapType>(key: keyType): boolean {
+        if (!key) {
+            console.warn("!!!key is null");
+            return false;
+        }
+        const ins = this._sigCtrlCache[key];
+        return ins ? ins.isShowed : false;
+    }
     //基础操作函数
 
     public insDpc<T, keyType extends keyof CtrlKeyMapType = any>(typeKey: keyType): displayCtrl.ReturnCtrlType<T> {
@@ -307,7 +314,8 @@ export class DpcMgr<
     }
     public initDpcByIns<keyType extends keyof CtrlKeyMapType>(
         ins: displayCtrl.ICtrl,
-        initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>): void {
+        initCfg?: displayCtrl.IInitConfig<keyType, InitDataTypeMapType>
+    ): void {
         if (ins) {
             if (!ins.isInited) {
                 ins.isInited = true;
@@ -353,7 +361,7 @@ export class DpcMgr<
     protected _loadRess(ctrlIns: displayCtrl.ICtrl, loadCfg?: displayCtrl.ILoadConfig) {
         if (ctrlIns) {
             if (!ctrlIns.isLoaded) {
-                const loadHandler: displayCtrl.ILoadHandler = loadCfg ? loadCfg : {} as any;
+                const loadHandler: displayCtrl.ILoadHandler = loadCfg ? loadCfg : ({} as any);
                 if (isNaN(loadHandler.loadCount)) {
                     loadHandler.loadCount = 0;
                 }
@@ -363,10 +371,9 @@ export class DpcMgr<
                     if (loadHandler.loadCount === 0) {
                         ctrlIns.isLoaded = true;
                         ctrlIns.isLoading = false;
-                        loadCfg && loadCfg?.loadCb(ctrlIns)
+                        loadCfg && loadCfg?.loadCb(ctrlIns);
                     }
-
-                }
+                };
                 const onError = () => {
                     loadHandler.loadCount--;
                     if (loadHandler.loadCount === 0) {
@@ -374,16 +381,13 @@ export class DpcMgr<
                         ctrlIns.isLoading = false;
                         loadCfg && loadCfg?.loadCb(null);
                     }
-                }
+                };
 
                 const customLoadViewIns: displayCtrl.IResHandler = ctrlIns as any;
                 ctrlIns.isLoading = true;
                 ctrlIns.isLoaded = false;
                 let onLoadData = loadCfg && loadCfg.onLoadData;
-                onLoadData =
-                    ctrlIns.onLoadData
-                        ? Object.assign(ctrlIns.onLoadData, onLoadData)
-                        : onLoadData;
+                onLoadData = ctrlIns.onLoadData ? Object.assign(ctrlIns.onLoadData, onLoadData) : onLoadData;
                 if (customLoadViewIns.loadRes) {
                     customLoadViewIns.loadRes({
                         key: ctrlIns.key,
@@ -417,5 +421,4 @@ export class DpcMgr<
             }
         }
     }
-
 }
