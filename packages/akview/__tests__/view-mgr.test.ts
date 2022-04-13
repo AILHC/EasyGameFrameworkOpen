@@ -2,7 +2,7 @@ import { DefaultPlugin, ViewMgr } from "../src";
 import { DefaultEventBus } from "../src/default-event-bus";
 import { DefaultTemplateHandler } from "../src/default-template-handler";
 import { DefaultViewState } from "../src/default-view-state";
-import { LRUCacheHandler } from "../src/lru-cache-handler";
+import { LRU2QCacheHandler } from "../src/lru2q-cache-handler";
 import { TestView, TestWithAnimView } from "./test-view";
 import { TestViewState } from "./test-view-state";
 
@@ -39,7 +39,6 @@ describe(`ViewMgr相关测试`, function () {
         let expectDefindFields: Array<keyof ViewMgr> | Array<string> = [
             "_viewStateMap",
             "eventBus",
-            "cacheHandler",
             "tplHandler",
             "_templateMap",
             "_vsClassMap",
@@ -60,13 +59,13 @@ describe(`ViewMgr相关测试`, function () {
         const mgr3 = new ViewMgr();
         mgr3.init({
             eventBus: new DefaultEventBus(),
-            cacheHandler: new LRUCacheHandler({ maxSize: 18 }),
+            cacheHandler: new LRU2QCacheHandler({ lruMaxSize: 18, fifoMaxSize: 18 }),
             tplHandler: new DefaultTemplateHandler()
         });
         expect(mgr3.eventBus).toBeDefined();
         expect(mgr3.cacheHandler).toBeDefined();
         expect(mgr3.tplHandler).toBeDefined();
-        expect(mgr3.cacheHandler["_option"].maxSize).toEqual(18);
+        expect(mgr3.cacheHandler["_option"].lruMaxSize).toEqual(18);
         expect(mgr3.tplHandler["_option"]).toBeDefined();
         //传递自定义ViewState
         const mgr4 = new ViewMgr();
@@ -271,6 +270,7 @@ describe(`ViewMgr相关测试`, function () {
         expect(viewIns2.viewState).toBe(viewState2);
         expect(viewState2.viewIns).toBe(viewIns2);
         expect(viewIns2.key).toBe(testViewKey2);
+        mgr["_tplHandler"];
     });
     test("测试：ViewMgr.createViewState", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -293,9 +293,9 @@ describe(`ViewMgr相关测试`, function () {
         expect(viewState2.template).toEqual(mgr2.getTemplate(viewKey));
         expect(viewState2.cacheMode).toEqual(undefined);
         const viewKey2: any = "test_ViewMgr.createViewState2";
-        mgr2.template({ key: viewKey2, cacheMode: "LRU" });
+        mgr2.template({ key: viewKey2, cacheMode: "CUSTOM" });
         const viewState3 = mgr2.createViewState(viewKey2);
-        expect(viewState3.cacheMode).toEqual("LRU");
+        expect(viewState3.cacheMode).toEqual("CUSTOM");
         //有templateHandler的createViewState方法,createViewState返回testCreateViewStateReturnObj
         const mgr4 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         let testCreateViewStateReturnObj = {
@@ -458,7 +458,7 @@ describe(`ViewMgr相关测试`, function () {
     });
     test("测试：ViewMgr.isPreloadResLoaded", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        //没有实现templateHandler.isLoaded方法，返回true(没有实现就当作不处理资源加载，不阻碍没资源加载的流程)
+        //没有实现templateHandler.isLoaded方法，返回true(没有实现就当作不处理资源加载，不阻碍没资源加载的流程) 这是错误的，只有没实现loadRes才算是加载完成，因为它是所有template的资源处理
         mgr.init({
             tplHandler: {} as any
         });
@@ -546,8 +546,8 @@ describe(`ViewMgr相关测试`, function () {
 
         expect(mgr.getViewState(viewState3.id)).toBeDefined();
 
-        const viewState4 = mgr.create(viewKey, undefined, false, undefined, "LRU");
-        expect(viewState4.cacheMode).toEqual("LRU");
+        const viewState4 = mgr.create(viewKey, undefined, false, undefined, "CUSTOM");
+        expect(viewState4.cacheMode).toEqual("CUSTOM");
         const viewState5 = mgr.create(viewKey, undefined, true);
         expect((viewState5 as DefaultViewState)["showCfg"].needShowView).toBeTruthy();
         const viewKey2: any = "testKey_ViewMgr.create2";

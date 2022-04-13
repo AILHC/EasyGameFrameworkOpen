@@ -4,7 +4,7 @@ describe(`DefaultEventBus相关测试`, function () {
     test("测试：DefaultEventBus.onAkEvent", (done) => {
         const eventBus = new DefaultEventBus();
         eventBus.onAkEvent("test1", function () {});
-        expect(eventBus.handleMethodMap.has("test")).toBeTruthy();
+        expect(eventBus.handleMethodMap.has("test1")).toBeTruthy();
         const test2Caller = {};
         eventBus.onAkEvent("test2", function () {}, test2Caller);
         const test2methods = eventBus.handleMethodMap.get("test2");
