@@ -1,7 +1,3 @@
-import { DefaultEventBus } from "./default-event-bus";
-import { DefaultTemplateHandler } from "./default-template-handler";
-import { DefaultViewState } from "./default-view-state";
-import { LRUCacheHandler } from "./lru-cache-handler";
 import { globalViewTemplateMap } from "./view-template";
 /**
  * id拼接字符
@@ -61,9 +57,9 @@ export class ViewMgr<
     }
     init(option?: akView.IMgrInitOption<TemplateType>): void {
         if (this._inited) return;
-        option = option || {};
+        option = option || ({} as any);
         this._eventBus = option.eventBus || ({} as any);
-        this._cacheHandler = option.cacheHandler || ({} as any);
+        this._cacheHandler = option.cacheHandler;
         this._viewStateMap = {};
         this._tplHandler = option.tplHandler || ({} as any);
         this._option = option;
@@ -308,11 +304,8 @@ export class ViewMgr<
             template = this.getTemplate(this.getKeyById(keyOrIdOrTemplate));
         }
         const templateHandler = this._tplHandler;
-        if (!templateHandler.isLoaded) {
-            return true;
-        } else {
-            return templateHandler.isLoaded(template);
-        }
+        //如果没有加载，判断有没有loadRes实现
+        return templateHandler.isLoaded ? templateHandler.isLoaded(template) : !templateHandler.loadRes;
     }
     /**
      * 模板资源引用持有处理
@@ -409,9 +402,7 @@ export class ViewMgr<
         const viewState = this.createViewState(showCfg.id);
         if (viewState) {
             cacheMode && (viewState.cacheMode = cacheMode);
-            if (viewState.cacheMode === "FOREVER") {
-                this._viewStateMap[viewState.id] = viewState;
-            }
+            this._cacheViewState(viewState);
             this._showViewState(viewState, showCfg as any);
             return viewState as T;
         }
@@ -466,6 +457,7 @@ export class ViewMgr<
             if (isSig && !viewState.cacheMode) {
                 viewState.cacheMode = "FOREVER";
             }
+            this._cacheViewState(viewState);
             showCfg.needShowView = true;
             this._showViewState(viewState, showCfg as any);
         }
@@ -485,10 +477,6 @@ export class ViewMgr<
         if (!viewState) return;
 
         viewState.onShow(showCfg as any);
-        const cacheMode = viewState.cacheMode;
-        if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler.onViewStateShow?.(viewState);
-        }
     }
     /**
      * 更新View
@@ -513,10 +501,6 @@ export class ViewMgr<
         if (!viewState) return;
 
         viewState.onUpdate(updateState);
-        const cacheMode = viewState.cacheMode;
-        if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler.onViewStateUpdate?.(viewState);
-        }
     }
     /**
      * 隐藏View
@@ -535,16 +519,12 @@ export class ViewMgr<
         if (typeof keyOrViewState === "object") {
             viewState = keyOrViewState;
         } else {
-            viewState = this.getViewState(keyOrViewState as string);
+            viewState = this.getViewState(keyOrViewState as string, true);
         }
         if (!viewState) return;
-        const cacheMode = viewState.cacheMode;
         viewState.onHide(hideCfg);
-        if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler.onViewStateHide?.(viewState);
-        }
         if (hideCfg?.destroyAfterHide) {
-            this.deleteViewState(viewState.id);
+            this.destroy(viewState);
         }
     }
     destroy(keyOrViewState: keyType | akView.IViewState, destroyRes?: boolean): void {
@@ -558,11 +538,7 @@ export class ViewMgr<
         } else {
             viewState = this.getViewState(keyOrViewState as string);
         }
-        const cacheMode = viewState.cacheMode;
         viewState.onDestroy(destroyRes);
-        if (cacheMode && cacheMode !== "FOREVER") {
-            this._cacheHandler.onViewStateDestroy?.(viewState);
-        }
         //从缓存中移除
         this.deleteViewState(keyOrViewState as string);
     }
@@ -596,8 +572,9 @@ export class ViewMgr<
         let viewIns = viewState.viewIns;
         if (viewIns) return viewIns;
         let tplHandler = this._tplHandler;
-        viewIns = template.viewClass && new template.viewClass();
-        viewIns = viewIns || (tplHandler.createViewIns && tplHandler.createViewIns(template));
+        //先自定义的创建
+        viewIns = tplHandler.createViewIns && tplHandler.createViewIns(template);
+        viewIns = viewIns || (template.viewClass && new template.viewClass());
 
         if (viewIns) {
             viewIns.viewState = viewState;
@@ -609,14 +586,23 @@ export class ViewMgr<
 
         return viewIns;
     }
-
+    protected _cacheViewState<T extends akView.IViewState = akView.IViewState>(viewState: T) {
+        if (viewState.cacheMode === "FOREVER") {
+            this._viewStateMap[viewState.id] = viewState;
+        } else if (viewState.cacheMode === "CUSTOM") {
+            this._cacheHandler.put(viewState.id, viewState);
+        }
+    }
     /**
      * 根据id获取缓存中的ViewState
      * @param id
      * @returns
      */
-    getViewState<T extends akView.IViewState = akView.IViewState>(id: string): T {
-        return this._viewStateMap[id] as T;
+    getViewState<T extends akView.IViewState = akView.IViewState>(id: string, isOnlyGet?: boolean): T {
+        return (
+            this._viewStateMap[id] ||
+            (this._cacheHandler && (isOnlyGet ? this._cacheHandler.onlyGet(id) : this._cacheHandler.get(id)))
+        );
     }
     /**
      * 根据id获取缓存中的ViewState
@@ -625,13 +611,11 @@ export class ViewMgr<
      * @returns
      */
     getOrCreateViewState<T extends akView.IViewState = akView.IViewState>(id: string): T {
-        let viewState = this._viewStateMap[id];
+        let viewState = this.getViewState(id);
         if (!viewState) {
             viewState = this.createViewState(id);
         }
-        if (viewState) {
-            this._viewStateMap[viewState.id] = viewState;
-        }
+
         return viewState as T;
     }
     createViewState(id: string) {
@@ -665,6 +649,7 @@ export class ViewMgr<
      */
     deleteViewState(id: string): void {
         delete this._viewStateMap[id];
+        this._cacheHandler && this._cacheHandler.delete(id);
     }
     /**
      * 根据viewid 获取view实例
@@ -672,7 +657,7 @@ export class ViewMgr<
      * @returns
      */
     getViewIns(id: string): akView.IView {
-        const viewState = this._viewStateMap[id];
+        const viewState = this.getViewState(id);
         return viewState && viewState.viewIns;
     }
 

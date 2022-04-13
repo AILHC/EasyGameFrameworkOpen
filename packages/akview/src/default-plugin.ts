@@ -4,7 +4,7 @@ import { DefaultViewState } from "./default-view-state";
 import { LRU2QCacheHandler } from "./lru2q-cache-handler";
 
 declare global {
-    interface IDefaultPluginOption {
+    interface IAkViewDefaultPluginOption {
         /**
          * 默认模板处理配置
          */
@@ -17,7 +17,7 @@ declare global {
 }
 export class DefaultPlugin implements akView.IPlugin {
     viewMgr: akView.IMgr;
-    onUse(opt: IDefaultPluginOption) {
+    onUse(opt: IAkViewDefaultPluginOption) {
         opt = opt || {};
         this.viewMgr["_tplHandler"] = new DefaultTemplateHandler(opt.tplHandlerOption);
         this.viewMgr["_eventBus"] = new DefaultEventBus();

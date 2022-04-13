@@ -425,35 +425,36 @@ declare global {
             getSize?(): number;
         }
 
-        interface ICacheHandler {
+        interface ICacheHandler<ValueType = any> {
             viewMgr: akView.IMgr;
-            onViewStateShow(viewState: akView.IViewState): void;
-            onViewStateUpdate(viewState: akView.IViewState): void;
-            onViewStateHide(viewState: akView.IViewState): void;
-            onViewStateDestroy(viewState: akView.IViewState): void;
-            // /**
-            //  * 获取缓存大小
-            //  */
-            // getCachedSize(): number;
-            // /**
-            //  * 获取
-            //  * @param id
-            //  */
-            // get(id: string): akView.ICache;
-            // /**
-            //  * 放入
-            //  * @param viewState
-            //  */
-            // put(id: string, cache: akView.ICache): void;
-            // /**
-            //  * 主动移除
-            //  * @param id
-            //  */
-            // remove(id: string): void
-            // /**
-            //  * 清理所有缓存
-            //  */
-            // clear(): void;
+            /**
+             * 获取缓存大小
+             */
+            getCachedSize(): number;
+            /**
+             * 只获取不触发队列更新
+             * @param id
+             */
+            onlyGet(id: string): ValueType;
+            /**
+             * 获取
+             * @param id
+             */
+            get(id: string): ValueType;
+            /**
+             * 放入
+             * @param viewState
+             */
+            put(id: string, cache: ValueType): void;
+            /**
+             * 主动移除
+             * @param id
+             */
+            delete(id: string): void;
+            /**
+             * 清理所有缓存
+             */
+            clear(): void;
             // /**
             //  * 主动清理长时间没有使用的
             //  */
@@ -605,7 +606,7 @@ declare global {
              * 按使用频率淘汰式缓存
              * 使用频率小的就会被淘汰
              */
-            LRU: string;
+            CUSTOM: string;
         }
 
         /**
@@ -614,17 +615,18 @@ declare global {
         interface IMgrInitOption<TemplateType extends akView.ITemplate<any>> {
             /**
              * 事件处理器
-             * 默认使用 default-event-bus.ts
+             * 可使用default-event-bus 或者直接use default-plugin
              */
             eventBus?: akView.IEventBus;
             /**
              * 缓存处理
-             * 默认使用 lru-cache-handler.ts
+             * 可不使用，不使用就不能用cacheMode=="CUSTOM"
+             * 或者直接use default-plugin
              */
             cacheHandler?: akView.ICacheHandler;
             /**
              * 模板处理器
-             * 默认使用 default-template-handler.ts
+             * 可使用default-plugin-handler或者直接use default-plugin
              */
             tplHandler?: akView.ITemplateHandler;
             /**

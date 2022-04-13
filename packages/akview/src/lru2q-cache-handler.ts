@@ -1,7 +1,13 @@
 declare global {
     namespace akView {
         interface ILRU2QCacheHandlerOption {
+            /**
+             * 最大先进先出队列大小，默认为5
+             */
             fifoMaxSize?: number;
+            /**
+             * 最大LRU队列大小，默认为5
+             */
             lruMaxSize?: number;
         }
     }
@@ -25,23 +31,21 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewState> implements a
         this.fifoQueue = new Map();
         this.lruQueue = new Map();
     }
+    public getCachedSize(): number {
+        return this.fifoQueue.size + this.lruQueue.size;
+    }
+    public clear(): void {}
 
-    onViewStateShow(viewState: akView.IViewState<any>): void {
-        this.put(viewState.id, viewState as any);
+    public onlyGet(key: string): ValueType {
+        return this.lruQueue.get(key) || this.fifoQueue.get(key);
     }
-    onViewStateUpdate(viewState: akView.IViewState<any>): void {
-        this.get(viewState.id);
-    }
-    onViewStateHide(viewState: akView.IViewState<any>): void {}
-    onViewStateDestroy(viewState: akView.IViewState<any>): void {
-        this.delete(viewState.id);
-    }
-    protected get(key: string): ValueType {
+    public get(key: string): ValueType {
         const lruQueue = this.lruQueue;
         let value: ValueType;
-        if (this.fifoQueue.has(key)) {
-            value = this.fifoQueue.get(key);
-            this.fifoQueue.delete(key);
+        const fifoQueue = this.fifoQueue;
+        if (fifoQueue.has(key)) {
+            value = fifoQueue.get(key);
+            fifoQueue.delete(key);
             lruQueue.set(key, value);
         } else if (lruQueue.has(key)) {
             value = lruQueue.get(key);
@@ -51,24 +55,18 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewState> implements a
         }
         return value;
     }
-    protected put(key: string, value: ValueType): void {
+    public put(key: string, value: ValueType): void {
         const fifoMaxSize = this._option.fifoMaxSize;
         const lruMaxSize = this._option.lruMaxSize;
         const lruQueue = this.lruQueue;
         const fifoQueue = this.fifoQueue;
-        let isExit = false;
-        if (lruQueue.has(key)) {
-            isExit = lruQueue.delete(key);
-        } else if (fifoQueue.has(key)) {
-            isExit = fifoQueue.delete(key);
-        }
+        let isExit = !!this.get(key);
         if (isExit) {
             if (lruQueue.size >= lruMaxSize) {
                 this.deleteViewStateInQueueByMaxSize(lruQueue, lruMaxSize);
             }
-
-            lruQueue.set(key, value);
         } else {
+            fifoQueue.set(key, value);
             if (fifoQueue.size >= fifoMaxSize) {
                 this.deleteViewStateInQueueByMaxSize(fifoQueue, fifoMaxSize);
             }
@@ -79,8 +77,10 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewState> implements a
         let forCount = 0;
         for (let key of queue.keys()) {
             if (forCount < needDeleteCount) {
-                if (!queue.get(key).isViewShowed) {
+                const viewState = queue.get(key);
+                if (!viewState.isViewShowed) {
                     queue.delete(key);
+                    this.viewMgr.destroy(key as any, true);
                 }
             } else {
                 break;
@@ -88,7 +88,7 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewState> implements a
             forCount++;
         }
     }
-    protected delete(key: string) {
+    public delete(key: string) {
         this.fifoQueue.delete(key);
         this.lruQueue.delete(key);
     }
