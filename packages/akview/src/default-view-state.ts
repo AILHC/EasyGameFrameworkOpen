@@ -276,7 +276,7 @@ export class DefaultViewState implements IAkViewDefaultViewState {
             // } else {
 
             // }
-            viewIns.onDestroyView?.();
+            viewIns.onDestroyView && viewIns.onDestroyView();
             this.viewIns = undefined;
         }
         const template = this.template;

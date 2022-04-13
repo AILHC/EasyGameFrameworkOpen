@@ -1,4 +1,317 @@
 declare module 'displayCtrl' {
+	class DefaultEventBus implements akView.IEventBus {
+	    viewMgr: akView.IMgr;
+	    handleMethodMap: Map<String | string, akView.ICallableFunction[]>;
+	    onRegist(): void;
+	    onAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
+	    onceAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
+	    offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+	    emitAkEvent<EventDataType = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
+	    onAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
+	    onceAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
+	    offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+	    emitAkViewEvent<EventDataType extends any = any>(viewId: string, eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
+	    protected getIdEventKey(viewId: string, eventKey: any): string;
+	}
+
+}
+declare module 'displayCtrl' {
+	const globalViewTemplateMap: akView.TemplateMap<any>;
+	/**
+	 * 定义显示控制器模板,仅用于viewMgr初始化前调用
+	 * @param template 显示控制器定义
+	 * @param templateMap 默认为全局字典，可自定义
+	 */
+	function viewTemplate<TemplateType extends akView.ITemplate<any> = IAkViewDefaultTemplate>(template: TemplateType, templateMap?: akView.TemplateMap<any>): boolean;
+
+}
+declare module 'displayCtrl' {
+	class ViewMgr<ViewKeyTypes = IAkViewKeyTypes, ViewDataTypes = IAkViewDataTypes, TemplateType extends akView.ITemplate<ViewKeyTypes> = IAkViewDefaultTemplate<ViewKeyTypes>, keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> implements akView.IMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType> {
+	    private _cacheHandler;
+	    /**
+	     * 缓存处理器
+	     */
+	    get cacheHandler(): akView.ICacheHandler;
+	    private _eventBus;
+	    /**事件处理器 */
+	    get eventBus(): akView.IEventBus;
+	    private _tplHandler;
+	    /**
+	     * 模板处理器
+	     */
+	    get tplHandler(): akView.ITemplateHandler<TemplateType>;
+	    /**模版字典 */
+	    protected _templateMap: akView.TemplateMap<TemplateType, keyType>;
+	    /**状态缓存 */
+	    protected _viewStateMap: akView.ViewStateMap;
+	    protected _vsClassMap: {
+	        [key in AkViewStateClassTypeType]: any;
+	    };
+	    /**是否初始化 */
+	    protected _inited: boolean;
+	    /**实例数，用于创建id */
+	    protected _viewCount: number;
+	    /**
+	     * 默认ViewState的配置
+	     */
+	    private _vsCreateOpt;
+	    private _option;
+	    get option(): akView.IMgrInitOption<TemplateType>;
+	    getKey(key: keyType): keyType;
+	    init(option?: akView.IMgrInitOption<TemplateType>): void;
+	    use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void;
+	    template(templateOrKey: keyType | TemplateType | Array<TemplateType> | Array<keyType>): void;
+	    hasTemplate(key: keyType): boolean;
+	    getTemplate(key: keyType): TemplateType;
+	    /**
+	     * 注册ViewState类
+	     * @param type
+	     * @param vsClas ViewState类型
+	     */
+	    registViewStateClass(type: AkViewStateClassTypeType, vsClas: any): void;
+	    /**
+	     * 添加模板到模板字典
+	     * @param template
+	     * @returns
+	     */
+	    protected _addTemplate(template: TemplateType): void;
+	    /**
+	     * 获取模板预加载资源信息，用于自行加载
+	     * @param key 模板key
+	     * @returns
+	     */
+	    getTemplateResInfo(key: keyType): akView.TemplateResInfoType;
+	    /**
+	     * 根据id加载模板固定资源
+	     * @param idOrConfig
+	     * @returns
+	     */
+	    preloadResById(idOrConfig: string | akView.IResLoadConfig, complete?: akView.LoadResCompleteCallback, loadOption?: IAkViewLoadOption, progress?: akView.LoadResProgressCallback): void;
+	    /**
+	     * 取消加载
+	     * @param id
+	     */
+	    cancelPreloadRes(id: string): void;
+	    /**
+	     * 预加载模板固定资源,给业务使用，用于预加载
+	     * 会自动创建id，判断key是否为id
+	     * @param key
+	     * @param complate 加载资源完成回调，如果加载失败会error不为空
+	     * @param loadOption 加载资源透传参数，可选透传给资源加载处理器
+	     * @param progress 加载资源进度回调
+	     *
+	     */
+	    preloadRes(key: keyType, complete?: akView.LoadResCompleteCallback, loadOption?: IAkViewLoadOption, progress?: akView.LoadResProgressCallback): string;
+	    /**
+	     * 预加载模板固定资源,给业务使用，用于预加载
+	     * 会自动创建id，判断key是否为id
+	     * @param key
+	     * @param config
+	     * @returns id
+	     */
+	    preloadRes(key: keyType, config?: akView.IResLoadConfig): string;
+	    destroyRes(key: keyType): boolean;
+	    isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | TemplateType): boolean;
+	    /**
+	     * 模板资源引用持有处理
+	     * @param viewState
+	     */
+	    addTemplateResRef(viewState: akView.IViewState): void;
+	    /**
+	     * 模板资源引用释放处理
+	     * @param viewState
+	     */
+	    decTemplateResRef(viewState: akView.IViewState): void;
+	    /**
+	     * 创建新的ViewState并显示
+	     * @param keyOrConfig 配置
+	     * @returns 返回ViewState
+	     */
+	    create<T extends akView.IViewState = IAkViewDefaultViewState, ConfigKeyType extends keyType = keyType>(keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>): T;
+	    /**
+	     * 创建新的ViewState并显示
+	     * @param keyOrConfig 字符串key|配置
+	     * @param onInitData 初始化数据
+	     * @param needShowView 需要显示View到场景，默认false
+	     * @param onShowData 显示数据
+	     * @param cacheMode  缓存模式，默认无缓存,
+	     * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
+	     
+	     * @returns 返回ViewState
+	     */
+	    create<T extends akView.IViewState = IAkViewDefaultViewState, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>, needShowView?: boolean, onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>, cacheMode?: akView.ViewStateCacheModeType): T;
+	    /**
+	     * 显示View
+	     * @param keyOrViewStateOrConfig 类key或者ViewState对象或者显示配置IShowConfig
+	     * @param onShowData 显示透传数据
+	     * @param onInitData 初始化数据
+	     */
+	    show<TKeyType extends keyType, ViewStateType extends akView.IViewState = IAkViewDefaultViewState>(keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>, onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>, onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>): ViewStateType;
+	    /**
+	     * 显示
+	     * @param viewState
+	     * @param showCfg
+	     * @returns
+	     */
+	    protected _showViewState(viewState: akView.IViewState, showCfg: akView.IShowConfig<keyType, ViewKeyTypes>): void;
+	    /**
+	     * 更新View
+	     * @param keyOrViewState 界面id
+	     * @param updateState 更新数据
+	     */
+	    update<K extends keyType>(keyOrViewState: K | akView.IViewState, updateState?: akView.GetUpdateDataType<K, ViewDataTypes>): void;
+	    /**
+	     * 隐藏View
+	     * @param keyOrViewState 界面id
+	     * @param hideCfg
+	     */
+	    hide<KeyOrIdType extends keyType>(keyOrViewState: KeyOrIdType | akView.IViewState, hideCfg?: akView.IHideConfig<KeyOrIdType, ViewDataTypes>): void;
+	    destroy(keyOrViewState: keyType | akView.IViewState, destroyRes?: boolean): void;
+	    isViewInited<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean;
+	    isViewShowed<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean;
+	    /**
+	     * 实例化
+	     * @param id id
+	     * @param template 模板
+	     * @returns
+	     */
+	    createViewIns(viewState: akView.IViewState): akView.IView;
+	    protected _cacheViewState<T extends akView.IViewState = akView.IViewState>(viewState: T): void;
+	    /**
+	     * 根据id获取缓存中的ViewState
+	     * @param id
+	     * @returns
+	     */
+	    getViewState<T extends akView.IViewState = akView.IViewState>(id: string, isOnlyGet?: boolean): T;
+	    /**
+	     * 根据id获取缓存中的ViewState
+	     * 没有就创建并放到缓存viewStateMap中需要手动清理
+	     * @param id
+	     * @returns
+	     */
+	    getOrCreateViewState<T extends akView.IViewState = akView.IViewState>(id: string): T;
+	    createViewState(id: string): akView.IViewState<any, any>;
+	    /**
+	     * 移除指定id的viewState
+	     * @param id
+	     */
+	    deleteViewState(id: string): void;
+	    /**
+	     * 根据viewid 获取view实例
+	     * @param id view id
+	     * @returns
+	     */
+	    getViewIns(id: string): akView.IView;
+	    /**
+	     * 通过模板key生成id
+	     * @param key
+	     * @returns
+	     */
+	    createViewId(key: keyType): string;
+	    /**
+	     * 从id中解析出key
+	     * @param id
+	     * @returns
+	     */
+	    getKeyById(id: keyType | String): keyType;
+	}
+
+}
+declare module 'displayCtrl' {
+	 global {
+	    /**
+	     * 默认ViewState的配置
+	     */
+	    interface IAkViewDefaultViewStateOption {
+	        /**
+	         * 是否能在渲染节点隐藏后释放模板资源引用,默认false
+	         */
+	        canDecTemplateResRefOnHide?: boolean;
+	        /**
+	         * 在onDestroy时销毁资源，默认false
+	         *
+	         */
+	        destroyResOnDestroy?: boolean;
+	    }
+	    interface IAkViewDefaultView<ViewStateType extends akView.IViewState = akView.IViewState> extends akView.IView<ViewStateType> {
+	        /**
+	         * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
+	         * @param showData
+	         */
+	        onBeforeViewShow?(showData?: any): void;
+	        /**
+	         * 当播放出现或者消失动画时
+	         * @param isShowAnim
+	         * @param hideOption 隐藏时透传数据
+	         * @returns 返回promise
+	         */
+	        onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void>;
+	    }
+	    interface IAkViewDefaultViewState extends akView.IViewState<IAkViewDefaultViewStateOption, IAkViewDefaultTemplate> {
+	        /**
+	         * 显示结束(动画播放完)
+	         */
+	        isViewShowEnd?: boolean;
+	        /**是否需要销毁 */
+	        needDestroy?: boolean;
+	        /**是否需要显示View到场景 */
+	        needShowView?: boolean;
+	        /**是否需要隐藏 */
+	        hiding?: boolean;
+	        /**显示配置 */
+	        showCfg?: akView.IShowConfig;
+	        /**显示过程中的Promise */
+	        showingPromise?: Promise<void> | void;
+	        /**隐藏中的Promise */
+	        hidingPromise?: Promise<void> | void;
+	        /**
+	         * 未显示之前调用update接口的传递的数据
+	         */
+	        updateState?: any;
+	        /**hide 传参 */
+	        hideCfg?: akView.IHideConfig;
+	    }
+	}
+	class DefaultViewState implements IAkViewDefaultViewState {
+	    id: string;
+	    template: IAkViewDefaultTemplate;
+	    isViewInited?: boolean;
+	    isViewShowed?: boolean;
+	    isViewShowEnd?: boolean;
+	    isHoldTemplateResRef?: boolean;
+	    needDestroy?: boolean;
+	    /**
+	     * 是否需要显示View到场景
+	     */
+	    needShowView?: boolean;
+	    hiding?: boolean;
+	    showCfg?: akView.IShowConfig<any>;
+	    showingPromise?: void | Promise<void>;
+	    hidingPromise?: void | Promise<void>;
+	    updateState?: any;
+	    hideCfg?: akView.IHideConfig;
+	    viewIns?: IAkViewDefaultView<DefaultViewState>;
+	    viewMgr: akView.IMgr;
+	    destroyed: boolean;
+	    private _option;
+	    private _needDestroyRes;
+	    isLoading: boolean;
+	    private _isConstructed;
+	    onCreate(option: IAkViewDefaultViewStateOption): void;
+	    initAndShowView(): void;
+	    onShow(showCfg: akView.IShowConfig): void;
+	    onUpdate(updateState: any): void;
+	    onHide(hideCfg?: akView.IHideConfig): Promise<void>;
+	    onDestroy(destroyRes?: boolean): void;
+	    initView(): void;
+	    showView(): void;
+	    entryShowEnd(): void;
+	    hideViewIns(): void;
+	    entryDestroyed(): void;
+	}
+
+}
+declare module 'displayCtrl' {
 	 global {
 	    type FunctionPropertyNames<T> = {
 	        [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never;
@@ -12,11 +325,24 @@ declare module 'displayCtrl' {
 	    type GetShowConfigType<MgrType extends {
 	        MgrTypeParams?: any;
 	    }, ConfigKeyType extends MgrType["MgrTypeParams"][2]> = akView.IShowConfig<ConfigKeyType, MgrType["MgrTypeParams"][1]>;
+	    /**
+	     * 获取指定ViewKey接口中的ViewKey
+	     */
 	    type GetViewKeyType<ViewKeyMap, keyType extends keyof ViewKeyMap> = keyType;
+	    /**
+	     * 默认ViewKey接口
+	     */
 	    interface IAkViewKeyTypes {
 	    }
+	    /**
+	     * 默认ViewData接口
+	     */
 	    interface IAkViewDataTypes {
 	    }
+	    /**
+	     * 获取默认ViewKey
+	     */
+	    type GetAkViewKey<key extends keyof IAkViewKeyTypes> = key;
 	    /**
 	     * 类型工具函数，扩展
 	     * @type {IAkViewDataTypes} 时
@@ -57,16 +383,78 @@ declare module 'displayCtrl' {
 	     */
 	    interface IAkViewLoadOption {
 	    }
+	    /**
+	     * ViewState类型
+	     */
+	    interface IAkViewStateClassTypes {
+	        Default: "Default";
+	    }
+	    type AkViewStateClassTypeType = keyof IAkViewStateClassTypes;
+	    /**
+	     * View事件key
+	     */
+	    interface IAkViewEventKeys {
+	        /**
+	         * View初始化
+	         */
+	        onViewInit: "onViewInit";
+	        /**
+	         * View显示
+	         */
+	        onViewShow: "onViewShow";
+	        /**
+	         * View显示结束
+	         */
+	        onViewShowEnd: "onViewShowEnd";
+	        /**
+	         * View隐藏
+	         */
+	        onViewHide: "onViewHide";
+	        /**
+	         * View隐藏结束
+	         */
+	        onViewHideEnd: "onViewHideEnd";
+	        /**
+	         * View销毁
+	         */
+	        onViewDestroyed: "onViewDestroyed";
+	        /**
+	         * 根窗口尺寸变化
+	         */
+	        onWindowResize: "onWindowResize";
+	    }
+	    /**
+	     * AkView事件Key类型
+	     */
+	    type AkViewEventKeyType = keyof IAkViewEventKeys;
+	    /**
+	     * 通用View事件数据接口,
+	     * 可扩展
+	     */
+	    interface IAkViewEventData {
+	        viewId?: string;
+	    }
+	    /**
+	     * 窗口变化数据接口
+	     */
+	    interface IAkViewResizeData {
+	        oldWidth?: number;
+	        oldHeight?: number;
+	        width: number;
+	        height: number;
+	    }
 	    namespace akView {
-	        interface ICallableFunction extends Function {
-	            _caller?: any;
-	            _args?: any[];
+	        interface ICallableFunction {
+	            method?: Function;
+	            caller?: any;
+	            args?: any[];
+	            once?: boolean;
 	        }
 	        interface ITemplateResInfo {
 	            /**资源标识，可以是路径、url等,其他附加信息可以通过扩展akView.ITemplateResInfo来添加 */
 	            key: string;
 	        }
-	        type TemplateResInfoType = Array<ITemplateResInfo | string> | ITemplateResInfo | string;
+	        type TemplateResInfoType = Array<ITemplateResInfo> | ITemplateResInfo | string | string[];
 	        type ViewStateConstructor<T extends akView.IViewState = any> = {
 	            new (...args: any[]): T;
 	        };
@@ -93,14 +481,31 @@ declare module 'displayCtrl' {
 	             */
 	            cacheMode?: ViewStateCacheModeType;
 	            /**
-	             * viewState的配置
-	             * 会mgr.viewStateCreateOption与进行合并
+	             * 获取显示前预加载资源信息
 	             */
-	            viewStateCreateOption?: any;
+	            getResInfo?(): akView.TemplateResInfoType;
+	            /**
+	             * ViewState类型
+	             * 默认Default
+	             */
+	            vsClassType?: AkViewStateClassTypeType;
+	            /**
+	             * ViewState类或者方法
+	             */
+	            vsClass?: (new (...args: any[]) => any) | FunctionConstructor;
+	            /**
+	             * viewState的onCreate参数
+	             * 会mgr._vsCreateOpt与进行合并
+	             */
+	            vsCreateOpt?: any;
+	            /**
+	             * View类或者方法
+	             */
+	            viewClass?: (new (...args: any[]) => any) | FunctionConstructor;
 	            /**
 	             * 加载配置
 	             * 可对IAkViewLoadOption进行扩展
-	             * 配置资源加载样式之类的
+	             * 配置资源加载是否显示加载中界面，以及配置加载界面样式
 	             */
 	            loadOption?: IAkViewLoadOption;
 	        }
@@ -109,19 +514,12 @@ declare module 'displayCtrl' {
 	             * 创建akView.IView实例
 	             * @param template
 	             */
-	            createView<T extends akView.IView>(template: TemplateType): T;
+	            createViewIns<T extends akView.IView>(template: TemplateType): T;
 	            /**
 	             * 销毁渲染实例
 	             * @param viewIns
 	             */
 	            destroyView?<T extends akView.IView>(viewIns: T, template: TemplateType): void;
-	            /**
-	             * 创建ViewState , 如果没实现这个方法，则会默认 new DefaultViewState();
-	             * @param template
-	             * @param id viewState的id
-	             * @returns
-	             */
-	            createViewState?<T extends akView.IViewState>(template: TemplateType): T;
 	            /**
 	             * 添加到层级
 	             * @param viewState
@@ -133,10 +531,10 @@ declare module 'displayCtrl' {
 	             */
 	            removeFromLayer?(viewState: akView.IViewState): void;
 	            /**
-	             * 获取预加载资源
+	             * 获取模板预加载资源
 	             * @param template
 	             */
-	            getPreloadResInfo(template: TemplateType): akView.TemplateResInfoType;
+	            getResInfo(template: TemplateType): akView.TemplateResInfoType;
 	            /**
 	             * 判断资源是否已经加载
 	             * @param template
@@ -175,53 +573,67 @@ declare module 'displayCtrl' {
 	             */
 	            destroyRes(template: TemplateType): boolean;
 	        }
-	        /**
-	         * View事件key
-	         */
-	        interface IViewEventKeys {
-	            /**
-	             *
-	             */
-	            onViewInit: any;
-	            /**
-	             *
-	             */
-	            onViewShow: any;
-	            onViewShowEnd: any;
-	            onViewHide: any;
-	            onViewHideEnd: any;
-	            onViewDestroyed: any;
-	        }
-	        type ViewEventKeyType = keyof IViewEventKeys;
-	        interface IEventHandler {
+	        type EventCallBack<EventDataType extends any = IAkViewEventData> = (eventData: EventDataType, ...args: any[]) => void;
+	        interface IEventBus {
 	            /**
 	             * 监听
-	             * @param viewId
 	             * @param eventKey
 	             * @param method
+	             * @param args
+	             * @param offBefore 是否覆盖上次监听，默认false
 	             */
-	            on(viewId: string, eventKey: ViewEventKeyType | String, method: akView.ICallableFunction): void;
+	            onAkEvent<EventDataType extends any = IAkViewEventData>(eventKey: AkViewEventKeyType | String, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
 	            /**
-	             * 监听一次，执行完后取消监听
-	             * @param viewId
+	             * 监听一次，执行完后取消监听,会覆盖上次监听
 	             * @param eventKey
 	             * @param method
 	             */
-	            once(viewId: string, eventKey: ViewEventKeyType | String, method: akView.ICallableFunction): void;
+	            onceAkEvent<EventDataType extends any = IAkViewEventData>(eventKey: AkViewEventKeyType | String, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
+	            /**
+	             * 取消监听
+	             * @param eventKey
+	             * @param method
+	             */
+	            offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+	            /**
+	             * 触发事件
+	             * @param eventKey
+	             * @param eventData 事件数据，作为回调参数中的第一个;
+	             */
+	            emitAkEvent<EventDataType extends any = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
+	            /**
+	             * 监听指定ViewId的事件
+	             * @param viewId
+	             * @param eventKey
+	             * @param method
+	             * @param caller
+	             * @param args 自定义透传参数
+	             * @param offBefore 是否覆盖上次监听，默认false
+	             */
+	            onAkViewEvent<EventDataType extends any = IAkViewEventData>(viewId: string, eventKey: AkViewEventKeyType | String, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
+	            /**
+	             * 监听指定ViewId的事件一次，执行完后取消监听,会覆盖上次监听
+	             * @param viewId
+	             * @param eventKey
+	             * @param method
+	             * @param caller
+	             * @param args 自定义透传参数
+	             */
+	            onceAkViewEvent<EventDataType extends any = IAkViewEventData>(viewId: string, eventKey: AkViewEventKeyType | String, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
 	            /**
 	             * 取消监听
 	             * @param viewId
 	             * @param eventKey
 	             * @param method
 	             */
-	            off(viewId: string, eventKey: ViewEventKeyType | String, method: akView.ICallableFunction): void;
+	            offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
 	            /**
-	             * 触发事件
+	             * 触发指定ViewId的事件,同时也会以eventKey再派发一次，eventData合并{viewId:viewId}
 	             * @param viewId
 	             * @param eventKey
-	             * @param eventData 事件数据，作为回调参数中的最后的传入，比如method.apply(method._caller,method._args,eventData);
+	             * @param eventData 事件数据，作为回调参数中的第一个;
 	             */
-	            emit<EventDataType = any>(viewId: string, eventKey: ViewEventKeyType | String, eventData?: EventDataType): void;
+	            emitAkViewEvent<EventDataType extends any = any>(viewId: string, eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
 	        }
 	        interface IViewState<OptionType = any, TemplateType extends akView.ITemplate = any> {
 	            id: string;
@@ -280,36 +692,36 @@ declare module 'displayCtrl' {
 	             */
 	            getSize?(): number;
 	        }
-	        interface ICacheHandler {
+	        interface ICacheHandler<ValueType = any> {
 	            viewMgr: akView.IMgr;
-	            onViewStateShow(viewState: akView.IViewState): void;
-	            onViewStateUpdate(viewState: akView.IViewState): void;
-	            onViewStateHide(viewState: akView.IViewState): void;
-	            onViewStateDestroy(viewState: akView.IViewState): void;
-	        }
-	        interface IDefaultViewState<OptionType = any> extends IViewState<OptionType> {
 	            /**
-	             * 显示结束(动画播放完)
+	             * 获取缓存大小
 	             */
-	            isViewShowEnd?: boolean;
-	            /**是否需要销毁 */
-	            needDestroy?: boolean;
-	            /**是否需要显示View到场景 */
-	            needShowView?: boolean;
-	            /**是否需要隐藏 */
-	            needHide?: boolean;
-	            /**显示配置 */
-	            showCfg?: akView.IShowConfig;
-	            /**显示过程中的Promise */
-	            showingPromise?: Promise<void> | void;
-	            /**隐藏中的Promise */
-	            hidingPromise?: Promise<void> | void;
+	            getCachedSize(): number;
 	            /**
-	             * 未显示之前调用update接口的传递的数据
+	             * 只获取不触发队列更新
+	             * @param id
 	             */
-	            updateState?: any;
-	            /**hide 传参 */
-	            hideCfg?: akView.IHideConfig;
+	            onlyGet(id: string): ValueType;
+	            /**
+	             * 获取
+	             * @param id
+	             */
+	            get(id: string): ValueType;
+	            /**
+	             * 放入
+	             * @param viewState
+	             */
+	            put(id: string, cache: ValueType): void;
+	            /**
+	             * 主动移除
+	             * @param id
+	             */
+	            delete(id: string): void;
+	            /**
+	             * 清理所有缓存
+	             */
+	            clear(): void;
 	        }
 	        /**
 	         * 加载资源完成回调，如果加载失败会error不为空
@@ -322,8 +734,8 @@ declare module 'displayCtrl' {
 	        type ViewStateMap = {
 	            [key: string]: IViewState;
 	        };
-	        type TemplateMap<keyType extends keyof any = string> = {
-	            [P in keyType]: ITemplate;
+	        type TemplateMap<TemplateType, keyType extends keyof any = string> = {
+	            [P in keyType]: TemplateType;
 	        };
 	        type CancelLoad = () => void;
 	        type TemplateLoadedCb = (isOk: boolean) => void;
@@ -389,9 +801,17 @@ declare module 'displayCtrl' {
 	        }
 	        interface IView<ViewStateType extends akView.IViewState = akView.IViewState> {
 	            /**
+	             * templateKey,自动赋值
+	             */
+	            key?: string;
+	            /**
 	             * 状态,自动赋值
 	             */
 	            viewState: ViewStateType;
+	            /**
+	             * 层级类型
+	             */
+	            layerType?: string | number;
 	            /**
 	             * 初始化，只执行一次
 	             * @param initData 初始化数据
@@ -419,6 +839,10 @@ declare module 'displayCtrl' {
 	             */
 	            onDestroyView?(): void;
 	            /**
+	             * 当根窗口尺寸变化
+	             */
+	            onWindowResize?(data: IAkViewResizeData): void;
+	            /**
 	             * 获取显示节点
 	             */
 	            getNode(): any;
@@ -439,21 +863,7 @@ declare module 'displayCtrl' {
 	             * 按使用频率淘汰式缓存
 	             * 使用频率小的就会被淘汰
 	             */
-	            LRU: string;
-	        }
-	        /**
-	         * 默认ViewState的配置
-	         */
-	        interface IDefaultViewStateOption {
-	            /**
-	             * 是否能在渲染节点隐藏后释放模板资源引用,默认false
-	             */
-	            canDecTemplateResRefOnHide?: boolean;
-	            /**
-	             * 在onDestroy时销毁资源，默认false
-	             *
-	             */
-	            destroyResOnDestroy?: boolean;
+	            CUSTOM: string;
 	        }
 	        /**
 	         * 管理器初始化配置
@@ -461,35 +871,35 @@ declare module 'displayCtrl' {
 	        interface IMgrInitOption<TemplateType extends akView.ITemplate<any>> {
 	            /**
 	             * 事件处理器
-	             * 默认使用 default-event-handler.ts
+	             * 可使用default-event-bus 或者直接use default-plugin
 	             */
-	            eventHandler?: akView.IEventHandler;
+	            eventBus?: akView.IEventBus;
 	            /**
 	             * 缓存处理
-	             * 默认使用 lru-cache-handler.ts
+	             * 可不使用，不使用就不能用cacheMode=="CUSTOM"
+	             * 或者直接use default-plugin
 	             */
 	            cacheHandler?: akView.ICacheHandler;
 	            /**
 	             * 模板处理器
-	             * 默认使用 default-template-handler.ts
+	             * 可使用default-plugin-handler或者直接use default-plugin
 	             */
-	            templateHandler?: akView.ITemplateHandler;
+	            tplHandler?: akView.ITemplateHandler;
+	            /**
+	             * 默认ViewState类
+	             */
+	            defaultViewStateClass?: new (...args: any[]) => any;
 	            /**
 	             * 默认模板处理配置
 	             */
-	            defaultTplHandlerInitOption?: akView.IDefaultTplHandlerInitOption;
 	            /**
-	             * 默认缓存处理配置
+	             * 默认ViewState的配置，在viewState.onCreate时合并传入
 	             */
-	            defaultCacheHandlerOption?: akView.ILRUCacheHandlerOption;
-	            /**
-	             * 默认ViewState的配置
-	             */
-	            viewStateCreateOption?: IDefaultViewStateOption;
+	            vsCreateOpt?: IAkViewDefaultViewStateOption;
 	            /**
 	             * 模板字典
 	             */
-	            templateMap?: akView.TemplateMap;
+	            templateMap?: akView.TemplateMap<TemplateType>;
 	        }
 	        interface IViewDataFields {
 	            showData?: any;
@@ -515,7 +925,7 @@ declare module 'displayCtrl' {
 	             */
 	            MgrTypeParams?: [ViewKeyTypes, ViewDataTypes, keyType];
 	            /**事件处理器 */
-	            eventHandler: IEventHandler;
+	            eventBus: akView.IEventBus;
 	            /**
 	             * 缓存处理器
 	             */
@@ -523,7 +933,7 @@ declare module 'displayCtrl' {
 	            /**
 	             * 模板处理器
 	             */
-	            templateHandler: akView.ITemplateHandler<TemplateType>;
+	            tplHandler: akView.ITemplateHandler<TemplateType>;
 	            /**
 	             * 初始化参数(只读)
 	             */
@@ -560,11 +970,17 @@ declare module 'displayCtrl' {
 	             */
 	            getTemplate(key: keyType): TemplateType;
 	            /**
+	             * 注册ViewState类
+	             * @param type
+	             * @param vsClas ViewState类型
+	             */
+	            registViewStateClass(type: AkViewStateClassTypeType, vsClas: any): void;
+	            /**
 	             * 获取预加载资源信息
 	             * @param key 模板key
 	             * @returns
 	             */
-	            getPreloadResInfo(key: keyType): akView.TemplateResInfoType;
+	            getTemplateResInfo(key: keyType): akView.TemplateResInfoType;
 	            /**
 	             * 根据id加载模板固定资源
 	             * @param idOrConfig
@@ -613,7 +1029,7 @@ declare module 'displayCtrl' {
 	             * @param keyOrConfig 配置
 	             * @returns 返回ViewState
 	             */
-	            create<T extends akView.IViewState = akView.IViewState, ConfigKeyType extends keyType = keyType>(keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>): T;
+	            create<T extends akView.IViewState = IAkViewDefaultViewState, ConfigKeyType extends keyType = keyType>(keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>): T;
 	            /**
 	             * 创建新的ViewState并显示
 	             * @param keyOrConfig 字符串key|配置
@@ -625,7 +1041,7 @@ declare module 'displayCtrl' {
 	             
 	            * @returns 返回ViewState
 	            */
-	            create<T extends akView.IViewState = akView.IViewState, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>, needShowView?: boolean, onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>, cacheMode?: akView.ViewStateCacheModeType): T;
+	            create<T extends akView.IViewState = IAkViewDefaultViewState, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>, needShowView?: boolean, onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>, cacheMode?: akView.ViewStateCacheModeType): T;
 	            /**
 	             * 创建新的ViewState并显示
 	             * @param keyOrConfig 字符串key
@@ -637,21 +1053,21 @@ declare module 'displayCtrl' {
 	             
 	            * @returns 返回ViewState
 	            */
-	            create<CreateKeyType extends keyType, T extends akView.IViewState = akView.IViewState>(keyOrConfig: string, onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>, needShowView?: boolean, onShowData?: akView.GetShowDataType<CreateKeyType, ViewDataTypes>, cacheMode?: akView.ViewStateCacheModeType): T;
+	            create<CreateKeyType extends keyType, T extends akView.IViewState = IAkViewDefaultViewState>(keyOrConfig: string, onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>, needShowView?: boolean, onShowData?: akView.GetShowDataType<CreateKeyType, ViewDataTypes>, cacheMode?: akView.ViewStateCacheModeType): T;
 	            /**
 	             * 显示View
 	             * @param idOrkeyOrConfig 类key或者显示配置IShowConfig
 	             * @param onShowData 显示透传数据
 	             * @param onInitData 初始化数据
 	             */
-	            show<ConfigKeyType extends keyType>(idOrkeyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>): string;
+	            show<ConfigKeyType extends keyType, ViewStateType extends akView.IViewState = IAkViewDefaultViewState>(idOrkeyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>): ViewStateType;
 	            /**
 	             * 显示View
 	             * @param keyOrViewStateOrConfig 类key或者ViewState对象或者显示配置IShowConfig
 	             * @param onShowData 显示透传数据
 	             * @param onInitData 初始化数据
 	             */
-	            show<TKeyType extends keyType, ViewStateType extends akView.IViewState = any>(keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>, onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>, onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>): string;
+	            show<TKeyType extends keyType, ViewStateType extends akView.IViewState = IAkViewDefaultViewState>(keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>, onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>, onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>): ViewStateType;
 	            /**
 	             * 更新View
 	             * @param keyOrViewState 界面id
@@ -724,7 +1140,7 @@ declare module 'displayCtrl' {
 	             * @param viewState
 	             * @returns
 	             */
-	            createView(viewState: akView.IViewState): akView.IView;
+	            createViewIns(viewState: akView.IViewState): akView.IView;
 	            /**
 	             * 根据id获取缓存中的ViewState，没有就创建
 	             * @param id
@@ -743,210 +1159,89 @@ declare module 'displayCtrl' {
 
 }
 declare module 'displayCtrl' {
-	class DefaultEventHandler implements akView.IEventHandler {
-	    viewMgr: akView.IMgr;
-	    handleMethodMap: Map<string, akView.ICallableFunction[]>;
-	    onRegist(): void;
-	    on(viewId: string, eventKey: String | keyof akView.IViewEventKeys, method: akView.ICallableFunction): void;
-	    once(viewId: string, eventKey: String | keyof akView.IViewEventKeys, method: akView.ICallableFunction): void;
-	    off(viewId: string, eventKey: String | keyof akView.IViewEventKeys, method: akView.ICallableFunction): void;
-	    emit<EventDataType = any>(viewId: string, eventKey: String | keyof akView.IViewEventKeys, eventData?: EventDataType): void;
-	    protected getIdEventKey(viewId: string, eventKey: any): string;
-	}
-
-}
-declare module 'displayCtrl' {
 	 global {
-	    namespace akView {
-	        interface IDefaultView<ViewStateType extends akView.IViewState = akView.IViewState> extends akView.IView<ViewStateType> {
-	            /**
-	             * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
-	             * @param showData
-	             */
-	            onBeforeViewShow?(showData?: any): void;
-	            /**
-	             * 当播放出现或者消失动画时
-	             * @param isShowAnim
-	             * @param hideOption 隐藏时透传数据
-	             * @returns 返回promise
-	             */
-	            onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void>;
-	        }
-	    }
-	}
-	class DefaultViewState implements akView.IDefaultViewState {
-	    id: string;
-	    template: akView.ITemplate;
-	    isViewInited?: boolean;
-	    isViewShowed?: boolean;
-	    isViewShowEnd?: boolean;
-	    isHoldTemplateResRef?: boolean;
-	    needDestroy?: boolean;
-	    /**
-	     * 是否需要显示View到场景
-	     */
-	    needShowView?: boolean;
-	    needHide?: boolean;
-	    showCfg?: akView.IShowConfig<any>;
-	    showingPromise?: void | Promise<void>;
-	    hidingPromise?: void | Promise<void>;
-	    updateState?: any;
-	    hideCfg?: akView.IHideConfig;
-	    viewIns?: akView.IDefaultView<DefaultViewState>;
-	    viewMgr: akView.IMgr;
-	    destroyed: boolean;
-	    private _option;
-	    private _needDestroyRes;
-	    isLoading: boolean;
-	    private _isConstructed;
-	    onCreate(option: akView.IDefaultViewStateOption): void;
-	    initAndShowView(): void;
-	    onShow(showCfg: akView.IShowConfig): void;
-	    onUpdate(updateState: any): void;
-	    onHide(hideCfg?: akView.IHideConfig): Promise<void>;
-	    onDestroy(destroyRes?: boolean): void;
-	    initView(): void;
-	    showView(): void;
-	    entryShowEnd(): void;
-	    hideViewIns(): void;
-	    entryDestroyed(): void;
-	    addToLayer(viewState: akView.IViewState): void;
-	    removeFromLayer(viewState: akView.IViewState): void;
-	}
-
-}
-declare module 'displayCtrl' {
-	 global {
-	    /**
-	     * 创建和显示参数
-	     * 可扩展
-	     */
-	    interface IAkViewTemplateCASParam {
-	        Default: any;
-	    }
-	    /**
-	     * 模板处理参数
-	     * 可扩展
-	     */
-	    interface IAkViewTemplateHandleOption<CreateOptionType = any> {
-	        /**
-	         * 创建配置
-	         */
-	        createOption?: CreateOptionType;
-	        /**
-	         * View类
-	         */
-	        viewClass?: new (...args: any[]) => any;
-	        /**
-	         * ViewState类
-	         */
-	        viewStateClass?: new (...args: any[]) => any;
-	        /**
-	         * 层级类型
-	         */
-	        layerType?: number | string;
-	        /**
-	         * 自定义创建和显示处理
-	         */
-	        createHandler?: IAkViewTemplateCreateHandler;
-	        /**
-	         * 自定义层级处理
-	         */
-	        layerHandler?: IAkViewLayerHandler;
-	    }
 	    /**
 	     * 创建和显示处理器
 	     * 可扩展
 	     */
-	    interface IAkViewTemplateCreateHandler {
+	    interface IAkViewTemplateCreateAdapter {
 	        /**
 	         * 创建View
 	         * @param template
 	         */
-	        createView?(template: akView.ITemplate): akView.IView;
+	        createView?(template: IAkViewDefaultTemplate): akView.IView;
 	        /**
 	         * 创建ViewState
 	         * @param template
 	         */
-	        createViewState?(template: akView.ITemplate): akView.IViewState;
+	        createViewState?(template: IAkViewDefaultTemplate): akView.IViewState;
 	    }
 	    interface IAkViewLayerHandler {
 	        /**
 	         * 添加到层级
-	         * @param viewState
+	         * @param viewIns 渲染控制实例
 	         */
-	        addToLayer?(viewState: akView.IViewState): void;
+	        addToLayer?<ViewType extends akView.IView = IAkViewDefaultView>(viewIns: ViewType): void;
 	        /**
 	         * 从层级移除
-	         * @param viewState
+	         * @param viewIns 渲染控制实例
 	         */
-	        removeFromLayer?(viewState: akView.IViewState): void;
+	        removeFromLayer?<ViewType extends akView.IView = IAkViewDefaultView>(viewIns: ViewType): void;
 	    }
-	    namespace akView {
-	        interface IDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes> extends akView.ITemplate<ViewKeyTypes> {
-	            /**
-	             * default-template-handler
-	             * 处理参数配置
-	             */
-	            handleOption?: IAkViewTemplateHandleOption;
-	            /**
-	             * 获取预加载资源信息
-	             */
-	            getPreloadResInfo?(): akView.TemplateResInfoType;
-	        }
-	        interface IDefaultTplHandlerInitOption {
-	            /**
-	             * 创建处理
-	             */
-	            createHandler?: IAkViewTemplateCreateHandler;
-	            /**
-	             * 层级处理
-	             */
-	            layerHandler?: IAkViewLayerHandler;
-	            /**
-	             * 资源是否加载
-	             * @param resInfo
-	             */
-	            isLoaded(resInfo: akView.TemplateResInfoType): boolean;
-	            /**
-	             * 获取资源信息
-	             * @param template
-	             */
-	            getPreloadResInfo(template: akView.IDefaultTemplate): akView.TemplateResInfoType;
-	            /**
-	             * 加载资源
-	             * @param resInfo
-	             * @param complete
-	             * @param progress
-	             * @param loadOption 加载配置，会=Object.assign(IResLoadConfig.loadOption,ITemplate.loadOption);
-	             */
-	            loadRes(resInfo: akView.TemplateResInfoType, complete: akView.LoadResCompleteCallback, progress: akView.LoadResProgressCallback, loadOption?: IAkViewLoadOption): string;
-	            /**
-	             * 销毁资源
-	             * @param resInfo
-	             */
-	            destroyRes?(resInfo: akView.TemplateResInfoType): void;
-	            /**
-	             * 取消资源加载
-	             * @param loadResId 加载资源id
-	             * @param resInfo
-	             */
-	            cancelLoadRes?(loadResId: string, resInfo: akView.TemplateResInfoType): void;
-	            /**
-	             * 增加资源引用
-	             * @param resInfo
-	             */
-	            addResRef?(resInfo: akView.TemplateResInfoType): void;
-	            /**
-	             * 减少资源引用
-	             * @param resInfo
-	             */
-	            decResRef?(resInfo: akView.TemplateResInfoType): void;
-	        }
+	    /**
+	     * 默认模板接口
+	     */
+	    interface IAkViewDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes> extends akView.ITemplate<ViewKeyTypes> {
+	        /**
+	         * 自定义处理层级,如果自定义处理层级，则自行在onViewShow阶段进行显示添加层级处理
+	         */
+	        customHandleLayer?: boolean;
+	    }
+	    interface IAkViewDefaultTplHandlerOption extends IAkViewTemplateCreateAdapter, IAkViewLayerHandler {
+	        /**
+	         * 资源是否加载
+	         * @param resInfo
+	         */
+	        isLoaded(resInfo: akView.TemplateResInfoType): boolean;
+	        /**
+	         * 获取资源信息
+	         * @param template
+	         */
+	        getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType;
+	        /**
+	         * 加载资源
+	         * @param resInfo
+	         * @param complete
+	         * @param progress
+	         * @param loadOption 加载配置，会=Object.assign(IResLoadConfig.loadOption,ITemplate.loadOption);
+	         * @returns 返回加载id，用于取消加载
+	         */
+	        loadRes(resInfo: akView.TemplateResInfoType, complete: akView.LoadResCompleteCallback, progress: akView.LoadResProgressCallback, loadOption?: IAkViewLoadOption): string;
+	        /**
+	         * 销毁资源
+	         * @param resInfo
+	         */
+	        destroyRes?(resInfo: akView.TemplateResInfoType): void;
+	        /**
+	         * 取消资源加载
+	         * @param loadResId 加载资源id
+	         * @param resInfo
+	         */
+	        cancelLoadRes?(loadResId: string, resInfo: akView.TemplateResInfoType): void;
+	        /**
+	         * 增加资源引用
+	         * @param resInfo
+	         */
+	        addResRef?(resInfo: akView.TemplateResInfoType): void;
+	        /**
+	         * 减少资源引用
+	         * @param resInfo
+	         */
+	        decResRef?(resInfo: akView.TemplateResInfoType): void;
 	    }
 	}
-	class DefaultTemplateHandler implements akView.ITemplateHandler<akView.IDefaultTemplate> {
-	    _option?: akView.IDefaultTplHandlerInitOption;
+	class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDefaultTemplate> {
+	    _option?: IAkViewDefaultTplHandlerOption;
 	    /**
 	     * 模板加载config字典，key为模板key，value为{id:config}的字典
 	     */
@@ -979,249 +1274,33 @@ declare module 'displayCtrl' {
 	    protected _resInfoMap: {
 	        [key: string]: akView.TemplateResInfoType;
 	    };
-	    constructor(_option?: akView.IDefaultTplHandlerInitOption);
-	    createView<T extends akView.IView<akView.IViewState<any>>>(template: akView.IDefaultTemplate): T;
-	    createViewState?<T extends akView.IViewState<any>>(template: akView.IDefaultTemplate): T;
-	    addToLayer?(viewState: akView.IViewState<any>): void;
-	    removeFromLayer?(viewState: akView.IViewState<any>): void;
-	    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: akView.IDefaultTemplate): void;
-	    getPreloadResInfo(template: akView.IDefaultTemplate): akView.TemplateResInfoType;
-	    isLoaded(template: akView.IDefaultTemplate): boolean;
+	    constructor(_option?: IAkViewDefaultTplHandlerOption);
+	    createViewIns<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T;
+	    addToLayer?(viewState: IAkViewDefaultViewState): void;
+	    removeFromLayer?(viewState: IAkViewDefaultViewState): void;
+	    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: IAkViewDefaultTemplate): void;
+	    getResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType;
+	    isLoaded(template: IAkViewDefaultTemplate): boolean;
 	    loadRes(config: akView.IResLoadConfig): void;
-	    cancelLoad(id: string, template: akView.IDefaultTemplate): void;
-	    addResRef(id: string, template: akView.IDefaultTemplate): void;
-	    decResRef(id: string, template: akView.IDefaultTemplate): void;
-	    destroyRes(template: akView.IDefaultTemplate): boolean;
+	    cancelLoad(id: string, template: IAkViewDefaultTemplate): void;
+	    addResRef(id: string, template: IAkViewDefaultTemplate): void;
+	    decResRef(id: string, template: IAkViewDefaultTemplate): void;
+	    destroyRes(template: IAkViewDefaultTemplate): boolean;
 	}
-
-}
-declare module 'displayCtrl' {
-	 global {
-	    namespace akView {
-	        interface ILRUCacheHandlerOption {
-	            maxSize: number;
-	        }
-	    }
-	}
-	class LRUCacheHandler<ValueType extends akView.IViewState> implements akView.ICacheHandler {
-	    private _option?;
-	    cache: Map<string, ValueType>;
-	    FIFOQueue: Map<string, ValueType>;
-	    LRUQueue: Map<string, ValueType>;
-	    viewMgr: akView.IMgr;
-	    constructor(_option?: akView.ILRUCacheHandlerOption);
-	    onViewStateShow(viewState: akView.IViewState<any>): void;
-	    onViewStateUpdate(viewState: akView.IViewState<any>): void;
-	    onViewStateHide(viewState: akView.IViewState<any>): void;
-	    onViewStateDestroy(viewState: akView.IViewState<any>): void;
-	    protected get(key: string): ValueType;
-	    protected put(key: string, value: ValueType): void;
-	    protected toString(): void;
-	}
-
-}
-declare module 'displayCtrl' {
-	const globalViewTemplateMap: akView.TemplateMap;
-	/**
-	 * 定义显示控制器模板,仅用于viewMgr初始化前调用
-	 * @param template 显示控制器定义
-	 * @param templateMap 默认为全局字典，可自定义
-	 */
-	function viewTemplate(template: akView.ITemplate, templateMap?: akView.TemplateMap): boolean;
-
-}
-declare module 'displayCtrl' {
-	class ViewMgr<ViewKeyTypes = IAkViewKeyTypes, ViewDataTypes = IAkViewDataTypes, TemplateType extends akView.ITemplate<ViewKeyTypes> = akView.IDefaultTemplate<ViewKeyTypes>, keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> implements akView.IMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType> {
-	    private _cacheHandler;
-	    /**
-	     * 缓存处理器
-	     */
-	    get cacheHandler(): akView.ICacheHandler;
-	    private _eventHandler;
-	    /**事件处理器 */
-	    get eventHandler(): akView.IEventHandler;
-	    private _templateHandler;
-	    /**
-	     * 模板处理器
-	     */
-	    get templateHandler(): akView.ITemplateHandler<TemplateType>;
-	    /**模版字典 */
-	    protected _templateMap: akView.TemplateMap<keyType>;
-	    /**状态缓存 */
-	    protected _viewStateMap: akView.ViewStateMap;
-	    /**是否初始化 */
-	    protected _inited: boolean;
-	    /**实例数，用于创建id */
-	    protected _viewCount: number;
-	    /**
-	     * 默认ViewState的配置
-	     */
-	    private _viewStateCreateOption;
-	    private _option;
-	    get option(): akView.IMgrInitOption<TemplateType>;
-	    getKey(key: keyType): keyType;
-	    init(option?: akView.IMgrInitOption<TemplateType>): void;
-	    use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void;
-	    template(templateOrKey: keyType | TemplateType | Array<TemplateType | keyType>): void;
-	    hasTemplate(key: keyType): boolean;
-	    getTemplate(key: keyType): TemplateType;
-	    /**
-	     * 添加模板到模板字典
-	     * @param template
-	     * @returns
-	     */
-	    protected _addTemplate(template: akView.ITemplate<ViewKeyTypes>): void;
-	    /**
-	     * 获取预加载资源信息
-	     * @param key 模板key
-	     * @returns
-	     */
-	    getPreloadResInfo(key: keyType): akView.TemplateResInfoType;
-	    /**
-	     * 根据id加载模板固定资源
-	     * @param idOrConfig
-	     * @returns
-	     */
-	    preloadResById(idOrConfig: string | akView.IResLoadConfig, complete?: akView.LoadResCompleteCallback, loadOption?: IAkViewLoadOption, progress?: akView.LoadResProgressCallback): void;
-	    /**
-	     * 取消加载
-	     * @param id
-	     */
-	    cancelPreloadRes(id: string): void;
-	    /**
-	     * 预加载模板固定资源,给业务使用，用于预加载
-	     * 会自动创建id，判断key是否为id
-	     * @param key
-	     * @param complate 加载资源完成回调，如果加载失败会error不为空
-	     * @param loadOption 加载资源透传参数，可选透传给资源加载处理器
-	     * @param progress 加载资源进度回调
-	     *
-	     */
-	    preloadRes(key: keyType, complete?: akView.LoadResCompleteCallback, loadOption?: IAkViewLoadOption, progress?: akView.LoadResProgressCallback): string;
-	    /**
-	     * 预加载模板固定资源,给业务使用，用于预加载
-	     * 会自动创建id，判断key是否为id
-	     * @param key
-	     * @param config
-	     * @returns id
-	     */
-	    preloadRes(key: keyType, config?: akView.IResLoadConfig): string;
-	    destroyRes(key: keyType): boolean;
-	    isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | TemplateType): boolean;
-	    /**
-	     * 模板资源引用持有处理
-	     * @param viewState
-	     */
-	    addTemplateResRef(viewState: akView.IViewState): void;
-	    /**
-	     * 模板资源引用释放处理
-	     * @param viewState
-	     */
-	    decTemplateResRef(viewState: akView.IViewState): void;
-	    /**
-	     * 创建新的ViewState并显示
-	     * @param keyOrConfig 配置
-	     * @returns 返回ViewState
-	     */
-	    create<T extends akView.IViewState = akView.IViewState, ConfigKeyType extends keyType = keyType>(keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>): T;
-	    /**
-	     * 创建新的ViewState并显示
-	     * @param keyOrConfig 字符串key|配置
-	     * @param onInitData 初始化数据
-	     * @param needShowView 需要显示View到场景，默认false
-	     * @param onShowData 显示数据
-	     * @param cacheMode  缓存模式，默认无缓存,
-	     * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
-	     
-	     * @returns 返回ViewState
-	     */
-	    create<T extends akView.IViewState = akView.IViewState, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>, needShowView?: boolean, onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>, cacheMode?: akView.ViewStateCacheModeType): T;
-	    /**
-	     * 显示View
-	     * @param keyOrViewStateOrConfig 类key或者ViewState对象或者显示配置IShowConfig
-	     * @param onShowData 显示透传数据
-	     * @param onInitData 初始化数据
-	     */
-	    show<TKeyType extends keyType, ViewStateType extends akView.IViewState>(keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>, onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>, onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>): string;
-	    /**
-	     * 显示
-	     * @param viewState
-	     * @param showCfg
-	     * @returns
-	     */
-	    protected _showViewState(viewState: akView.IViewState, showCfg: akView.IShowConfig<keyType, ViewKeyTypes>): void;
-	    /**
-	     * 更新View
-	     * @param keyOrViewState 界面id
-	     * @param updateState 更新数据
-	     */
-	    update<K extends keyType>(keyOrViewState: K | akView.IViewState, updateState?: akView.GetUpdateDataType<K, ViewDataTypes>): void;
-	    /**
-	     * 隐藏View
-	     * @param keyOrViewState 界面id
-	     * @param hideCfg
-	     */
-	    hide<KeyOrIdType extends keyType>(keyOrViewState: KeyOrIdType | akView.IViewState, hideCfg?: akView.IHideConfig<KeyOrIdType, ViewDataTypes>): void;
-	    destroy(keyOrViewState: keyType | akView.IViewState, destroyRes?: boolean): void;
-	    isViewInited<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean;
-	    isViewShowed<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean;
-	    /**
-	     * 实例化
-	     * @param id id
-	     * @param template 模板
-	     * @returns
-	     */
-	    createView(viewState: akView.IViewState): akView.IView;
-	    /**
-	     * 根据id获取缓存中的ViewState
-	     * @param id
-	     * @returns
-	     */
-	    getViewState<T extends akView.IViewState = akView.IViewState>(id: string): T;
-	    /**
-	     * 根据id获取缓存中的ViewState，没有就创建
-	     * @param id
-	     * @returns
-	     */
-	    getOrCreateViewState<T extends akView.IViewState = akView.IViewState>(id: string): T;
-	    createViewState(id: string): akView.IViewState<any, any>;
-	    /**
-	     * 移除指定id的viewState
-	     * @param id
-	     */
-	    deleteViewState(id: string): void;
-	    /**
-	     * 根据viewid 获取view实例
-	     * @param id view id
-	     * @returns
-	     */
-	    getViewIns(id: string): akView.IView;
-	    /**
-	     * 通过模板key生成id
-	     * @param key
-	     * @returns
-	     */
-	    createViewId(key: keyType): string;
-	    /**
-	     * 从id中解析出key
-	     * @param id
-	     * @returns
-	     */
-	    getKeyById(id: keyType | String): keyType;
-	}
-
-}
-declare module 'displayCtrl' {
-	
-	
 
 }
 declare module 'displayCtrl' {
 	 global {
 	    namespace akView {
 	        interface ILRU2QCacheHandlerOption {
-	            fifoMaxSize: number;
-	            lruMaxSize: number;
+	            /**
+	             * 最大先进先出队列大小，默认为5
+	             */
+	            fifoMaxSize?: number;
+	            /**
+	             * 最大LRU队列大小，默认为5
+	             */
+	            lruMaxSize?: number;
 	        }
 	    }
 	}
@@ -1236,36 +1315,49 @@ declare module 'displayCtrl' {
 	    lruQueue: Map<string, ValueType>;
 	    viewMgr: akView.IMgr;
 	    constructor(_option?: akView.ILRU2QCacheHandlerOption);
-	    onViewStateShow(viewState: akView.IViewState<any>): void;
-	    onViewStateUpdate(viewState: akView.IViewState<any>): void;
-	    onViewStateHide(viewState: akView.IViewState<any>): void;
-	    onViewStateDestroy(viewState: akView.IViewState<any>): void;
-	    protected get(key: string): ValueType;
-	    protected put(key: string, value: ValueType): void;
+	    getCachedSize(): number;
+	    clear(): void;
+	    onlyGet(key: string): ValueType;
+	    get(key: string): ValueType;
+	    put(key: string, value: ValueType): void;
 	    protected deleteViewStateInQueueByMaxSize(queue: Map<string, ValueType>, maxSize: number): void;
-	    protected delete(key: string): void;
+	    delete(key: string): void;
 	}
 
 }
 declare module 'displayCtrl' {
-	namespace abc {
-	    class ccc {
-	        constructor();
+	 global {
+	    interface IAkViewDefaultPluginOption {
+	        /**
+	         * 默认模板处理配置
+	         */
+	        tplHandlerOption?: IAkViewDefaultTplHandlerOption;
+	        /**
+	         * 默认缓存处理配置
+	         */
+	        cacheHandlerOption?: akView.ILRU2QCacheHandlerOption;
 	    }
+	}
+	class DefaultPlugin implements akView.IPlugin {
+	    viewMgr: akView.IMgr;
+	    onUse(opt: IAkViewDefaultPluginOption): void;
 	}
 
 }
 declare module 'displayCtrl' {
 	
+	
+	
+	
 
 }
 
 declare namespace displayCtrl {
-	type DefaultEventHandler = import('displayCtrl').DefaultEventHandler;
+	type DefaultEventBus = import('displayCtrl').DefaultEventBus;
+	type ViewMgr<ViewKeyTypes = IAkViewKeyTypes,  ViewDataTypes = IAkViewDataTypes,  TemplateType extends akView.ITemplate<ViewKeyTypes> = IAkViewDefaultTemplate<ViewKeyTypes>,  keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> = import('displayCtrl').ViewMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>;
 	type DefaultViewState = import('displayCtrl').DefaultViewState;
 	type DefaultTemplateHandler = import('displayCtrl').DefaultTemplateHandler;
-	type LRUCacheHandler<ValueType extends akView.IViewState> = import('displayCtrl').LRUCacheHandler<ValueType>;
-	type ViewMgr<ViewKeyTypes = IAkViewKeyTypes,  ViewDataTypes = IAkViewDataTypes,  TemplateType extends akView.ITemplate<ViewKeyTypes> = akView.IDefaultTemplate<ViewKeyTypes>,  keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> = import('displayCtrl').ViewMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>;
 	type LRU2QCacheHandler<ValueType extends akView.IViewState> = import('displayCtrl').LRU2QCacheHandler<ValueType>;
+	type DefaultPlugin = import('displayCtrl').DefaultPlugin;
 }
 declare const displayCtrl:typeof import("displayCtrl");
