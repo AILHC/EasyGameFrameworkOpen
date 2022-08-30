@@ -1,7 +1,7 @@
 import { DefaultEventBus } from "../src/default-event-bus";
 
 describe(`DefaultEventBus相关测试`, function () {
-    test("测试：DefaultEventBus.onAkEvent", (done) => {
+    test("测试：DefaultEventBus.onAkEvent", () => {
         const eventBus = new DefaultEventBus();
         eventBus.onAkEvent("test1", function () {});
         expect(eventBus.handleMethodMap.has("test1")).toBeTruthy();
@@ -12,7 +12,7 @@ describe(`DefaultEventBus相关测试`, function () {
         const test3args = ["a"];
         eventBus.onAkEvent("test3", function () {}, null, test3args);
         const test3methods = eventBus.handleMethodMap.get("test3");
-        expect(test2methods[0].args).toBe(test3args);
+        expect(test3methods[0].args).toBe(test3args);
     });
     test("测试：DefaultEventBus.onceAkEvent", () => {});
     test("测试：DefaultEventBus.offAkEvent", () => {});

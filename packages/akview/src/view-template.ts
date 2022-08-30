@@ -17,3 +17,7 @@ export function viewTemplate<TemplateType extends akView.ITemplate<any> = IAkVie
     templateMap[key] = template;
     return true;
 }
+
+
+
+

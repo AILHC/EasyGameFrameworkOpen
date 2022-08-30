@@ -9,9 +9,9 @@ declare global {
     type AppendArgument<F extends (...args: any) => any, A> = (x: A, ...args: Parameters<F>) => ReturnType<F>;
 
     type GetShowConfigType<
-        MgrType extends { MgrTypeParams? },
+        MgrType extends { MgrTypeParams?},
         ConfigKeyType extends MgrType["MgrTypeParams"][2]
-    > = akView.IShowConfig<ConfigKeyType, MgrType["MgrTypeParams"][1]>;
+        > = akView.IShowConfig<ConfigKeyType, MgrType["MgrTypeParams"][1]>;
     /**
      * 获取指定ViewKey接口中的ViewKey
      */
@@ -19,11 +19,11 @@ declare global {
     /**
      * 默认ViewKey接口
      */
-    interface IAkViewKeyTypes {}
+    interface IAkViewKeyTypes { }
     /**
      * 默认ViewData接口
      */
-    interface IAkViewDataTypes {}
+    interface IAkViewDataTypes { }
     /**
      * 获取默认ViewKey
      */
@@ -46,7 +46,7 @@ declare global {
         ViewKeyType,
         Key extends keyof ViewKeyType = keyof ViewKeyType,
         T extends akView.IViewDataFields = akView.IViewDataFields
-    > = { [key in any as Key]: T };
+        > = { [key in any as Key]: T };
     /**
      * 类型工具函数,扩展
      * @type {IAkViewDataTypes} 时
@@ -70,7 +70,7 @@ declare global {
      * 加载配置，业务透传到资源加载层
      * 可定制，比如透传加载时进度显示样式类型参数
      */
-    interface IAkViewLoadOption {}
+    interface IAkViewLoadOption { }
     /**
      * ViewState类型
      */
@@ -145,7 +145,7 @@ declare global {
         }
         type TemplateResInfoType = Array<ITemplateResInfo> | ITemplateResInfo | string | string[];
 
-        type ViewStateConstructor<T extends akView.IViewState = any> = { new (...args): T };
+        type ViewStateConstructor<T extends akView.IViewState = any> = { new(...args): T };
         /**
          * 获取插件配置参数
          */
@@ -162,7 +162,7 @@ declare global {
         interface ITemplate<
             ViewKeyTypes = IAkViewKeyTypes,
             ViewKeyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-        > {
+            > {
             /**key */
             key: ViewKeyType;
 
@@ -193,6 +193,10 @@ declare global {
              * View类或者方法
              */
             viewClass?: (new (...args) => any) | FunctionConstructor;
+            /**
+             * 是否预加载
+             */
+            preloadRes?: boolean
             /**
              * 加载配置
              * 可对IAkViewLoadOption进行扩展
@@ -552,40 +556,6 @@ declare global {
              */
             viewState: ViewStateType;
             /**
-             * 层级类型
-             */
-            layerType?: string | number;
-            /**
-             * 初始化，只执行一次
-             * @param initData 初始化数据
-             */
-            onInitView?(initData?: any): void;
-            /**
-             * 当显示时
-             * @param showData 显示数据
-             * @returns
-             */
-            onShowView?(showData?: any): void;
-            /**
-             * 当更新时
-             * @updateData updateData 更新数据
-             */
-            onUpdateView?(updateData?: any): void;
-            /**
-             * 当隐藏时
-             * @param hideOption
-             * @returns
-             */
-            onHideView?(hideOption: any): void;
-            /**
-             * 当销毁时，默认是需要进行资源引用释放的
-             */
-            onDestroyView?(): void;
-            /**
-             * 当根窗口尺寸变化
-             */
-            onWindowResize?(data: IAkViewResizeData): void;
-            /**
              * 获取显示节点
              */
             getNode(): any;
@@ -681,7 +651,7 @@ declare global {
             ViewDataTypes = IAkViewDataTypes,
             TemplateType extends akView.ITemplate<ViewKeyTypes> = akView.ITemplate<ViewKeyTypes>,
             keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-        > {
+            > {
             /**
              * 类型参数
              */
@@ -713,6 +683,10 @@ declare global {
              * 初始化参数(只读)
              */
             option: akView.IMgrInitOption<TemplateType>;
+            /**
+             * 是否初始化
+             */
+            inited: boolean
             /**
              * 初始化
              * @param option 初始化配置
@@ -978,4 +952,4 @@ declare global {
         }
     }
 }
-export {};
+export { };

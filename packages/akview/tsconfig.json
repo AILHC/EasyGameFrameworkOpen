@@ -22,6 +22,6 @@
     },
     "exclude": [
         "dist",
-        "__test__"
+        "__tests__"
     ]
 }

@@ -1,4 +1,5 @@
 import { globalViewTemplateMap } from "./view-template";
+import { viewTemplateDecorator } from "./view-template-decorator";
 /**
  * id拼接字符
  */
@@ -8,7 +9,7 @@ export class ViewMgr<
     ViewDataTypes = IAkViewDataTypes,
     TemplateType extends akView.ITemplate<ViewKeyTypes> = IAkViewDefaultTemplate<ViewKeyTypes>,
     keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-> implements akView.IMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>
+    > implements akView.IMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>
 {
     private _cacheHandler: akView.ICacheHandler;
     /**
@@ -41,6 +42,9 @@ export class ViewMgr<
 
     /**是否初始化 */
     protected _inited: boolean;
+    public get inited() {
+        return this._inited;
+    };
     /**实例数，用于创建id */
     protected _viewCount: number = 0;
     /**
@@ -67,7 +71,7 @@ export class ViewMgr<
         this._vsClassMap = {} as any;
         this._vsClassMap["Default"] = option.defaultViewStateClass;
         this._inited = true;
-
+        (viewTemplateDecorator as akView.IViewTemplateDecorator<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>)._viewMgr = this;
         const templateMap = option.templateMap || globalViewTemplateMap;
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
@@ -109,7 +113,7 @@ export class ViewMgr<
     getTemplate(key: keyType): TemplateType {
         const template = this._templateMap[key];
         if (!template) {
-            console.warn(`template is not exit:${key}`);
+            console.warn(`template is not exit:${String(key)}`);
         }
         return template as any;
     }
@@ -251,7 +255,7 @@ export class ViewMgr<
             return;
         }
         if (!key || (key as string).includes(IdSplitChars)) {
-            const error = `[ViewMgr.preloadRes] key:${key} is id`;
+            const error = `[ViewMgr.preloadRes] key:${String(key)} is id`;
             console.error(error);
             return;
         }
@@ -279,7 +283,7 @@ export class ViewMgr<
 
         const template = this.getTemplate(key as any);
         if (!template) {
-            const errorMsg = `template:${key} not registed`;
+            const errorMsg = `template:${String(key)} not registed`;
             config.complete?.(errorMsg);
             return;
         }
@@ -581,7 +585,7 @@ export class ViewMgr<
             viewState.viewIns = viewIns;
             viewIns.key = template.key as string;
         } else {
-            console.warn(`key:${template.key} ins fail`);
+            console.warn(`key:${String(template.key)} ins fail`);
         }
 
         return viewIns;
@@ -669,7 +673,7 @@ export class ViewMgr<
     createViewId(key: keyType): string {
         if (!(key as string).includes(IdSplitChars)) {
             this._viewCount++;
-            return `${key}${IdSplitChars}${this._viewCount}`;
+            return `${String(key)}${IdSplitChars}${this._viewCount}`;
         }
         return key as string;
     }

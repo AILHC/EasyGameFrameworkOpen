@@ -3,8 +3,8 @@ import { DefaultEventBus } from "../src/default-event-bus";
 import { DefaultTemplateHandler } from "../src/default-template-handler";
 import { DefaultViewState } from "../src/default-view-state";
 import { LRU2QCacheHandler } from "../src/lru2q-cache-handler";
-import { TestView, TestWithAnimView } from "./test-view";
-import { TestViewState } from "./test-view-state";
+import { TestViewState } from "./test-use-logics/test-view-state";
+
 
 declare global {
     interface ITestViewKeys {

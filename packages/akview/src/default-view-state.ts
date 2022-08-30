@@ -19,6 +19,41 @@ declare global {
     interface IAkViewDefaultView<ViewStateType extends akView.IViewState = akView.IViewState>
         extends akView.IView<ViewStateType> {
         /**
+         * 层级类型
+         */
+        layerType?: string | number;
+        /**
+         * 初始化，只执行一次
+         * @param initData 初始化数据
+         */
+        onInitView?(initData?: any): void;
+        /**
+         * 当显示时
+         * @param showData 显示数据
+         * @returns
+         */
+        onShowView?(showData?: any): void;
+        /**
+         * 当更新时
+         * @updateData updateData 更新数据
+         */
+        onUpdateView?(updateData?: any): void;
+        /**
+         * 当隐藏时
+         * @param hideOption
+         * @returns
+         */
+        onHideView?(hideOption: any): void;
+        /**
+         * 当销毁时，默认是需要进行资源引用释放的
+         */
+        onDestroyView?(): void;
+        /**
+         * 当根窗口尺寸变化
+         */
+        onWindowResize?(data: IAkViewResizeData): void;
+        
+        /**
          * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
          * @param showData
          */
@@ -196,7 +231,7 @@ export class DefaultViewState implements IAkViewDefaultViewState {
 
     initView() {
         if (!this.isViewInited) {
-            const viewIns = this.viewMgr.createViewIns(this);
+            const viewIns:IAkViewDefaultView = this.viewMgr.createViewIns(this);
 
             //持有模板资源
             this.viewMgr.addTemplateResRef(this);

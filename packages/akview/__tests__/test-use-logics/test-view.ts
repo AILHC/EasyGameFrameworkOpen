@@ -1,4 +1,4 @@
-export class TestWithAnimView implements akView.IDefaultView {
+export class TestWithAnimView implements akView.IView {
     onBeforeViewShow?(showData?: any): void {}
     onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void> {
         return new Promise((res) => {
@@ -13,7 +13,7 @@ export class TestWithAnimView implements akView.IDefaultView {
     onDestroyView?(): void {}
     getNode() {}
 }
-export class TestView implements akView.IDefaultView {
+export class TestView implements akView.IView {
     onBeforeViewShow?(showData?: any): void {}
     viewState: akView.IViewState<any>;
     onInitView?(initData?: any): void {}
