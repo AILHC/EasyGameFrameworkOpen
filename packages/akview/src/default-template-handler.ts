@@ -10,10 +10,10 @@ declare global {
          */
         createView?(template: IAkViewDefaultTemplate): akView.IView;
         /**
-         * 创建ViewState
+         * 创建ViewAgent
          * @param template
          */
-        createViewState?(template: IAkViewDefaultTemplate): akView.IViewState;
+        createViewAgent?(template: IAkViewDefaultTemplate): akView.IViewAgent;
     }
     interface IAkViewLayerHandler {
         /**
@@ -47,7 +47,7 @@ declare global {
          * 获取资源信息
          * @param template
          */
-        getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType;
+        getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType | undefined;
         /**
          * 加载资源
          * @param resInfo
@@ -112,23 +112,23 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
     constructor(public _option?: IAkViewDefaultTplHandlerOption) {
         if (!this._option) this._option = {} as any;
     }
-    createViewIns<T extends akView.IView<akView.IViewState<any>>>(template: IAkViewDefaultTemplate): T {
+    createViewIns<T extends akView.IView>(template: IAkViewDefaultTemplate): T {
         //先使用自定义
         const option = this._option;
         let viewIns = option.createView && option.createView(template);
         return viewIns as T;
     }
-    addToLayer?(viewState: IAkViewDefaultViewState): void {
-        const template = viewState.template;
+    addToLayer?(viewAgent: IAkViewDefaultViewAgent): void {
+        const template = viewAgent.template;
         const option = this._option;
-        template.customHandleLayer || (option.addToLayer && option.addToLayer(viewState.viewIns));
+        template.customHandleLayer || (option.addToLayer && option.addToLayer(viewAgent.viewIns));
     }
-    removeFromLayer?(viewState: IAkViewDefaultViewState): void {
-        const template = viewState.template;
+    removeFromLayer?(viewAgent: IAkViewDefaultViewAgent): void {
+        const template = viewAgent.template;
         const option = this._option;
-        template.customHandleLayer || (option.removeFromLayer && option.removeFromLayer(viewState.viewIns));
+        template.customHandleLayer || (option.removeFromLayer && option.removeFromLayer(viewAgent.viewIns));
     }
-    destroyView?<T extends akView.IView<akView.IViewState<any>>>(viewIns: T, template: IAkViewDefaultTemplate): void {}
+    destroyView?<T extends akView.IView>(viewIns: T, template: IAkViewDefaultTemplate): void {}
 
     getResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType {
         const key = template.key;

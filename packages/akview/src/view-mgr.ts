@@ -1,15 +1,15 @@
-import { globalViewTemplateMap } from "./view-template";
-import { viewTemplateDecorator } from "./view-template-decorator";
+import { globalPlugins, globalViewTemplateMap, setViewMgr as injectMgr } from "./view-utils";
+
 /**
  * id拼接字符
  */
-const IdSplitChars = "_$_";
+const IdSplitChars: akView.IdSplitCharsType = "_$_";
 export class ViewMgr<
     ViewKeyTypes = IAkViewKeyTypes,
     ViewDataTypes = IAkViewDataTypes,
     TemplateType extends akView.ITemplate<ViewKeyTypes> = IAkViewDefaultTemplate<ViewKeyTypes>,
     keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-    > implements akView.IMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>
+> implements akView.IMgr<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>
 {
     private _cacheHandler: akView.ICacheHandler;
     /**
@@ -36,19 +36,19 @@ export class ViewMgr<
     protected _templateMap: akView.TemplateMap<TemplateType, keyType>;
 
     /**状态缓存 */
-    protected _viewStateMap: akView.ViewStateMap;
+    protected _viewAgentMap: akView.ViewAgentMap;
 
-    protected _vsClassMap: { [key in AkViewStateClassTypeType]: any };
+    protected _vsClassMap: { [key in AkViewAgentClassTypeType]: any };
 
     /**是否初始化 */
     protected _inited: boolean;
     public get inited() {
         return this._inited;
-    };
+    }
     /**实例数，用于创建id */
     protected _viewCount: number = 0;
     /**
-     * 默认ViewState的配置
+     * 默认ViewAgent的配置
      */
     private _vsCreateOpt: any;
     private _option: akView.IMgrInitOption<TemplateType>;
@@ -64,17 +64,19 @@ export class ViewMgr<
         option = option || ({} as any);
         this._eventBus = option.eventBus || ({} as any);
         this._cacheHandler = option.cacheHandler;
-        this._viewStateMap = {};
+        this._viewAgentMap = {};
         this._tplHandler = option.tplHandler || ({} as any);
         this._option = option;
         this._vsCreateOpt = option.vsCreateOpt || {};
         this._vsClassMap = {} as any;
-        this._vsClassMap["Default"] = option.defaultViewStateClass;
+        this._vsClassMap["Default"] = option.defaultViewAgentClass;
         this._inited = true;
-        (viewTemplateDecorator as akView.IViewTemplateDecorator<ViewKeyTypes, ViewDataTypes, TemplateType, keyType>)._viewMgr = this;
+        injectMgr(this as never);
+        this._usePlugins(globalPlugins);
         const templateMap = option.templateMap || globalViewTemplateMap;
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
+
     use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void {
         if (plugin) {
             plugin.viewMgr = this as any;
@@ -82,7 +84,7 @@ export class ViewMgr<
         }
     }
 
-    template(templateOrKey: keyType | TemplateType | Array<TemplateType> | Array<keyType>): void {
+    template(templateOrKey: keyType | TemplateType | Array<TemplateType | keyType>): void {
         if (!templateOrKey) return;
         if (!this._inited) {
             console.error(`[viewMgr](template): is no inited`);
@@ -118,11 +120,11 @@ export class ViewMgr<
         return template as any;
     }
     /**
-     * 注册ViewState类
+     * 注册ViewAgent类
      * @param type
-     * @param vsClas ViewState类型
+     * @param vsClas ViewAgent类型
      */
-    registViewStateClass(type: AkViewStateClassTypeType, vsClas): void {
+    registViewAgentClass(type: AkViewAgentClassTypeType, vsClas): void {
         this._vsClassMap[type] = vsClas;
     }
     /**
@@ -152,7 +154,7 @@ export class ViewMgr<
      * @param key 模板key
      * @returns
      */
-    getTemplateResInfo(key: keyType): akView.TemplateResInfoType {
+    getTemplateResInfo(key: keyType | undefined | null): akView.TemplateResInfoType {
         const template = this.getTemplate(key);
         if (!template) {
             return;
@@ -313,38 +315,38 @@ export class ViewMgr<
     }
     /**
      * 模板资源引用持有处理
-     * @param viewState
+     * @param viewAgent
      */
-    addTemplateResRef(viewState: akView.IViewState): void {
-        if (viewState && !viewState.isHoldTemplateResRef) {
-            const id = viewState.id;
-            const template = viewState.template;
+    addTemplateResRef(viewAgent: akView.IViewAgent): void {
+        if (viewAgent && !viewAgent.isHoldTemplateResRef) {
+            const id = viewAgent.id;
+            const template = viewAgent.template;
             this._tplHandler.addResRef(id, template);
-            viewState.isHoldTemplateResRef = true;
+            viewAgent.isHoldTemplateResRef = true;
         }
     }
     /**
      * 模板资源引用释放处理
-     * @param viewState
+     * @param viewAgent
      */
-    decTemplateResRef(viewState: akView.IViewState): void {
-        if (viewState && viewState.isHoldTemplateResRef) {
-            const template = viewState.template;
-            const id = viewState.id;
+    decTemplateResRef(viewAgent: akView.IViewAgent): void {
+        if (viewAgent && viewAgent.isHoldTemplateResRef) {
+            const template = viewAgent.template;
+            const id = viewAgent.id;
             this._tplHandler.decResRef(id, template);
-            viewState.isHoldTemplateResRef = false;
+            viewAgent.isHoldTemplateResRef = false;
         }
     }
     /**
-     * 创建新的ViewState并显示
+     * 创建新的ViewAgent并显示
      * @param keyOrConfig 配置
-     * @returns 返回ViewState
+     * @returns 返回ViewAgent
      */
-    create<T extends akView.IViewState = IAkViewDefaultViewState, ConfigKeyType extends keyType = keyType>(
+    create<T extends akView.IViewAgent = IAkViewDefaultViewAgent, ConfigKeyType extends keyType = keyType>(
         keyOrConfig: akView.IShowConfig<ConfigKeyType, ViewDataTypes>
     ): T;
     /**
-     * 创建新的ViewState并显示
+     * 创建新的ViewAgent并显示
      * @param keyOrConfig 字符串key|配置
      * @param onInitData 初始化数据 
      * @param needShowView 需要显示View到场景，默认false 
@@ -352,18 +354,18 @@ export class ViewMgr<
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
      
-     * @returns 返回ViewState
+     * @returns 返回ViewAgent
      */
-    create<T extends akView.IViewState = IAkViewDefaultViewState, ViewKey extends keyType = keyType>(
+    create<T extends akView.IViewAgent = IAkViewDefaultViewAgent, ViewKey extends keyType = keyType>(
         keyOrConfig: ViewKey,
         onInitData?: akView.GetInitDataType<ViewKey, ViewDataTypes>,
         needShowView?: boolean,
         onShowData?: akView.GetShowDataType<ViewKey, ViewDataTypes>,
 
-        cacheMode?: akView.ViewStateCacheModeType
+        cacheMode?: akView.ViewAgentCacheModeType
     ): T;
     /**
-     * 创建新的ViewState并显示
+     * 创建新的ViewAgent并显示
      * @param keyOrConfig 字符串key|配置
      * @param onInitData 初始化数据 
      * @param needShowView 需要显示View到场景，默认false 
@@ -371,14 +373,14 @@ export class ViewMgr<
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
      
-     * @returns 返回ViewState
+     * @returns 返回ViewAgent
      */
-    create<CreateKeyType extends keyType, T extends akView.IViewState = IAkViewDefaultViewState>(
+    create<CreateKeyType extends keyType, T extends akView.IViewAgent = IAkViewDefaultViewAgent>(
         keyOrConfig: string | akView.IShowConfig<CreateKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<CreateKeyType, ViewDataTypes>,
         needShowView?: boolean,
         onShowData?: akView.GetShowDataType<CreateKeyType, ViewDataTypes>,
-        cacheMode?: akView.ViewStateCacheModeType
+        cacheMode?: akView.ViewAgentCacheModeType
     ): T {
         if (!this._inited) {
             console.error(`[viewMgr](show) is no inited`);
@@ -403,47 +405,47 @@ export class ViewMgr<
         }
         showCfg.id = this.createViewId(showCfg.key);
 
-        const viewState = this.createViewState(showCfg.id);
-        if (viewState) {
-            cacheMode && (viewState.cacheMode = cacheMode);
-            this._cacheViewState(viewState);
-            this._showViewState(viewState, showCfg as any);
-            return viewState as T;
+        const viewAgent = this.createViewAgent(showCfg.id);
+        if (viewAgent) {
+            cacheMode && (viewAgent.cacheMode = cacheMode);
+            this._cacheViewAgent(viewAgent);
+            this._showViewAgent(viewAgent, showCfg as any);
+            return viewAgent as T;
         }
     }
     /**
      * 显示View
-     * @param keyOrViewStateOrConfig 类key或者ViewState对象或者显示配置IShowConfig
+     * @param keyOrViewAgentOrConfig 类key或者ViewAgent对象或者显示配置IShowConfig
      * @param onShowData 显示透传数据
      * @param onInitData 初始化数据
      */
-    show<TKeyType extends keyType, ViewStateType extends akView.IViewState = IAkViewDefaultViewState>(
-        keyOrViewStateOrConfig: TKeyType | ViewStateType | akView.IShowConfig<keyType, ViewDataTypes>,
+    show<TKeyType extends keyType>(
+        keyOrViewAgentOrConfig: TKeyType | akView.IShowConfig<keyType, ViewDataTypes>,
         onShowData?: akView.GetShowDataType<TKeyType, ViewDataTypes>,
         onInitData?: akView.GetInitDataType<TKeyType, ViewDataTypes>
-    ): ViewStateType {
+    ): string {
         let showCfg: akView.IShowConfig;
         let isSig: boolean;
-        let viewState: ViewStateType;
+        let viewAgent: akView.IViewAgent;
         let id: string;
         let key: string;
-        if (typeof keyOrViewStateOrConfig == "string") {
-            id = keyOrViewStateOrConfig;
+        if (typeof keyOrViewAgentOrConfig == "string") {
+            id = keyOrViewAgentOrConfig;
             key = id;
             isSig = true;
-        } else if (typeof keyOrViewStateOrConfig === "object") {
-            if (keyOrViewStateOrConfig["__$flag"]) {
-                viewState = keyOrViewStateOrConfig as any;
-                id = viewState.id;
-                key = viewState.template.key;
+        } else if (typeof keyOrViewAgentOrConfig === "object") {
+            if (keyOrViewAgentOrConfig["__$flag"]) {
+                viewAgent = keyOrViewAgentOrConfig as any;
+                id = viewAgent.id;
+                key = viewAgent.template.key;
             } else {
-                showCfg = keyOrViewStateOrConfig as any;
+                showCfg = keyOrViewAgentOrConfig as any;
                 showCfg.id = showCfg.key;
                 onShowData !== undefined && (showCfg.onShowData = onShowData);
                 onInitData !== undefined && (showCfg.onInitData = onInitData);
             }
         } else {
-            console.warn(`[viewMgr](show) unknown param`, keyOrViewStateOrConfig);
+            console.warn(`[viewMgr](show) unknown param`, keyOrViewAgentOrConfig);
             return;
         }
         if (!showCfg) {
@@ -454,115 +456,93 @@ export class ViewMgr<
                 onShowData: onShowData
             };
         }
-        if (!viewState) {
-            viewState = this.getOrCreateViewState(showCfg.id);
+        if (!viewAgent) {
+            viewAgent = this.getOrCreateViewAgent(showCfg.id);
         }
-        if (viewState) {
-            if (isSig && !viewState.cacheMode) {
-                viewState.cacheMode = "FOREVER";
+        if (viewAgent) {
+            if (isSig && !viewAgent.cacheMode) {
+                viewAgent.cacheMode = "FOREVER";
             }
-            this._cacheViewState(viewState);
+            this._cacheViewAgent(viewAgent);
             showCfg.needShowView = true;
-            this._showViewState(viewState, showCfg as any);
+            this._showViewAgent(viewAgent, showCfg as any);
         }
-        return viewState;
+        return viewAgent.id;
     }
     /**
      * 显示
-     * @param viewState
+     * @param viewAgent
      * @param showCfg
      * @returns
      */
-    protected _showViewState(viewState: akView.IViewState, showCfg: akView.IShowConfig<keyType, ViewKeyTypes>): void {
+    protected _showViewAgent(viewAgent: akView.IViewAgent, showCfg: akView.IShowConfig<keyType, ViewKeyTypes>): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        if (!viewState) return;
+        if (!viewAgent) return;
 
-        viewState.onShow(showCfg as any);
+        viewAgent.onShow(showCfg as any);
     }
     /**
      * 更新View
-     * @param keyOrViewState 界面id
+     * @param keyOrId 界面id
      * @param updateState 更新数据
      */
-    update<K extends keyType>(
-        keyOrViewState: K | akView.IViewState,
-        updateState?: akView.GetUpdateDataType<K, ViewDataTypes>
-    ): void {
+    update<K extends keyType | String>(keyOrId: K, updateState?: akView.GetUpdateDataType<K, ViewDataTypes>): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let viewState: akView.IViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
-        if (typeof keyOrViewState === "object") {
-            viewState = keyOrViewState;
-        } else {
-            viewState = this.getViewState(keyOrViewState as string);
-        }
+        let viewAgent: akView.IViewAgent = this.getViewAgent(keyOrId as string);
 
-        if (!viewState) return;
+        if (!viewAgent) return;
 
-        viewState.onUpdate(updateState);
+        viewAgent.onUpdate(updateState);
     }
     /**
      * 隐藏View
-     * @param keyOrViewState 界面id
+     * @param keyOrId 界面id
      * @param hideCfg
      */
-    hide<KeyOrIdType extends keyType>(
-        keyOrViewState: KeyOrIdType | akView.IViewState,
+    hide<KeyOrIdType extends keyType | String>(
+        keyOrId: KeyOrIdType,
         hideCfg?: akView.IHideConfig<KeyOrIdType, ViewDataTypes>
     ): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let viewState: akView.IViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
-        if (typeof keyOrViewState === "object") {
-            viewState = keyOrViewState;
-        } else {
-            viewState = this.getViewState(keyOrViewState as string, true);
-        }
-        if (!viewState) return;
-        viewState.onHide(hideCfg);
+        let viewAgent = this.getViewAgent(keyOrId as string, true);
+        if (!viewAgent) return;
+        viewAgent.onHide(hideCfg);
         if (hideCfg?.destroyAfterHide) {
-            this.destroy(viewState);
+            this._destroy(viewAgent);
         }
     }
-    destroy(keyOrViewState: keyType | akView.IViewState, destroyRes?: boolean): void {
+    destroy(keyOrId: keyType | String, destroyRes?: boolean): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let viewState: akView.IViewState = typeof keyOrViewState === "object" ? keyOrViewState : undefined;
-        if (typeof keyOrViewState === "object") {
-            viewState = keyOrViewState;
-        } else {
-            viewState = this.getViewState(keyOrViewState as string);
-        }
-        viewState.onDestroy(destroyRes);
+        let viewAgent = this.getViewAgent(keyOrId as string, true);
+        if (!viewAgent) return;
+        this._destroy(viewAgent, destroyRes);
+    }
+    private _destroy(viewAgent: akView.IViewAgent, destroyRes?: boolean) {
+        viewAgent.onDestroy(destroyRes);
         //从缓存中移除
-        this.deleteViewState(keyOrViewState as string);
+        this.deleteViewAgent(viewAgent.id);
     }
-    isViewInited<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean {
-        let viewState: ViewStateType;
-        if (typeof keyOrViewState !== "object") {
-            viewState = this.getViewState(keyOrViewState as string);
-        } else {
-            viewState = keyOrViewState;
-        }
-        return viewState && viewState.isViewInited;
+    isViewInited<ViewAgentType extends akView.IViewAgent>(keyOrId: keyType | String): boolean {
+        let viewAgent: ViewAgentType = this.getViewAgent(keyOrId as string);
+
+        return viewAgent && viewAgent.isViewInited;
     }
-    isViewShowed<ViewStateType extends akView.IViewState>(keyOrViewState: keyType | ViewStateType): boolean {
-        let viewState: ViewStateType;
-        if (typeof keyOrViewState !== "object") {
-            viewState = this.getViewState(keyOrViewState as string);
-        } else {
-            viewState = keyOrViewState;
-        }
-        return viewState && viewState.isViewShowed;
+    isViewShowed<ViewAgentType extends akView.IViewAgent>(keyOrId: keyType | String): boolean {
+        let viewAgent: ViewAgentType = this.getViewAgent(keyOrId as string);
+
+        return viewAgent && viewAgent.isViewShowed;
     }
 
     /**
@@ -571,9 +551,9 @@ export class ViewMgr<
      * @param template 模板
      * @returns
      */
-    createViewIns(viewState: akView.IViewState): akView.IView {
-        const template: TemplateType = viewState.template;
-        let viewIns = viewState.viewIns;
+    createViewIns(viewAgent: akView.IViewAgent): akView.IView {
+        const template: TemplateType = viewAgent.template;
+        let viewIns = viewAgent.viewIns;
         if (viewIns) return viewIns;
         let tplHandler = this._tplHandler;
         //先自定义的创建
@@ -581,8 +561,7 @@ export class ViewMgr<
         viewIns = viewIns || (template.viewClass && new template.viewClass());
 
         if (viewIns) {
-            viewIns.viewState = viewState;
-            viewState.viewIns = viewIns;
+            viewAgent.viewIns = viewIns;
             viewIns.key = template.key as string;
         } else {
             console.warn(`key:${String(template.key)} ins fail`);
@@ -590,69 +569,69 @@ export class ViewMgr<
 
         return viewIns;
     }
-    protected _cacheViewState<T extends akView.IViewState = akView.IViewState>(viewState: T) {
-        if (viewState.cacheMode === "FOREVER") {
-            this._viewStateMap[viewState.id] = viewState;
-        } else if (viewState.cacheMode === "CUSTOM") {
-            this._cacheHandler.put(viewState.id, viewState);
+    protected _cacheViewAgent<T extends akView.IViewAgent = akView.IViewAgent>(viewAgent: T) {
+        if (viewAgent.cacheMode === "FOREVER") {
+            this._viewAgentMap[viewAgent.id] = viewAgent;
+        } else if (viewAgent.cacheMode === "CUSTOM") {
+            this._cacheHandler.put(viewAgent.id, viewAgent);
         }
     }
     /**
-     * 根据id获取缓存中的ViewState
+     * 根据id获取缓存中的ViewAgent
      * @param id
      * @returns
      */
-    getViewState<T extends akView.IViewState = akView.IViewState>(id: string, isOnlyGet?: boolean): T {
+    getViewAgent<T extends akView.IViewAgent = akView.IViewAgent>(id: string, isOnlyGet: boolean = true): T {
         return (
-            this._viewStateMap[id] ||
+            this._viewAgentMap[id] ||
             (this._cacheHandler && (isOnlyGet ? this._cacheHandler.onlyGet(id) : this._cacheHandler.get(id)))
         );
     }
     /**
-     * 根据id获取缓存中的ViewState
-     * 没有就创建并放到缓存viewStateMap中需要手动清理
+     * 根据id获取缓存中的ViewAgent
+     * 没有就创建并放到缓存viewAgentMap中需要手动清理
      * @param id
      * @returns
      */
-    getOrCreateViewState<T extends akView.IViewState = akView.IViewState>(id: string): T {
-        let viewState = this.getViewState(id);
-        if (!viewState) {
-            viewState = this.createViewState(id);
+    getOrCreateViewAgent<T extends akView.IViewAgent = akView.IViewAgent>(id: string): T {
+        let viewAgent = this.getViewAgent(id);
+        if (!viewAgent) {
+            viewAgent = this.createViewAgent(id);
         }
 
-        return viewState as T;
+        return viewAgent as T;
     }
-    createViewState(id: string) {
+    createViewAgent(id: string) {
         const key = this.getKeyById(id);
         const template = this.getTemplate(key);
         if (!template) {
             return;
         }
-        const viewStateClass = template.vsClass || this._vsClassMap[template.vsClassType || "Default"];
-        if (!viewStateClass) {
-            console.error(`viewStateType not regist`);
+        const viewAgentClass = template.vsClass || this._vsClassMap[template.vsClassType || "Default"];
+        if (!viewAgentClass) {
+            console.error(`viewAgentType not regist`);
             return;
         }
-        let viewState: akView.IViewState = new viewStateClass();
-        if (viewState) {
-            viewState.onCreate(Object.assign({}, this._vsCreateOpt, template.vsCreateOpt));
-            viewState.id = id;
-            viewState.viewMgr = this as any;
-            viewState.template = template;
-            if (!viewState.cacheMode) {
-                viewState.cacheMode = template.cacheMode;
+        let viewAgent: akView.IViewAgent = new viewAgentClass();
+        if (viewAgent) {
+            viewAgent.onCreate(Object.assign({}, this._vsCreateOpt, template.vsCreateOpt));
+            viewAgent.id = id;
+            viewAgent.viewMgr = this as any;
+            viewAgent.template = template;
+            if (!viewAgent.cacheMode) {
+                viewAgent.cacheMode = template.cacheMode;
             }
-            //ViewState标记，用于和config做区分
-            viewState["__$flag"] = 1;
+            //ViewAgent标记，用于和config做区分
+            viewAgent["__$flag"] = 1;
         }
-        return viewState;
+        return viewAgent;
     }
     /**
-     * 移除指定id的viewState
+     * 移除指定id的viewAgent
      * @param id
      */
-    deleteViewState(id: string): void {
-        delete this._viewStateMap[id];
+    deleteViewAgent(id: string): void {
+        delete this._viewAgentMap[id];
         this._cacheHandler && this._cacheHandler.delete(id);
     }
     /**
@@ -661,8 +640,8 @@ export class ViewMgr<
      * @returns
      */
     getViewIns(id: string): akView.IView {
-        const viewState = this.getViewState(id);
-        return viewState && viewState.viewIns;
+        const viewAgent = this.getViewAgent(id);
+        return viewAgent && viewAgent.viewIns;
     }
 
     /**
@@ -670,7 +649,7 @@ export class ViewMgr<
      * @param key
      * @returns
      */
-    createViewId(key: keyType): string {
+    createViewId(key: keyType | String): string {
         if (!(key as string).includes(IdSplitChars)) {
             this._viewCount++;
             return `${String(key)}${IdSplitChars}${this._viewCount}`;
@@ -690,6 +669,11 @@ export class ViewMgr<
             return id.split(IdSplitChars)[0] as keyType;
         } else {
             return id as keyType;
+        }
+    }
+    protected _usePlugins(pluginInfos: akView.IPluginRegistInfo[]) {
+        for (const pluginInfo of pluginInfos) {
+            this.use(pluginInfo.plugin, pluginInfo.option);
         }
     }
 }

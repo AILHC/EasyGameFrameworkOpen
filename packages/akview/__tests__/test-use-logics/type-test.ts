@@ -1,5 +1,6 @@
-import { ViewMgr } from "../src";
-import { DefaultViewState } from "../src/default-view-state";
+import { ViewMgr } from "../../src";
+import { DefaultViewAgent } from "../../src/default-view-agent";
+
 //使用自定义的类型
 interface CustomViewKeys {
     /**dasfas */
@@ -45,7 +46,7 @@ viewMgr.template([{ key: "ypeTest" }, "typeTest5", { key: "typeTes" }]);
 // //提示handlerOption类型,类型不对会报错
 // viewMgr.template({ key: "typeTest", handleOption:});
 // //自定义handlerOption类型
-// viewMgr.template({ key: "typeTest", handleOption: {ab:{bc:""}} as {ab:{bc:string},viewStateClass:string}});
+// viewMgr.template({ key: "typeTest", handleOption: {ab:{bc:""}} as {ab:{bc:string},viewAgentClass:string}});
 
 //插件类型提示
 interface ITestPlugin {
@@ -67,14 +68,14 @@ viewMgr.show({ key: "typeTest", onShowData: 1 });
 const config: GetShowConfigType<typeof viewMgr, "typeTest"> = { key: "typeTest", onInitData: "" };
 
 viewMgr.show(config);
-let viewState = {} as akView.IViewState;
+let viewAgent = {} as akView.IViewAgent;
 //会做合并类型检查
-viewMgr.show(viewState, {});
+viewMgr.show(viewAgent, {});
 //如果不想检查
-viewMgr.show<any>(viewState, "");
+viewMgr.show<any>(viewAgent, "");
 //精确检查,第二个参数应该是number
-viewMgr.show<GetViewKeyType<CustomViewKeys, "typeTest">>(viewState, "", new Date());
-viewMgr.show<GetViewKeyType<CustomViewKeys, "typeTest">>(viewState, 1, new Date());
+viewMgr.show<GetViewKeyType<CustomViewKeys, "typeTest">>(viewAgent, "", new Date());
+viewMgr.show<GetViewKeyType<CustomViewKeys, "typeTest">>(viewAgent, 1, new Date());
 
 //参数应该是string
 viewMgr.update("typeTest", 1);
@@ -82,24 +83,24 @@ viewMgr.update("typeTest", "");
 
 //会做合并类型检查,要符合其中一个类型
 
-viewMgr.update(viewState, 1);
+viewMgr.update(viewAgent, 1);
 
-viewMgr.update(viewState, "1");
-viewMgr.update(viewState, { c: 1, d: 1 });
+viewMgr.update(viewAgent, "1");
+viewMgr.update(viewAgent, { c: 1, d: 1 });
 
 //精确类型检查，第二个参数应该是string类型
 
-viewMgr.update<CustomViewKeys["typeTest"]>(viewState, 1);
-viewMgr.update<CustomViewKeys["typeTest"]>(viewState, "1");
+viewMgr.update<CustomViewKeys["typeTest"]>(viewAgent, 1);
+viewMgr.update<CustomViewKeys["typeTest"]>(viewAgent, "1");
 
 //如果不想检查
 
-viewMgr.update<any>(viewState, 1);
+viewMgr.update<any>(viewAgent, 1);
 
 //精确检查,第二个参数应该是string
 
-viewMgr.update<GetViewKeyType<CustomViewKeys, "typeTest">>(viewState, 1);
-viewMgr.update<GetViewKeyType<CustomViewKeys, "typeTest">>(viewState, "1");
+viewMgr.update<GetViewKeyType<CustomViewKeys, "typeTest">>(viewAgent, 1);
+viewMgr.update<GetViewKeyType<CustomViewKeys, "typeTest">>(viewAgent, "1");
 
 //隐藏传递option类型,类型应该是boolean
 
@@ -112,7 +113,7 @@ viewMgr.isPreloadResLoading("typeTest3");
 viewMgr.isPreloadResLoaded("");
 viewMgr.hide("typeTest", {});
 viewMgr.destroy("typeTest");
-viewMgr.isViewInited(viewState);
+viewMgr.isViewInited(viewAgent);
 viewMgr.isViewShowed("typeTest2");
 
 //扩展IAkViewKeys和IAkViewDataTypes的类型
@@ -153,25 +154,25 @@ viewMgr2.show({ key: "testKey1", onInitData: new Date() });
 const config2: GetShowConfigType<typeof viewMgr2, "testKey1"> = { key: "testKey1", onInitData: "" };
 
 viewMgr2.show(config2);
-let viewState2 = {} as DefaultViewState;
+let viewAgent2 = {} as DefaultViewAgent;
 //会做合并类型检查
-viewMgr2.show(viewState2, "");
+viewMgr2.show(viewAgent2, "");
 //如果不想检查
-viewMgr2.show<any>(viewState2, "");
+viewMgr2.show<any>(viewAgent2, "");
 //精确检查,第二个参数应该是number
-viewMgr2.show<GetViewKeyType<IAkViewKeyTypes, "testKey1">>(viewState2, "", new Date());
+viewMgr2.show<GetViewKeyType<IAkViewKeyTypes, "testKey1">>(viewAgent2, "", new Date());
 
 //参数应该是string
 viewMgr2.update("testKey1", 1);
 
 //会做合并类型检查,不符合所有类型
-viewMgr2.update(viewState2, 1);
+viewMgr2.update(viewAgent2, 1);
 //精确类型检查，不string类型
-viewMgr2.update<IAkViewKeyTypes["testKey1"]>(viewState2, 1);
+viewMgr2.update<IAkViewKeyTypes["testKey1"]>(viewAgent2, 1);
 //如果不想检查
-viewMgr2.update<any>(viewState2, 1);
+viewMgr2.update<any>(viewAgent2, 1);
 //精确检查,第二个参数应该是string
-viewMgr2.update<GetViewKeyType<IAkViewKeyTypes, "testKey1">>(viewState2, 1);
+viewMgr2.update<GetViewKeyType<IAkViewKeyTypes, "testKey1">>(viewAgent2, 1);
 //隐藏传递option类型,类型应该是boolean
 viewMgr2.hide("testKey1", { hideOption: { play: 1 } });
 //可以获得类型提示,对于字符串变量也不会报错

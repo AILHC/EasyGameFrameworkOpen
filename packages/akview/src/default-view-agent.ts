@@ -3,9 +3,9 @@ const isPromise = <T = any>(val: any): val is Promise<T> => {
 };
 declare global {
     /**
-     * 默认ViewState的配置
+     * 默认ViewAgent的配置
      */
-    interface IAkViewDefaultViewStateOption {
+    interface IAkViewDefaultViewAgentOption {
         /**
          * 是否能在渲染节点隐藏后释放模板资源引用,默认false
          */
@@ -16,43 +16,12 @@ declare global {
          */
         destroyResOnDestroy?: boolean;
     }
-    interface IAkViewDefaultView<ViewStateType extends akView.IViewState = akView.IViewState>
-        extends akView.IView<ViewStateType> {
+    interface IAkViewDefaultView extends akView.IView {
         /**
          * 层级类型
          */
         layerType?: string | number;
-        /**
-         * 初始化，只执行一次
-         * @param initData 初始化数据
-         */
-        onInitView?(initData?: any): void;
-        /**
-         * 当显示时
-         * @param showData 显示数据
-         * @returns
-         */
-        onShowView?(showData?: any): void;
-        /**
-         * 当更新时
-         * @updateData updateData 更新数据
-         */
-        onUpdateView?(updateData?: any): void;
-        /**
-         * 当隐藏时
-         * @param hideOption
-         * @returns
-         */
-        onHideView?(hideOption: any): void;
-        /**
-         * 当销毁时，默认是需要进行资源引用释放的
-         */
-        onDestroyView?(): void;
-        /**
-         * 当根窗口尺寸变化
-         */
-        onWindowResize?(data: IAkViewResizeData): void;
-        
+
         /**
          * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
          * @param showData
@@ -67,7 +36,7 @@ declare global {
          */
         onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void>;
     }
-    interface IAkViewDefaultViewState extends akView.IViewState<IAkViewDefaultViewStateOption, IAkViewDefaultTemplate> {
+    interface IAkViewDefaultViewAgent extends akView.IViewAgent<IAkViewDefaultViewAgentOption, IAkViewDefaultTemplate> {
         /**
          * 显示结束(动画播放完)
          */
@@ -94,12 +63,11 @@ declare global {
         hideCfg?: akView.IHideConfig;
     }
 }
-export class DefaultViewState implements IAkViewDefaultViewState {
+export class DefaultViewAgent implements IAkViewDefaultViewAgent {
     id: string;
     template: IAkViewDefaultTemplate;
-
-    isViewInited?: boolean;
     isViewShowed?: boolean;
+    isViewInited?: boolean;
     isViewShowEnd?: boolean;
     isHoldTemplateResRef?: boolean;
     needDestroy?: boolean;
@@ -114,18 +82,18 @@ export class DefaultViewState implements IAkViewDefaultViewState {
     updateState?: any;
 
     hideCfg?: akView.IHideConfig;
-    viewIns?: IAkViewDefaultView<DefaultViewState>;
+    viewIns?: IAkViewDefaultView;
     viewMgr: akView.IMgr;
     public destroyed: boolean;
 
-    private _option: IAkViewDefaultViewStateOption;
+    private _option: IAkViewDefaultViewAgentOption;
 
     private _needDestroyRes: any;
     isLoading: boolean;
 
     private _isConstructed: boolean;
 
-    onCreate(option: IAkViewDefaultViewStateOption): void {
+    onCreate(option: IAkViewDefaultViewAgentOption): void {
         if (this._isConstructed) {
             return;
         }
@@ -231,7 +199,7 @@ export class DefaultViewState implements IAkViewDefaultViewState {
 
     initView() {
         if (!this.isViewInited) {
-            const viewIns:IAkViewDefaultView = this.viewMgr.createViewIns(this);
+            const viewIns: IAkViewDefaultView = this.viewMgr.createViewIns(this);
 
             //持有模板资源
             this.viewMgr.addTemplateResRef(this);
@@ -304,7 +272,7 @@ export class DefaultViewState implements IAkViewDefaultViewState {
         this.destroyed = true;
         this.isViewInited = false;
         if (viewIns) {
-            // const template = viewState.template;
+            // const template = viewAgent.template;
             // const destroyFuncKey = template?.viewLifeCycleFuncMap?.onViewDestroy;
             // if (destroyFuncKey && viewIns[destroyFuncKey]) {
             //     viewIns[destroyFuncKey]();

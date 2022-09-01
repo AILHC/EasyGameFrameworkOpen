@@ -1,10 +1,9 @@
 import { DefaultPlugin, ViewMgr } from "../src";
 import { DefaultEventBus } from "../src/default-event-bus";
 import { DefaultTemplateHandler } from "../src/default-template-handler";
-import { DefaultViewState } from "../src/default-view-state";
+import { DefaultViewAgent } from "../src/default-view-agent";
 import { LRU2QCacheHandler } from "../src/lru2q-cache-handler";
-import { TestViewState } from "./test-use-logics/test-view-state";
-
+import { TestViewAgent } from "./test-use-logics/test-view-agent";
 
 declare global {
     interface ITestViewKeys {
@@ -37,7 +36,7 @@ describe(`ViewMgr相关测试`, function () {
         const mgr = new ViewMgr();
         mgr.init();
         let expectDefindFields: Array<keyof ViewMgr> | Array<string> = [
-            "_viewStateMap",
+            "_viewAgentMap",
             "eventBus",
             "tplHandler",
             "_templateMap",
@@ -67,10 +66,10 @@ describe(`ViewMgr相关测试`, function () {
         expect(mgr3.tplHandler).toBeDefined();
         expect(mgr3.cacheHandler["_option"].lruMaxSize).toEqual(18);
         expect(mgr3.tplHandler["_option"]).toBeDefined();
-        //传递自定义ViewState
+        //传递自定义ViewAgent
         const mgr4 = new ViewMgr();
-        mgr4.init({ defaultViewStateClass: TestViewState });
-        expect(mgr4["_vsClassMap"]["Default"]).toEqual(TestViewState);
+        mgr4.init({ defaultViewAgentClass: TestViewAgent });
+        expect(mgr4["_vsClassMap"]["Default"]).toEqual(TestViewAgent);
     });
 
     test(`测试:ViewMgr.template 注册view模板,以及相关函数:ViewMgr.getTempalte,ViewMgr.hasTemplate`, function () {
@@ -115,7 +114,7 @@ describe(`ViewMgr相关测试`, function () {
         //注册空对象
         mgr.use({} as any, { a: "a", b: 1 });
         //注册空值
-        mgr.use(undefined, { a: "a", b: 1 });
+        mgr.use(undefined as any, { a: "a", b: 1 });
     });
     test("测试: ViewMgr.getResInfo", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -146,7 +145,7 @@ describe(`ViewMgr相关测试`, function () {
         });
         const loadResSpy = jest.spyOn(handler, "loadRes");
         //传空值
-        mgr.preloadResById(undefined);
+        mgr.preloadResById("");
         expect(loadResSpy).toBeCalledTimes(0);
         let testKey: any = "testKey_ViewMgr.preloadResById";
         mgr.template(testKey);
@@ -200,8 +199,8 @@ describe(`ViewMgr相关测试`, function () {
         const testLoadOption5 = { a: 1 };
         const handler5 = {
             loadRes(config: akView.IResLoadConfig) {
-                expect(config.loadOption["a"]).toEqual(1);
-                expect(config.loadOption["b"]).toEqual(1);
+                expect(config.loadOption?.["a"]).toEqual(1);
+                expect(config.loadOption?.["b"]).toEqual(1);
             }
         } as any;
         mgr5.init({
@@ -251,118 +250,118 @@ describe(`ViewMgr相关测试`, function () {
     test("测试：ViewMgr.createViewIns", function () {
         //TODO
         const mgr = new ViewMgr();
-        mgr.init({ defaultViewStateClass: DefaultViewState });
+        mgr.init({ defaultViewAgentClass: DefaultViewAgent });
         const testViewKey1 = "test_ViewMgr.createViewIns1" as any;
         mgr.template(testViewKey1);
-        const viewState1 = mgr.createViewState(testViewKey1);
+        const viewAgent1 = mgr.createViewAgent(testViewKey1);
 
-        const viewIns1 = mgr.createViewIns(viewState1);
+        const viewIns1 = mgr.createViewIns(viewAgent1!);
 
         expect(viewIns1).toBeUndefined();
 
-        const testViewKey2 = "test_ViewMgr.createViewIns2" as any;
+        const testViewKey2 = "test_ViewMgr.createViewIns2" as never;
         mgr.template({ key: testViewKey2, viewClass: Object });
-        const viewState2 = mgr.createViewState(testViewKey2);
+        const viewAgent2 = mgr.createViewAgent(testViewKey2);
 
-        const viewIns2 = mgr.createViewIns(viewState2);
+        const viewIns2 = mgr.createViewIns(viewAgent2!);
 
         expect(viewIns2).toBeDefined();
-        expect(viewIns2.viewState).toBe(viewState2);
-        expect(viewState2.viewIns).toBe(viewIns2);
+
+        expect(viewAgent2?.viewIns).toBe(viewIns2);
         expect(viewIns2.key).toBe(testViewKey2);
         mgr["_tplHandler"];
     });
-    test("测试：ViewMgr.createViewState", function () {
+    test("测试：ViewMgr.createViewAgent", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        mgr.init({ defaultViewStateClass: DefaultViewState });
+        mgr.init({ defaultViewAgentClass: DefaultViewAgent });
         //传递空id，返回undefined
-        const viewState1 = mgr.createViewState("");
-        expect(viewState1).toBeUndefined();
+        const viewAgent1 = mgr.createViewAgent("");
+        expect(viewAgent1).toBeUndefined();
 
-        //没有templateHandler的createViewState方法，mgr.createViewState返回DefaultViewState的实例
+        //没有templateHandler的createViewAgent方法，mgr.createViewAgent返回DefaultViewAgent的实例
         const mgr2 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
         mgr2.init({
-            defaultViewStateClass: DefaultViewState
+            defaultViewAgentClass: DefaultViewAgent
         });
-        const viewKey: any = "test_ViewMgr.createViewState";
+        const viewKey: any = "test_ViewMgr.createViewAgent";
         mgr2.template(viewKey);
-        const viewState2 = mgr2.createViewState(viewKey);
-        expect(viewState2 instanceof DefaultViewState).toBeTruthy();
-        expect(viewState2.id).toEqual(viewKey);
-        expect(viewState2.viewMgr).toEqual(mgr2);
-        expect(viewState2.template).toEqual(mgr2.getTemplate(viewKey));
-        expect(viewState2.cacheMode).toEqual(undefined);
-        const viewKey2: any = "test_ViewMgr.createViewState2";
+        const viewAgent2 = mgr2.createViewAgent(viewKey)!;
+        expect(viewAgent2 instanceof DefaultViewAgent).toBeTruthy();
+        expect(viewAgent2.id).toEqual(viewKey);
+        expect(viewAgent2.viewMgr).toEqual(mgr2);
+        expect(viewAgent2.template).toEqual(mgr2.getTemplate(viewKey));
+        expect(viewAgent2.cacheMode).toEqual(undefined);
+        const viewKey2: any = "test_ViewMgr.createViewAgent2";
         mgr2.template({ key: viewKey2, cacheMode: "CUSTOM" });
-        const viewState3 = mgr2.createViewState(viewKey2);
-        expect(viewState3.cacheMode).toEqual("CUSTOM");
-        //有templateHandler的createViewState方法,createViewState返回testCreateViewStateReturnObj
+        const viewAgent3 = mgr2.createViewAgent(viewKey2);
+        expect(viewAgent3?.cacheMode).toEqual("CUSTOM");
+        //有templateHandler的createViewAgent方法,createViewAgent返回testCreateViewAgentReturnObj
         const mgr4 = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        let testCreateViewStateReturnObj = {
+        let testCreateViewAgentReturnObj = {
             onCreate(option) {
                 expect(option.a).toEqual(1);
             }
         };
         mgr4.init();
-        mgr4.registViewStateClass("Default", function () {
-            return testCreateViewStateReturnObj;
+        mgr4.registViewAgentClass("Default", function () {
+            return testCreateViewAgentReturnObj;
         });
-        //传递viewStateInitOption，onCreate可以读取到option.a=1
+        //传递viewAgentInitOption，onCreate可以读取到option.a=1
         mgr4.template({ key: viewKey, vsCreateOpt: { a: 1 } });
-        const viewState4 = mgr4.createViewState(viewKey);
-        expect(viewState4).toEqual(testCreateViewStateReturnObj);
+        const viewAgent4 = mgr4.createViewAgent(viewKey);
+        expect(viewAgent4).toEqual(testCreateViewAgentReturnObj);
     });
-    test("测试：ViewMgr.getOrCreateViewState", function () {
+    test("测试：ViewMgr.getOrCreateViewAgent", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        mgr.init({ defaultViewStateClass: DefaultViewState });
-        const viewKey: any = "test_ViewMgr.getOrCreateViewState";
-        const viewKey2: any = "test_ViewMgr.getOrCreateViewState2";
+        mgr.init({ defaultViewAgentClass: DefaultViewAgent });
+        const viewKey: any = "test_ViewMgr.getOrCreateViewAgent";
+        const viewKey2: any = "test_ViewMgr.getOrCreateViewAgent2";
         mgr.template(viewKey);
         mgr.template(viewKey2);
         //传空值id,返回undefined
-        const viewState1 = mgr.getOrCreateViewState("");
-        expect(viewState1).toBeUndefined();
+        const viewAgent1 = mgr.getOrCreateViewAgent("");
+        expect(viewAgent1).toBeUndefined();
 
-        //放入测试viewState，getOrCreateViewState返回测试viewState
-        const testViewStateObj = {};
-        mgr["_viewStateMap"][viewKey] = testViewStateObj as any;
-        const viewState2 = mgr.getOrCreateViewState(viewKey);
-        expect(viewState2).toEqual(testViewStateObj);
-        //传入key，返回DefaultViewState实例
-        const viewState3 = mgr.getOrCreateViewState(viewKey2);
-        expect(viewState3 instanceof DefaultViewState).toBeTruthy();
-        expect(viewState3.id).toEqual(viewKey2);
+        //放入测试viewAgent，getOrCreateViewAgent返回测试viewAgent
+        const testViewAgentObj = {};
+        mgr["_viewAgentMap"][viewKey] = testViewAgentObj as any;
+        const viewAgent2 = mgr.getOrCreateViewAgent(viewKey);
+        expect(viewAgent2).toEqual(testViewAgentObj);
+        //传入key，返回DefaultViewAgent实例
+        const viewAgent3 = mgr.getOrCreateViewAgent(viewKey2);
+        expect(viewAgent3 instanceof DefaultViewAgent).toBeTruthy();
+        expect(viewAgent3.id).toEqual(viewKey2);
     });
-    test("测试：ViewMgr.getViewState", function () {
+    test("测试：ViewMgr.getViewAgent", function () {
         const mgr = new ViewMgr();
         mgr.init();
-        const viewKey: any = "testKey1_ViewMgr.getViewState";
-        //放入测试ViewState,返回
-        const testViewState = new DefaultViewState();
-        mgr["_viewStateMap"][viewKey] = testViewState;
-        const viewState = mgr.getViewState(viewKey);
-        expect(viewState).toEqual(testViewState);
+        const viewKey: any = "testKey1_ViewMgr.getViewAgent";
+        //放入测试ViewAgent,返回
+        const testViewAgent = new DefaultViewAgent();
+        mgr["_viewAgentMap"][viewKey] = testViewAgent;
+        const viewAgent = mgr.getViewAgent(viewKey);
+        expect(viewAgent).toEqual(testViewAgent);
 
         //传入不存在的id
-        const viewState2 = mgr.getViewState(viewKey + 1);
-        expect(viewState2).toBeUndefined();
+        const viewAgent2 = mgr.getViewAgent(viewKey + 1);
+        expect(viewAgent2).toBeUndefined();
     });
     test("测试：ViewMgr.getViewIns", function () {
         const mgr = new ViewMgr();
         mgr.init();
-        const viewState = (mgr["_viewStateMap"]["testKey1"] = new DefaultViewState());
+        const viewAgent = (mgr["_viewAgentMap"]["testKey1"] = new DefaultViewAgent());
         const viewIns = mgr.getViewIns("testKey1");
         expect(viewIns).toBeUndefined();
-        viewState.viewIns = {} as any;
+        viewAgent.viewIns = {} as any;
         expect(mgr.getViewIns("testKey1")).toBeDefined();
         expect(mgr.getViewIns("")).toBeUndefined();
     });
-    test("测试：ViewMgr.deleteViewState", function () {
+    test("测试：ViewMgr.deleteViewAgent", function () {
         const mgr = new ViewMgr();
         mgr.init();
-        const viewState = (mgr["_viewStateMap"]["testKey1"] = new DefaultViewState());
-        mgr.deleteViewState("testKey1");
-        expect(Object.keys(mgr["_viewStateMap"]).length).toEqual(0);
+        const viewAgent = (mgr["_viewAgentMap"]["testKey1"] = new DefaultViewAgent());
+        mgr.deleteViewAgent("testKey1");
+        expect(Object.keys(mgr["_viewAgentMap"]).length).toEqual(0);
     });
     test("测试: ViewMgr.preloadRes", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -375,7 +374,7 @@ describe(`ViewMgr相关测试`, function () {
         });
         const loadResSpy = jest.spyOn(handler, "loadRes");
         //传空值
-        mgr.preloadRes(undefined);
+        mgr.preloadRes(undefined!);
         expect(loadResSpy).toBeCalledTimes(0);
         let testKey: any = "testKey_ViewMgr.preloadRes";
         mgr.template(testKey);
@@ -431,8 +430,8 @@ describe(`ViewMgr相关测试`, function () {
         const testLoadOption5 = { a: 1 };
         const handler5 = {
             loadRes(config: akView.IResLoadConfig) {
-                expect(config.loadOption["a"]).toEqual(1);
-                expect(config.loadOption["b"]).toEqual(1);
+                expect(config.loadOption?.["a"]).toEqual(1);
+                expect(config.loadOption?.["b"]).toEqual(1);
             }
         } as any;
         mgr5.init({
@@ -494,13 +493,13 @@ describe(`ViewMgr相关测试`, function () {
         const mgr = new ViewMgr();
         mgr.init();
         mgr.use(new DefaultPlugin());
-        const viewKey: any = "test_ViewMgr.destroyRes";
+        const viewKey = "test_ViewMgr.destroyRes" as never;
         mgr.template(viewKey);
         const destroyResSpy = jest.spyOn(mgr.tplHandler, "destroyRes");
         mgr.destroyRes(viewKey);
         expect(destroyResSpy).toBeCalledTimes(1);
         //传空viewKey
-        const isDestroy = mgr.destroyRes("" as any);
+        const isDestroy = mgr.destroyRes("" as never);
         expect(isDestroy).toBeFalsy();
     });
     test("测试：ViewMgr.addTemplateResRef & ViewMgr.decTemplateResRef", function () {
@@ -511,50 +510,51 @@ describe(`ViewMgr相关测试`, function () {
         mgr.template(viewKey);
         // const handlerAddResRefSpy = jest.spyOn(mgr.tplHandler, "addResRef");
         // const handlerDecResRefSpy = jest.spyOn(mgr.tplHandler, "decResRef");
-        const viewState1 = mgr.createViewState(viewKey);
-        mgr.addTemplateResRef(viewState1);
+        const viewAgent1 = mgr.createViewAgent(viewKey)!;
+        mgr.addTemplateResRef(viewAgent1!);
 
-        expect(viewState1.isHoldTemplateResRef).toBeTruthy();
+        expect(viewAgent1.isHoldTemplateResRef).toBeTruthy();
         //不会重复调用addResRef
-        viewState1.isHoldTemplateResRef = 1 as any;
-        mgr.addTemplateResRef(viewState1);
-        expect(viewState1.isHoldTemplateResRef).toEqual(1);
-        mgr.decTemplateResRef(viewState1);
-        expect(viewState1.isHoldTemplateResRef).toBeFalsy();
+        viewAgent1.isHoldTemplateResRef = 1 as any;
+        mgr.addTemplateResRef(viewAgent1);
+        expect(viewAgent1.isHoldTemplateResRef).toEqual(1);
+        mgr.decTemplateResRef(viewAgent1);
+        expect(viewAgent1.isHoldTemplateResRef).toBeFalsy();
         //不会重复调用decResRef
-        viewState1.isHoldTemplateResRef = undefined;
-        mgr.decTemplateResRef(viewState1);
-        expect(viewState1.isHoldTemplateResRef).toBeUndefined();
+        viewAgent1.isHoldTemplateResRef = undefined;
+        mgr.decTemplateResRef(viewAgent1);
+        expect(viewAgent1.isHoldTemplateResRef).toBeUndefined();
     });
     test("测试：ViewMgr.create", function () {
         const mgr = new ViewMgr();
         mgr.init();
         mgr.use(new DefaultPlugin());
-        const viewKey: any = "testKey_ViewMgr.create";
+        const viewKey = "testKey_ViewMgr.create" as never;
         mgr.template(viewKey);
-        const viewState1 = mgr.create(viewKey);
-        expect(viewState1.cacheMode).toBeUndefined();
-        expect(mgr.getViewState(viewState1.id)).toBeUndefined();
+        const viewAgent1 = mgr.create(viewKey);
+        expect(viewAgent1.cacheMode).toBeUndefined();
+        expect(mgr.getViewAgent(viewAgent1.id)).toBeUndefined();
         const testInitData = {};
         const testShowData = {};
-        const viewState2 = mgr.create(viewKey, testInitData, false, testShowData);
-        expect(viewState2.cacheMode).toEqual(undefined);
-        expect((viewState2 as DefaultViewState)["showCfg"].onInitData).toEqual(testInitData);
-        expect((viewState2 as DefaultViewState)["showCfg"].onShowData).toEqual(testShowData);
+        const viewAgent2 = mgr.create(viewKey, testInitData, false, testShowData);
+        expect(viewAgent2.cacheMode).toEqual(undefined);
+        const viewAgent2ShowCfg = (viewAgent2 as DefaultViewAgent)["showCfg"]!;
+        expect(viewAgent2ShowCfg.onInitData).toEqual(testInitData);
+        expect(viewAgent2ShowCfg.onShowData).toEqual(testShowData);
 
-        const viewState3 = mgr.create(viewKey, undefined, false, undefined, "FOREVER");
+        const viewAgent3 = mgr.create(viewKey, undefined, false, undefined, "FOREVER");
 
-        expect(mgr.getViewState(viewState3.id)).toBeDefined();
+        expect(mgr.getViewAgent(viewAgent3.id)).toBeDefined();
 
-        const viewState4 = mgr.create(viewKey, undefined, false, undefined, "CUSTOM");
-        expect(viewState4.cacheMode).toEqual("CUSTOM");
-        const viewState5 = mgr.create(viewKey, undefined, true);
-        expect((viewState5 as DefaultViewState)["showCfg"].needShowView).toBeTruthy();
-        const viewKey2: any = "testKey_ViewMgr.create2";
+        const viewAgent4 = mgr.create(viewKey, undefined, false, undefined, "CUSTOM");
+        expect(viewAgent4.cacheMode).toEqual("CUSTOM");
+        const viewAgent5 = mgr.create(viewKey, undefined, true);
+        expect((viewAgent5 as DefaultViewAgent)["showCfg"]!.needShowView).toBeTruthy();
+        const viewKey2 = "testKey_ViewMgr.create2" as never;
         mgr.template({ key: viewKey2, cacheMode: "FOREVER" });
-        const viewState6 = mgr.create(viewKey2);
-        expect(viewState6.cacheMode === "FOREVER").toBeTruthy();
-        expect(mgr.getViewState(viewState6.id)).toBeDefined();
+        const viewAgent6 = mgr.create(viewKey2);
+        expect(viewAgent6.cacheMode === "FOREVER").toBeTruthy();
+        expect(mgr.getViewAgent(viewAgent6.id)).toBeDefined();
     });
     test("测试：ViewMgr.show", function () {
         const viewMgr = new ViewMgr();
@@ -568,18 +568,17 @@ describe(`ViewMgr相关测试`, function () {
         viewMgr.template(viewKey2);
         viewMgr.template(viewKey3);
         viewMgr.template(viewKey4);
-        //传key,返回viewState.id===key
-        const viewState: akView.IViewState = viewMgr.show(viewKey1);
-        const id = viewState.id;
-        expect(id).toEqual(viewKey1);
-        //传ViewState,返回viewState.showCfg.id === id;
-        const viewState2 = viewMgr.create(viewKey2);
-        const id2 = viewMgr.show(viewState2);
-        expect(viewState2["showCfg"].id).toEqual(viewState2.id);
-        expect(viewState2["showCfg"].key).toEqual(viewState2.template.key);
+        //传key,返回viewId===key
+        const viewId = viewMgr.show(viewKey1);
+        expect(viewId).toEqual(viewKey1);
+        //传ViewAgent,返回viewAgent.showCfg.id === id;
+        const viewAgent2 = viewMgr.create(viewKey2);
+        const id2 = viewMgr.show(viewAgent2);
+        expect(viewAgent2["showCfg"]!.id).toEqual(viewAgent2.id);
+        expect(viewAgent2["showCfg"]!.key).toEqual(viewAgent2.template.key);
         //传config,返回id=key
-        const viewState3 = viewMgr.show({ key: viewKey3 });
-        expect(viewState3.id).toEqual(viewKey3);
+        const view3Id = viewMgr.show({ key: viewKey3 });
+        expect(view3Id).toEqual(viewKey3);
     });
     test("测试: 资源加载loadOption & progressCallback & isPreloadResLoading & isPreloadResLoaded", function (done) {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -597,7 +596,7 @@ describe(`ViewMgr相关测试`, function () {
                 }, 500);
                 progress("", {}, 5, 5);
                 expect(loadOption).toBeDefined();
-                expect(loadOption["a"]).toEqual(1);
+                expect(loadOption!["a"]).toEqual(1);
                 return "abc";
             }
         };
@@ -665,52 +664,52 @@ describe(`ViewMgr相关测试`, function () {
     //     mgr.template({ key: viewKey, viewClass: TestWithAnimView });
 
     //     //创建
-    //     const viewState1 = mgr.create(viewKey);
+    //     const viewAgent1 = mgr.create(viewKey);
     //     //不在缓存中
-    //     expect(mgr.getViewState(viewState1.id)).toBeUndefined();
-    //     expect(viewState1.viewIns).toBeDefined();
-    //     expect(viewState1.viewIns instanceof TestWithAnimView).toBeTruthy();
+    //     expect(mgr.getViewAgent(viewAgent1.id)).toBeUndefined();
+    //     expect(viewAgent1.viewIns).toBeDefined();
+    //     expect(viewAgent1.viewIns instanceof TestWithAnimView).toBeTruthy();
 
     //     //显示数据、初始化数据,自动显示
-    //     const viewState2 = mgr.create(viewKey, { init: "init" }, true, { a: 1 });
+    //     const viewAgent2 = mgr.create(viewKey, { init: "init" }, true, { a: 1 });
 
     //     //自定义缓存模式
-    //     const viewState3 = mgr.create(viewKey, null, false, null, "FOREVER");
+    //     const viewAgent3 = mgr.create(viewKey, null, false, null, "FOREVER");
 
-    //     expect(viewState1.id === viewState2.id).toBeFalsy();
-    //     expect((viewState2 as DefaultViewState).showCfg.onInitData).toBeDefined();
-    //     expect((viewState2 as DefaultViewState).showCfg.onShowData).toBeDefined();
-    //     expect(viewState2.cacheMode).toEqual(undefined);
-    //     expect(viewState3.cacheMode).toEqual("FOREVER");
+    //     expect(viewAgent1.id === viewAgent2.id).toBeFalsy();
+    //     expect((viewAgent2 as DefaultViewAgent).showCfg.onInitData).toBeDefined();
+    //     expect((viewAgent2 as DefaultViewAgent).showCfg.onShowData).toBeDefined();
+    //     expect(viewAgent2.cacheMode).toEqual(undefined);
+    //     expect(viewAgent3.cacheMode).toEqual("FOREVER");
     // });
     // test("测试: show单例View和create创建的View", function () {
     //     const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-    //     mgr.init({ defaultViewStateClass: DefaultViewState });
+    //     mgr.init({ defaultViewAgentClass: DefaultViewAgent });
     //     const viewKey = "regitstTestViewKey9";
     //     mgr.template({ key: viewKey, viewClass: TestView });
 
-    //     const sigViewState = mgr.getOrCreateViewState(viewKey);
+    //     const sigViewAgent = mgr.getOrCreateViewAgent(viewKey);
 
-    //     const sigViewStateonShowSpy = jest.spyOn(sigViewState, "onShow");
+    //     const sigViewAgentonShowSpy = jest.spyOn(sigViewAgent, "onShow");
 
     //     const viewId = mgr.show(viewKey, { a: 1 }, { init: "init" });
 
-    //     expect(sigViewStateonShowSpy).toBeCalledTimes(1);
+    //     expect(sigViewAgentonShowSpy).toBeCalledTimes(1);
     //     expect(viewId).toEqual(viewKey);
-    //     expect((sigViewState as DefaultViewState).showCfg).toBeDefined();
-    //     expect(sigViewState.cacheMode).toEqual("FOREVER");
-    //     expect((sigViewState as DefaultViewState).showCfg.onInitData).toBeDefined();
-    //     expect((sigViewState as DefaultViewState).showCfg.onShowData).toBeDefined();
+    //     expect((sigViewAgent as DefaultViewAgent).showCfg).toBeDefined();
+    //     expect(sigViewAgent.cacheMode).toEqual("FOREVER");
+    //     expect((sigViewAgent as DefaultViewAgent).showCfg.onInitData).toBeDefined();
+    //     expect((sigViewAgent as DefaultViewAgent).showCfg.onShowData).toBeDefined();
     //     //显示create创建的
-    //     const createViewState = mgr.create(viewKey);
-    //     const createViewStateonShowSpy = jest.spyOn(createViewState, "onShow");
-    //     mgr.show(createViewState, { a: 1 }, { init: "init" });
-    //     expect(createViewStateonShowSpy).toBeCalledTimes(1);
-    //     expect((sigViewState as DefaultViewState).showCfg).toBeDefined();
+    //     const createViewAgent = mgr.create(viewKey);
+    //     const createViewAgentonShowSpy = jest.spyOn(createViewAgent, "onShow");
+    //     mgr.show(createViewAgent, { a: 1 }, { init: "init" });
+    //     expect(createViewAgentonShowSpy).toBeCalledTimes(1);
+    //     expect((sigViewAgent as DefaultViewAgent).showCfg).toBeDefined();
 
-    //     expect((createViewState as DefaultViewState).showCfg.onInitData).toBeDefined();
-    //     expect((createViewState as DefaultViewState).showCfg.onShowData).toBeDefined();
-    //     expect(createViewState.cacheMode).toEqual(undefined);
+    //     expect((createViewAgent as DefaultViewAgent).showCfg.onInitData).toBeDefined();
+    //     expect((createViewAgent as DefaultViewAgent).showCfg.onShowData).toBeDefined();
+    //     expect(createViewAgent.cacheMode).toEqual(undefined);
     // });
     // test("测试：单例UI的正常show、update、hide、destroy", function (done) {
     //     const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -738,34 +737,34 @@ describe(`ViewMgr相关测试`, function () {
     //         viewClass: TestWithAnimView
     //     });
 
-    //     const sigViewState = mgr.getOrCreateViewState(viewKey);
+    //     const sigViewAgent = mgr.getOrCreateViewAgent(viewKey);
 
-    //     const sigViewStateOnShowSpy = jest.spyOn(sigViewState, "onShow");
-    //     const sigViewStateOnUpdateSpy = jest.spyOn(sigViewState, "onUpdate");
-    //     const sigViewStateOnHideSpy = jest.spyOn(sigViewState, "onHide");
-    //     const sigViewStateOnDestroySpy = jest.spyOn(sigViewState, "onDestroy");
+    //     const sigViewAgentOnShowSpy = jest.spyOn(sigViewAgent, "onShow");
+    //     const sigViewAgentOnUpdateSpy = jest.spyOn(sigViewAgent, "onUpdate");
+    //     const sigViewAgentOnHideSpy = jest.spyOn(sigViewAgent, "onHide");
+    //     const sigViewAgentOnDestroySpy = jest.spyOn(sigViewAgent, "onDestroy");
 
     //     const handlerAddResRefSpy = jest.spyOn(handler, "addResRef");
     //     const handlerDecResRefSpy = jest.spyOn(handler, "decResRef");
     //     const handlerAddToLayerSpy = jest.spyOn(handler, "addToLayer");
     //     const handlerRemoveFromLayerSpy = jest.spyOn(handler, "removeFromLayer");
     //     mgr.show(viewKey);
-    //     expect(mgr.getViewState(viewKey)).toBeDefined();
+    //     expect(mgr.getViewAgent(viewKey)).toBeDefined();
     //     mgr.update(viewKey, { b: "a" });
-    //     expect(sigViewStateOnShowSpy).toBeCalledTimes(1);
-    //     expect(sigViewStateOnUpdateSpy).toBeCalledTimes(1);
-    //     expect((sigViewState as DefaultViewState).updateState).toBeDefined();
-    //     expect(sigViewState.viewIns).toBeUndefined();
+    //     expect(sigViewAgentOnShowSpy).toBeCalledTimes(1);
+    //     expect(sigViewAgentOnUpdateSpy).toBeCalledTimes(1);
+    //     expect((sigViewAgent as DefaultViewAgent).updateState).toBeDefined();
+    //     expect(sigViewAgent.viewIns).toBeUndefined();
 
     //     setTimeout(() => {
     //         expect(mgr.isPreloadResLoaded(viewKey)).toBeTruthy();
-    //         expect(sigViewState.viewIns).toBeDefined();
-    //         expect((sigViewState as DefaultViewState).updateState).toBeUndefined();
+    //         expect(sigViewAgent.viewIns).toBeDefined();
+    //         expect((sigViewAgent as DefaultViewAgent).updateState).toBeUndefined();
     //         mgr.hide(viewKey, { hideOption: { p: false } });
-    //         expect(sigViewStateOnHideSpy).toBeCalledTimes(1);
+    //         expect(sigViewAgentOnHideSpy).toBeCalledTimes(1);
     //         mgr.destroy(viewKey);
-    //         expect(sigViewStateOnDestroySpy).toBeCalledTimes(1);
-    //         expect(mgr.getViewState(viewKey)).toBeUndefined();
+    //         expect(sigViewAgentOnDestroySpy).toBeCalledTimes(1);
+    //         expect(mgr.getViewAgent(viewKey)).toBeUndefined();
     //         expect(handlerAddResRefSpy).toBeCalledTimes(1);
     //         expect(handlerDecResRefSpy).toBeCalledTimes(1);
     //         expect(handlerAddToLayerSpy).toBeCalledTimes(1);
@@ -800,26 +799,26 @@ describe(`ViewMgr相关测试`, function () {
     //         viewClass: TestView
     //     });
 
-    //     const sigViewState = mgr.getOrCreateViewState(viewKey);
+    //     const sigViewAgent = mgr.getOrCreateViewAgent(viewKey);
 
-    //     const sigViewStateOnShowSpy = jest.spyOn(sigViewState, "onShow");
-    //     const sigViewStateOnHideSpy = jest.spyOn(sigViewState, "onHide");
+    //     const sigViewAgentOnShowSpy = jest.spyOn(sigViewAgent, "onShow");
+    //     const sigViewAgentOnHideSpy = jest.spyOn(sigViewAgent, "onHide");
     //     mgr.show(viewKey);
 
-    //     expect(sigViewStateOnShowSpy).toBeCalledTimes(1);
+    //     expect(sigViewAgentOnShowSpy).toBeCalledTimes(1);
 
-    //     expect(sigViewState.viewIns).toBeUndefined();
+    //     expect(sigViewAgent.viewIns).toBeUndefined();
 
     //     setTimeout(() => {
     //         expect(mgr.isPreloadResLoaded(viewKey)).toBeFalsy();
-    //         expect(sigViewState.viewIns).toBeUndefined();
+    //         expect(sigViewAgent.viewIns).toBeUndefined();
 
     //         done();
     //     }, 600);
-    //     expect(sigViewState.isLoading).toBeTruthy();
+    //     expect(sigViewAgent.isLoading).toBeTruthy();
     //     mgr.hide(viewKey, { hideOption: { p: false } });
 
-    //     expect(sigViewStateOnHideSpy).toBeCalledTimes(1);
+    //     expect(sigViewAgentOnHideSpy).toBeCalledTimes(1);
     // });
     // test("测试：多实例View的预加载后show、update、hide、destroy", function (done) {
     //     const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -849,41 +848,41 @@ describe(`ViewMgr相关测试`, function () {
     //     mgr.template({ key: viewKey2, viewClass: TestWithAnimView });
     //     mgr.preloadRes(viewKey1, () => {
     //         expect(mgr.isPreloadResLoaded(viewKey1)).toBeTruthy();
-    //         const viewState1 = mgr.create<IAkViewDefaultViewState>(viewKey1, null, true, { a: 1 });
+    //         const viewAgent1 = mgr.create<IAkViewDefaultViewAgent>(viewKey1, null, true, { a: 1 });
 
-    //         expect(viewState1.viewIns).toBeDefined();
-    //         expect(viewState1.isViewInited).toBeTruthy();
-    //         expect(viewState1.isViewShowed).toBeTruthy();
-    //         expect(viewState1.isViewShowEnd).toBeTruthy();
-    //         const viewState1ViewInsOnUpdateSpy = jest.spyOn(viewState1.viewIns, "onUpdateView");
-    //         const viewState1ViewInsOnHideSpy = jest.spyOn(viewState1.viewIns, "onHideView");
+    //         expect(viewAgent1.viewIns).toBeDefined();
+    //         expect(viewAgent1.isViewInited).toBeTruthy();
+    //         expect(viewAgent1.isViewShowed).toBeTruthy();
+    //         expect(viewAgent1.isViewShowEnd).toBeTruthy();
+    //         const viewAgent1ViewInsOnUpdateSpy = jest.spyOn(viewAgent1.viewIns, "onUpdateView");
+    //         const viewAgent1ViewInsOnHideSpy = jest.spyOn(viewAgent1.viewIns, "onHideView");
 
     //         const updateData = { b: "str" };
-    //         mgr.update(viewState1, updateData);
-    //         expect(viewState1ViewInsOnUpdateSpy).toBeCalledTimes(1);
-    //         expect(viewState1ViewInsOnUpdateSpy).toBeCalledWith(updateData);
-    //         mgr.hide(viewState1);
-    //         expect(viewState1ViewInsOnHideSpy).toBeCalledTimes(1);
-    //         expect(viewState1.isViewShowed).toBeFalsy();
-    //         const viewState1ViewInsOnDestroySpy = jest.spyOn(viewState1.viewIns, "onDestroyView");
-    //         mgr.destroy(viewState1);
-    //         expect(viewState1ViewInsOnDestroySpy).toBeCalledTimes(1);
-    //         expect(viewState1.isViewInited).toBeFalsy();
-    //         expect(viewState1.viewIns).toBeUndefined();
+    //         mgr.update(viewAgent1, updateData);
+    //         expect(viewAgent1ViewInsOnUpdateSpy).toBeCalledTimes(1);
+    //         expect(viewAgent1ViewInsOnUpdateSpy).toBeCalledWith(updateData);
+    //         mgr.hide(viewAgent1);
+    //         expect(viewAgent1ViewInsOnHideSpy).toBeCalledTimes(1);
+    //         expect(viewAgent1.isViewShowed).toBeFalsy();
+    //         const viewAgent1ViewInsOnDestroySpy = jest.spyOn(viewAgent1.viewIns, "onDestroyView");
+    //         mgr.destroy(viewAgent1);
+    //         expect(viewAgent1ViewInsOnDestroySpy).toBeCalledTimes(1);
+    //         expect(viewAgent1.isViewInited).toBeFalsy();
+    //         expect(viewAgent1.viewIns).toBeUndefined();
 
     //         mgr.preloadRes(viewKey2, () => {
-    //             const viewState2 = mgr.create<IAkViewDefaultViewState>(viewKey2, null, false);
-    //             expect(viewState2.viewIns).toBeDefined();
-    //             expect(viewState2.isViewInited).toBeTruthy();
-    //             expect(viewState2.isViewShowed).toBeFalsy();
-    //             mgr.show(viewState2);
-    //             expect(viewState2.isViewShowed).toBeTruthy();
-    //             expect(viewState2.isViewShowEnd).toBeFalsy();
+    //             const viewAgent2 = mgr.create<IAkViewDefaultViewAgent>(viewKey2, null, false);
+    //             expect(viewAgent2.viewIns).toBeDefined();
+    //             expect(viewAgent2.isViewInited).toBeTruthy();
+    //             expect(viewAgent2.isViewShowed).toBeFalsy();
+    //             mgr.show(viewAgent2);
+    //             expect(viewAgent2.isViewShowed).toBeTruthy();
+    //             expect(viewAgent2.isViewShowEnd).toBeFalsy();
 
-    //             mgr.hide(viewState2);
-    //             expect(viewState2.isViewShowed).toBeFalsy();
+    //             mgr.hide(viewAgent2);
+    //             expect(viewAgent2.isViewShowed).toBeFalsy();
     //             setTimeout(() => {
-    //                 expect(viewState2.isViewShowEnd).toBeFalsy();
+    //                 expect(viewAgent2.isViewShowEnd).toBeFalsy();
     //                 done();
     //             }, 300);
     //         });

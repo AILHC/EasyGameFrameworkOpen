@@ -1,6 +1,6 @@
 import { DefaultEventBus } from "./default-event-bus";
 import { DefaultTemplateHandler } from "./default-template-handler";
-import { DefaultViewState } from "./default-view-state";
+import { DefaultViewAgent } from "./default-view-agent";
 import { LRU2QCacheHandler } from "./lru2q-cache-handler";
 
 declare global {
@@ -22,6 +22,6 @@ export class DefaultPlugin implements akView.IPlugin {
         this.viewMgr["_tplHandler"] = new DefaultTemplateHandler(opt.tplHandlerOption);
         this.viewMgr["_eventBus"] = new DefaultEventBus();
         this.viewMgr["_cacheHandler"] = new LRU2QCacheHandler(opt.cacheHandlerOption);
-        this.viewMgr.registViewStateClass("Default", DefaultViewState);
+        this.viewMgr.registViewAgentClass("Default", DefaultViewAgent);
     }
 }

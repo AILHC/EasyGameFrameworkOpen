@@ -5,7 +5,6 @@ export class TestWithAnimView implements akView.IView {
             setTimeout(res, 10);
         });
     }
-    viewState: akView.IViewState<any>;
     onInitView?(initData?: any): void {}
     onShowView?(showData?: any): void {}
     onUpdateView?(updateData?: any): void {}
@@ -15,7 +14,6 @@ export class TestWithAnimView implements akView.IView {
 }
 export class TestView implements akView.IView {
     onBeforeViewShow?(showData?: any): void {}
-    viewState: akView.IViewState<any>;
     onInitView?(initData?: any): void {}
     onShowView?(showData?: any): void {}
     onUpdateView?(updateData?: any): void {}

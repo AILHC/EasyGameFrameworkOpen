@@ -18,7 +18,7 @@ declare global {
  * Two queues（2Q）双队列LRU算法，就是为了解决这个问题
  * https://www.yuque.com/face_sea/bp4624/2088a9fd-0032-4e50-92b4-32d10fea97df
  */
-export class LRU2QCacheHandler<ValueType extends akView.IViewState> implements akView.ICacheHandler {
+export class LRU2QCacheHandler<ValueType extends akView.IViewAgent> implements akView.ICacheHandler {
     fifoQueue: Map<string, ValueType>;
     lruQueue: Map<string, ValueType>;
     viewMgr: akView.IMgr;
@@ -63,22 +63,22 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewState> implements a
         let isExit = !!this.get(key);
         if (isExit) {
             if (lruQueue.size >= lruMaxSize) {
-                this.deleteViewStateInQueueByMaxSize(lruQueue, lruMaxSize);
+                this.deleteViewAgentInQueueByMaxSize(lruQueue, lruMaxSize);
             }
         } else {
             fifoQueue.set(key, value);
             if (fifoQueue.size >= fifoMaxSize) {
-                this.deleteViewStateInQueueByMaxSize(fifoQueue, fifoMaxSize);
+                this.deleteViewAgentInQueueByMaxSize(fifoQueue, fifoMaxSize);
             }
         }
     }
-    protected deleteViewStateInQueueByMaxSize(queue: Map<string, ValueType>, maxSize: number) {
+    protected deleteViewAgentInQueueByMaxSize(queue: Map<string, ValueType>, maxSize: number) {
         let needDeleteCount = queue.size - maxSize;
         let forCount = 0;
         for (let key of queue.keys()) {
             if (forCount < needDeleteCount) {
-                const viewState = queue.get(key);
-                if (!viewState.isViewShowed) {
+                const viewAgent = queue.get(key);
+                if (!viewAgent.isViewShowed) {
                     queue.delete(key);
                     this.viewMgr.destroy(key as any, true);
                 }
