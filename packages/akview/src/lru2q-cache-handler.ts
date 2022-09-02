@@ -3,10 +3,14 @@ declare global {
         interface ILRU2QCacheHandlerOption {
             /**
              * 最大先进先出队列大小，默认为5
+             *
+             * 控制第一次缓存的对象的容量
              */
             fifoMaxSize?: number;
             /**
              * 最大LRU队列大小，默认为5
+             *
+             * 控制两次取用以上的缓存的容量大小
              */
             lruMaxSize?: number;
         }
@@ -21,7 +25,6 @@ declare global {
 export class LRU2QCacheHandler<ValueType extends akView.IViewAgent> implements akView.ICacheHandler {
     fifoQueue: Map<string, ValueType>;
     lruQueue: Map<string, ValueType>;
-    viewMgr: akView.IMgr;
     constructor(private _option?: akView.ILRU2QCacheHandlerOption) {
         if (!this._option) {
             this._option = {} as any;
@@ -31,10 +34,20 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewAgent> implements a
         this.fifoQueue = new Map();
         this.lruQueue = new Map();
     }
+    deleteCacheCb: (value: any, force?: boolean) => boolean;
     public getCachedSize(): number {
         return this.fifoQueue.size + this.lruQueue.size;
     }
-    public clear(): void {}
+    public clear(): void {
+        this.fifoQueue.forEach((value) => {
+            this.deleteCacheCb?.(value, true);
+        });
+        this.lruQueue.forEach((value) => {
+            this.deleteCacheCb?.(value, true);
+        });
+        this.fifoQueue.clear();
+        this.lruQueue.clear();
+    }
 
     public onlyGet(key: string): ValueType {
         return this.lruQueue.get(key) || this.fifoQueue.get(key);
@@ -63,24 +76,25 @@ export class LRU2QCacheHandler<ValueType extends akView.IViewAgent> implements a
         let isExit = !!this.get(key);
         if (isExit) {
             if (lruQueue.size >= lruMaxSize) {
-                this.deleteViewAgentInQueueByMaxSize(lruQueue, lruMaxSize);
+                this.deleteCacheInQueueByMaxSize(lruQueue, lruMaxSize);
             }
         } else {
             fifoQueue.set(key, value);
             if (fifoQueue.size >= fifoMaxSize) {
-                this.deleteViewAgentInQueueByMaxSize(fifoQueue, fifoMaxSize);
+                this.deleteCacheInQueueByMaxSize(fifoQueue, fifoMaxSize);
             }
         }
     }
-    protected deleteViewAgentInQueueByMaxSize(queue: Map<string, ValueType>, maxSize: number) {
+    protected deleteCacheInQueueByMaxSize(queue: Map<string, ValueType>, maxSize: number) {
         let needDeleteCount = queue.size - maxSize;
         let forCount = 0;
-        for (let key of queue.keys()) {
+        const keyValues = queue.entries();
+        for (const [key, value] of keyValues) {
             if (forCount < needDeleteCount) {
-                const viewAgent = queue.get(key);
-                if (!viewAgent.isViewShowed) {
+                const cache = value;
+                const canDelete = this.deleteCacheCb?.(cache);
+                if (canDelete) {
                     queue.delete(key);
-                    this.viewMgr.destroy(key as any, true);
                 }
             } else {
                 break;

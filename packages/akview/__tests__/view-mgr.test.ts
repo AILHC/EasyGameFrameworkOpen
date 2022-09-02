@@ -311,27 +311,6 @@ describe(`ViewMgr相关测试`, function () {
         const viewAgent4 = mgr4.createViewAgent(viewKey);
         expect(viewAgent4).toEqual(testCreateViewAgentReturnObj);
     });
-    test("测试：ViewMgr.getOrCreateViewAgent", function () {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
-        mgr.init({ defaultViewAgentClass: DefaultViewAgent });
-        const viewKey: any = "test_ViewMgr.getOrCreateViewAgent";
-        const viewKey2: any = "test_ViewMgr.getOrCreateViewAgent2";
-        mgr.template(viewKey);
-        mgr.template(viewKey2);
-        //传空值id,返回undefined
-        const viewAgent1 = mgr.getOrCreateViewAgent("");
-        expect(viewAgent1).toBeUndefined();
-
-        //放入测试viewAgent，getOrCreateViewAgent返回测试viewAgent
-        const testViewAgentObj = {};
-        mgr["_viewAgentMap"][viewKey] = testViewAgentObj as any;
-        const viewAgent2 = mgr.getOrCreateViewAgent(viewKey);
-        expect(viewAgent2).toEqual(testViewAgentObj);
-        //传入key，返回DefaultViewAgent实例
-        const viewAgent3 = mgr.getOrCreateViewAgent(viewKey2);
-        expect(viewAgent3 instanceof DefaultViewAgent).toBeTruthy();
-        expect(viewAgent3.id).toEqual(viewKey2);
-    });
     test("测试：ViewMgr.getViewAgent", function () {
         const mgr = new ViewMgr();
         mgr.init();
@@ -355,13 +334,6 @@ describe(`ViewMgr相关测试`, function () {
         viewAgent.viewIns = {} as any;
         expect(mgr.getViewIns("testKey1")).toBeDefined();
         expect(mgr.getViewIns("")).toBeUndefined();
-    });
-    test("测试：ViewMgr.deleteViewAgent", function () {
-        const mgr = new ViewMgr();
-        mgr.init();
-        const viewAgent = (mgr["_viewAgentMap"]["testKey1"] = new DefaultViewAgent());
-        mgr.deleteViewAgent("testKey1");
-        expect(Object.keys(mgr["_viewAgentMap"]).length).toEqual(0);
     });
     test("测试: ViewMgr.preloadRes", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
@@ -580,6 +552,41 @@ describe(`ViewMgr相关测试`, function () {
         const view3Id = viewMgr.show({ key: viewKey3 });
         expect(view3Id).toEqual(viewKey3);
     });
+    test("测试：map遍历", function () {
+        const map = new Map();
+        map.set("a", 1);
+        map.set("b", 1);
+        let keyG;
+        for (let key of map.keys()) {
+            keyG = key;
+        }
+        expect(keyG).toBe("b");
+    });
+    test("测试：ViewMgr lru缓存模式", function () {
+        const viewMgr = new ViewMgr();
+        viewMgr.init();
+        viewMgr.use(new DefaultPlugin(), { cacheHandlerOption: { lruMaxSize: 2, fifoMaxSize: 2 } });
+        const viewKey1: any = "viewKey_ViewMgr.show1";
+        const viewKey2: any = "viewKey_ViewMgr.show2";
+        const viewKey3: any = "viewKey_ViewMgr.show3";
+        const viewKey4: any = "viewKey_ViewMgr.show4";
+        viewMgr.template({ key: viewKey1, cacheMode: "CUSTOM" });
+        viewMgr.template({ key: viewKey2, cacheMode: "CUSTOM" });
+        viewMgr.template({ key: viewKey3, cacheMode: "CUSTOM" });
+        viewMgr.template({ key: viewKey4, cacheMode: "CUSTOM" });
+        viewMgr.show(viewKey1);
+        viewMgr.show(viewKey2);
+        viewMgr.hide(viewKey1);
+        viewMgr.show(viewKey3);
+
+        expect(viewMgr.getViewAgent(viewKey1)).toBeUndefined();
+        viewMgr.show(viewKey2);
+        viewMgr.show(viewKey3);
+        viewMgr.show(viewKey1);
+        viewMgr.show(viewKey1);
+        expect(viewMgr.getViewAgent(viewKey2)).toBeUndefined();
+    });
+
     test("测试: 资源加载loadOption & progressCallback & isPreloadResLoading & isPreloadResLoaded", function (done) {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();
 
