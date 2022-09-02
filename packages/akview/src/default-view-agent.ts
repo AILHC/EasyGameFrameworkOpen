@@ -83,7 +83,9 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
 
     hideCfg?: akView.IHideConfig;
     viewIns?: IAkViewDefaultView;
+    childViewInsMap?: akView.ChildViewInsMapType;
     viewMgr: akView.IMgr;
+
     public destroyed: boolean;
 
     private _option: IAkViewDefaultViewAgentOption;
@@ -205,6 +207,15 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
             this.viewMgr.addTemplateResRef(this);
             if (!this.isViewInited && viewIns) {
                 viewIns.onInitView?.(this.showCfg.onInitData);
+                //子view处理
+                const childViewMap = this.childViewInsMap;
+                if (childViewMap) {
+                    let childViewIns: akView.IView;
+                    for (const childViewInsKey in childViewMap) {
+                        childViewIns = childViewMap[childViewInsKey];
+                        childViewIns.onInitView && childViewIns.onInitView(this.showCfg.onInitData);
+                    }
+                }
                 this.isViewInited = true;
                 this.viewMgr.eventBus.emitAkViewEvent("onViewInit", this.id);
             }
@@ -220,13 +231,31 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
         tplHandler && tplHandler.addToLayer && tplHandler.addToLayer(this);
 
         ins.onShowView && ins.onShowView(this.showCfg.onShowData);
+        //子view处理
+        const childViewMap = this.childViewInsMap;
+        if (childViewMap) {
+            let childViewIns: akView.IView;
+            for (const childViewInsKey in childViewMap) {
+                childViewIns = childViewMap[childViewInsKey];
+                childViewIns.onUpdateView && childViewIns.onShowView(this.showCfg.onShowData);
+            }
+        }
         eventBus.emitAkViewEvent("onViewShow", this.id);
         const promise = ins.onPlayAnim && ins.onPlayAnim(true);
         this.showingPromise = promise;
         this.isViewShowed = true;
         this.needShowView = false;
-        if (this.updateState && ins.onUpdateView) {
-            ins.onUpdateView(this.updateState);
+        const updateState = this.updateState;
+        if (updateState && ins.onUpdateView) {
+            ins.onUpdateView(updateState);
+            const childViewMap = this.childViewInsMap;
+            if (childViewMap) {
+                let childViewIns: akView.IView;
+                for (const childViewInsKey in childViewMap) {
+                    childViewIns = childViewMap[childViewInsKey];
+                    childViewIns.onUpdateView && childViewIns.onUpdateView(updateState);
+                }
+            }
             this.updateState = undefined;
         }
 
@@ -253,9 +282,19 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
         const viewMgr = this.viewMgr;
         const { eventBus, tplHandler } = viewMgr;
         if (ins) {
+            //子view处理
+            const childViewMap = this.childViewInsMap;
+            if (childViewMap) {
+                let childViewIns: akView.IView;
+                for (const childViewInsKey in childViewMap) {
+                    childViewIns = childViewMap[childViewInsKey];
+                    childViewIns.onHideView && childViewIns.onHideView(hideCfg && hideCfg.hideOption);
+                }
+            }
             tplHandler && tplHandler.removeFromLayer && tplHandler.removeFromLayer(this);
 
             ins.onHideView && ins.onHideView(hideCfg && hideCfg.hideOption);
+
             eventBus.offAkEvent("onWindowResize", ins.onWindowResize, ins);
         }
         if (this._option.canDecTemplateResRefOnHide && hideCfg && hideCfg.decTemplateResRef) {
@@ -279,7 +318,17 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
             // } else {
 
             // }
+            const childViewMap = this.childViewInsMap;
+            if (childViewMap) {
+                let childViewIns: akView.IView;
+                for (const childViewInsKey in childViewMap) {
+                    childViewIns = childViewMap[childViewInsKey];
+                    childViewIns.onDestroyView && childViewIns.onDestroyView();
+                }
+                this.childViewInsMap = undefined;
+            }
             viewIns.onDestroyView && viewIns.onDestroyView();
+
             this.viewIns = undefined;
         }
         const template = this.template;

@@ -204,18 +204,30 @@ declare global {
              * 配置资源加载是否显示加载中界面，以及配置加载界面样式
              */
             loadOption?: IAkViewLoadOption;
-
+            /**
+             * 子view字典
+             * 推荐
+             * key为绑定节点路径或者节点key
+             * value为类型
+             */
+            childViews?: any;
             /**
              * 自定义生命周期函数映射,主要用于兼容
              */
             // viewLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<akView.IView>>]?: string };
         }
+        type ChildViewInsMapType = { [key: string]: akView.IView };
         interface ITemplateHandler<TemplateType extends akView.ITemplate<any> = any> {
             /**
              * 创建akView.IView实例
              * @param template
              */
             createViewIns<T extends akView.IView>(template: TemplateType): T;
+            /**
+             * 创建子View
+             * @param template
+             */
+            createChildViewIns?(template: TemplateType): ChildViewInsMapType;
             /**
              * 销毁渲染实例
              * @param viewIns
@@ -390,6 +402,10 @@ declare global {
             /**渲染逻辑实例 */
             viewIns?: akView.IView;
             /**
+             * 子渲染逻辑实例字典
+             */
+            childViewInsMap?: ChildViewInsMapType;
+            /**
              * 控制器实例
              */
             viewMgr?: akView.IMgr;
@@ -431,7 +447,11 @@ declare global {
         }
 
         interface ICacheHandler<ValueType = any> {
-            viewMgr: akView.IMgr;
+            /**
+             * 删除缓存回调
+             * 返回是否删除
+             */
+            deleteCacheCb: (value: ValueType, force?: boolean) => boolean;
             /**
              * 获取缓存大小
              */
@@ -547,11 +567,19 @@ declare global {
             hideOption?: akView.GetHideOptionType<ConfigKeyType, ViewDataTypes>;
         }
 
-        interface IView {
+        interface IView<ViewStateType = any, ChildViewMap = any> {
             /**
              * templateKey,自动赋值
              */
             key?: string;
+            /**
+             * 状态对象
+             */
+            state?: ViewStateType;
+            /**
+             * 子view引用
+             */
+            refs?: ChildViewMap;
             /**
              * 获取显示节点
              */
@@ -921,7 +949,17 @@ declare global {
              * @param destroyRes 是否销毁资源(安全)
              */
             destroy(keyOrId: keyType | String, destroyRes?: boolean): void;
-
+            /**
+             * 添加子view到View
+             * @param viewId
+             * @param childView
+             * @param childViewKey
+             */
+            addChildToView<ChildViewType extends akView.IView, ChildViewKeyType = any>(
+                viewId: keyType | String,
+                childView: ChildViewType,
+                childViewKey?: ChildViewKeyType | String
+            ): ChildViewType;
             /**
              * 模板固定资源是否加载了
              * @param keyOrTemplate template.key 或者 id 或者 template
@@ -968,26 +1006,16 @@ declare global {
             /**
              * 根据id获取缓存中的ViewAgent
              * @param id
+             * @param isOnlyGet 是否只获取，默认是，只获取不会触发缓存刷新
              * @returns
              */
-            getViewAgent(id: string): akView.IViewAgent;
+            getViewAgent(id: string, isOnlyGet?: boolean): akView.IViewAgent;
             /**
              * 创建View实例
              * @param viewAgent
              * @returns
              */
             createViewIns(viewAgent: akView.IViewAgent): akView.IView;
-            /**
-             * 根据id获取缓存中的ViewAgent，没有就创建
-             * @param id
-             * @returns
-             */
-            getOrCreateViewAgent<T extends akView.IViewAgent = akView.IViewAgent>(id: string): T;
-            /**
-             * 移除指定id的viewAgent
-             * @param id
-             */
-            deleteViewAgent(id: string): void;
         }
     }
 }

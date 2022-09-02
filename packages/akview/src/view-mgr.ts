@@ -18,6 +18,16 @@ export class ViewMgr<
     public get cacheHandler(): akView.ICacheHandler {
         return this._cacheHandler;
     }
+    public set cacheHandler(cacheHandler: akView.ICacheHandler) {
+        this._cacheHandler = cacheHandler;
+        cacheHandler.deleteCacheCb = (value, force) => {
+            if (value.isViewShowed && !force) {
+                return false;
+            }
+            this._destroy(value);
+            return true;
+        };
+    }
 
     private _eventBus: akView.IEventBus;
     /**事件处理器 */
@@ -457,7 +467,7 @@ export class ViewMgr<
             };
         }
         if (!viewAgent) {
-            viewAgent = this.getOrCreateViewAgent(showCfg.id);
+            viewAgent = this._getOrCreateViewAgent(showCfg.id);
         }
         if (viewAgent) {
             if (isSig && !viewAgent.cacheMode) {
@@ -532,7 +542,30 @@ export class ViewMgr<
     private _destroy(viewAgent: akView.IViewAgent, destroyRes?: boolean) {
         viewAgent.onDestroy(destroyRes);
         //从缓存中移除
-        this.deleteViewAgent(viewAgent.id);
+        this._deleteViewAgent(viewAgent.id);
+    }
+    addChildToView<ChildViewType extends akView.IView<any, any>, ChildViewKeyType = any>(
+        viewId: String | keyType,
+        childViewIns: ChildViewType,
+        childViewKey?: String | ChildViewKeyType
+    ): ChildViewType {
+        const viewAgent = this.getViewAgent(viewId as string);
+        if (!viewAgent) return null;
+        if (typeof childViewKey != "string") {
+            console.error("viewMgr addChildToView childViewKey is not string");
+            return;
+        }
+        if (!childViewKey) {
+            childViewKey = childViewIns.key;
+        } else {
+            childViewIns.key = childViewKey as string;
+        }
+        if (!childViewKey) {
+            console.error("viewMgr addChildToView childViewKey is null");
+            return;
+        }
+        viewAgent.childViewInsMap[childViewKey as string] = childViewIns;
+        return childViewIns;
     }
     isViewInited<ViewAgentType extends akView.IViewAgent>(keyOrId: keyType | String): boolean {
         let viewAgent: ViewAgentType = this.getViewAgent(keyOrId as string);
@@ -559,10 +592,13 @@ export class ViewMgr<
         //先自定义的创建
         viewIns = tplHandler.createViewIns && tplHandler.createViewIns(template);
         viewIns = viewIns || (template.viewClass && new template.viewClass());
+        let childViewInsMap = tplHandler.createChildViewIns && tplHandler.createChildViewIns(template);
 
         if (viewIns) {
+            viewAgent.childViewInsMap = childViewInsMap;
             viewAgent.viewIns = viewIns;
             viewIns.key = template.key as string;
+            viewIns.refs = viewAgent.childViewInsMap;
         } else {
             console.warn(`key:${String(template.key)} ins fail`);
         }
@@ -582,9 +618,9 @@ export class ViewMgr<
      * @returns
      */
     getViewAgent<T extends akView.IViewAgent = akView.IViewAgent>(id: string, isOnlyGet: boolean = true): T {
+        const cacheHandler = this._cacheHandler;
         return (
-            this._viewAgentMap[id] ||
-            (this._cacheHandler && (isOnlyGet ? this._cacheHandler.onlyGet(id) : this._cacheHandler.get(id)))
+            this._viewAgentMap[id] || (cacheHandler && (isOnlyGet ? cacheHandler.onlyGet(id) : cacheHandler.get(id)))
         );
     }
     /**
@@ -593,8 +629,8 @@ export class ViewMgr<
      * @param id
      * @returns
      */
-    getOrCreateViewAgent<T extends akView.IViewAgent = akView.IViewAgent>(id: string): T {
-        let viewAgent = this.getViewAgent(id);
+    protected _getOrCreateViewAgent<T extends akView.IViewAgent = akView.IViewAgent>(id: string): T {
+        let viewAgent = this.getViewAgent(id, false);
         if (!viewAgent) {
             viewAgent = this.createViewAgent(id);
         }
@@ -630,7 +666,7 @@ export class ViewMgr<
      * 移除指定id的viewAgent
      * @param id
      */
-    deleteViewAgent(id: string): void {
+    protected _deleteViewAgent(id: string): void {
         delete this._viewAgentMap[id];
         this._cacheHandler && this._cacheHandler.delete(id);
     }
