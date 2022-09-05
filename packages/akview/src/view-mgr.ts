@@ -544,29 +544,6 @@ export class ViewMgr<
         //从缓存中移除
         this._deleteViewAgent(viewAgent.id);
     }
-    addChildToView<ChildViewType extends akView.IView<any, any>, ChildViewKeyType = any>(
-        viewId: String | keyType,
-        childViewIns: ChildViewType,
-        childViewKey?: String | ChildViewKeyType
-    ): ChildViewType {
-        const viewAgent = this.getViewAgent(viewId as string);
-        if (!viewAgent) return null;
-        if (typeof childViewKey != "string") {
-            console.error("viewMgr addChildToView childViewKey is not string");
-            return;
-        }
-        if (!childViewKey) {
-            childViewKey = childViewIns.key;
-        } else {
-            childViewIns.key = childViewKey as string;
-        }
-        if (!childViewKey) {
-            console.error("viewMgr addChildToView childViewKey is null");
-            return;
-        }
-        viewAgent.childViewInsMap[childViewKey as string] = childViewIns;
-        return childViewIns;
-    }
     isViewInited<ViewAgentType extends akView.IViewAgent>(keyOrId: keyType | String): boolean {
         let viewAgent: ViewAgentType = this.getViewAgent(keyOrId as string);
 
@@ -592,13 +569,11 @@ export class ViewMgr<
         //先自定义的创建
         viewIns = tplHandler.createViewIns && tplHandler.createViewIns(template);
         viewIns = viewIns || (template.viewClass && new template.viewClass());
-        let childViewInsMap = tplHandler.createChildViewIns && tplHandler.createChildViewIns(template);
+        tplHandler.bindChildViews && tplHandler.bindChildViews(viewIns, template);
 
         if (viewIns) {
-            viewAgent.childViewInsMap = childViewInsMap;
             viewAgent.viewIns = viewIns;
             viewIns.key = template.key as string;
-            viewIns.refs = viewAgent.childViewInsMap;
         } else {
             console.warn(`key:${String(template.key)} ins fail`);
         }

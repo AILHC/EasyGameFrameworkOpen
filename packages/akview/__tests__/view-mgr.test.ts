@@ -3,6 +3,7 @@ import { DefaultEventBus } from "../src/default-event-bus";
 import { DefaultTemplateHandler } from "../src/default-template-handler";
 import { DefaultViewAgent } from "../src/default-view-agent";
 import { LRU2QCacheHandler } from "../src/lru2q-cache-handler";
+import { TestParentView } from "./test-use-logics/test-child-view";
 import { TestViewAgent } from "./test-use-logics/test-view-agent";
 
 declare global {
@@ -250,6 +251,7 @@ describe(`ViewMgr相关测试`, function () {
     test("测试：ViewMgr.createViewIns", function () {
         //TODO
         const mgr = new ViewMgr();
+
         mgr.init({ defaultViewAgentClass: DefaultViewAgent });
         const testViewKey1 = "test_ViewMgr.createViewIns1" as any;
         mgr.template(testViewKey1);
@@ -269,7 +271,16 @@ describe(`ViewMgr相关测试`, function () {
 
         expect(viewAgent2?.viewIns).toBe(viewIns2);
         expect(viewIns2.key).toBe(testViewKey2);
-        mgr["_tplHandler"];
+    });
+    test("测试:ViewMgr.createViewIns bindChildViews", function () {
+        var viewMgr = new ViewMgr();
+        viewMgr.init();
+        viewMgr.use(new DefaultPlugin());
+        const viewKey = "TestParentView";
+        TestParentView;
+        const viewAgent = viewMgr.createViewAgent(viewKey);
+        const viewIns: TestParentView = viewMgr.createViewIns(viewAgent);
+        expect(viewIns.refs).toBeDefined();
     });
     test("测试：ViewMgr.createViewAgent", function () {
         const mgr = new ViewMgr<ITestViewKeys, ITestViewDataTypes>();

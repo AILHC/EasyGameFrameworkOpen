@@ -1,4 +1,10 @@
 export class TestWithAnimView implements akView.IView {
+    key?: string;
+    state: any;
+    refs: any;
+    onWindowResize?(data: IAkViewResizeData): void {
+        throw new Error("Method not implemented.");
+    }
     onBeforeViewShow?(showData?: any): void {}
     onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void> {
         return new Promise((res) => {
@@ -13,6 +19,12 @@ export class TestWithAnimView implements akView.IView {
     getNode() {}
 }
 export class TestView implements akView.IView {
+    key?: string;
+    state: any;
+    refs: any;
+    onWindowResize?(data: IAkViewResizeData): void {
+        throw new Error("Method not implemented.");
+    }
     onBeforeViewShow?(showData?: any): void {}
     onInitView?(initData?: any): void {}
     onShowView?(showData?: any): void {}

@@ -83,7 +83,6 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
 
     hideCfg?: akView.IHideConfig;
     viewIns?: IAkViewDefaultView;
-    childViewInsMap?: akView.ChildViewInsMapType;
     viewMgr: akView.IMgr;
 
     public destroyed: boolean;
@@ -111,10 +110,10 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
             console.error(`id:${this.id} isViewInited is false`);
         }
     }
-    onShow(showCfg: akView.IShowConfig) {
+    onShow(showCfg?: akView.IShowConfig) {
         this.showCfg = showCfg;
         this.needDestroy = false;
-        this.needShowView = showCfg.needShowView;
+        this.needShowView = showCfg ? showCfg.needShowView : true;
         this._needDestroyRes = false;
         //在显示中或者正在隐藏中
         if (this.isViewShowed || this.hiding) {
@@ -140,7 +139,7 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
                 }
             };
             this.isLoading = true;
-            this.viewMgr.preloadResById(this.id, onLoadedCb, showCfg.loadOption);
+            this.viewMgr.preloadResById(this.id, onLoadedCb, showCfg?.loadOption);
         }
     }
     onUpdate(updateState: any) {
@@ -148,6 +147,7 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
         const viewIns = this.viewIns;
         if (this.isViewInited) {
             viewIns?.onUpdateView?.(updateState);
+            this._updateChildViews(viewIns, updateState);
         } else {
             this.updateState = updateState;
         }
@@ -206,14 +206,15 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
             //持有模板资源
             this.viewMgr.addTemplateResRef(this);
             if (!this.isViewInited && viewIns) {
-                viewIns.onInitView?.(this.showCfg.onInitData);
+                const onInitData = this.showCfg?.onInitData;
+                viewIns.onInitView?.(onInitData);
                 //子view处理
-                const childViewMap = this.childViewInsMap;
+                const childViewMap = viewIns.refs;
                 if (childViewMap) {
                     let childViewIns: akView.IView;
                     for (const childViewInsKey in childViewMap) {
                         childViewIns = childViewMap[childViewInsKey];
-                        childViewIns.onInitView && childViewIns.onInitView(this.showCfg.onInitData);
+                        childViewIns.onInitView && childViewIns.onInitView(onInitData);
                     }
                 }
                 this.isViewInited = true;
@@ -222,40 +223,34 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
         }
     }
     showView(): void {
-        const ins = this.viewIns;
-        ins.onBeforeViewShow?.(this.showCfg.onShowData);
+        const viewIns = this.viewIns;
+        const onShowData = this.showCfg?.onShowData;
+        viewIns.onBeforeViewShow?.(onShowData);
         const viewMgr = this.viewMgr;
         const { tplHandler, eventBus } = viewMgr;
-        eventBus.onAkEvent("onWindowResize", ins.onWindowResize, ins);
+        eventBus.onAkEvent("onWindowResize", viewIns.onWindowResize, viewIns);
 
         tplHandler && tplHandler.addToLayer && tplHandler.addToLayer(this);
 
-        ins.onShowView && ins.onShowView(this.showCfg.onShowData);
+        viewIns.onShowView && viewIns.onShowView(onShowData);
         //子view处理
-        const childViewMap = this.childViewInsMap;
+        const childViewMap = viewIns.refs;
         if (childViewMap) {
             let childViewIns: akView.IView;
             for (const childViewInsKey in childViewMap) {
                 childViewIns = childViewMap[childViewInsKey];
-                childViewIns.onUpdateView && childViewIns.onShowView(this.showCfg.onShowData);
+                childViewIns.onShowView && childViewIns.onShowView(onShowData);
             }
         }
         eventBus.emitAkViewEvent("onViewShow", this.id);
-        const promise = ins.onPlayAnim && ins.onPlayAnim(true);
+        const promise = viewIns.onPlayAnim && viewIns.onPlayAnim(true);
         this.showingPromise = promise;
         this.isViewShowed = true;
         this.needShowView = false;
         const updateState = this.updateState;
-        if (updateState && ins.onUpdateView) {
-            ins.onUpdateView(updateState);
-            const childViewMap = this.childViewInsMap;
-            if (childViewMap) {
-                let childViewIns: akView.IView;
-                for (const childViewInsKey in childViewMap) {
-                    childViewIns = childViewMap[childViewInsKey];
-                    childViewIns.onUpdateView && childViewIns.onUpdateView(updateState);
-                }
-            }
+        if (updateState && viewIns.onUpdateView) {
+            viewIns.onUpdateView(updateState);
+            this._updateChildViews(viewIns, updateState);
             this.updateState = undefined;
         }
 
@@ -269,6 +264,16 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
             this.entryShowEnd();
         }
     }
+    private _updateChildViews(viewIns: akView.IView, updateState: any) {
+        const childViewMap = viewIns.refs;
+        if (childViewMap) {
+            let childViewIns: akView.IView;
+            for (const childViewInsKey in childViewMap) {
+                childViewIns = childViewMap[childViewInsKey];
+                childViewIns.onUpdateView && childViewIns.onUpdateView(updateState);
+            }
+        }
+    }
     entryShowEnd(): void {
         this.isViewShowEnd = true;
         this.viewMgr.eventBus.emitAkViewEvent("onViewShowEnd", this.id);
@@ -278,24 +283,25 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
         this.isViewShowed = false;
         this.isViewShowEnd = false;
         const hideCfg = this.hideCfg;
-        const ins = this.viewIns;
+        const viewIns = this.viewIns;
         const viewMgr = this.viewMgr;
         const { eventBus, tplHandler } = viewMgr;
-        if (ins) {
+        const hideOption = hideCfg && hideCfg.hideOption;
+        if (viewIns) {
             //子view处理
-            const childViewMap = this.childViewInsMap;
+            const childViewMap = viewIns.refs;
             if (childViewMap) {
                 let childViewIns: akView.IView;
                 for (const childViewInsKey in childViewMap) {
                     childViewIns = childViewMap[childViewInsKey];
-                    childViewIns.onHideView && childViewIns.onHideView(hideCfg && hideCfg.hideOption);
+                    childViewIns.onHideView && childViewIns.onHideView(hideOption);
                 }
             }
             tplHandler && tplHandler.removeFromLayer && tplHandler.removeFromLayer(this);
 
-            ins.onHideView && ins.onHideView(hideCfg && hideCfg.hideOption);
+            viewIns.onHideView && viewIns.onHideView(hideOption);
 
-            eventBus.offAkEvent("onWindowResize", ins.onWindowResize, ins);
+            eventBus.offAkEvent("onWindowResize", viewIns.onWindowResize, viewIns);
         }
         if (this._option.canDecTemplateResRefOnHide && hideCfg && hideCfg.decTemplateResRef) {
             viewMgr.decTemplateResRef(this);
@@ -318,14 +324,14 @@ export class DefaultViewAgent implements IAkViewDefaultViewAgent {
             // } else {
 
             // }
-            const childViewMap = this.childViewInsMap;
+            const childViewMap = viewIns.refs;
             if (childViewMap) {
                 let childViewIns: akView.IView;
                 for (const childViewInsKey in childViewMap) {
                     childViewIns = childViewMap[childViewInsKey];
                     childViewIns.onDestroyView && childViewIns.onDestroyView();
                 }
-                this.childViewInsMap = undefined;
+                viewIns.refs = undefined;
             }
             viewIns.onDestroyView && viewIns.onDestroyView();
 

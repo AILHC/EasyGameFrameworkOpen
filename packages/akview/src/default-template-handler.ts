@@ -118,6 +118,20 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
         let viewIns = option.createView && option.createView(template);
         return viewIns as T;
     }
+    bindChildViews<T extends akView.IView<any, any> = akView.IView<any, any>>(
+        viewIns: T,
+        template: IAkViewDefaultTemplate<IAkViewKeyTypes>
+    ): void {
+        const childViews = template.childViews;
+        if (childViews) {
+            const childViewInsMap = {};
+            for (const key in childViews) {
+                childViewInsMap[key] = new childViews[key]();
+            }
+            viewIns.refs = childViewInsMap;
+        }
+    }
+
     addToLayer?(viewAgent: IAkViewDefaultViewAgent): void {
         const template = viewAgent.template;
         const option = this._option;

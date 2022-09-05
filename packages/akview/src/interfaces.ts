@@ -205,10 +205,12 @@ declare global {
              */
             loadOption?: IAkViewLoadOption;
             /**
-             * 子view字典
+             * 子view创建字典
              * 推荐
              * key为绑定节点路径或者节点key
-             * value为类型
+             * value为类型或者创建函数
+             * 在onInitView前，进行创建绑定
+             * 如需自行绑定，比如在onInitView node才有值的，可以不赋值，自行绑定
              */
             childViews?: any;
             /**
@@ -224,10 +226,10 @@ declare global {
              */
             createViewIns<T extends akView.IView>(template: TemplateType): T;
             /**
-             * 创建子View
+             * 绑定子View
              * @param template
              */
-            createChildViewIns?(template: TemplateType): ChildViewInsMapType;
+            bindChildViews?<T extends akView.IView = akView.IView>(viewIns: T, template: TemplateType): void;
             /**
              * 销毁渲染实例
              * @param viewIns
@@ -402,10 +404,6 @@ declare global {
             /**渲染逻辑实例 */
             viewIns?: akView.IView;
             /**
-             * 子渲染逻辑实例字典
-             */
-            childViewInsMap?: ChildViewInsMapType;
-            /**
              * 控制器实例
              */
             viewMgr?: akView.IMgr;
@@ -423,7 +421,7 @@ declare global {
             /**
              * 加载并实例化(如果没加载和实例化)，然后显示到舞台
              */
-            onShow(showCfg: akView.IShowConfig): void;
+            onShow(showCfg?: akView.IShowConfig): void;
             /**
              * 更新
              * @param updateState
@@ -575,11 +573,14 @@ declare global {
             /**
              * 状态对象
              */
-            state?: ViewStateType;
+            state: ViewStateType;
             /**
              * 子view引用
+             * 需要实现
+             * @type {akView.ITemplateHandler} 的 bindChildViews
+             * 或者自行在onInitView进行绑定
              */
-            refs?: ChildViewMap;
+            refs: ChildViewMap;
             /**
              * 获取显示节点
              */
@@ -949,17 +950,6 @@ declare global {
              * @param destroyRes 是否销毁资源(安全)
              */
             destroy(keyOrId: keyType | String, destroyRes?: boolean): void;
-            /**
-             * 添加子view到View
-             * @param viewId
-             * @param childView
-             * @param childViewKey
-             */
-            addChildToView<ChildViewType extends akView.IView, ChildViewKeyType = any>(
-                viewId: keyType | String,
-                childView: ChildViewType,
-                childViewKey?: ChildViewKeyType | String
-            ): ChildViewType;
             /**
              * 模板固定资源是否加载了
              * @param keyOrTemplate template.key 或者 id 或者 template
