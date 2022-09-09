@@ -12,7 +12,7 @@ declare global {
 
 let viewMgr: akView.IMgr;
 
-export function setViewMgr(mgr: akView.IMgr) {
+export function injectViewMgr(mgr: akView.IMgr) {
     viewMgr = mgr;
 }
 /**
@@ -20,7 +20,7 @@ export function setViewMgr(mgr: akView.IMgr) {
  * @param template 显示控制器定义
  * @param templateMap 默认为全局字典，可自定义
  */
-export function viewTemplateDecorator<TemplateType extends akView.ITemplate<any> = IAkViewDefaultTemplate>(
+export function viewTemplateDecorator<TemplateType extends akView.ITemplate<any> = any>(
     template: Omit<TemplateType, "viewClass">,
     templateMap: akView.TemplateMap<any> = globalViewTemplateMap
 ) {
@@ -45,7 +45,7 @@ export function viewTemplateDecorator<TemplateType extends akView.ITemplate<any>
  * @param template 显示控制器定义
  * @param templateMap 默认为全局字典，可自定义
  */
-export function viewTemplate<TemplateType extends akView.ITemplate<any> = IAkViewDefaultTemplate>(
+export function viewTemplate<TemplateType extends akView.ITemplate<any> = any>(
     template: TemplateType,
     templateMap: akView.TemplateMap<any> = globalViewTemplateMap
 ): boolean {
@@ -83,4 +83,25 @@ export function viewPluginDecorator<T>(option: T) {
             viewPlugin(plugin, option);
         }
     };
+}
+/**
+ * 构建key类型Map
+ * const keyMap = createKeyMap<KeyTypes>();
+ * keyMap.test //有类型提示
+ * 但值和类型需要一致
+ * interface KeyTypes {
+ *  test:"test"
+ *  "test.test2":"test.test2"
+ * }
+ * @returns
+ */
+export function createKeyMap<KeyTypes>(): KeyTypes {
+    return new Proxy(
+        {},
+        {
+            get(target, p, receiver) {
+                return p;
+            }
+        }
+    ) as any;
 }

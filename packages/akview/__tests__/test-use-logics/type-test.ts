@@ -1,4 +1,4 @@
-import { ViewMgr } from "../../src";
+import { createKeyMap, ViewMgr } from "../../src";
 import { DefaultViewAgent } from "../../src/default-view-agent";
 
 //使用自定义的类型
@@ -8,28 +8,28 @@ interface CustomViewKeys {
     typeTest2: "typeTest2";
     typeTest3: "typeTest3";
 }
-interface CustomViewDataTypes {
-    typeTest: ToAkViewDataType<{ showData: number; initData: Date; updateData: string; hideOption: { play: boolean } }>;
-    typeTest3: ToAkViewDataType<{
-        showData: string;
-        initData: Date;
-        updateData: string;
-        hideOption: { play: boolean };
+interface CustomViewOptTypes {
+    typeTest: ToAkViewOptType<{ showOpt: number; initOpt: Date; updateOpt: string; hideOpt: { play: boolean } }>;
+    typeTest3: ToAkViewOptType<{
+        showOpt: string;
+        initOpt: Date;
+        updateOpt: string;
+        hideOpt: { play: boolean };
     }>;
 }
-type TypeTest2DataType = AddAkViewDataType<
+type TypeTest2DataType = AddAkViewOptType<
     CustomViewKeys,
     "typeTest2",
     {
-        showData: { a: number; b: number };
-        initData: { m: number; n: number };
-        updateData: { c: number; d: number };
-        hideOption: { open: boolean };
+        showOpt: { a: number; b: number };
+        initOpt: { m: number; n: number };
+        updateOpt: { c: number; d: number };
+        hideOpt: { open: boolean };
     }
 >;
-interface CustomViewDataTypes extends TypeTest2DataType {}
+interface CustomViewOptTypes extends TypeTest2DataType {}
 
-const viewMgr: akView.IMgr<CustomViewKeys, CustomViewDataTypes> = new ViewMgr<CustomViewKeys, CustomViewDataTypes>();
+const viewMgr: akView.IMgr<CustomViewKeys, CustomViewOptTypes> = new ViewMgr<CustomViewKeys, CustomViewOptTypes>();
 //注册Template测试
 viewMgr.template("typeTest");
 //类型不对报错
@@ -104,9 +104,9 @@ viewMgr.update<GetViewKeyType<CustomViewKeys, "typeTest">>(viewAgent, "1");
 
 //隐藏传递option类型,类型应该是boolean
 
-viewMgr.hide("typeTest", { hideOption: { play: 1 } });
+viewMgr.hide("typeTest", { hideOpt: { play: 1 } });
 
-viewMgr.hide("typeTest", { hideOption: { play: false } });
+viewMgr.hide("typeTest", { hideOpt: { play: false } });
 //可以获得类型提示,对于字符串变量也不会报错
 viewMgr.isPreloadResLoading();
 viewMgr.isPreloadResLoading("typeTest3");
@@ -116,7 +116,7 @@ viewMgr.destroy("typeTest");
 viewMgr.isViewInited(viewAgent);
 viewMgr.isViewShowed("typeTest2");
 
-//扩展IAkViewKeys和IAkViewDataTypes的类型
+//扩展IAkViewKeys和IAkViewOptTypes的类型
 declare global {
     interface IAkViewKeyTypes {
         /**dasfas */
@@ -124,34 +124,34 @@ declare global {
         testKey2: "testKey2";
         testKey3: "testKey3";
     }
-    interface IAkViewDataTypes {
-        testKey1: ToAkViewDataType<{
-            showData: number;
-            initData: Date;
-            updateData: string;
-            hideOption: { play: boolean };
+    interface IAkViewOptTypes {
+        testKey1: ToAkViewOptType<{
+            showOpt: number;
+            initOpt: Date;
+            updateOpt: string;
+            hideOpt: { play: boolean };
         }>;
     }
-    type TypeKey2DataType = AddAkViewDataType<
+    type TypeKey2DataType = AddAkViewOptType<
         IAkViewKeyTypes,
         "testKey2",
         {
-            showData: { a: number; b: number };
-            initData: { m: number; n: number };
-            updateData: { c: number; d: number };
-            hideOption: { open: boolean };
+            showOpt: { a: number; b: number };
+            initOpt: { m: number; n: number };
+            updateOpt: { c: number; d: number };
+            hideOpt: { open: boolean };
         }
     >;
-    interface IAkViewDataTypes extends TypeKey2DataType {}
+    interface IAkViewOptTypes extends TypeKey2DataType {}
 }
 
 const viewMgr2: akView.IMgr = new ViewMgr() as any;
 //提示类型错误
 viewMgr2.show("testKey1", "");
 //类型正确
-viewMgr2.show({ key: "testKey1", onInitData: new Date() });
+viewMgr2.show({ key: "testKey1", onInitViewOpt: new Date() });
 //获取viewMgr中指定View的ShowConfig类型信息，类型错误会报错
-const config2: GetShowConfigType<typeof viewMgr2, "testKey1"> = { key: "testKey1", onInitData: "" };
+const config2: GetShowConfigType<typeof viewMgr2, "testKey1"> = { key: "testKey1", onInitViewOpt: "" };
 
 viewMgr2.show(config2);
 let viewAgent2 = {} as DefaultViewAgent;
@@ -174,7 +174,7 @@ viewMgr2.update<any>(viewAgent2, 1);
 //精确检查,第二个参数应该是string
 viewMgr2.update<GetViewKeyType<IAkViewKeyTypes, "testKey1">>(viewAgent2, 1);
 //隐藏传递option类型,类型应该是boolean
-viewMgr2.hide("testKey1", { hideOption: { play: 1 } });
+viewMgr2.hide("testKey1", { hideOpt: { play: 1 } });
 //可以获得类型提示,对于字符串变量也不会报错
 viewMgr2.isPreloadResLoading();
 viewMgr2.isPreloadResLoaded("");
@@ -188,3 +188,17 @@ viewMgr2.template("testKey5");
 viewMgr2.template("testKey1");
 viewMgr2.template({ key: "testKey2" });
 viewMgr2.template([{ key: "testKey3" }, { key: "testKey1" }]);
+declare global {
+    interface IAkViewKeyTypes {
+        /**dasfas */
+        testKey1: "testKey1";
+        testKey2: "testKey2";
+        testKey3: "testKey3";
+        "test/testView1": "test.testView1";
+        "test.testView1": "test.testView1";
+    }
+}
+const keyMap: IAkViewKeyTypes = createKeyMap<IAkViewKeyTypes>() as any;
+viewMgr2.show(keyMap.te);
+//只有/ 和. 可以再次唤起提示
+viewMgr2.show("test");

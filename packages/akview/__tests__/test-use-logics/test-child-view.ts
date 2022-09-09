@@ -5,10 +5,10 @@ export class TestChildView implements akView.IView {
     state: any;
     refs: any;
     onWindowResize?(data: IAkViewResizeData): void {}
-    onInitView?(initData?: any): void {}
-    onShowView?(showData?: any): void {}
-    onUpdateView?(updateData?: any): void {}
-    onHideView?(hideOption: any): void {}
+    onInitView?(initViewOpt?: any): void {}
+    onShowView?(showViewOpt?: any): void {}
+    onUpdateView?(updateViewOpt?: any): void {}
+    onHideView?(hideViewOpt: any): void {}
     onDestroyView?(): void {}
     getNode() {}
 }
@@ -33,10 +33,10 @@ export class TestParentView implements akView.IView<any, ITestParentViewChildVie
     state: any;
     refs: ITestParentViewChildViewMap;
     getNode() {}
-    onInitView?(initData?: any): void {}
-    onShowView?(showData?: any): void {}
-    onUpdateView?(updateData?: any): void {}
-    onHideView?(hideOption: any): void {}
+    onInitView?(initViewOpt?: any): void {}
+    onShowView?(showViewOpt?: any): void {}
+    onUpdateView?(updateViewOpt?: any): void {}
+    onHideView?(hideViewOpt: any): void {}
     onDestroyView?(): void {}
     onWindowResize?(data: IAkViewResizeData): void {}
 }

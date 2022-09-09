@@ -22,7 +22,7 @@ declare global {
  * Two queues（2Q）双队列LRU算法，就是为了解决这个问题
  * https://www.yuque.com/face_sea/bp4624/2088a9fd-0032-4e50-92b4-32d10fea97df
  */
-export class LRU2QCacheHandler<ValueType extends akView.IViewAgent> implements akView.ICacheHandler {
+export class LRU2QCacheHandler<ValueType = any> implements akView.ICacheHandler {
     fifoQueue: Map<string, ValueType>;
     lruQueue: Map<string, ValueType>;
     constructor(private _option?: akView.ILRU2QCacheHandlerOption) {

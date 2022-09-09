@@ -5,16 +5,16 @@ export class TestWithAnimView implements akView.IView {
     onWindowResize?(data: IAkViewResizeData): void {
         throw new Error("Method not implemented.");
     }
-    onBeforeViewShow?(showData?: any): void {}
-    onPlayAnim?(isShowAnim?: boolean, hideOption?: any): Promise<void> {
+    onBeforeViewShow?(showViewOpt?: any): void {}
+    onPlayAnim?(isShowAnim?: boolean, hideViewOpt?: any): Promise<void> {
         return new Promise((res) => {
             setTimeout(res, 10);
         });
     }
-    onInitView?(initData?: any): void {}
-    onShowView?(showData?: any): void {}
-    onUpdateView?(updateData?: any): void {}
-    onHideView?(hideOption: any): void {}
+    onInitView?(initViewOpt?: any): void {}
+    onShowView?(showViewOpt?: any): void {}
+    onUpdateView?(updateViewOpt?: any): void {}
+    onHideView?(hideViewOpt: any): void {}
     onDestroyView?(): void {}
     getNode() {}
 }
@@ -25,11 +25,11 @@ export class TestView implements akView.IView {
     onWindowResize?(data: IAkViewResizeData): void {
         throw new Error("Method not implemented.");
     }
-    onBeforeViewShow?(showData?: any): void {}
-    onInitView?(initData?: any): void {}
-    onShowView?(showData?: any): void {}
-    onUpdateView?(updateData?: any): void {}
-    onHideView?(hideOption: any): void {}
+    onBeforeViewShow?(showViewOpt?: any): void {}
+    onInitView?(initViewOpt?: any): void {}
+    onShowView?(showViewOpt?: any): void {}
+    onUpdateView?(updateViewOpt?: any): void {}
+    onHideView?(hideViewOpt: any): void {}
     onDestroyView?(): void {}
     getNode() {}
 }

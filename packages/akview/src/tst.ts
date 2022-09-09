@@ -1,8 +1,8 @@
-interface test<ViewKeyTypes, ViewDataTypes, keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> {
+interface test<ViewKeyTypes, ViewOptTypes, keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> {
     show<TKeyType extends keyType>(key: TKeyType): outIdType<TKeyType>;
     hide<KeyOrIdType extends keyType | String>(
         keyOrViewAgent: KeyOrIdType,
-        hideCfg?: akView.IHideConfig<KeyOrIdType, ViewDataTypes>
+        hideCfg?: akView.IHideOption<KeyOrIdType, ViewOptTypes>
     ): void;
 }
 type GetKeyType<InputType> = InputType extends `${infer L}${"_$_"}` ? L : InputType;
@@ -20,11 +20,11 @@ class bb {
     private _aid: outIdType<"a">;
     constructor() {
         this._aid = t.show("a");
-        t.hide(this._aid, { hideOption: { dsd } });
+        t.hide(this._aid, { onHideViewOpt: { dsd } });
     }
 }
 let aid = t.show("a");
-t.hide("a_$_", { hideOption: { dsd } });
+t.hide("a_$_", { onHideViewOpt: { dsd } });
 
 //对于子UI的需求
 // 仔细想了一下，这个需求并不是很重要

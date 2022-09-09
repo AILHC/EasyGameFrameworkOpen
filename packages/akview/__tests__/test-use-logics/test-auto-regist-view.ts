@@ -7,10 +7,10 @@ import { viewTemplateDecorator } from "../../src/view-utils";
 export class TestAutoRegistView implements akView.IView {
     key?: string;
     layerType?: string | number;
-    onInitView?(initData?: any): void {}
-    onShowView?(showData?: any): void {}
-    onUpdateView?(updateData?: any): void {}
-    onHideView?(hideOption: any): void {}
+    onInitView?(initViewOpt?: any): void {}
+    onShowView?(showViewOpt?: any): void {}
+    onUpdateView?(updateViewOpt?: any): void {}
+    onHideView?(hideViewOpt: any): void {}
     onDestroyView?(): void {}
     onWindowResize?(data: IAkViewResizeData): void {}
     getNode() {}

@@ -20,7 +20,7 @@ import { ViewMgr } from "../../src/view-mgr";
 //     onShow(config?: displayCtrl.IShowConfig<any, any, any>): void {
 //         throw new Error("Method not implemented.");
 //     }
-//     onUpdate(updateData: any): void {
+//     onUpdate(updateViewOpt: any): void {
 //         throw new Error("Method not implemented.");
 //     }
 //     getFace<T>(): displayCtrl.ReturnCtrlType<T> {
@@ -231,29 +231,29 @@ interface TestViewKeyType3 {
     testViewKey2: string;
 }
 
-type AddViewDataType<
+type AddViewOptType<
     ViewKeyType,
     Key extends keyof ViewKeyType,
-    T extends { showData?; initData?; updateData?; hideOption? }
+    T extends { showViewOpt?; initViewOpt?; updateViewOpt?; hideViewOpt? }
 > = { [key in any as Key]: T };
-type ToViewDataType<T extends { showData?; initData?; updateData?; hideOption? }> = T;
-type TestKey1DataType = AddViewDataType<
+type ToViewOptType<T extends { showViewOpt?; initViewOpt?; updateViewOpt?; hideViewOpt? }> = T;
+type TestKey1DataType = AddViewOptType<
     TestViewKeyType3,
     "testViewKey1",
-    { showData: { a: number; b: boolean }; initData: { c: string } }
+    { showViewOpt: { a: number; b: boolean }; initViewOpt: { c: string } }
 >;
 
 /**
  * ssss
  */
 interface TestKeyDataTypeMapType {
-    testViewKey2: ToViewDataType<{ showData: { ddd: "ddd" } }>;
+    testViewKey2: ToViewOptType<{ showViewOpt: { ddd: "ddd" } }>;
 }
 interface TestKeyDataTypeMapType
-    extends AddViewDataType<
+    extends AddViewOptType<
         TestViewKeyType3,
         "testViewKey1",
-        { showData: { a: number; b: boolean }; initData: { c: string } }
+        { showViewOpt: { a: number; b: boolean }; initViewOpt: { c: string } }
     > {}
 
 /**
@@ -263,12 +263,12 @@ interface ITestViewMgr3<ViewKeyType, KeyDataTypeMapType, keyType extends keyof V
     show<KeyOrIdType extends keyType>(
         idOrkeyOrConfig: KeyOrIdType,
         onShowData?: KeyDataTypeMapType[ToAnyIndexKey<KeyOrIdType, KeyDataTypeMapType>] extends {
-            showData: infer ShowDataType;
+            showViewOpt: infer ShowDataType;
         }
             ? ShowDataType
             : any,
         onInitData?: KeyDataTypeMapType[ToAnyIndexKey<KeyOrIdType, KeyDataTypeMapType>] extends {
-            initData: infer InitDataType;
+            initViewOpt: infer InitDataType;
         }
             ? InitDataType
             : any

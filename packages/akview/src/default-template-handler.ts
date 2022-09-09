@@ -8,33 +8,24 @@ declare global {
          * 创建View
          * @param template
          */
-        createView?(template: IAkViewDefaultTemplate): akView.IView;
+        createView?(template: akView.ITemplate): akView.IView;
         /**
          * 创建ViewAgent
          * @param template
          */
-        createViewAgent?(template: IAkViewDefaultTemplate): akView.IViewAgent;
+        createViewAgent?(template: akView.ITemplate): akView.IViewAgent;
     }
     interface IAkViewLayerHandler {
         /**
          * 添加到层级
          * @param viewIns 渲染控制实例
          */
-        addToLayer?<ViewType extends akView.IView = IAkViewDefaultView>(viewIns: ViewType): void;
+        addToLayer?<ViewType extends akView.IView = any>(viewIns: ViewType): void;
         /**
          * 从层级移除
          * @param viewIns 渲染控制实例
          */
-        removeFromLayer?<ViewType extends akView.IView = IAkViewDefaultView>(viewIns: ViewType): void;
-    }
-    /**
-     * 默认模板接口
-     */
-    interface IAkViewDefaultTemplate<ViewKeyTypes = IAkViewKeyTypes> extends akView.ITemplate<ViewKeyTypes> {
-        /**
-         * 自定义处理层级,如果自定义处理层级，则自行在onViewShow阶段进行显示添加层级处理
-         */
-        customHandleLayer?: boolean;
+        removeFromLayer?<ViewType extends akView.IView = any>(viewIns: ViewType): void;
     }
 
     interface IAkViewDefaultTplHandlerOption extends IAkViewTemplateCreateAdapter, IAkViewLayerHandler {
@@ -47,7 +38,7 @@ declare global {
          * 获取资源信息
          * @param template
          */
-        getPreloadResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType | undefined;
+        getPreloadResInfo(template: akView.ITemplate): akView.TemplateResInfoType | undefined;
         /**
          * 加载资源
          * @param resInfo
@@ -88,7 +79,7 @@ declare global {
     }
 }
 // export class DefaultTemplateHandler<Handle> implements akView.ITemplateHandler<"Default">{}
-export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDefaultTemplate> {
+export class DefaultTemplateHandler implements akView.ITemplateHandler<akView.ITemplate> {
     /**
      * 模板加载config字典，key为模板key，value为{id:config}的字典
      */
@@ -112,7 +103,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
     constructor(public _option?: IAkViewDefaultTplHandlerOption) {
         if (!this._option) this._option = {} as any;
     }
-    createViewIns<T extends akView.IView>(template: IAkViewDefaultTemplate): T {
+    createViewIns<T extends akView.IView>(template: akView.ITemplate): T {
         //先使用自定义
         const option = this._option;
         let viewIns = option.createView && option.createView(template);
@@ -120,7 +111,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
     }
     bindChildViews<T extends akView.IView<any, any> = akView.IView<any, any>>(
         viewIns: T,
-        template: IAkViewDefaultTemplate<IAkViewKeyTypes>
+        template: akView.ITemplate<IAkViewKeyTypes>
     ): void {
         const childViews = template.childViews;
         if (childViews) {
@@ -132,19 +123,19 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
         }
     }
 
-    addToLayer?(viewAgent: IAkViewDefaultViewAgent): void {
+    addToLayer?(viewAgent: akView.IViewAgent): void {
         const template = viewAgent.template;
         const option = this._option;
         template.customHandleLayer || (option.addToLayer && option.addToLayer(viewAgent.viewIns));
     }
-    removeFromLayer?(viewAgent: IAkViewDefaultViewAgent): void {
+    removeFromLayer?(viewAgent: akView.IViewAgent): void {
         const template = viewAgent.template;
         const option = this._option;
         template.customHandleLayer || (option.removeFromLayer && option.removeFromLayer(viewAgent.viewIns));
     }
-    destroyView?<T extends akView.IView>(viewIns: T, template: IAkViewDefaultTemplate): void {}
+    destroyView?<T extends akView.IView>(viewIns: T, template: akView.ITemplate): void {}
 
-    getResInfo(template: IAkViewDefaultTemplate): akView.TemplateResInfoType {
+    getResInfo(template: akView.ITemplate): akView.TemplateResInfoType {
         const key = template.key;
         const resInfoMap = this._resInfoMap;
         let resInfo = resInfoMap[key];
@@ -156,7 +147,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
         }
         return resInfo;
     }
-    isLoaded(template: IAkViewDefaultTemplate): boolean {
+    isLoaded(template: akView.ITemplate): boolean {
         let isLoaded = this._loadedMap[template.key];
         if (!isLoaded) {
             let option = this._option;
@@ -220,7 +211,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
         }
     }
 
-    cancelLoad(id: string, template: IAkViewDefaultTemplate): void {
+    cancelLoad(id: string, template: akView.ITemplate): void {
         let templateKey = template.key;
         const configs = this._templateLoadResConfigsMap[templateKey];
 
@@ -238,7 +229,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
             }
         }
     }
-    addResRef(id: string, template: IAkViewDefaultTemplate): void {
+    addResRef(id: string, template: akView.ITemplate): void {
         let refIds = this._resRefMap[id];
         if (!refIds) {
             refIds = [];
@@ -247,7 +238,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
         refIds.push(id);
         this._option.addResRef?.(template);
     }
-    decResRef(id: string, template: IAkViewDefaultTemplate): void {
+    decResRef(id: string, template: akView.ITemplate): void {
         //移除引用
         let refIds = this._resRefMap[id];
         if (refIds) {
@@ -265,7 +256,7 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<IAkViewDe
             this._loadedMap[template.key] = false;
         }
     }
-    destroyRes(template: IAkViewDefaultTemplate): boolean {
+    destroyRes(template: akView.ITemplate): boolean {
         if (!template) return;
         const configs = this._templateLoadResConfigsMap[template.key];
         if (configs && Object.keys(configs).length) {
