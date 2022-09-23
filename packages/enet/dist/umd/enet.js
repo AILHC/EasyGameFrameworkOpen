@@ -2,7 +2,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.enet = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
     var DefaultNetEventHandler = (function () {
         function DefaultNetEventHandler() {
@@ -50,6 +50,7 @@
         return DefaultNetEventHandler;
     }());
 
+    exports.PackageType = void 0;
     (function (PackageType) {
         PackageType[PackageType["HANDSHAKE"] = 1] = "HANDSHAKE";
         PackageType[PackageType["HANDSHAKE_ACK"] = 2] = "HANDSHAKE_ACK";
@@ -58,6 +59,70 @@
         PackageType[PackageType["KICK"] = 5] = "KICK";
     })(exports.PackageType || (exports.PackageType = {}));
 
+    var DefaultProtoHandler = (function () {
+        function DefaultProtoHandler() {
+        }
+        Object.defineProperty(DefaultProtoHandler.prototype, "handShakeRes", {
+            get: function () {
+                return undefined;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(DefaultProtoHandler.prototype, "heartbeatConfig", {
+            get: function () {
+                return this._heartbeatCfg;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        DefaultProtoHandler.prototype.encodePkg = function (pkg, useCrypto) {
+            return JSON.stringify(pkg);
+        };
+        DefaultProtoHandler.prototype.protoKey2Key = function (protoKey) {
+            return protoKey;
+        };
+        DefaultProtoHandler.prototype.encodeMsg = function (msg, useCrypto) {
+            return JSON.stringify({ type: exports.PackageType.DATA, data: msg });
+        };
+        DefaultProtoHandler.prototype.decodePkg = function (data) {
+            var parsedData;
+            var pkgType;
+            try {
+                parsedData = JSON.parse(data);
+                pkgType = parsedData.type;
+            }
+            catch (error) {
+                parsedData = {
+                    key: null,
+                    type: 0,
+                    data: data
+                };
+                pkgType = 0;
+            }
+            if (parsedData.type === exports.PackageType.DATA) {
+                var msg = parsedData.data;
+                return {
+                    key: msg && msg.key,
+                    type: pkgType,
+                    data: msg.data,
+                    reqId: parsedData.data && parsedData.data.reqId
+                };
+            }
+            else {
+                if (pkgType === exports.PackageType.HANDSHAKE) {
+                    this._heartbeatCfg = parsedData.data;
+                }
+                return {
+                    type: pkgType,
+                    data: parsedData.data
+                };
+            }
+        };
+        return DefaultProtoHandler;
+    }());
+
+    exports.SocketState = void 0;
     (function (SocketState) {
         SocketState[SocketState["CONNECTING"] = 0] = "CONNECTING";
         SocketState[SocketState["OPEN"] = 1] = "OPEN";
@@ -402,7 +467,7 @@
         };
         NetNode.prototype._heartbeatTimeoutCb = function () {
             var gap = this._nextHeartbeatTimeoutTime - Date.now();
-            if (gap > this._reConnectCfg) {
+            if (gap > this._gapThreashold) {
                 this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), gap);
             }
             else {
@@ -534,56 +599,6 @@
         };
         return NetNode;
     }());
-    var DefaultProtoHandler = (function () {
-        function DefaultProtoHandler() {
-        }
-        Object.defineProperty(DefaultProtoHandler.prototype, "handShakeRes", {
-            get: function () {
-                return undefined;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(DefaultProtoHandler.prototype, "heartbeatConfig", {
-            get: function () {
-                return this._heartbeatCfg;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        DefaultProtoHandler.prototype.encodePkg = function (pkg, useCrypto) {
-            return JSON.stringify(pkg);
-        };
-        DefaultProtoHandler.prototype.protoKey2Key = function (protoKey) {
-            return protoKey;
-        };
-        DefaultProtoHandler.prototype.encodeMsg = function (msg, useCrypto) {
-            return JSON.stringify({ type: exports.PackageType.DATA, data: msg });
-        };
-        DefaultProtoHandler.prototype.decodePkg = function (data) {
-            var parsedData = JSON.parse(data);
-            var pkgType = parsedData.type;
-            if (parsedData.type === exports.PackageType.DATA) {
-                var msg = parsedData.data;
-                return {
-                    key: msg && msg.key,
-                    type: pkgType,
-                    data: msg.data,
-                    reqId: parsedData.data && parsedData.data.reqId
-                };
-            }
-            else {
-                if (pkgType === exports.PackageType.HANDSHAKE) {
-                    this._heartbeatCfg = parsedData.data;
-                }
-                return {
-                    type: pkgType,
-                    data: parsedData.data
-                };
-            }
-        };
-        return DefaultProtoHandler;
-    }());
 
     exports.DefaultNetEventHandler = DefaultNetEventHandler;
     exports.NetNode = NetNode;
@@ -591,7 +606,7 @@
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 
     var globalTarget =window?window:global;
     globalTarget.enet?Object.assign({},globalTarget.enet):(globalTarget.enet = enet)

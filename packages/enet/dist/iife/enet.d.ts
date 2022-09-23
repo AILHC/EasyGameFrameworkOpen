@@ -407,6 +407,18 @@ declare module 'enet' {
 
 }
 declare module 'enet' {
+	class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyType> {
+	    private _heartbeatCfg;
+	    get handShakeRes(): any;
+	    get heartbeatConfig(): enet.IHeartBeatConfig;
+	    encodePkg(pkg: enet.IPackage<any>, useCrypto?: boolean): enet.NetData;
+	    protoKey2Key(protoKey: ProtoKeyType): string;
+	    encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): enet.NetData;
+	    decodePkg(data: enet.NetData): enet.IDecodePackage<any>;
+	}
+
+}
+declare module 'enet' {
 	enum SocketState {
 	    /**连接中 */
 	    CONNECTING = 0,
@@ -617,6 +629,7 @@ declare module 'enet' {
 
 declare namespace enet {
 	type DefaultNetEventHandler = import('enet').DefaultNetEventHandler;
+	type DefaultProtoHandler<ProtoKeyType> = import('enet').DefaultProtoHandler<ProtoKeyType>;
 	type WSocket = import('enet').WSocket;
 	type NetNode<ProtoKeyType> = import('enet').NetNode<ProtoKeyType>;
 }

@@ -1,4 +1,6 @@
 export enum PackageType {
+    /**未知 */
+    NONE = 0,
     /**握手 */
     HANDSHAKE = 1,
     /**握手回应 */

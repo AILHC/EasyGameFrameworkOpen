@@ -407,6 +407,18 @@ declare module '@ailhc/enet' {
 
 }
 declare module '@ailhc/enet' {
+	export class DefaultProtoHandler<ProtoKeyType> implements enet.IProtoHandler<ProtoKeyType> {
+	    private _heartbeatCfg;
+	    get handShakeRes(): any;
+	    get heartbeatConfig(): enet.IHeartBeatConfig;
+	    encodePkg(pkg: enet.IPackage<any>, useCrypto?: boolean): enet.NetData;
+	    protoKey2Key(protoKey: ProtoKeyType): string;
+	    encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): enet.NetData;
+	    decodePkg(data: enet.NetData): enet.IDecodePackage<any>;
+	}
+
+}
+declare module '@ailhc/enet' {
 	export enum SocketState {
 	    /**连接中 */
 	    CONNECTING = 0,
