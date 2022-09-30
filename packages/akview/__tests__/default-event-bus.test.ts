@@ -1,4 +1,4 @@
-import { DefaultEventBus } from "../src/default-event-bus";
+import { DefaultEventBus } from "../src/DefaultEventBus";
 
 describe(`DefaultEventBus相关测试`, function () {
     test("测试：DefaultEventBus.onAkEvent", () => {

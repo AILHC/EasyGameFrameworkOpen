@@ -1,4 +1,4 @@
-import { DefaultViewAgent } from "../../src/default-view-agent";
+import { DefaultViewAgent } from "../../src/DefaultViewAgent";
 
 export class TestViewAgent extends DefaultViewAgent {
     testFlag = true;

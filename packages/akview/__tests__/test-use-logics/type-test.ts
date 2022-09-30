@@ -1,5 +1,5 @@
 import { createKeyMap, ViewMgr } from "../../src";
-import { DefaultViewAgent } from "../../src/default-view-agent";
+import { DefaultViewAgent } from "../../src/DefaultViewAgent";
 
 //使用自定义的类型
 interface CustomViewKeys {
@@ -9,8 +9,9 @@ interface CustomViewKeys {
     typeTest3: "typeTest3";
 }
 interface CustomViewOptTypes {
-    typeTest: ToAkViewOptType<{ showOpt: number; initOpt: Date; updateOpt: string; hideOpt: { play: boolean } }>;
-    typeTest3: ToAkViewOptType<{
+    
+    typeTest: ToAkViewStateType<{ showOpt: number; initOpt: Date; updateOpt: string; hideOpt: { play: boolean } }>;
+    typeTest3: ToAkViewStateType<{
         showOpt: string;
         initOpt: Date;
         updateOpt: string;
@@ -30,6 +31,7 @@ type TypeTest2DataType = AddAkViewOptType<
 interface CustomViewOptTypes extends TypeTest2DataType {}
 
 const viewMgr: akView.IMgr<CustomViewKeys, CustomViewOptTypes> = new ViewMgr<CustomViewKeys, CustomViewOptTypes>();
+
 //注册Template测试
 viewMgr.template("typeTest");
 //类型不对报错
@@ -124,8 +126,8 @@ declare global {
         testKey2: "testKey2";
         testKey3: "testKey3";
     }
-    interface IAkViewOptTypes {
-        testKey1: ToAkViewOptType<{
+    interface IAkViewStateTypes {
+        testKey1: ToAkViewStateType<{
             showOpt: number;
             initOpt: Date;
             updateOpt: string;
@@ -142,16 +144,16 @@ declare global {
             hideOpt: { open: boolean };
         }
     >;
-    interface IAkViewOptTypes extends TypeKey2DataType {}
+    interface IAkViewStateTypes extends TypeKey2DataType {}
 }
 
 const viewMgr2: akView.IMgr = new ViewMgr() as any;
 //提示类型错误
 viewMgr2.show("testKey1", "");
 //类型正确
-viewMgr2.show({ key: "testKey1", onInitViewOpt: new Date() });
+viewMgr2.show({ key: "testKey1", viewInitState: new Date() });
 //获取viewMgr中指定View的ShowConfig类型信息，类型错误会报错
-const config2: GetShowConfigType<typeof viewMgr2, "testKey1"> = { key: "testKey1", onInitViewOpt: "" };
+const config2: GetShowConfigType<typeof viewMgr2, "testKey1"> = { key: "testKey1", viewInitState: "" };
 
 viewMgr2.show(config2);
 let viewAgent2 = {} as DefaultViewAgent;

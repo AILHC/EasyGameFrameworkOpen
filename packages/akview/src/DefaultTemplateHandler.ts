@@ -15,20 +15,9 @@ declare global {
          */
         createViewAgent?(template: akView.ITemplate): akView.IViewAgent;
     }
-    interface IAkViewLayerHandler {
-        /**
-         * 添加到层级
-         * @param viewIns 渲染控制实例
-         */
-        addToLayer?<ViewType extends akView.IView = any>(viewIns: ViewType): void;
-        /**
-         * 从层级移除
-         * @param viewIns 渲染控制实例
-         */
-        removeFromLayer?<ViewType extends akView.IView = any>(viewIns: ViewType): void;
-    }
 
-    interface IAkViewDefaultTplHandlerOption extends IAkViewTemplateCreateAdapter, IAkViewLayerHandler {
+
+    interface IAkViewDefaultTplHandlerOption extends IAkViewTemplateCreateAdapter {
         /**
          * 资源是否加载
          * @param resInfo
@@ -58,7 +47,24 @@ declare global {
          * @param resInfo
          */
         destroyRes?(resInfo: akView.TemplateResInfoType): void;
-
+        /**
+         * 显示或隐藏 并 添加到层级或从层级移除
+         * @param viewAgent
+         * @param visible 是否显示
+         * @param showOrHideOpt 参数
+         */
+        handleViewVisible?: akView.ITemplateHandler["handleViewVisible"]
+        /**
+         * 创建显示对象
+         * @param viewIns 
+         * @param template 
+         */
+        createDisplayObj?: akView.ITemplateHandler["createDisplayObj"]
+        /**
+         * 销毁渲染实例
+         * @param viewIns
+         */
+        destroyDisplayObj?: akView.ITemplateHandler["destroyDisplayObj"]
         /**
          * 取消资源加载
          * @param loadResId 加载资源id
@@ -102,6 +108,10 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<akView.IT
     protected _resInfoMap: { [key: string]: akView.TemplateResInfoType } = {};
     constructor(public _option?: IAkViewDefaultTplHandlerOption) {
         if (!this._option) this._option = {} as any;
+        const opt = this._option;
+        opt.handleViewVisible  && (this.handleViewVisible = opt.handleViewVisible);
+        opt.destroyDisplayObj  && (this.destroyDisplayObj = opt.destroyDisplayObj);
+        opt.createDisplayObj  && (this.createDisplayObj = opt.createDisplayObj);
     }
     createViewIns<T extends akView.IView>(template: akView.ITemplate): T {
         //先使用自定义
@@ -109,31 +119,13 @@ export class DefaultTemplateHandler implements akView.ITemplateHandler<akView.IT
         let viewIns = option.createView && option.createView(template);
         return viewIns as T;
     }
-    bindChildViews<T extends akView.IView<any, any> = akView.IView<any, any>>(
-        viewIns: T,
-        template: akView.ITemplate<IAkViewKeyTypes>
-    ): void {
-        const childViews = template.childViews;
-        if (childViews) {
-            const childViewInsMap = {};
-            for (const key in childViews) {
-                childViewInsMap[key] = new childViews[key]();
-            }
-            viewIns.refs = childViewInsMap;
-        }
-    }
+    handleViewVisible<BoolType extends boolean>(viewAgent: akView.IViewAgent<any>, visible: BoolType, showOpt?: akView.IShowOption<any, IAkViewStateTypes>, hideOpt?: akView.IHideOption<any, IAkViewStateTypes>): void {
 
-    addToLayer?(viewAgent: akView.IViewAgent): void {
-        const template = viewAgent.template;
-        const option = this._option;
-        template.customHandleLayer || (option.addToLayer && option.addToLayer(viewAgent.viewIns));
     }
-    removeFromLayer?(viewAgent: akView.IViewAgent): void {
-        const template = viewAgent.template;
-        const option = this._option;
-        template.customHandleLayer || (option.removeFromLayer && option.removeFromLayer(viewAgent.viewIns));
+    createDisplayObj<T extends akView.IView<any>>(viewIns: T, template: akView.ITemplate) {
+        
     }
-    destroyView?<T extends akView.IView>(viewIns: T, template: akView.ITemplate): void {}
+    destroyDisplayObj?<T extends akView.IView>(viewIns: T, template: akView.ITemplate): void { }
 
     getResInfo(template: akView.ITemplate): akView.TemplateResInfoType {
         const key = template.key;

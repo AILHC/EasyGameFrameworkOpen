@@ -9,7 +9,7 @@ declare global {
     type AppendArgument<F extends (...args: any) => any, A> = (x: A, ...args: Parameters<F>) => ReturnType<F>;
 
     type GetShowConfigType<
-        MgrType extends { MgrTypeParams? },
+        MgrType extends { MgrTypeParams?},
         ConfigKeyType extends MgrType["MgrTypeParams"][2]
     > = akView.IShowOption<ConfigKeyType, MgrType["MgrTypeParams"][1]>;
     /**
@@ -19,18 +19,18 @@ declare global {
     /**
      * 默认ViewKey接口
      */
-    interface IAkViewKeyTypes {}
+    interface IAkViewKeyTypes { }
     /**
      * 默认ViewOpt接口
      */
-    interface IAkViewOptTypes {}
+    interface IAkViewStateTypes { }
     /**
      * 获取默认ViewKey
      */
     type GetAkViewKey<key extends keyof IAkViewKeyTypes> = key;
     /**
      * 类型工具函数，扩展
-     * @type {IAkViewOptTypes} 时
+     * @type {IAkViewStateTypes} 时
      * 可以获得 showOpt,initOpt这些属性资源的类型提示
      * 使用extends关键字继承这个类型的结果即可
      * 比如
@@ -45,11 +45,12 @@ declare global {
     type AddAkViewOptType<
         ViewKeyType,
         Key extends keyof ViewKeyType = keyof ViewKeyType,
-        T extends akView.IViewOptFields = akView.IViewOptFields
+        T extends akView.IViewStateFields = akView.IViewStateFields
     > = { [key in any as Key]: T };
     /**
      * 类型工具函数,扩展
-     * @type {IAkViewOptTypes} 时
+     * @type {IAkViewStateTypes} 时
+     * @example
      * 可以获得 showOpt,initOpt这些属性资源的类型提示
      *
      * 这样即可
@@ -59,18 +60,17 @@ declare global {
      * => 等效
      * xxx:{showOpt,initOpt,updateOpt....}
      */
-    type ToAkViewOptType<T extends akView.IViewOptFields> = T;
-
+    type ToAkViewStateType<T extends akView.IViewStateFields> = T;
     /**
      * 获取类型字典中的类型
      */
-    type GetTypeMapType<IndexKey, TypeMap> = TypeMap[ToAnyIndexKey<IndexKey, TypeMap>];
+    type GetTypeMapType<IndexKey, TypeMap> = IndexKey extends keyof TypeMap ? TypeMap[ToAnyIndexKey<IndexKey, TypeMap>] : any;
 
     /**
      * 加载配置，业务透传到资源加载层
      * 可定制，比如透传加载时进度显示样式类型参数
      */
-    interface IAkViewLoadOption {}
+    interface IAkViewLoadOption { }
     /**
      * ViewAgent类型
      */
@@ -133,6 +133,7 @@ declare global {
         height: number;
     }
     namespace akView {
+
         type IdSplitCharsType = "_$_";
         interface ICallableFunction {
             method?: Function;
@@ -146,7 +147,7 @@ declare global {
         }
         type TemplateResInfoType = Array<ITemplateResInfo> | ITemplateResInfo | string | string[];
 
-        type ViewAgentConstructor<T extends akView.IViewAgent = any> = { new (...args): T };
+        type ViewAgentConstructor<T extends akView.IViewAgent = any> = { new(...args): T };
         /**
          * 获取插件配置参数
          */
@@ -161,12 +162,15 @@ declare global {
         }
 
         interface ITemplate<
-            ViewKeyTypes = IAkViewKeyTypes,
-            ViewKeyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
+            ViewKeyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes
         > {
             /**key */
             key: ViewKeyType;
-
+            /**
+             * 默认层级 
+             * 可以在onShowView前重新指定
+            */
+            layerType?: any
             /**
              * 缓存模式
              * 默认“FOREVER”
@@ -217,39 +221,36 @@ declare global {
              * 自定义生命周期函数映射,主要用于兼容
              */
             // viewLifeCycleFuncMap?: { [key in FunctionPropertyNames<Required<akView.IView>>]?: string };
-            /**
-             * 自定义处理层级,如果自定义处理层级，则自行在onViewShow阶段进行显示添加层级处理
-             */
-            customHandleLayer?: boolean;
+
         }
         type ChildViewInsMapType = { [key: string]: akView.IView };
-        interface ITemplateHandler<TemplateType extends akView.ITemplate<any> = any> {
+        interface ITemplateHandler<TemplateType = akView.ITemplate> {
             /**
              * 创建akView.IView实例
              * @param template
              */
             createViewIns<T extends akView.IView>(template: TemplateType): T;
             /**
-             * 绑定子View
-             * @param template
+             * 创建显示对象
+             * @param viewIns 
+             * @param template 
              */
-            bindChildViews?<T extends akView.IView = akView.IView>(viewIns: T, template: TemplateType): void;
+            createDisplayObj?<T extends akView.IView>(viewIns: T, template: TemplateType): any;
             /**
              * 销毁渲染实例
              * @param viewIns
              */
-            destroyView?<T extends akView.IView>(viewIns: T, template: TemplateType): void;
-            /**
-             * 添加到层级
-             * @param viewAgent
-             */
-            addToLayer?(viewAgent: akView.IViewAgent): void;
+            destroyDisplayObj?<T extends akView.IView>(viewIns: T, template: TemplateType): void;
 
             /**
-             * 从层级移除
+             * 显示或隐藏 并 添加到层级或从层级移除
              * @param viewAgent
+             * @param visible 是否显示
+             * @param showOpt 显示透传参数
+             * @param hideOpt 隐藏透传参数
              */
-            removeFromLayer?(viewAgent: akView.IViewAgent): void;
+            handleViewVisible?<BoolType extends true | false>(viewAgent: akView.IViewAgent, visible: BoolType, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): void;
+
             //#region 资源处理
             /**
              * 获取模板预加载资源
@@ -391,7 +392,7 @@ declare global {
             ): void;
         }
 
-        interface IViewAgent<OptionType = any, TemplateType extends akView.ITemplate = any> {
+        interface IViewAgent<OptionType = any> {
             id: string;
             /**已经初始化 */
             isViewInited?: boolean;
@@ -400,7 +401,7 @@ declare global {
             /**持有模板资源引用 */
             isHoldTemplateResRef?: boolean;
             /**模板 */
-            template: TemplateType;
+            template: akView.ITemplate;
             /**
              * 默认使用template.cacheMode,可动态修改
              * 缓存模式
@@ -501,7 +502,7 @@ declare global {
             loadedCount: number
         ) => void;
         type ViewAgentMap = { [key: string]: IViewAgent };
-        type TemplateMap<TemplateType, keyType extends keyof any = string> = { [P in keyType]: TemplateType };
+        type TemplateMap = Record<any, akView.ITemplate>;
 
         type CancelLoad = () => void;
         type TemplateLoadedCb = (isOk: boolean) => void;
@@ -531,7 +532,7 @@ declare global {
         /**
          * 显示参数
          */
-        interface IShowOption<TemplateKeyType extends keyof any = any, ViewOptTypes = IAkViewOptTypes> {
+        interface IShowOption<TemplateKeyType extends keyof any = any, ViewStateTypes = IAkViewStateTypes> {
             id?: string;
             /**
              * template key
@@ -539,22 +540,25 @@ declare global {
              */
             key?: TemplateKeyType;
             /**
-             * 透传初始化数据
+             * view 初始化状态数据
              */
-            onInitViewOpt?: akView.GetInitOptType<TemplateKeyType, ViewOptTypes>;
+            viewInitState?: akView.GetInitStateType<TemplateKeyType, ViewStateTypes>;
             /**
              * 是否需要显示View到场景
              */
             needShowView?: boolean;
             /**
-             * 显示数据
+             * view 显示状态数据
              */
-            onShowViewOpt?: akView.GetShowViewOptType<TemplateKeyType, ViewOptTypes>;
+            viewShowState?: akView.GetShowStateType<TemplateKeyType, ViewStateTypes>;
             /**加载资源透传参数，可选透传给资源加载处理器IResHandler.loadRes
              * 或自定义加载透传给Template.loadRes */
             loadOption?: IAkViewLoadOption;
         }
-        interface IHideOption<TemplateKeyType = any, ViewOptTypes = IAkViewOptTypes> {
+        /**
+         * 隐藏参数
+         */
+        interface IHideOption<TemplateKeyType = any, ViewStateTypes = IAkViewStateTypes> {
             /**释放资源引用 默认false */
             decTemplateResRef?: boolean;
             /**
@@ -563,12 +567,14 @@ declare global {
              */
             destroyAfterHide?: boolean;
             /**
-             * 传给View.onHideView逻辑的隐藏参数
+             * 自定义数据
              */
-            onHideViewOpt?: akView.GetHideViewOptType<TemplateKeyType, ViewOptTypes>;
+            viewHideState?: akView.GetHideStateType<TemplateKeyType, ViewStateTypes>
         }
-
-        interface IView<ViewStateType = any, ChildViewMap = any> {
+        /**
+         * view接口
+         */
+        interface IView<DisplayObjectType = any> {
             /**
              * templateKey,自动赋值
              */
@@ -578,62 +584,94 @@ declare global {
              */
             layerType?: string | number;
             /**
-             * 状态对象
+             * 渲染对象
              */
-            state: ViewStateType;
+            dpObj?: DisplayObjectType
+
             /**
-             * 子view引用
-             * 需要实现
-             * @type {akView.ITemplateHandler} 的 bindChildViews
-             * 或者自行在onInitView进行绑定
+             * 显示或隐藏 之前 
+             * @example 
+             * //onBeforeSetVisible -> setVisible
+             * //可以动态设置层级等
+             * @param visible
+             * @param showOpt
+             * @param hideOpt 
              */
-            refs: ChildViewMap;
+            onBeforeSetVisible?(visible: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): void;
             /**
-             * 获取显示节点
+             * 基类需要设置为虚函数，方便提示重写
+             * @example
+            //   如果不实现，则调用TemplateHandler.handleViewVisible
+            //   设置显示（添加到层级，显示对象的active或者visible=visible）
+            //   setVisible(true) -> onTransition(true)
+            //   onTransition(false) -> setVisible(false)
+             * 
+             * @param visible 
+             * @param showOpt 显示时透传数据
+             * @param hideOpt 隐藏时透传数据
              */
-            getNode(): any;
+            setVisible?(visible: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): void;
+            /**
+             * 当播放出现或者消失动画时
+             * @example
+             * //setVisible(true)->onShowedView -> onTransition(true) 
+             * //onTransition(false) -> setVisible(false) -> onHidedView
+             * @param isToShow
+             * @param showOpt 显示时透传数据
+             * @param hideOpt 隐藏时透传数据
+             * @returns 返回promise
+             */
+            onTransition?(visible: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): Promise<void>;
             /**
              * 初始化，只执行一次
-             * @param initOpt 初始化数据
+             * @param initState 初始化数据
              */
-            onInitView?(initOpt?: any): void;
+            onInitView?(initState?: any): void;
+
             /**
-             * 每次显示之前执行一次,可以做一些预处理,比如动态确定显示层级
-             * @param showOpt
-             */
-            onBeforeViewShow?(showOpt?: any): void;
-            /**
-             * 当显示时
-             * @param showOpt 显示数据
+             * 当显示后
+             * setVisible -> onShowView -> onTransition
+             * @param showState 显示数据
              * @returns
              */
-            onShowView?(showOpt?: any): void;
+            onShowedView?(showState?: any): void;
             /**
              * 当更新时
              * @updateOpt updateOpt 更新数据
              */
-            onUpdateView?(updateOpt?: any): void;
+            onUpdateView?(updateState?: any): void;
             /**
-             * 当隐藏时
-             * @param hideOpt
+             * 当隐藏后
+             * @example
+             * //setVisibale -> onHidedView
+             * //可以进行一些取消监听之类、停止定时器等操作
+             * @param hideState
              * @returns
              */
-            onHideView?(hideOpt: any): void;
+            onHidedView?(hideState?: any): void;
             /**
-             * 当销毁时，默认是需要进行资源引用释放的
+             * 销毁显示对象之前
+             * 可以进行一些取消监听之类、停止定时器等操作
+             * 比如在onInitView时的初始化逻辑，在这里可以反初始化
              */
-            onDestroyView?(): void;
+            onBeforeDestroyDpObj?(): void
+            /**
+             * 销毁显示对象
+             */
+            destroyDisplayObj?(): void;
+            /**
+             * 当销毁后 
+             * 
+             * destroyDisplayObj->onDestroyedView
+             * 
+             * 可以进行自定义内存或资源释放操作
+             */
+            onDestroyedView?(): void;
             /**
              * 当根窗口尺寸变化
              */
             onWindowResize?(data: IAkViewResizeData): void;
-            /**
-             * 当播放出现或者消失动画时
-             * @param isShowAnim
-             * @param hideOpt 隐藏时透传数据
-             * @returns 返回promise
-             */
-            onPlayAnim?(isShowAnim?: boolean, hideOpt?: any): Promise<void>;
+
         }
         type ReturnCtrlType<T> = T extends akView.IView ? T : akView.IView;
         /**
@@ -657,7 +695,7 @@ declare global {
         /**
          * 管理器初始化配置
          */
-        interface IMgrInitOption<TemplateType extends akView.ITemplate<any>> {
+        interface IMgrInitOption {
             /**
              * 事件处理器
              * 可使用default-event-bus 或者直接use default-plugin
@@ -693,56 +731,55 @@ declare global {
             /**
              * 模板字典
              */
-            templateMap?: akView.TemplateMap<TemplateType>;
+            templateMap?: akView.TemplateMap;
         }
-        interface IViewOptFields {
-            showOpt?;
-            initOpt?;
-            updateOpt?;
-            hideOpt?;
+        interface IViewStateFields {
+            initState?;
+            showState?;
+
+            updateState?;
+            hideState?;
         }
-        type GetShowViewOptType<IndexKey, ViewOptTypes> = GetTypeMapType<
+        type GetShowStateType<IndexKey, StateTypes> = GetTypeMapType<
             IndexKey extends `${infer K}${akView.IdSplitCharsType}${number}` ? K : IndexKey,
-            ViewOptTypes
+            StateTypes
         > extends {
-            showOpt: infer OptType;
+            showState: infer StateType;
         }
-            ? OptType
+            ? StateType
             : any;
-        type GetInitOptType<IndexKey, ViewOptTypes> = GetTypeMapType<
+        type GetInitStateType<IndexKey, StateTypes> = GetTypeMapType<
             IndexKey extends `${infer K}${akView.IdSplitCharsType}${number}` ? K : IndexKey,
-            ViewOptTypes
+            StateTypes
         > extends {
-            initOpt: infer OptType;
+            initState: infer StateType;
         }
-            ? OptType
+            ? StateType
             : any;
-        type GetUpdateOptType<IndexKey, ViewOptTypes> = GetTypeMapType<
+        type GetUpdateStateType<IndexKey, StateTypes> = GetTypeMapType<
             IndexKey extends `${infer K}${akView.IdSplitCharsType}${number}` ? K : IndexKey,
-            ViewOptTypes
+            StateTypes
         > extends {
-            updateOpt: infer OptType;
+            updateState: infer StateType;
         }
-            ? OptType
+            ? StateType
             : any;
-        type GetHideViewOptType<IndexKey, ViewOptTypes> = GetTypeMapType<
+        type GetHideStateType<IndexKey, StateTypes> = GetTypeMapType<
             IndexKey extends `${infer K}${akView.IdSplitCharsType}${number}` ? K : IndexKey,
-            ViewOptTypes
+            StateTypes
         > extends {
-            hideOpt: infer OptType;
+            hideState: infer StateType;
         }
-            ? OptType
+            ? StateType
             : any;
+        type TemplateType = akView.ITemplate;
         interface IMgr<
-            ViewKeyTypes = IAkViewKeyTypes,
-            ViewOptTypes = IAkViewOptTypes,
-            TemplateType extends akView.ITemplate<ViewKeyTypes> = akView.ITemplate<ViewKeyTypes>,
-            keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
+            keyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes
         > {
             /**
              * 类型参数
              */
-            MgrTypeParams?: [ViewKeyTypes, ViewOptTypes, keyType];
+            MgrTypeParams?: [IAkViewKeyTypes, IAkViewStateTypes, keyType];
             /**事件处理器 */
             eventBus: akView.IEventBus;
             // /**
@@ -761,7 +798,7 @@ declare global {
             /**
              * 模板处理器
              */
-            tplHandler: akView.ITemplateHandler<TemplateType>;
+            tplHandler: akView.ITemplateHandler;
             // /**
             //  * 获取模块处理器,可类型转换
             //  */
@@ -769,7 +806,7 @@ declare global {
             /**
              * 初始化参数(只读)
              */
-            option: akView.IMgrInitOption<TemplateType>;
+            option: akView.IMgrInitOption;
             /**
              * 是否初始化
              */
@@ -778,7 +815,7 @@ declare global {
              * 初始化
              * @param option 初始化配置
              */
-            init(option: IMgrInitOption<TemplateType>): void;
+            init(option: IMgrInitOption): void;
             /**
              * 使用插件，可在插件声明周期中对Mgr进行扩展：addTemplate,addTemplateHandler等
              * @param plugin 插件实现
@@ -876,8 +913,8 @@ declare global {
              * @param keyOrConfig 配置
              * @returns 返回ViewAgent
              */
-            create<T extends akView.IViewAgent = any, OptKeyType extends keyType = keyType>(
-                keyOrConfig: akView.IShowOption<OptKeyType, ViewOptTypes>
+            create<T extends akView.IViewAgent = any, StateKeyType extends keyType = keyType>(
+                keyOrConfig: akView.IShowOption<StateKeyType, IAkViewStateTypes>
             ): T;
             /**
              * 创建新的ViewAgent并显示
@@ -892,9 +929,9 @@ declare global {
             */
             create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(
                 keyOrConfig: ViewKey,
-                onInitOpt?: akView.GetInitOptType<ViewKey, ViewOptTypes>,
+                onInitOpt?: akView.GetInitStateType<ViewKey, IAkViewStateTypes>,
                 needShowView?: boolean,
-                onShowOpt?: akView.GetShowViewOptType<ViewKey, ViewOptTypes>,
+                onShowOpt?: akView.GetShowStateType<ViewKey, IAkViewStateTypes>,
                 cacheMode?: akView.ViewAgentCacheModeType
             ): T;
             /**
@@ -910,9 +947,9 @@ declare global {
             */
             create<CreateKeyType extends keyType, T extends akView.IViewAgent = any>(
                 keyOrConfig: string,
-                onInitOpt?: akView.GetInitOptType<CreateKeyType, ViewOptTypes>,
+                onInitOpt?: akView.GetInitStateType<CreateKeyType, IAkViewStateTypes>,
                 needShowView?: boolean,
-                onShowOpt?: akView.GetShowViewOptType<CreateKeyType, ViewOptTypes>,
+                onShowOpt?: akView.GetShowStateType<CreateKeyType, IAkViewStateTypes>,
 
                 cacheMode?: akView.ViewAgentCacheModeType
             ): T;
@@ -924,7 +961,7 @@ declare global {
              * @param onInitOpt 初始化数据
              */
             show<ConfigKeyType extends keyType>(
-                idOrkeyOrConfig: akView.IShowOption<ConfigKeyType, ViewOptTypes>
+                idOrkeyOrConfig: akView.IShowOption<ConfigKeyType, IAkViewStateTypes>
             ): string;
             /**
              * 显示View
@@ -933,9 +970,9 @@ declare global {
              * @param onInitOpt 初始化数据
              */
             show<TKeyType extends keyType>(
-                keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewOptTypes>,
-                onShowOpt?: akView.GetShowViewOptType<TKeyType, ViewOptTypes>,
-                onInitOpt?: akView.GetInitOptType<TKeyType, ViewOptTypes>
+                keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, IAkViewStateTypes>,
+                onShowOpt?: akView.GetShowStateType<TKeyType, IAkViewStateTypes>,
+                onInitOpt?: akView.GetInitStateType<TKeyType, IAkViewStateTypes>
             ): string;
 
             /**
@@ -945,7 +982,7 @@ declare global {
              */
             update<K extends keyType | String>(
                 keyOrId: K,
-                onUpdateOpt?: akView.GetUpdateOptType<K, ViewOptTypes>
+                onUpdateOpt?: akView.GetUpdateStateType<K, IAkViewStateTypes>
             ): void;
 
             /**
@@ -955,7 +992,7 @@ declare global {
              */
             hide<KeyOrIdType extends keyType | String>(
                 keyOrId: KeyOrIdType,
-                hideCfg?: akView.IHideOption<KeyOrIdType, ViewOptTypes>
+                hideCfg?: akView.IHideOption<KeyOrIdType, IAkViewStateTypes>
             ): void;
 
             /**
@@ -1023,4 +1060,4 @@ declare global {
         }
     }
 }
-export {};
+export { };

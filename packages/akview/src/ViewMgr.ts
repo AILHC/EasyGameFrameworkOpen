@@ -4,17 +4,14 @@ import { globalPlugins, globalViewTemplateMap, injectViewMgr } from "./view-util
  * id拼接字符
  */
 const IdSplitChars: akView.IdSplitCharsType = "_$_";
+type TemplateType = akView.ITemplate;
 export class ViewMgr<
-    ViewKeyTypes = IAkViewKeyTypes,
-    ViewOptTypes = IAkViewOptTypes,
-    TemplateType extends akView.ITemplate<ViewKeyTypes> = any,
-    keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
-> implements akView.IMgr<ViewKeyTypes, ViewOptTypes, TemplateType, keyType>
+
+    keyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes
+> implements akView.IMgr<keyType>
 {
     private _cacheHandler: akView.ICacheHandler;
-    /**
-     * 缓存处理器
-     */
+
     public get cacheHandler(): akView.ICacheHandler {
         return this._cacheHandler;
     }
@@ -34,16 +31,16 @@ export class ViewMgr<
     public get eventBus(): akView.IEventBus {
         return this._eventBus;
     }
-    private _tplHandler: akView.ITemplateHandler<TemplateType>;
+    private _tplHandler: akView.ITemplateHandler;
     /**
      * 模板处理器
      */
-    public get tplHandler(): akView.ITemplateHandler<TemplateType> {
+    public get tplHandler(): akView.ITemplateHandler {
         return this._tplHandler;
     }
 
     /**模版字典 */
-    protected _templateMap: akView.TemplateMap<TemplateType, keyType>;
+    protected _templateMap: akView.TemplateMap;
 
     /**状态缓存 */
     protected _viewAgentMap: akView.ViewAgentMap;
@@ -61,12 +58,12 @@ export class ViewMgr<
      * 默认ViewAgent的配置
      */
     private _vsCreateOpt: any;
-    private _option: akView.IMgrInitOption<TemplateType>;
+    private _option: akView.IMgrInitOption;
 
-    public get option(): akView.IMgrInitOption<TemplateType> {
+    public get option(): akView.IMgrInitOption {
         return this._option;
     }
-    init(option?: akView.IMgrInitOption<TemplateType>): void {
+    init(option?: akView.IMgrInitOption): void {
         if (this._inited) return;
         option = option || ({} as any);
         this._eventBus = option.eventBus || ({} as any);
@@ -121,7 +118,7 @@ export class ViewMgr<
     hasTemplate(key: keyType): boolean {
         return !!this._templateMap[key as any];
     }
-    getTemplate(key: keyType): TemplateType {
+    getTemplate(key: keyType): akView.ITemplate {
         const template = this._templateMap[key];
         if (!template) {
             console.warn(`template is not exit:${String(key)}`);
@@ -141,13 +138,13 @@ export class ViewMgr<
      * @param template
      * @returns
      */
-    protected _addTemplate(template: TemplateType): void {
+    protected _addTemplate(template: akView.ITemplate): void {
         if (!template) return;
         if (!this._inited) {
             console.error(`[viewMgr](_addTemplate): is no inited`);
             return;
         }
-        const key = template.key as any;
+        const key = template.key;
         if (typeof key === "string" && (key as string) !== "") {
             if (!this._templateMap[key]) {
                 this._templateMap[key] = template;
@@ -307,12 +304,12 @@ export class ViewMgr<
         const template = this.getTemplate(key as any);
         return this._tplHandler.destroyRes(template);
     }
-    isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | TemplateType): boolean {
+    isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | akView.ITemplate): boolean {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
         }
-        let template: TemplateType;
+        let template: akView.ITemplate;
         if (typeof keyOrIdOrTemplate === "object") {
             template = keyOrIdOrTemplate as any;
         } else {
@@ -330,7 +327,7 @@ export class ViewMgr<
         if (viewAgent && !viewAgent.isHoldTemplateResRef) {
             const id = viewAgent.id;
             const template = viewAgent.template;
-            this._tplHandler.addResRef(id, template);
+            this._tplHandler.addResRef(id, template as any);
             viewAgent.isHoldTemplateResRef = true;
         }
     }
@@ -342,7 +339,7 @@ export class ViewMgr<
         if (viewAgent && viewAgent.isHoldTemplateResRef) {
             const template = viewAgent.template;
             const id = viewAgent.id;
-            this._tplHandler.decResRef(id, template);
+            this._tplHandler.decResRef(id, template as any);
             viewAgent.isHoldTemplateResRef = false;
         }
     }
@@ -352,14 +349,14 @@ export class ViewMgr<
      * @returns 返回ViewAgent
      */
     create<T extends akView.IViewAgent = any, ConfigKeyType extends keyType = keyType>(
-        keyOrConfig: akView.IShowOption<ConfigKeyType, ViewOptTypes>
+        keyOrConfig: akView.IShowOption<ConfigKeyType, IAkViewStateTypes>
     ): T;
     /**
      * 创建新的ViewAgent并显示
      * @param keyOrConfig 字符串key|配置
-     * @param onInitViewOpt 初始化数据 
+     * @param viewInitState 初始化数据 
      * @param needShowView 需要显示View到场景，默认false 
-     * @param onShowViewOpt 显示数据
+     * @param viewShowState 显示数据
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
      
@@ -367,28 +364,28 @@ export class ViewMgr<
      */
     create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(
         keyOrConfig: ViewKey,
-        onInitViewOpt?: akView.GetInitOptType<ViewKey, ViewOptTypes>,
+        viewInitState?: akView.GetInitStateType<ViewKey, IAkViewStateTypes>,
         needShowView?: boolean,
-        onShowViewOpt?: akView.GetShowViewOptType<ViewKey, ViewOptTypes>,
+        viewShowState?: akView.GetShowStateType<ViewKey, IAkViewStateTypes>,
 
         cacheMode?: akView.ViewAgentCacheModeType
     ): T;
     /**
      * 创建新的ViewAgent并显示
      * @param keyOrConfig 字符串key|配置
-     * @param onInitViewOpt 初始化数据 
+     * @param viewInitState 初始化数据 
      * @param needShowView 需要显示View到场景，默认false 
-     * @param onShowViewOpt 显示数据
+     * @param viewShowState 显示数据
      * @param cacheMode  缓存模式，默认无缓存,
      * 如果选择FOREVER，需要注意用完就要销毁或者择机销毁，选择LRU则注意影响其他UI了。（疯狂创建可能会导致超过阈值后，其他常驻UI被销毁）
      
      * @returns 返回ViewAgent
      */
     create<CreateKeyType extends keyType, T extends akView.IViewAgent = any>(
-        keyOrConfig: string | akView.IShowOption<CreateKeyType, ViewOptTypes>,
-        onInitViewOpt?: akView.GetInitOptType<CreateKeyType, ViewOptTypes>,
+        keyOrConfig: string | akView.IShowOption<CreateKeyType, IAkViewStateTypes>,
+        viewInitState?: akView.GetInitStateType<CreateKeyType, IAkViewStateTypes>,
         needShowView?: boolean,
-        onShowViewOpt?: akView.GetShowViewOptType<CreateKeyType, ViewOptTypes>,
+        viewShowState?: akView.GetShowStateType<CreateKeyType, IAkViewStateTypes>,
         cacheMode?: akView.ViewAgentCacheModeType
     ): T {
         if (!this._inited) {
@@ -399,14 +396,14 @@ export class ViewMgr<
         if (typeof keyOrConfig == "string") {
             showOpt = {
                 key: keyOrConfig,
-                onInitViewOpt: onInitViewOpt,
-                onShowViewOpt: onShowViewOpt,
+                viewInitState: viewInitState,
+                viewShowState: viewShowState,
                 needShowView: needShowView
             };
         } else if (typeof keyOrConfig === "object") {
             showOpt = keyOrConfig as any;
-            onShowViewOpt !== undefined && (showOpt.onShowViewOpt = onShowViewOpt);
-            onInitViewOpt !== undefined && (showOpt.onInitViewOpt = onInitViewOpt);
+            viewShowState !== undefined && (showOpt.viewShowState = viewShowState);
+            viewInitState !== undefined && (showOpt.viewInitState = viewInitState);
             needShowView !== undefined && (showOpt.needShowView = needShowView);
         } else {
             console.warn(`(create) unknown param`, keyOrConfig);
@@ -425,13 +422,13 @@ export class ViewMgr<
     /**
      * 显示View
      * @param keyOrViewAgentOrConfig 类key或者ViewAgent对象或者显示配置IShowConfig
-     * @param onShowViewOpt 显示透传数据
-     * @param onInitViewOpt 初始化数据
+     * @param viewShowState 显示透传数据
+     * @param viewInitState 初始化数据
      */
     show<TKeyType extends keyType>(
-        keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewOptTypes>,
-        onShowViewOpt?: akView.GetShowViewOptType<TKeyType, ViewOptTypes>,
-        onInitViewOpt?: akView.GetInitOptType<TKeyType, ViewOptTypes>
+        keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, IAkViewStateTypes>,
+        viewShowState?: akView.GetShowStateType<TKeyType, IAkViewStateTypes>,
+        viewInitState?: akView.GetInitStateType<TKeyType, IAkViewStateTypes>
     ): string {
         let showOpt: akView.IShowOption;
         let isSig: boolean;
@@ -450,8 +447,8 @@ export class ViewMgr<
             } else {
                 showOpt = keyOrViewAgentOrConfig as any;
                 showOpt.id = showOpt.key;
-                onShowViewOpt !== undefined && (showOpt.onShowViewOpt = onShowViewOpt);
-                onInitViewOpt !== undefined && (showOpt.onInitViewOpt = onInitViewOpt);
+                viewShowState !== undefined && (showOpt.viewShowState = viewShowState);
+                viewInitState !== undefined && (showOpt.viewInitState = viewInitState);
             }
         } else {
             console.warn(`[viewMgr](show) unknown param`, keyOrViewAgentOrConfig);
@@ -461,8 +458,8 @@ export class ViewMgr<
             showOpt = {
                 id: id,
                 key: key,
-                onInitViewOpt: onInitViewOpt,
-                onShowViewOpt: onShowViewOpt
+                viewInitState: viewInitState,
+                viewShowState: viewShowState
             };
         }
         if (!viewAgent) {
@@ -484,7 +481,7 @@ export class ViewMgr<
      * @param showOpt
      * @returns
      */
-    protected _showViewAgent(viewAgent: akView.IViewAgent, showOpt: akView.IShowOption<keyType, ViewKeyTypes>): void {
+    protected _showViewAgent(viewAgent: akView.IViewAgent, showOpt: akView.IShowOption<keyType, IAkViewKeyTypes>): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
@@ -498,7 +495,7 @@ export class ViewMgr<
      * @param keyOrId 界面id
      * @param updateOpt 更新数据
      */
-    update<K extends keyType | String>(keyOrId: K, updateOpt?: akView.GetUpdateOptType<K, ViewOptTypes>): void {
+    update<K extends keyType | String>(keyOrId: K, updateOpt?: akView.GetUpdateStateType<K, IAkViewStateTypes>): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
@@ -516,7 +513,7 @@ export class ViewMgr<
      */
     hide<KeyOrIdType extends keyType | String>(
         keyOrId: KeyOrIdType,
-        hideOpt?: akView.IHideOption<KeyOrIdType, ViewOptTypes>
+        hideOpt?: akView.IHideOption<KeyOrIdType, IAkViewStateTypes>
     ): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
@@ -561,14 +558,16 @@ export class ViewMgr<
      * @returns
      */
     createViewIns(viewAgent: akView.IViewAgent): akView.IView {
-        const template: TemplateType = viewAgent.template;
+        const template = viewAgent.template;
         let viewIns = viewAgent.viewIns;
         if (viewIns) return viewIns;
         let tplHandler = this._tplHandler;
         //先自定义的创建
         viewIns = tplHandler.createViewIns && tplHandler.createViewIns(template);
         viewIns = viewIns || (template.viewClass && new template.viewClass());
-        tplHandler.bindChildViews && tplHandler.bindChildViews(viewIns, template);
+        if (viewIns && !viewIns.dpObj) {
+            viewIns.dpObj = tplHandler.createDisplayObj && tplHandler.createDisplayObj(viewIns, template);
+        }
 
         if (viewIns) {
             viewAgent.viewIns = viewIns;
@@ -627,7 +626,7 @@ export class ViewMgr<
             viewAgent.onCreate(Object.assign({}, this._vsCreateOpt, template.vsCreateOpt));
             viewAgent.id = id;
             viewAgent.viewMgr = this as any;
-            viewAgent.template = template;
+            viewAgent.template = template as any;
             if (!viewAgent.cacheMode) {
                 viewAgent.cacheMode = template.cacheMode;
             }

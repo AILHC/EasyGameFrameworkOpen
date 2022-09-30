@@ -1,7 +1,7 @@
-import { DefaultEventBus } from "./default-event-bus";
-import { DefaultTemplateHandler } from "./default-template-handler";
-import { DefaultViewAgent } from "./default-view-agent";
-import { LRU2QCacheHandler } from "./lru2q-cache-handler";
+import { DefaultEventBus } from "./DefaultEventBus";
+import { DefaultTemplateHandler } from "./DefaultTemplateHandler";
+import { DefaultViewAgent } from "./DefaultViewAgent";
+import { LRU2QCacheHandler } from "./LRU2QCacheHandler";
 
 declare global {
     interface IAkViewDefaultPluginOption {

@@ -1,5 +1,5 @@
 // import { CreateTypes } from './create-types';
-import { ViewMgr } from "../../src/view-mgr";
+import { ViewMgr } from "../../src/ViewMgr";
 
 // class testCtrlClass implements displayCtrl.ICtrl {
 //     key?: any;

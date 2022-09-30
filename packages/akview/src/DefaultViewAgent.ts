@@ -24,17 +24,13 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     isHoldTemplateResRef?: boolean;
     template: akView.ITemplate;
     cacheMode?: keyof akView.IViewAgentCacheMode;
-    viewIns?: akView.IView<any, any>;
-    viewMgr?: akView.IMgr<IAkViewKeyTypes, IAkViewOptTypes, akView.ITemplate<IAkViewKeyTypes, never>, never>;
+    viewIns?: akView.IView;
+    viewMgr?: akView.IMgr;
     destroyed?: boolean;
 
     protected _isCreated: boolean;
     private _opt: IAkViewViewAgentOption;
-    onCreate(option: IAkViewViewAgentOption): void {
-        if (this._isCreated) return;
-        this._isCreated = true;
-        this._opt = option;
-    }
+
     /**正在隐藏中 */
     hiding: boolean;
     /**
@@ -46,9 +42,9 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     /**是否需要显示View */
     needShowView?: boolean;
     /**显示参数 */
-    showOpt?: akView.IShowOption<any, IAkViewOptTypes>;
+    showOpt?: akView.IShowOption<any, IAkViewStateTypes>;
     /**隐藏参数 */
-    hideOpt?: akView.IHideOption<any, IAkViewOptTypes>;
+    hideOpt?: akView.IHideOption<any, IAkViewStateTypes>;
     /**显示过程中的Promise */
     protected _showingPromise?: void | Promise<void>;
     /**隐藏中的Promise */
@@ -66,11 +62,11 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     }
 
     protected _needDestroyRes: boolean;
-    /**
-     * 自定义创建
-     * @param option
-     */
-    onCreateCustom?(option: IAkViewViewAgentOption): void;
+    onCreate(option: IAkViewViewAgentOption): void {
+        if (this._isCreated) return;
+        this._isCreated = true;
+        this._opt = option;
+    }
 
     initAndShowView(): void {
         this._initViewIns();
@@ -81,10 +77,10 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
             console.error(`id:${this.id} isViewInited is false`);
         }
     }
-    onShow(showCfg?: akView.IShowOption) {
-        this.showOpt = showCfg;
+    onShow(showOpt?: akView.IShowOption) {
+        this.showOpt = showOpt;
         this.needDestroy = false;
-        this.needShowView = showCfg ? showCfg.needShowView : true;
+        this.needShowView = showOpt ? showOpt.needShowView : true;
         this._needDestroyRes = false;
         //在显示中或者正在隐藏中
         if (this.isViewShowed || this.hiding) {
@@ -110,7 +106,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
                 }
             };
             this._isLoading = true;
-            this.viewMgr.preloadResById(this.id, onLoadedCb, showCfg?.loadOption);
+            this.viewMgr.preloadResById(this.id, onLoadedCb, showOpt?.loadOption);
         }
     }
     onUpdate(updateState: any) {
@@ -118,15 +114,14 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         const viewIns = this.viewIns;
         if (this.isViewInited) {
             viewIns?.onUpdateView?.(updateState);
-            this._callChildViewsOnUpdateView(updateState);
         } else {
             this.updateState = updateState;
         }
     }
-    async onHide(hideCfg?: akView.IHideOption) {
+    async onHide(hideOpt?: akView.IHideOption) {
         const viewIns = this.viewIns;
 
-        this.hideOpt = hideCfg;
+        this.hideOpt = hideOpt;
         this.hiding = true;
         this.needDestroy = this.hideOpt?.destroyAfterHide;
 
@@ -141,7 +136,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         this.isViewShowed = false;
         this.isViewShowEnd = false;
         if (viewIns) {
-            promise = viewIns.onPlayAnim?.(false, hideCfg?.onHideViewOpt);
+            promise = viewIns.onTransition?.(false, null, hideOpt);
             this._hidingPromise = promise;
         }
         //TODO 需要单元测试验证多次调用会怎么样
@@ -151,7 +146,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
             this._hidingPromise = undefined;
         }
         this._hideViewIns();
-        this.needDestroy && this.entryDestroyed();
+        this.needDestroy && this.doDestroy();
     }
     onDestroy(destroyRes?: boolean) {
         if (this._hidingPromise) {
@@ -167,15 +162,15 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         this._needDestroyRes = destroyRes;
         this._hideViewIns();
 
-        this.entryDestroyed();
+        this.doDestroy();
     }
 
     showView(): void {
         const viewIns = this.viewIns;
 
-        this._addViewToLayerAndShow();
+        this._showViewIns();
 
-        const promise = viewIns.onPlayAnim && viewIns.onPlayAnim(true);
+        const promise = viewIns.onTransition && viewIns.onTransition(true);
         this._showingPromise = promise;
         this.isViewShowed = true;
         this.needShowView = false;
@@ -196,7 +191,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         this._emitViewEvent("onViewShowEnd");
     }
 
-    entryDestroyed(): void {
+    doDestroy(): void {
         this.needDestroy = false;
         const needDestroyRes = this._needDestroyRes || this._opt.destroyResOnDestroy;
         this._destroyViewIns(needDestroyRes);
@@ -213,17 +208,8 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
             //持有模板资源
             this.viewMgr.addTemplateResRef(this);
             if (!this.isViewInited && viewIns) {
-                const onInitData = showOpt?.onInitViewOpt;
+                const onInitData = showOpt?.viewInitState;
                 viewIns.onInitView?.(onInitData);
-                //子view处理
-                const childViewMap = viewIns.refs;
-                if (childViewMap) {
-                    let childViewIns: akView.IView;
-                    for (const childViewInsKey in childViewMap) {
-                        childViewIns = childViewMap[childViewInsKey];
-                        childViewIns.onInitView && childViewIns.onInitView(onInitData);
-                    }
-                }
                 this.isViewInited = true;
                 this._emitViewEvent("onViewInit");
             }
@@ -231,27 +217,46 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     }
 
     /**
-     * 添加到层级并显示View
+     * 显示View并处理事件
      * @param showOpt
      */
-    protected _addViewToLayerAndShow(showOpt?: akView.IShowOption) {
+    protected _showViewIns(showOpt?: akView.IShowOption) {
         const viewIns = this.viewIns;
-        const onShowViewOpt = showOpt?.onShowViewOpt;
+        const viewShowState = showOpt?.viewShowState;
         const viewMgr = this.viewMgr;
-        const { tplHandler, eventBus } = viewMgr;
-        viewIns.onBeforeViewShow?.(onShowViewOpt);
-        tplHandler && tplHandler.addToLayer && tplHandler.addToLayer(this);
+        const { eventBus } = viewMgr;
+
+
+
+        this._setViewInsVisible(true, viewShowState);
+
         eventBus.onAkEvent("onWindowResize", viewIns.onWindowResize, viewIns);
 
-        viewIns.onShowView && viewIns.onShowView(onShowViewOpt);
-        //子view处理
-        this._callChildViewsOnShowView(onShowViewOpt);
+        viewIns.onShowedView && viewIns.onShowedView(viewShowState);
         this._emitViewEvent("onViewShow");
         const updateState = this.updateState;
         if (updateState && viewIns.onUpdateView) {
             viewIns.onUpdateView(updateState);
-            this._callChildViewsOnUpdateView(updateState);
             this.updateState = undefined;
+        }
+    }
+    /**
+     * 设置显示
+     * @param visible 
+     * @param showOpt 
+     * @param hideOpt 
+     */
+    protected _setViewInsVisible(visible: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption) {
+
+        const viewIns = this.viewIns;
+        const { tplHandler } = this.viewMgr;
+        viewIns.onBeforeSetVisible && viewIns.onBeforeSetVisible(visible, showOpt, hideOpt);
+        if (viewIns.setVisible) {
+            viewIns.setVisible(visible, showOpt, hideOpt);
+        } else if (tplHandler && tplHandler.handleViewVisible) {
+            tplHandler.handleViewVisible(this, visible, showOpt, hideOpt);
+        } else {
+            console.warn("[akview] can not set view visible");
         }
     }
     /**
@@ -262,15 +267,12 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         this.isViewShowed = false;
         const viewIns = this.viewIns;
         const viewMgr = this.viewMgr;
-        const { eventBus, tplHandler } = viewMgr;
-        const hideViewOpt = hideOption && hideOption.onHideViewOpt;
+        const viewHideState = hideOption?.viewHideState;
+        const { eventBus } = viewMgr;
+
         if (viewIns) {
-            //子view处理
-            this._callChildViewsOnHideView(hideViewOpt);
-            tplHandler && tplHandler.removeFromLayer && tplHandler.removeFromLayer(this);
-
-            viewIns.onHideView && viewIns.onHideView(hideViewOpt);
-
+            this._setViewInsVisible(true, null, hideOption);
+            viewIns.onHidedView && viewIns.onHidedView(viewHideState);
             eventBus.offAkEvent("onWindowResize", viewIns.onWindowResize, viewIns);
         }
         if (this._opt.canDecTemplateResRefOnHide && hideOption && hideOption.decTemplateResRef) {
@@ -287,76 +289,30 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         const viewIns = this.viewIns;
         this.destroyed = true;
         this.isViewInited = false;
+        const template = this.template;
+        const handler = viewMgr.tplHandler;
         if (viewIns) {
-            this._callChildViewsOnDestroyView();
-            viewIns.onDestroyView && viewIns.onDestroyView();
+            viewIns.onBeforeDestroyDpObj && viewIns.onBeforeDestroyDpObj();
+            if (viewIns.destroyDisplayObj) {
+                viewIns.destroyDisplayObj();
+            } else if (handler.destroyDisplayObj) {
+                handler.destroyDisplayObj(viewIns, template);
+            } else {
+                console.warn("[akview] can not destroyed DisplayObject");
+            }
+
+            viewIns.onDestroyedView && viewIns.onDestroyedView();
 
             this.viewIns = undefined;
         }
-        const template = this.template;
-        const handler = viewMgr.tplHandler;
-        handler?.destroyView(viewIns, template);
+
+
         //释放引用
         viewMgr.decTemplateResRef(this);
         //销毁资源
         needDestroyRes && viewMgr.destroyRes(template.key);
 
         viewMgr.eventBus.emitAkViewEvent("onViewDestroyed", this.id);
-    }
-    /**
-     * 执行childView的 OnShowView
-     */
-    protected _callChildViewsOnShowView(onShowViewOpt: any) {
-        const childViewMap = this.viewIns.refs;
-        if (childViewMap) {
-            let childViewIns: akView.IView;
-            for (const childViewInsKey in childViewMap) {
-                childViewIns = childViewMap[childViewInsKey];
-                childViewIns.onShowView && childViewIns.onShowView(onShowViewOpt);
-            }
-        }
-    }
-    /**
-     * 执行childView的 OnUpdateView
-     */
-    protected _callChildViewsOnUpdateView(updateState: any) {
-        const viewIns = this.viewIns;
-        const childViewMap = viewIns.refs;
-        if (childViewMap) {
-            let childViewIns: akView.IView;
-            for (const childViewInsKey in childViewMap) {
-                childViewIns = childViewMap[childViewInsKey];
-                childViewIns.onUpdateView && childViewIns.onUpdateView(updateState);
-            }
-        }
-    }
-    /**
-     * 执行childView的 OnHideView
-     */
-    protected _callChildViewsOnHideView(hideViewOpt: any) {
-        const childViewMap = this.viewIns.refs;
-        if (childViewMap) {
-            let childViewIns: akView.IView;
-            for (const childViewInsKey in childViewMap) {
-                childViewIns = childViewMap[childViewInsKey];
-                childViewIns.onHideView && childViewIns.onHideView(hideViewOpt);
-            }
-        }
-    }
-    /**
-     * 执行childView的 OnDestroyView
-     */
-    protected _callChildViewsOnDestroyView() {
-        const viewIns = this.viewIns;
-        const childViewMap = viewIns.refs;
-        if (childViewMap) {
-            let childViewIns: akView.IView;
-            for (const childViewInsKey in childViewMap) {
-                childViewIns = childViewMap[childViewInsKey];
-                childViewIns.onDestroyView && childViewIns.onDestroyView();
-            }
-            viewIns.refs = undefined;
-        }
     }
     /**
      * 派发View事件

@@ -1,4 +1,4 @@
-export const globalViewTemplateMap: akView.TemplateMap<any> = {};
+export const globalViewTemplateMap: akView.TemplateMap = {};
 export const globalPlugins: akView.IPluginRegistInfo[] = [];
 
 declare global {
@@ -20,9 +20,9 @@ export function injectViewMgr(mgr: akView.IMgr) {
  * @param template 显示控制器定义
  * @param templateMap 默认为全局字典，可自定义
  */
-export function viewTemplateDecorator<TemplateType extends akView.ITemplate<any> = any>(
-    template: Omit<TemplateType, "viewClass">,
-    templateMap: akView.TemplateMap<any> = globalViewTemplateMap
+export function viewTemplateDecorator(
+    template: Omit<akView.ITemplate, "viewClass">,
+    templateMap: akView.TemplateMap = globalViewTemplateMap
 ) {
     return function (target): void {
         const key: any = template.key;
@@ -35,7 +35,7 @@ export function viewTemplateDecorator<TemplateType extends akView.ITemplate<any>
                 return;
             }
             templateMap[key] = template;
-            (template as TemplateType).viewClass = target;
+            (template as akView.ITemplate).viewClass = target;
         }
     };
 }
@@ -45,9 +45,9 @@ export function viewTemplateDecorator<TemplateType extends akView.ITemplate<any>
  * @param template 显示控制器定义
  * @param templateMap 默认为全局字典，可自定义
  */
-export function viewTemplate<TemplateType extends akView.ITemplate<any> = any>(
-    template: TemplateType,
-    templateMap: akView.TemplateMap<any> = globalViewTemplateMap
+export function viewTemplate(
+    template: akView.ITemplate,
+    templateMap: akView.TemplateMap = globalViewTemplateMap
 ): boolean {
     const key: any = template.key;
     if (viewMgr?.inited) {

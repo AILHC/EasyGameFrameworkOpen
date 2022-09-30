@@ -1,8 +1,8 @@
 import { DefaultPlugin, ViewMgr } from "../src";
-import { DefaultEventBus } from "../src/default-event-bus";
-import { DefaultTemplateHandler } from "../src/default-template-handler";
-import { DefaultViewAgent } from "../src/default-view-agent";
-import { LRU2QCacheHandler } from "../src/lru2q-cache-handler";
+import { DefaultEventBus } from "../src/DefaultEventBus";
+import { DefaultTemplateHandler } from "../src/DefaultTemplateHandler";
+import { DefaultViewAgent } from "../src/DefaultViewAgent";
+import { LRU2QCacheHandler } from "../src/LRU2QCacheHandler";
 import { TestParentView } from "./test-use-logics/test-child-view";
 import { TestViewAgent } from "./test-use-logics/test-view-agent";
 
@@ -22,13 +22,19 @@ declare global {
         regitstTestViewKey12?: "regitstTestViewKey12";
         regitstTestViewKey13?: "regitstTestViewKey13";
     }
-    interface ITestViewOptTypes {
-        regitstTestViewKey1: ToAkViewOptType<{
-            showOpt: { a: number };
-            updateOpt: { b: string };
-            initOpt: { init: string };
-            hideOpt: { p: boolean };
+    interface IAkViewKeyTypes extends ITestViewKeys{
+
+    }
+    interface ITestViewStateTypes {
+        regitstTestViewKey1: ToAkViewStateType<{
+            showState: { a: number };
+            updateState: { b: string };
+            initState: { init: string };
+            hideState: { p: boolean };
         }>;
+    }
+    interface IAkViewStateTypes extends ITestViewStateTypes {
+
     }
 }
 
@@ -74,8 +80,8 @@ describe(`ViewMgr相关测试`, function () {
     });
 
     test(`测试:ViewMgr.template 注册view模板,以及相关函数:ViewMgr.getTempalte,ViewMgr.hasTemplate`, function () {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
-
+        const mgr = new ViewMgr();
+        
         mgr.init();
         const viewKey1 = "regitstTestViewKey1";
         //template Key
@@ -118,7 +124,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr.use(undefined as any, { a: "a", b: 1 });
     });
     test("测试: ViewMgr.getResInfo", function () {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr = new ViewMgr();
         const tplHandler = {
             getResInfo(template) {
                 return template.key;
@@ -136,7 +142,7 @@ describe(`ViewMgr相关测试`, function () {
         expect(mgr.getTemplateResInfo(undefined)).toEqual(undefined);
     });
     test("测试: ViewMgr.preloadResById", function () {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr = new ViewMgr();
 
         const handler = {
             loadRes(config: akView.IResLoadConfig) {}
@@ -153,7 +159,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr.preloadResById(testKey);
         expect(loadResSpy).toBeCalledTimes(1);
         //已经加载
-        const mgr2 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr2 = new ViewMgr();
         const handler2 = {
             loadRes(config: akView.IResLoadConfig) {},
             isLoaded() {
@@ -168,7 +174,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr2.preloadResById(testKey, completeMockFunc);
         expect(completeMockFunc).toBeCalledTimes(1);
         //没有加载方法
-        const mgr3 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr3 = new ViewMgr();
         const handler3 = {} as any;
         mgr3.init({
             tplHandler: handler3
@@ -178,7 +184,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr3.preloadResById(testKey, completeMockFunc3);
         expect(completeMockFunc3).toBeCalledTimes(1);
         //progress不是函数
-        const mgr4 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr4 = new ViewMgr();
         const testLoadOption4 = {};
         const handler4 = {
             loadRes(config: akView.IResLoadConfig) {
@@ -195,7 +201,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr4.preloadResById(testKey, () => {}, testLoadOption4, {} as any);
 
         //loadOption合并,参数loadOption会和template.loadOption合并
-        const mgr5 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr5 = new ViewMgr();
 
         const testLoadOption5 = { a: 1 };
         const handler5 = {
@@ -213,7 +219,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr5.preloadResById({ id: testKey, loadOption: testLoadOption5 });
 
         //传递config对象,config会传到loadRes方法的第一个参数
-        const mgr6 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr6 = new ViewMgr();
         const testConfig6 = { id: "", complete: function () {}, progress: function () {}, loadOption: {} };
         const handler6 = {
             loadRes(config: akView.IResLoadConfig) {
@@ -272,25 +278,25 @@ describe(`ViewMgr相关测试`, function () {
         expect(viewAgent2?.viewIns).toBe(viewIns2);
         expect(viewIns2.key).toBe(testViewKey2);
     });
-    test("测试:ViewMgr.createViewIns bindChildViews", function () {
-        var viewMgr = new ViewMgr();
-        viewMgr.init();
-        viewMgr.use(new DefaultPlugin());
-        const viewKey = "TestParentView";
-        TestParentView;
-        const viewAgent = viewMgr.createViewAgent(viewKey);
-        const viewIns: TestParentView = viewMgr.createViewIns(viewAgent);
-        expect(viewIns.refs).toBeDefined();
-    });
+    // test("测试:ViewMgr.createViewIns bindChildViews", function () {
+    //     var viewMgr = new ViewMgr();
+    //     viewMgr.init();
+    //     viewMgr.use(new DefaultPlugin());
+    //     const viewKey = "TestParentView";
+    //     TestParentView;
+    //     const viewAgent = viewMgr.createViewAgent(viewKey);
+    //     const viewIns: TestParentView = viewMgr.createViewIns(viewAgent);
+    //     expect(viewIns.refs).toBeDefined();
+    // });
     test("测试：ViewMgr.createViewAgent", function () {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr = new ViewMgr();
         mgr.init({ defaultViewAgentClass: DefaultViewAgent });
         //传递空id，返回undefined
         const viewAgent1 = mgr.createViewAgent("");
         expect(viewAgent1).toBeUndefined();
 
         //没有templateHandler的createViewAgent方法，mgr.createViewAgent返回DefaultViewAgent的实例
-        const mgr2 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr2 = new ViewMgr();
         mgr2.init({
             defaultViewAgentClass: DefaultViewAgent
         });
@@ -307,7 +313,7 @@ describe(`ViewMgr相关测试`, function () {
         const viewAgent3 = mgr2.createViewAgent(viewKey2);
         expect(viewAgent3?.cacheMode).toEqual("CUSTOM");
         //有templateHandler的createViewAgent方法,createViewAgent返回testCreateViewAgentReturnObj
-        const mgr4 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr4 = new ViewMgr();
         let testCreateViewAgentReturnObj = {
             onCreate(option) {
                 expect(option.a).toEqual(1);
@@ -347,7 +353,7 @@ describe(`ViewMgr相关测试`, function () {
         expect(mgr.getViewIns("")).toBeUndefined();
     });
     test("测试: ViewMgr.preloadRes", function () {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr = new ViewMgr();
 
         const handler = {
             loadRes(config: akView.IResLoadConfig) {}
@@ -366,7 +372,7 @@ describe(`ViewMgr相关测试`, function () {
 
         expect(loadResSpy).toBeCalledTimes(1);
         //已经加载
-        const mgr2 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr2 = new ViewMgr();
         const handler2 = {
             loadRes(config: akView.IResLoadConfig) {},
             isLoaded() {
@@ -381,7 +387,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr2.preloadRes(testKey, completeMockFunc);
         expect(completeMockFunc).toBeCalledTimes(1);
         //没有加载方法
-        const mgr3 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr3 = new ViewMgr();
         const handler3 = {} as any;
         mgr3.init({
             tplHandler: handler3
@@ -391,7 +397,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr3.preloadResById(testKey, completeMockFunc3);
         expect(completeMockFunc3).toBeCalledTimes(1);
         //progress不是函数
-        const mgr4 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr4 = new ViewMgr();
         const testLoadOption4 = {};
         const handler4 = {
             loadRes(config: akView.IResLoadConfig) {
@@ -408,7 +414,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr4.preloadResById(testKey, () => {}, testLoadOption4, {} as any);
 
         //loadOption合并,参数loadOption会和template.loadOption合并
-        const mgr5 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr5 = new ViewMgr();
 
         const testLoadOption5 = { a: 1 };
         const handler5 = {
@@ -426,7 +432,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr5.preloadResById({ id: testKey, loadOption: testLoadOption5 });
 
         //传递config对象,config会传到loadRes方法的第一个参数
-        const mgr6 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr6 = new ViewMgr();
         const testConfig6 = { id: "", complete: function () {}, progress: function () {}, loadOption: {} };
         const handler6 = {
             loadRes(config: akView.IResLoadConfig) {
@@ -439,7 +445,7 @@ describe(`ViewMgr相关测试`, function () {
         mgr6.preloadResById(testConfig6);
     });
     test("测试：ViewMgr.isPreloadResLoaded", function () {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr = new ViewMgr();
         //没有实现templateHandler.isLoaded方法，返回true(没有实现就当作不处理资源加载，不阻碍没资源加载的流程) 这是错误的，只有没实现loadRes才算是加载完成，因为它是所有template的资源处理
         mgr.init({
             tplHandler: {} as any
@@ -457,7 +463,7 @@ describe(`ViewMgr相关测试`, function () {
         expect(isLoaded12).toBeTruthy();
         expect(isLoaded13).toBeTruthy();
         //实现templateHandler.isLoaded方法，都返回false
-        const mgr2 = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr2 = new ViewMgr();
         const templateHandler: akView.ITemplateHandler = {
             isLoaded() {
                 return false;
@@ -522,8 +528,8 @@ describe(`ViewMgr相关测试`, function () {
         const viewAgent2 = mgr.create(viewKey, testInitData, false, testShowData);
         expect(viewAgent2.cacheMode).toEqual(undefined);
         const viewAgent2ShowOpt = (viewAgent2 as DefaultViewAgent).showOpt;
-        expect(viewAgent2ShowOpt.onInitViewOpt).toEqual(testInitData);
-        expect(viewAgent2ShowOpt.onShowViewOpt).toEqual(testShowData);
+        expect(viewAgent2ShowOpt.viewInitState).toEqual(testInitData);
+        expect(viewAgent2ShowOpt.viewShowState).toEqual(testShowData);
 
         const viewAgent3 = mgr.create(viewKey, undefined, false, undefined, "FOREVER");
 
@@ -599,7 +605,7 @@ describe(`ViewMgr相关测试`, function () {
     });
 
     test("测试: 资源加载loadOption & progressCallback & isPreloadResLoading & isPreloadResLoaded", function (done) {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr = new ViewMgr();
 
         const handlerInitOption: IAkViewDefaultTplHandlerOption = {
             isLoaded(resInfo) {
@@ -641,7 +647,7 @@ describe(`ViewMgr相关测试`, function () {
         );
     });
     test("测试: 取消加载cancelLoadPreloadRes", function (done) {
-        const mgr = new ViewMgr<ITestViewKeys, ITestViewOptTypes>();
+        const mgr = new ViewMgr();
 
         const handlerInitOption: IAkViewDefaultTplHandlerOption = {
             isLoaded(resInfo) {
