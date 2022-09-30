@@ -1,21 +1,17 @@
 
+
 /**
  * @author AILHC 505126057@qq.com
  */
 export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, ResultType = any>
     implements broadcast.IBroadcast<MsgKeyType, ValueType, ResultType>{
-
-    public keys: { [key in keyof MsgKeyType]: MsgKeyType[key] };
-    private _valueMap: { [key in keyof MsgKeyType]: any };
-    private _handlerMap: { [key in keyof MsgKeyType]: broadcast.IListenerHandler | broadcast.IListenerHandler[] };
-    private _stickHandlersMap: { [key in keyof MsgKeyType]: broadcast.IStickyHandler[] };
+    private _valueMap: Record<any, any>;
+    public static readonly onListenerOnEventKey: "onListenerOn" = "onListenerOn";
+    private _handlerMap: Record<any, broadcast.IListenerHandler | broadcast.IListenerHandler[]>
+    private _stickHandlersMap: Record<any, broadcast.IStickyHandler[]>;
     protected _unuseHandlers: any[]
     constructor() {
-        this.keys = new Proxy({} as any, {
-            get: (target, p) => {
-                return p;
-            }
-        })
+
         this._valueMap = {} as any;
         this._unuseHandlers = [];
     }
@@ -29,8 +25,8 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * @param once 是否监听一次
      * 
      */
-    public on<keyType extends keyof MsgKeyType = any>(
-        handler: keyType | broadcast.IListenerHandler<keyType, ValueType, ResultType> | broadcast.IListenerHandler<keyType, ValueType, ResultType>[],
+    public on<keyType extends keyof MsgKeyType>(
+        handler: keyType | String | broadcast.IListenerHandler<keyType, ValueType, ResultType> | broadcast.IListenerHandler<keyType, ValueType, ResultType>[],
         listener?: broadcast.Listener<ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>], ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
         context?: any,
         once?: boolean,
@@ -51,7 +47,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
         }
 
     }
-    public has(key: keyof MsgKeyType) {
+    public has(key: keyof MsgKeyType | String) {
         return this._handlerMap && !!this._handlerMap[key]
     }
 
@@ -70,7 +66,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * 注销指定事件的所有监听
      * @param key 
      */
-    public offAll(key?: keyof MsgKeyType) {
+    public offAll(key?: keyof MsgKeyType | String) {
         if (this._isStringNull(key)) {
             return;
         }
@@ -92,7 +88,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
         if (valueMap) valueMap[key] = undefined;
 
     }
-    public off(key: keyof MsgKeyType, listener: broadcast.Listener, context?: any, onceOnly?: boolean) {
+    public off(key: keyof MsgKeyType | String, listener: broadcast.Listener, context?: any, onceOnly?: boolean) {
         if (this._isStringNull(key)) return;
         const handlerMap = this._handlerMap;
         if (!handlerMap || !handlerMap[key]) return this;
@@ -165,9 +161,9 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * @param callback 回调
      * @param persistence 是否持久化数据
      */
-    public broadcast<keyType extends keyof MsgKeyType = any>(
-        key: keyType, value?: ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>],
-        callback?: broadcast.ResultCallBack<ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
+    public broadcast<keyType extends keyof MsgKeyType>(
+        key: keyType | String, value?: broadcast.GetTypeMapType<keyType, ValueType>,
+        callback?: broadcast.ResultCallBack<broadcast.GetTypeMapType<keyType, ResultType>>,
         persistence?: boolean) {
         const handlerMap = this._handlerMap;
         if (!handlerMap) return;
@@ -218,12 +214,12 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * @param callback 能够收到接收器返回的消息
      * @param persistence 是否持久化消息类型。持久化的消息可以在任意时刻通过 broadcast.value(key) 获取当前消息的数据包。默认情况下，未持久化的消息类型在没有接收者的时候会被移除，而持久化的消息类型则不会。开发者可以通过 [clear] 函数来移除持久化的消息类型。
      */
-    public stickyBroadcast<keyType extends keyof MsgKeyType = any>(
+    public stickyBroadcast<keyType extends keyof MsgKeyType>(
         key: keyType,
-        value?: ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>],
-        callback?: broadcast.ResultCallBack<ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
+        value?: broadcast.GetTypeMapType<keyType, ValueType>,
+        callback?: broadcast.ResultCallBack<broadcast.GetTypeMapType<keyType, ResultType>>,
         persistence?: boolean
-    ) {
+    ): void {
         if (this._isStringNull(key)) return;
         const handlerMap = this._handlerMap;
         if (handlerMap && handlerMap[key]) {
@@ -360,8 +356,8 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
                 stickyMap[handler.key] = undefined;
             }
         }
-        if (handler.key !== this.keys.onListenerOn) {
-            this.broadcast(this.keys.onListenerOn, handler.key);
+        if (handler.key !== "onListenerOn") {
+            this.broadcast("onListenerOn", handler.key);
         }
 
     }
@@ -369,8 +365,8 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * 取值
      * @param key 
      */
-    public value<keyType extends keyof MsgKeyType = any>(key: keyType): ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>] {
-        return this._valueMap && this._valueMap[key];
+    public value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetTypeMapType<keyType, ValueType> {
+        return this._valueMap && this._valueMap[key] as any;
     }
     /**
      * 销毁广播系统

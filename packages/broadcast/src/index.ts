@@ -1,2 +1,2 @@
 export * from "./broadcast";
-export * from "./globalDefines";
+export * from "./interfaces";

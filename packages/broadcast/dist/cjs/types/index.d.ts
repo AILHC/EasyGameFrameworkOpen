@@ -36,7 +36,7 @@ declare module '@ailhc/broadcast' {
 	     * @param callback 回调
 	     * @param persistence 是否持久化数据
 	     */
-	    broadcast<keyType extends keyof MsgKeyType = any>(key: keyType, value?: ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>], callback?: broadcast.ResultCallBack<ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>, persistence?: boolean): void;
+	    broadcast<keyType extends keyof MsgKeyType>(key: keyType, value?: ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>], callback?: broadcast.ResultCallBack<ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>, persistence?: boolean): void;
 	    /**
 	     * 广播一条 指定 [key] 的粘性消息
 	     * 如果广播系统中没有注册该类型的接收者，本条信息将被滞留在系统中。一旦有该类型接收者被注册，本条消息将会被立即发送给接收者
