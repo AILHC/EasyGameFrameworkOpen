@@ -253,8 +253,8 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         viewIns.onBeforeSetVisible && viewIns.onBeforeSetVisible(visible, showOpt, hideOpt);
         if (viewIns.setVisible) {
             viewIns.setVisible(visible, showOpt, hideOpt);
-        } else if (tplHandler && tplHandler.handleViewVisible) {
-            tplHandler.handleViewVisible(this, visible, showOpt, hideOpt);
+        } else if (tplHandler.handleViewVisible) {
+            tplHandler.handleViewVisible(viewIns, visible, showOpt, hideOpt);
         } else {
             console.warn("[akview] can not set view visible");
         }
@@ -296,7 +296,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
             if (viewIns.destroyDisplayObj) {
                 viewIns.destroyDisplayObj();
             } else if (handler.destroyDisplayObj) {
-                handler.destroyDisplayObj(viewIns, template);
+                handler.destroyDisplayObj(viewIns.dpObj);
             } else {
                 console.warn("[akview] can not destroyed DisplayObject");
             }

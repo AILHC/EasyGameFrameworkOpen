@@ -1,3 +1,7 @@
+import { DefaultEventBus } from "./DefaultEventBus";
+import { BaseViewAdapter } from "./BaseViewAdapter";
+import { DefaultViewAgent } from "./DefaultViewAgent";
+import { LRU2QCacheHandler } from "./LRU2QCacheHandler";
 import { globalPlugins, globalViewTemplateMap, injectViewMgr } from "./view-utils";
 
 /**
@@ -6,11 +10,10 @@ import { globalPlugins, globalViewTemplateMap, injectViewMgr } from "./view-util
 const IdSplitChars: akView.IdSplitCharsType = "_$_";
 type TemplateType = akView.ITemplate;
 export class ViewMgr<
-
     keyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes
 > implements akView.IMgr<keyType>
 {
-    private _cacheHandler: akView.ICacheHandler;
+    protected _cacheHandler: akView.ICacheHandler;
 
     public get cacheHandler(): akView.ICacheHandler {
         return this._cacheHandler;
@@ -26,17 +29,25 @@ export class ViewMgr<
         };
     }
 
-    private _eventBus: akView.IEventBus;
+    protected _eventBus: akView.IEventBus;
     /**事件处理器 */
     public get eventBus(): akView.IEventBus {
         return this._eventBus;
     }
-    private _tplHandler: akView.ITemplateHandler;
+    protected _tplHandler: akView.IViewAdapter;
     /**
      * 模板处理器
      */
-    public get tplHandler(): akView.ITemplateHandler {
+    public get tplHandler(): akView.IViewAdapter {
         return this._tplHandler;
+    }
+    protected _resHandler: akView.IResHandler;
+    public get resHandler(): akView.IResHandler {
+        return this._resHandler;
+    }
+    protected _displayHandler: akView.IDisplayHandler;
+    public get displayHandler(): akView.IDisplayHandler {
+        return this._displayHandler;
     }
 
     /**模版字典 */
@@ -57,36 +68,35 @@ export class ViewMgr<
     /**
      * 默认ViewAgent的配置
      */
-    private _vsCreateOpt: any;
-    private _option: akView.IMgrInitOption;
+    protected _vsCreateOpt: any;
+    protected _option: akView.IMgrInitOption;
 
     public get option(): akView.IMgrInitOption {
         return this._option;
     }
-    init(option?: akView.IMgrInitOption): void {
+    init(option: akView.IMgrInitOption): void {
         if (this._inited) return;
         option = option || ({} as any);
-        this._eventBus = option.eventBus || ({} as any);
-        this._cacheHandler = option.cacheHandler;
+        this._eventBus = option.eventBus || (new DefaultEventBus());
+        this._cacheHandler = option.cacheHandler || (new LRU2QCacheHandler(option.cacheHandlerOption));
         this._viewAgentMap = {};
-        this._tplHandler = option.tplHandler || ({} as any);
+        this._tplHandler = option.adapter;
         this._option = option;
         this._vsCreateOpt = option.vsCreateOpt || {};
         this._vaClassMap = {} as any;
         if (option.defaultViewAgentClass) {
             this.registViewAgentClass("Default", option.defaultViewAgentClass);
+        } else {
+            this.registViewAgentClass("Default", DefaultViewAgent);
         }
         this._inited = true;
         injectViewMgr(this as never);
-        this._usePlugins(globalPlugins);
         const templateMap = option.templateMap || globalViewTemplateMap;
         this._templateMap = templateMap ? Object.assign({}, templateMap) : ({} as any);
     }
-
-    use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void {
-        if (plugin) {
-            plugin.viewMgr = this as any;
-            plugin.onUse?.(option);
+    public static use(plugin: akView.IPlugin, option?: any) {
+        if (plugin.onUse) {
+            plugin.onUse(ViewMgr, option);
         }
     }
 
@@ -165,7 +175,9 @@ export class ViewMgr<
         if (!template) {
             return;
         }
-        return this._tplHandler.getResInfo(template);
+        let resInfo = template.getResInfo && template.getResInfo()
+        resInfo = resInfo || this._tplHandler?.getTplResInfo(template);
+        return resInfo;
     }
     /**
      * 根据id加载模板固定资源
@@ -209,11 +221,11 @@ export class ViewMgr<
             config.loadOption = Object.assign({}, template.loadOption, config.loadOption);
         }
         const handler = this._tplHandler;
-        if (!handler.loadRes || handler.isLoaded?.(template)) {
+        if (!handler.loadTplRes || handler.isTplResLoaded?.(template)) {
             config.complete?.();
             return;
         } else {
-            handler.loadRes(config);
+            handler.loadTplRes(config);
         }
     }
     /**
@@ -225,7 +237,7 @@ export class ViewMgr<
         const key = this.getKeyById(id);
         const template = this.getTemplate(key);
 
-        this._tplHandler.cancelLoad(id, template);
+        this._tplHandler.cancelLoadTplRes(id, template);
     }
     /**
      * 预加载模板固定资源,给业务使用，用于预加载
@@ -302,7 +314,7 @@ export class ViewMgr<
 
     destroyRes(key: keyType): boolean {
         const template = this.getTemplate(key as any);
-        return this._tplHandler.destroyRes(template);
+        return this._tplHandler.destroyTplRes(template);
     }
     isPreloadResLoaded(keyOrIdOrTemplate: (keyType | String) | akView.ITemplate): boolean {
         if (!this._inited) {
@@ -317,7 +329,7 @@ export class ViewMgr<
         }
         const templateHandler = this._tplHandler;
         //如果没有加载，判断有没有loadRes实现
-        return templateHandler.isLoaded ? templateHandler.isLoaded(template) : !templateHandler.loadRes;
+        return templateHandler.isTplResLoaded ? templateHandler.isTplResLoaded(template) : !templateHandler.loadTplRes;
     }
     /**
      * 模板资源引用持有处理
@@ -327,7 +339,7 @@ export class ViewMgr<
         if (viewAgent && !viewAgent.isHoldTemplateResRef) {
             const id = viewAgent.id;
             const template = viewAgent.template;
-            this._tplHandler.addResRef(id, template as any);
+            this._tplHandler.addTplRef(id, template as any);
             viewAgent.isHoldTemplateResRef = true;
         }
     }
@@ -339,7 +351,7 @@ export class ViewMgr<
         if (viewAgent && viewAgent.isHoldTemplateResRef) {
             const template = viewAgent.template;
             const id = viewAgent.id;
-            this._tplHandler.decResRef(id, template as any);
+            this._tplHandler.decTplRef(id, template as any);
             viewAgent.isHoldTemplateResRef = false;
         }
     }
@@ -561,12 +573,12 @@ export class ViewMgr<
         const template = viewAgent.template;
         let viewIns = viewAgent.viewIns;
         if (viewIns) return viewIns;
-        let tplHandler = this._tplHandler;
+        const handler = this._tplHandler;
         //先自定义的创建
-        viewIns = tplHandler.createViewIns && tplHandler.createViewIns(template);
+        viewIns = handler.createViewIns && handler.createViewIns(template);
         viewIns = viewIns || (template.viewClass && new template.viewClass());
         if (viewIns && !viewIns.dpObj) {
-            viewIns.dpObj = tplHandler.createDisplayObj && tplHandler.createDisplayObj(viewIns, template);
+            viewIns.dpObj = handler.createDisplayObj && handler.createDisplayObj(template.key, template);
         }
 
         if (viewIns) {
@@ -678,11 +690,6 @@ export class ViewMgr<
             return id.split(IdSplitChars)[0] as keyType;
         } else {
             return id as keyType;
-        }
-    }
-    protected _usePlugins(pluginInfos: akView.IPluginRegistInfo[]) {
-        for (const pluginInfo of pluginInfos) {
-            this.use(pluginInfo.plugin, pluginInfo.option);
         }
     }
 }

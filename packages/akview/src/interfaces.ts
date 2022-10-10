@@ -151,14 +151,17 @@ declare global {
         /**
          * 获取插件配置参数
          */
-        type GetPluginOptionType<Plugin> = Plugin extends { onUse(...args: infer P): void } ? P[0] : any;
+        type GetPluginOptionType<Plugin> = Plugin extends { onUse(...args: infer P): void } ? P : any;
+        // interface IPlugin {
+        //     /**
+        //      * 管理器
+        //      * 自动赋值
+        //      */
+        //     viewMgr?: akView.IMgr;
+        //     onUse(...args): void;
+        // }
         interface IPlugin {
-            /**
-             * 管理器
-             * 自动赋值
-             */
-            viewMgr?: akView.IMgr;
-            onUse(...args): void;
+            onUse(viewMgr: { new(): akView.IMgr }, option: any): void;
         }
 
         interface ITemplate<
@@ -224,44 +227,33 @@ declare global {
 
         }
         type ChildViewInsMapType = { [key: string]: akView.IView };
-        interface ITemplateHandler<TemplateType = akView.ITemplate> {
-            /**
-             * 创建akView.IView实例
-             * @param template
-             */
-            createViewIns<T extends akView.IView>(template: TemplateType): T;
-            /**
-             * 创建显示对象
-             * @param viewIns 
-             * @param template 
-             */
-            createDisplayObj?<T extends akView.IView>(viewIns: T, template: TemplateType): any;
-            /**
-             * 销毁渲染实例
-             * @param viewIns
-             */
-            destroyDisplayObj?<T extends akView.IView>(viewIns: T, template: TemplateType): void;
+
+        interface IDisplayHandler {
+
+        }
+        interface IResHandler {
 
             /**
-             * 显示或隐藏 并 添加到层级或从层级移除
-             * @param viewAgent
-             * @param visible 是否显示
-             * @param showOpt 显示透传参数
-             * @param hideOpt 隐藏透传参数
+             * 获取模块依赖的资源信息
+             * @param template 
              */
-            handleViewVisible?<BoolType extends true | false>(viewAgent: akView.IViewAgent, visible: BoolType, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): void;
+            getTemplateResInfo(template: akView.ITemplate): akView.TemplateResInfoType;
+
+        }
+        interface IViewAdapter<TemplateType = akView.ITemplate> {
 
             //#region 资源处理
             /**
              * 获取模板预加载资源
              * @param template
              */
-            getResInfo(template: TemplateType): akView.TemplateResInfoType;
+            getTplResInfo(template: TemplateType): akView.TemplateResInfoType;
+
             /**
              * 判断资源是否已经加载
              * @param template
              */
-            isLoaded(template: TemplateType): boolean;
+            isTplResLoaded(template: TemplateType): boolean;
             /**
              * 加载资源
              * 为了防止所有资源没下载完时，加载完成的单项资源被别的逻辑释放掉
@@ -269,32 +261,98 @@ declare global {
              * 总体加载完成后的资源引用则由业务处理了。
              * @param config
              */
-            loadRes(config: IResLoadConfig): void;
+            loadTplRes(config: IResLoadConfig): void;
             /**
              * 取消模板资源下载
              * @param id
              * @param template
              */
-            cancelLoad(id: string, template: TemplateType): void;
+            cancelLoadTplRes(id: string, template: TemplateType): void;
             /**
              * 持有模板资源引用
              * @param id
              * @param template
              */
-            addResRef(id: string, template: TemplateType): void;
+            addTplRef(id: string, template: TemplateType): void;
             /**
              * 释放模板资源引用
              * @param id
              * @param template
              */
-            decResRef(id: string, template: TemplateType): void;
+            decTplRef(id: string, template: TemplateType): void;
             /**
              * 销毁模板资源
              * @param template
              * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
              */
-            destroyRes(template: TemplateType): boolean;
+            destroyTplRes(template: TemplateType): boolean;
+            /**
+             * 资源是否加载
+             * @param resInfo
+             */
+            isLoaded(resInfo: akView.TemplateResInfoType): boolean;
+            /**
+             * 加载资源,需要返回唯一id，用于取消加载
+             * @param resInfo
+             * @param completeCb
+             * @param progressCb
+             * @param loadOption 加载配置，会=Object.assign(IResLoadConfig.loadOption,ITemplate.loadOption);
+             * @returns 返回加载id，用于取消加载
+             */
+            loadRes(
+                resInfo: akView.TemplateResInfoType,
+                completeCb: akView.LoadResCompleteCallback,
+                progressCb: akView.LoadResProgressCallback,
+                loadOption?: IAkViewLoadOption
+            ): string;
+            /**
+             * 销毁资源
+             * @param resInfo
+             */
+            destroyRes(resInfo: akView.TemplateResInfoType): void;
 
+            /**
+             * 取消资源加载
+             * @param loadResId 加载资源id
+             * @param resInfo
+             */
+            cancelLoadRes(loadResId: string, resInfo: akView.TemplateResInfoType): void;
+
+            /**
+             * 增加资源引用
+             * @param resInfo
+             */
+            addResRef(resInfo: akView.TemplateResInfoType): void;
+            /**
+             * 减少资源引用
+             * @param resInfo
+             */
+            decResRef(resInfo: akView.TemplateResInfoType): void;
+            /**
+             * 自定义创建akView.IView实例
+             * @param template
+             */
+            createViewIns?<T extends akView.IView>(template: akView.ITemplate): T;
+            /**
+             * 创建显示对象
+             * @param keyOrPath 
+             * @param opt 可选自定义参数
+             */
+            createDisplayObj?(keyOrPath: string, opt?: any): any;
+            /**
+             * 销毁渲染实例
+             * @param dpObj
+             */
+            destroyDisplayObj?(dpObj: any): void;
+
+            /**
+             * 显示或隐藏 并 添加到层级或从层级移除
+             * @param viewIns
+             * @param visible 是否显示
+             * @param showOpt 显示透传参数
+             * @param hideOpt 隐藏透传参数
+             */
+            handleViewVisible?(viewIns: akView.IView, visible: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): void;
             //#endregion
         }
 
@@ -708,10 +766,14 @@ declare global {
              */
             cacheHandler?: akView.ICacheHandler;
             /**
-             * 模板处理器
-             * 可使用default-plugin-handler或者直接use default-plugin
+             * 默认缓存处理配置
              */
-            tplHandler?: akView.ITemplateHandler;
+            cacheHandlerOption?: akView.ILRU2QCacheHandlerOption;
+            /**
+             * 视图处理适配器
+             */
+            adapter?: akView.IViewAdapter;
+            
             /**
              * 默认ViewAgent类
              */
@@ -798,7 +860,15 @@ declare global {
             /**
              * 模板处理器
              */
-            tplHandler: akView.ITemplateHandler;
+            tplHandler: akView.IViewAdapter;
+            /**
+             * 资源处理器
+             */
+            resHandler: akView.IResHandler;
+            /**
+             * 显示处理器
+             */
+            displayHandler: akView.IDisplayHandler;
             // /**
             //  * 获取模块处理器,可类型转换
             //  */
@@ -816,15 +886,7 @@ declare global {
              * @param option 初始化配置
              */
             init(option: IMgrInitOption): void;
-            /**
-             * 使用插件，可在插件声明周期中对Mgr进行扩展：addTemplate,addTemplateHandler等
-             * @param plugin 插件实现
-             * @param option 插件配置
-             */
-            use<PluginType extends akView.IPlugin>(
-                plugin: PluginType,
-                option?: akView.GetPluginOptionType<PluginType>
-            ): void;
+
             /**
              * 批量注册控制器模版
              * @param templates 定义字典，单个定义，定义数组
