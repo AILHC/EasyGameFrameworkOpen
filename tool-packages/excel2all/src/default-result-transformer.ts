@@ -26,7 +26,7 @@ declare global {
         isBundleDts?: boolean;
         /**合并后的声明文件名,如果没有则默认为tableMap */
         bundleDtsFileName?: string;
-        /**是否将json格式压缩,默认否,减少json字段名字符,效果较小 */
+        /**是否将json格式压缩,默认否,减少json字段名字符,与zip压缩相比包体效果较小，但内存占用减少明显 */
         isCompress?: boolean;
         /**是否Zip压缩,使用zlib */
         isZip?: boolean;
@@ -62,7 +62,8 @@ export class DefaultParseResultTransformer {
         let parseResult: ITableParseResult;
         let tableName: string;
         let tableObj: any;
-        let isObjTypeTableMap: { [key: string]: boolean } = {};
+        const isObjTypeTableMap: { [key: string]: boolean } = {};
+        const tableMainKeyFieldMap: Record<string, string> = {};
         Logger.log(`[outputTransform |转换解析结果]请稍等...`);
         for (let filePath in parseResultMap) {
             parseResult = parseResultMap[filePath];
@@ -90,6 +91,7 @@ export class DefaultParseResultTransformer {
             tableFieldInfoMap[tableName] = fieldInfoMap;
 
             if (outputConfig.clientDtsOutDir && isObjTypeTableMap[tableName] === undefined) {
+                tableMainKeyFieldMap[tableName] = parseResult.mainKeyFieldName;
                 isObjTypeTableMap[tableName] = parseResult.tableDefine.tableType === TableType.vertical;
                 if (parseResult.tableDefine.tableType === TableType.vertical) {
                     tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
@@ -145,19 +147,38 @@ export class DefaultParseResultTransformer {
                 //进行格式压缩
                 const newTableObjMap = {};
                 let tableObj: any;
-                let newTableObj: any;
+                let newTableObj: IExcel2AllCompressTable;
                 for (let tableName in tableObjMap) {
                     if (isObjTypeTableMap[tableName]) {
                         newTableObjMap[tableName] = tableObjMap[tableName];
                         continue;
                     }
                     tableObj = tableObjMap[tableName];
-                    newTableObj = { fieldValuesMap: {} };
+                    const mainKeyFieldName = tableMainKeyFieldMap[tableName];
+                    newTableObj = { $e2a$ValuesMap: {} };
+                    let mainFieldIndex: number;
                     for (let mainKey in tableObj) {
-                        if (!newTableObj.fieldNames) {
-                            newTableObj.fieldNames = Object.keys(tableObj[mainKey]);
+
+                        if (!newTableObj.$e2a$indexMap) {
+                            const fieldNames = Object.keys(tableObj[mainKey]);
+                            mainFieldIndex = fieldNames.indexOf(mainKeyFieldName);
+                            fieldNames.splice(mainFieldIndex, 1);
+
+                            const fieldNameIndexMap = {};
+                            for (let i = 0; i < fieldNames.length; i++) {
+                                fieldNameIndexMap[fieldNames[i]] = i;
+                            }
+                            newTableObj.$e2a$indexMap = fieldNameIndexMap;
+                            if (typeof tableObj[mainKey][mainKeyFieldName] == "number") {
+                                newTableObj.$e2a$n = mainKeyFieldName;
+                            }else{
+                                newTableObj.$e2a$s = mainKeyFieldName;
+                            }
                         }
-                        newTableObj.fieldValuesMap[mainKey] = Object.values(tableObj[mainKey]);
+
+                        const valuesMap = Object.values(tableObj[mainKey]);
+                        valuesMap.splice(mainFieldIndex, 1);
+                        newTableObj.$e2a$ValuesMap[mainKey] = valuesMap;
                     }
                     newTableObjMap[tableName] = newTableObj;
                 }

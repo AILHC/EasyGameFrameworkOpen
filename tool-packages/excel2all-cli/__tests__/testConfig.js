@@ -20,7 +20,7 @@ const outConfig = {
     isBundleDts: true,
     // bundleDtsFileName:"myTableDTS",
     /**是否将json格式压缩,默认否,减少json字段名字符,效果较小 */
-    isCompress: false,
+    isCompress: true,
     /**是否Zip压缩,使用zlib */
     // isZip: false
 }

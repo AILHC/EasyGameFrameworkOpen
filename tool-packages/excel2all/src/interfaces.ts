@@ -225,5 +225,16 @@ declare global {
             parseResult: ITableParseResult
         ): ITableParseResult;
     }
+    interface IExcel2AllCompressTable {
+        /**值索引字典 */
+        $e2a$indexMap?: Record<string, number>,
+        /**行值数组字典 */
+        $e2a$ValuesMap?: Record<string, any[]>;
+        /**主键字段名,类型number */
+        $e2a$n?: string;
+        /**主键字段名,类型string */
+        $e2a$s?: string;
+
+    }
 }
-export interface Interfaces {}
+export interface Interfaces { }

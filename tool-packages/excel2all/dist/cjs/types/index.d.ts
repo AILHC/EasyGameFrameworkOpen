@@ -453,7 +453,7 @@ declare module '@ailhc/excel2all' {
 	        isBundleDts?: boolean;
 	        /**合并后的声明文件名,如果没有则默认为tableMap */
 	        bundleDtsFileName?: string;
-	        /**是否将json格式压缩,默认否,减少json字段名字符,效果较小 */
+	        /**是否将json格式压缩,默认否,减少json字段名字符,与zip压缩相比包体效果较小，但内存占用减少明显 */
 	        isCompress?: boolean;
 	        /**是否Zip压缩,使用zlib */
 	        isZip?: boolean;
@@ -730,6 +730,16 @@ declare module '@ailhc/excel2all' {
 	         * @param parseResult 解析结果
 	         */
 	        parseTableFile(parseConfig: ITableConvertConfig, fileInfo: IFileInfo, parseResult: ITableParseResult): ITableParseResult;
+	    }
+	    interface IExcel2AllCompressTable {
+	        /**值索引字典 */
+	        $e2a$indexMap?: Record<string, number>;
+	        /**行值数组字典 */
+	        $e2a$ValuesMap?: Record<string, any[]>;
+	        /**主键字段名,类型number */
+	        $e2a$n?: string;
+	        /**主键字段名,类型string */
+	        $e2a$s?: string;
 	    }
 	}
 	export interface Interfaces {

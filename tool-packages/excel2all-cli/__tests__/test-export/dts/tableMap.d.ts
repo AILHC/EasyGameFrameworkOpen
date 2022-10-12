@@ -136,6 +136,8 @@ interface IT_ObjTypeSetting {
 	readonly Prop4?: string[];
 	/** json对象 */
 	readonly Prop5?: any;
+	/** 自定义类型,解析为number数组 */
+	readonly field_custom_type?: nums;
 	readonly MyObject?: {
 		/** 嵌套对象测试:主键id */
 		readonly id?: number;
@@ -176,8 +178,6 @@ interface IT_TableTypeSetting {
 	readonly id?: number;
 	/** 数字 */
 	readonly field_int?: number;
-	/** 布尔值 */
-	readonly field_bool?: boolean;
 	/** 数字数组 */
 	readonly field_int_array?: number[];
 	/** 字符串 */
@@ -186,6 +186,12 @@ interface IT_TableTypeSetting {
 	readonly field_string_array?: string[];
 	/** JSON */
 	readonly field_json?: any;
+	/** 没有值的一列 */
+	readonly field_novalue?: number;
+	/** 自定义类型,解析为number数组 */
+	readonly field_custom_type?: nums;
+	/** 布尔值 */
+	readonly field_bool?: boolean;
 	readonly obj?: {
 		/** 多列对象:数字字段 */
 		readonly obj_field_int?: number;

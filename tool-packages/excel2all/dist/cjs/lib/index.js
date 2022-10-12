@@ -21,14 +21,12 @@ function _interopNamespace(e) {
                 var d = Object.getOwnPropertyDescriptor(e, k);
                 Object.defineProperty(n, k, d.get ? d : {
                     enumerable: true,
-                    get: function () {
-                        return e[k];
-                    }
+                    get: function () { return e[k]; }
                 });
             }
         });
     }
-    n['default'] = e;
+    n["default"] = e;
     return Object.freeze(n);
 }
 
@@ -793,7 +791,8 @@ class DefaultParseResultTransformer {
         let parseResult;
         let tableName;
         let tableObj;
-        let isObjTypeTableMap = {};
+        const isObjTypeTableMap = {};
+        const tableMainKeyFieldMap = {};
         Logger.log(`[outputTransform |转换解析结果]请稍等...`);
         for (let filePath in parseResultMap) {
             parseResult = parseResultMap[filePath];
@@ -817,6 +816,7 @@ class DefaultParseResultTransformer {
             }
             tableFieldInfoMap[tableName] = fieldInfoMap;
             if (outputConfig.clientDtsOutDir && isObjTypeTableMap[tableName] === undefined) {
+                tableMainKeyFieldMap[tableName] = parseResult.mainKeyFieldName;
                 isObjTypeTableMap[tableName] = parseResult.tableDefine.tableType === exports.TableType.vertical;
                 if (parseResult.tableDefine.tableType === exports.TableType.vertical) {
                     tableTypeMapDtsStr += "\treadonly " + tableName + "?: " + `IT_${tableName};` + osEol;
@@ -871,12 +871,29 @@ class DefaultParseResultTransformer {
                         continue;
                     }
                     tableObj = tableObjMap[tableName];
-                    newTableObj = { fieldValuesMap: {} };
+                    const mainKeyFieldName = tableMainKeyFieldMap[tableName];
+                    newTableObj = { $e2a$ValuesMap: {} };
+                    let mainFieldIndex;
                     for (let mainKey in tableObj) {
-                        if (!newTableObj.fieldNames) {
-                            newTableObj.fieldNames = Object.keys(tableObj[mainKey]);
+                        if (!newTableObj.$e2a$indexMap) {
+                            const fieldNames = Object.keys(tableObj[mainKey]);
+                            mainFieldIndex = fieldNames.indexOf(mainKeyFieldName);
+                            fieldNames.splice(mainFieldIndex, 1);
+                            const fieldNameIndexMap = {};
+                            for (let i = 0; i < fieldNames.length; i++) {
+                                fieldNameIndexMap[fieldNames[i]] = i;
+                            }
+                            newTableObj.$e2a$indexMap = fieldNameIndexMap;
+                            if (typeof tableObj[mainKey][mainKeyFieldName] == "number") {
+                                newTableObj.$e2a$n = mainKeyFieldName;
+                            }
+                            else {
+                                newTableObj.$e2a$s = mainKeyFieldName;
+                            }
                         }
-                        newTableObj.fieldValuesMap[mainKey] = Object.values(tableObj[mainKey]);
+                        const valuesMap = Object.values(tableObj[mainKey]);
+                        valuesMap.splice(mainFieldIndex, 1);
+                        newTableObj.$e2a$ValuesMap[mainKey] = valuesMap;
                     }
                     newTableObjMap[tableName] = newTableObj;
                 }
@@ -1329,7 +1346,7 @@ function getFileInfos(context) {
         return fileInfo;
     };
     const matchPattern = converConfig.pattern;
-    const filePaths = fg__default['default'].sync(matchPattern, {
+    const filePaths = fg__default["default"].sync(matchPattern, {
         absolute: true,
         onlyFiles: true,
         caseSensitiveMatch: false,
