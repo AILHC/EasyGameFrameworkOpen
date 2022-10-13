@@ -240,7 +240,11 @@ declare global {
             getTemplateResInfo(template: akView.ITemplate): akView.TemplateResInfoType;
 
         }
-        interface IViewAdapter<TemplateType = akView.ITemplate> {
+        /**
+         * 项目适配器
+         * 针对不同项目的资源加载、视图底层进行实现
+         */
+        interface IProjAdapter<TemplateType = akView.ITemplate> {
 
             //#region 资源处理
             /**
@@ -772,7 +776,7 @@ declare global {
             /**
              * 视图处理适配器
              */
-            adapter?: akView.IViewAdapter;
+            adapter?: akView.IProjAdapter;
             
             /**
              * 默认ViewAgent类
@@ -860,7 +864,7 @@ declare global {
             /**
              * 模板处理器
              */
-            tplHandler: akView.IViewAdapter;
+            tplHandler: akView.IProjAdapter;
             /**
              * 资源处理器
              */

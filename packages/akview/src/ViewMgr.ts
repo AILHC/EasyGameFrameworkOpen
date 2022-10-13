@@ -1,8 +1,7 @@
 import { DefaultEventBus } from "./DefaultEventBus";
-import { BaseViewAdapter } from "./BaseViewAdapter";
 import { DefaultViewAgent } from "./DefaultViewAgent";
 import { LRU2QCacheHandler } from "./LRU2QCacheHandler";
-import { globalPlugins, globalViewTemplateMap, injectViewMgr } from "./view-utils";
+import { globalViewTemplateMap, injectViewMgr } from "./view-utils";
 
 /**
  * id拼接字符
@@ -34,11 +33,11 @@ export class ViewMgr<
     public get eventBus(): akView.IEventBus {
         return this._eventBus;
     }
-    protected _tplHandler: akView.IViewAdapter;
+    protected _tplHandler: akView.IProjAdapter;
     /**
      * 模板处理器
      */
-    public get tplHandler(): akView.IViewAdapter {
+    public get tplHandler(): akView.IProjAdapter {
         return this._tplHandler;
     }
     protected _resHandler: akView.IResHandler;
@@ -577,6 +576,7 @@ export class ViewMgr<
         //先自定义的创建
         viewIns = handler.createViewIns && handler.createViewIns(template);
         viewIns = viewIns || (template.viewClass && new template.viewClass());
+        viewIns.layerType = template.layerType;
         if (viewIns && !viewIns.dpObj) {
             viewIns.dpObj = handler.createDisplayObj && handler.createDisplayObj(template.key, template);
         }

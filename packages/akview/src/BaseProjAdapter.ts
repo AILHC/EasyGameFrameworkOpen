@@ -1,5 +1,5 @@
 
-export abstract class BaseViewAdapter implements akView.IViewAdapter<akView.ITemplate> {
+export abstract class BaseProjAdapter implements akView.IProjAdapter<akView.ITemplate> {
 
     /**
      * 模板加载config字典，key为模板key，value为{id:config}的字典
@@ -28,6 +28,9 @@ export abstract class BaseViewAdapter implements akView.IViewAdapter<akView.ITem
         let resInfo = resInfoMap[key];
         if (!resInfo) {
             resInfo = template.getResInfo && template.getResInfo();
+            if (!resInfo) {
+                resInfo = this.customGetTplResInfo?.(template);
+            }
             resInfoMap[key] = resInfo;
         }
         return resInfo;
@@ -159,6 +162,8 @@ export abstract class BaseViewAdapter implements akView.IViewAdapter<akView.ITem
     abstract cancelLoadRes(loadResId: string, resInfo: akView.TemplateResInfoType): void;
     abstract addResRef(resInfo: akView.TemplateResInfoType): void;
     abstract decResRef(resInfo: akView.TemplateResInfoType): void;
+
+    customGetTplResInfo?(template: akView.ITemplate): akView.TemplateResInfoType;
 
     createViewIns?<T extends akView.IView<any>>(template: akView.ITemplate<never>): T;
     createDisplayObj?(keyOrPath: string, opt?: any): any;

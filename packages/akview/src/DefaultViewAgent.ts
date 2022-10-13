@@ -170,7 +170,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
 
         this._showViewIns();
 
-        const promise = viewIns.onTransition && viewIns.onTransition(true);
+        const promise = viewIns.onTransition && viewIns.onTransition(true, this.showOpt);
         this._showingPromise = promise;
         this.isViewShowed = true;
         this.needShowView = false;
