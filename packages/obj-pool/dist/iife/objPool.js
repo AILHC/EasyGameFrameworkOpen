@@ -18,12 +18,6 @@ var objPool = (function (exports) {
             enumerable: false,
             configurable: true
         });
-        BaseObjPool.prototype.setObjHandler = function (objHandler) {
-            if (objHandler) {
-                objHandler.pool = this;
-                this._objHandler = objHandler;
-            }
-        };
         Object.defineProperty(BaseObjPool.prototype, "size", {
             get: function () {
                 var poolObjs = this._poolObjs;
@@ -39,56 +33,32 @@ var objPool = (function (exports) {
             enumerable: false,
             configurable: true
         });
-        BaseObjPool.prototype.init = function (opt) {
+        BaseObjPool.prototype.initByObjHandler = function (sign, objHandler, threshold) {
+            if (threshold === void 0) { threshold = -1; }
             if (!this._sign) {
-                if (!opt.sign) {
-                    console.log("[objPool] sign is undefind");
-                    return;
-                }
-                if (!opt.createFunc && !opt.clas) {
-                    console.error("[objPool] sign:" + opt.sign + "  no createFunc and class");
-                    return;
-                }
-                this._sign = opt.sign;
+                this._sign = sign;
                 this._poolObjs = [];
                 this._usedObjMap = new Map();
-                this.threshold = opt.threshold;
-                var clas_1 = opt.clas;
-                if (opt.createFunc) {
-                    this._createFunc = opt.createFunc;
+                if (isNaN(this.threshold)) {
+                    this.threshold = threshold;
                 }
-                else if (opt.clas) {
-                    this._createFunc = function () {
-                        return new clas_1();
-                    };
-                }
-                this._objHandler = opt.objHandler;
+                this._objHandler = objHandler;
             }
             else {
                 this._loghasInit();
             }
             return this;
         };
-        BaseObjPool.prototype.initByFunc = function (sign, createFunc) {
+        BaseObjPool.prototype.initByClass = function (sign, clas, threshold) {
+            if (threshold === void 0) { threshold = -1; }
             if (!this._sign) {
                 this._sign = sign;
                 this._poolObjs = [];
+                if (isNaN(this.threshold)) {
+                    this.threshold = threshold;
+                }
                 this._usedObjMap = new Map();
-                this._createFunc = createFunc;
-            }
-            else {
-                this._loghasInit();
-            }
-            return this;
-        };
-        BaseObjPool.prototype.initByClass = function (sign, clas) {
-            if (!this._sign) {
-                this._sign = sign;
-                this._poolObjs = [];
-                this._usedObjMap = new Map();
-                this._createFunc = function () {
-                    return new clas();
-                };
+                this._clas = clas;
             }
             else {
                 this._loghasInit();
@@ -104,16 +74,20 @@ var objPool = (function (exports) {
             var obj;
             var handler = this._objHandler;
             for (var i = 0; i < num; i++) {
-                obj = this._createFunc();
-                if (obj && obj.onCreate) {
-                    obj.onCreate();
+                if (this._clas) {
+                    obj = new this._clas();
+                    if (obj.onCreate) {
+                        obj.onCreate();
+                    }
                 }
-                else if (handler && handler.onCreate) {
-                    handler.onCreate(obj);
+                else {
+                    obj = handler.createObj();
+                    if (handler.onCreate) {
+                        handler.onCreate(obj);
+                    }
                 }
                 obj.poolSign = this._sign;
                 obj.isInPool = true;
-                obj.pool = this;
                 poolObjs.push(obj);
             }
         };
@@ -131,11 +105,11 @@ var objPool = (function (exports) {
         BaseObjPool.prototype.kill = function (obj) {
             if (this._usedObjMap.has(obj)) {
                 var handler_1 = this._objHandler;
-                if (obj.onReturn) {
-                    obj.onReturn && obj.onReturn();
+                if (obj.onRecycle) {
+                    obj.onRecycle && obj.onRecycle();
                 }
-                else if (handler_1 && handler_1.onReturn) {
-                    handler_1.onReturn && handler_1.onReturn(obj);
+                else if (handler_1 && handler_1.onRecycle) {
+                    handler_1.onRecycle && handler_1.onRecycle(obj);
                 }
                 this._usedObjMap.delete(obj);
             }
@@ -147,11 +121,8 @@ var objPool = (function (exports) {
                 handler.onKill(obj);
             }
             obj.isInPool = false;
-            if (obj.pool) {
-                obj.pool = undefined;
-            }
         };
-        BaseObjPool.prototype.return = function (obj) {
+        BaseObjPool.prototype.recycle = function (obj) {
             if (!this._sign) {
                 this._logNotInit();
                 return;
@@ -159,15 +130,15 @@ var objPool = (function (exports) {
             if (!obj.isInPool) {
                 obj.isInPool = true;
                 var handler = this._objHandler;
-                if (this.threshold && this.size >= this.threshold) {
+                if (this.threshold > -1 && this.size >= this.threshold) {
                     this.kill(obj);
                     return;
                 }
-                if (obj.onReturn) {
-                    obj.onReturn && obj.onReturn();
+                if (obj.onRecycle) {
+                    obj.onRecycle && obj.onRecycle();
                 }
-                else if (handler && handler.onReturn) {
-                    handler.onReturn && handler.onReturn(obj);
+                else if (handler && handler.onRecycle) {
+                    handler.onRecycle && handler.onRecycle(obj);
                 }
                 this._poolObjs.push(obj);
                 this._usedObjMap.delete(obj);
@@ -176,10 +147,10 @@ var objPool = (function (exports) {
                 console.warn("pool :" + this._sign + " obj is in pool");
             }
         };
-        BaseObjPool.prototype.returnAll = function () {
+        BaseObjPool.prototype.recycleAll = function () {
             var _this = this;
             this._usedObjMap.forEach(function (value) {
-                _this.return(value);
+                _this.recycle(value);
             });
             this._usedObjMap.clear();
         };
@@ -194,7 +165,7 @@ var objPool = (function (exports) {
                 obj = this._poolObjs.pop();
             }
             else {
-                obj = this._createFunc();
+                obj = new this._clas();
                 if (obj && obj.onCreate) {
                     obj.onCreate();
                 }
@@ -202,7 +173,6 @@ var objPool = (function (exports) {
                     handler.onCreate(obj);
                 }
                 obj.poolSign = this._sign;
-                obj.pool = this;
             }
             this._usedObjMap.set(obj, obj);
             obj.isInPool = false;
@@ -254,24 +224,14 @@ var objPool = (function (exports) {
                 this._log(logType.poolIsNull + ":" + sign);
             }
         };
-        ObjPoolMgr.prototype.setPoolHandler = function (sign, objHandler) {
-            var pool = this._poolDic[sign];
-            if (pool) {
-                pool.setObjHandler(objHandler);
-            }
-            else {
-                this._log(logType.poolIsNull);
-            }
-        };
-        ObjPoolMgr.prototype.createObjPool = function (opt) {
-            var sign = opt.sign;
+        ObjPoolMgr.prototype.createByObjHandler = function (sign, objHandler, threshold) {
             if (this.hasPool(sign)) {
                 this._log("" + logType.poolExit + sign);
                 return;
             }
             if (sign && sign.trim() !== "") {
                 var pool = new BaseObjPool();
-                pool = pool.init(opt);
+                pool = pool.initByObjHandler(sign, objHandler, threshold);
                 if (pool) {
                     this._poolDic[sign] = pool;
                 }
@@ -281,28 +241,15 @@ var objPool = (function (exports) {
                 this._log("" + logType.signIsNull);
             }
         };
-        ObjPoolMgr.prototype.createByClass = function (sign, cls) {
+        ObjPoolMgr.prototype.createByClass = function (sign, cls, threshold) {
+            if (threshold === void 0) { threshold = -1; }
             if (this.hasPool(sign)) {
                 this._log("" + logType.poolExit + sign);
                 return;
             }
             if (sign && sign.trim() !== "") {
                 var pool = new BaseObjPool();
-                pool.initByClass(sign, cls);
-                this._poolDic[sign] = pool;
-            }
-            else {
-                this._log("" + logType.signIsNull);
-            }
-        };
-        ObjPoolMgr.prototype.createByFunc = function (sign, createFunc) {
-            if (this.hasPool(sign)) {
-                this._log("" + logType.poolExit + sign);
-                return;
-            }
-            if (sign && sign.trim() !== "") {
-                var pool = new BaseObjPool();
-                pool.initByFunc(sign, createFunc);
+                pool.initByClass(sign, cls, threshold);
                 this._poolDic[sign] = pool;
             }
             else {
@@ -345,24 +292,20 @@ var objPool = (function (exports) {
             var pool = this._poolDic[sign];
             return pool ? pool.get(onGetData) : undefined;
         };
-        ObjPoolMgr.prototype.getMore = function (sign, onGetData, num) {
+        ObjPoolMgr.prototype.getMore = function (sign, num, onGetData) {
             var pool = this._poolDic[sign];
             return pool ? pool.getMore(onGetData, num) : undefined;
         };
-        ObjPoolMgr.prototype.getPoolObjsBySign = function (sign) {
-            var pool = this._poolDic[sign];
-            return pool ? pool.poolObjs : undefined;
-        };
-        ObjPoolMgr.prototype.return = function (obj) {
+        ObjPoolMgr.prototype.recycle = function (obj) {
             var pool = this._poolDic[obj.poolSign];
             if (pool) {
-                pool.return(obj);
+                pool.recycle(obj);
             }
         };
-        ObjPoolMgr.prototype.returnAll = function (sign) {
+        ObjPoolMgr.prototype.recycleAll = function (sign) {
             var pool = this._poolDic[sign];
             if (pool) {
-                pool.returnAll();
+                pool.recycleAll();
             }
         };
         ObjPoolMgr.prototype.kill = function (obj) {
@@ -397,7 +340,7 @@ var objPool = (function (exports) {
 
     return exports;
 
-}({}));
+})({});
 
     var globalTarget =window?window:global;
     globalTarget.objPool?Object.assign({},globalTarget.objPool):(globalTarget.objPool = objPool)

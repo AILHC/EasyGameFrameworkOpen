@@ -8,14 +8,8 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
     public get sign(): string {
         return this._sign;
     }
-    private _createFunc: (...args) => T;
+    private _clas: objPool.Clas<T>;
     protected _objHandler: objPool.IObjHandler<T, onGetDataType>;
-    public setObjHandler(objHandler: objPool.IObjHandler<T, onGetDataType>): void {
-        if (objHandler) {
-            objHandler.pool = this;
-            this._objHandler = objHandler;
-        }
-    }
     public get size(): number {
         const poolObjs = this._poolObjs;
         return poolObjs ? poolObjs.length : 0;
@@ -24,53 +18,34 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         return this._usedObjMap ? this._usedObjMap.size : 0;
     }
     public threshold: number;
-    public init(opt: objPool.IPoolInitOption<T, onGetDataType, string>): objPool.IPool<T, onGetDataType> {
+    public initByObjHandler(
+        sign: string,
+        objHandler: objPool.IObjHandler<T, onGetDataType>,
+        threshold: number = -1
+    ): objPool.IPool<T, onGetDataType> {
         if (!this._sign) {
-            if (!opt.sign) {
-                console.log(`[objPool] sign is undefind`);
-                return;
-            }
-            if (!opt.createFunc && !opt.clas) {
-                console.error(`[objPool] sign:${opt.sign}  no createFunc and class`);
-                return;
-            }
-            this._sign = opt.sign;
+            this._sign = sign;
             this._poolObjs = [];
             this._usedObjMap = new Map();
-            this.threshold = opt.threshold;
-            const clas = opt.clas;
-            if (opt.createFunc) {
-                this._createFunc = opt.createFunc;
-            } else if (opt.clas) {
-                this._createFunc = function () {
-                    return new clas();
-                };
+            if (isNaN(this.threshold)) {
+                this.threshold = threshold;
             }
-            this._objHandler = opt.objHandler;
+            this._objHandler = objHandler;
         } else {
             this._loghasInit();
         }
         return this;
     }
-    public initByFunc(sign: string, createFunc: () => T): objPool.IPool<T, onGetDataType> {
+    public initByClass(sign: string, clas: objPool.Clas<T>, threshold: number = -1): objPool.IPool<T, onGetDataType> {
         if (!this._sign) {
             this._sign = sign as any;
             this._poolObjs = [];
+            if (isNaN(this.threshold)) {
+                this.threshold = threshold;
+            }
+
             this._usedObjMap = new Map();
-            this._createFunc = createFunc;
-        } else {
-            this._loghasInit();
-        }
-        return this;
-    }
-    public initByClass(sign: string, clas: objPool.Clas<T>): objPool.IPool<T, onGetDataType> {
-        if (!this._sign) {
-            this._sign = sign as any;
-            this._poolObjs = [];
-            this._usedObjMap = new Map();
-            this._createFunc = function () {
-                return new clas();
-            };
+            this._clas = clas;
         } else {
             this._loghasInit();
         }
@@ -86,15 +61,19 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         let obj: objPool.IObj;
         const handler = this._objHandler;
         for (let i = 0; i < num; i++) {
-            obj = this._createFunc() as any;
-            if (obj && obj.onCreate) {
-                obj.onCreate();
-            } else if (handler && handler.onCreate) {
-                handler.onCreate(obj as any);
+            if (this._clas) {
+                obj = new this._clas() as any;
+                if (obj.onCreate) {
+                    obj.onCreate();
+                }
+            } else {
+                obj = handler.createObj() as any;
+                if (handler.onCreate) {
+                    handler.onCreate(obj as any);
+                }
             }
             obj.poolSign = this._sign as string;
             obj.isInPool = true;
-            obj.pool = this;
             poolObjs.push(obj as any);
         }
     }
@@ -112,10 +91,10 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
     public kill(obj: T extends objPool.IObj ? T : any): void {
         if (this._usedObjMap.has(obj)) {
             const handler = this._objHandler;
-            if (obj.onReturn) {
-                obj.onReturn && obj.onReturn();
-            } else if (handler && handler.onReturn) {
-                handler.onReturn && handler.onReturn(obj);
+            if (obj.onRecycle) {
+                obj.onRecycle && obj.onRecycle();
+            } else if (handler && handler.onRecycle) {
+                handler.onRecycle && handler.onRecycle(obj);
             }
 
             this._usedObjMap.delete(obj);
@@ -127,11 +106,8 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
             handler.onKill(obj);
         }
         obj.isInPool = false;
-        if (obj.pool) {
-            obj.pool = undefined;
-        }
     }
-    public return(obj: T extends objPool.IObj ? T : any): void {
+    public recycle(obj: T extends objPool.IObj ? T : any): void {
         if (!this._sign) {
             this._logNotInit();
             return;
@@ -139,14 +115,14 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         if (!obj.isInPool) {
             obj.isInPool = true;
             const handler = this._objHandler;
-            if (this.threshold && this.size >= this.threshold) {
+            if (this.threshold > -1 && this.size >= this.threshold) {
                 this.kill(obj);
                 return;
             }
-            if (obj.onReturn) {
-                obj.onReturn && obj.onReturn();
-            } else if (handler && handler.onReturn) {
-                handler.onReturn && handler.onReturn(obj);
+            if (obj.onRecycle) {
+                obj.onRecycle && obj.onRecycle();
+            } else if (handler && handler.onRecycle) {
+                handler.onRecycle && handler.onRecycle(obj);
             }
 
             this._poolObjs.push(obj);
@@ -155,9 +131,9 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
             console.warn(`pool :${this._sign} obj is in pool`);
         }
     }
-    public returnAll(): void {
+    public recycleAll(): void {
         this._usedObjMap.forEach((value) => {
-            this.return(value as any);
+            this.recycle(value as any);
         });
         this._usedObjMap.clear();
     }
@@ -172,14 +148,13 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         if (this.poolObjs.length) {
             obj = this._poolObjs.pop() as any;
         } else {
-            obj = this._createFunc() as any;
+            obj = new this._clas() as any;
             if (obj && obj.onCreate) {
                 obj.onCreate();
             } else if (handler && handler.onCreate) {
                 handler.onCreate(obj as any);
             }
             obj.poolSign = this._sign as any;
-            obj.pool = this;
         }
         this._usedObjMap.set(obj, obj);
         obj.isInPool = false;
