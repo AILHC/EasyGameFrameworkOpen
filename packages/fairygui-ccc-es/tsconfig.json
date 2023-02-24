@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "es6",
+    "module": "es6",
+    "strict": true,
+    "strictNullChecks": false,
+    "moduleResolution": "Node",
+    "skipLibCheck": true
+  },
+  "include": [
+    "./src/**/*",
+    "dts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
