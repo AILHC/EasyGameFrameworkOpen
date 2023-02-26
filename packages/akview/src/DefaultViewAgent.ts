@@ -249,7 +249,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     protected _setViewInsVisible(visible: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption) {
 
         const viewIns = this.viewIns;
-        const { tplHandler } = this.viewMgr;
+        const { projAdapter: tplHandler } = this.viewMgr;
         viewIns.onBeforeSetVisible && viewIns.onBeforeSetVisible(visible, showOpt, hideOpt);
         if (viewIns.setVisible) {
             viewIns.setVisible(visible, showOpt, hideOpt);
@@ -290,7 +290,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         this.destroyed = true;
         this.isViewInited = false;
         const template = this.template;
-        const handler = viewMgr.tplHandler;
+        const handler = viewMgr.projAdapter;
         if (viewIns) {
             viewIns.onBeforeDestroyDpObj && viewIns.onBeforeDestroyDpObj();
             if (viewIns.destroyDisplayObj) {

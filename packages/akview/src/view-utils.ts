@@ -61,29 +61,6 @@ export function viewTemplate(
         return true;
     }
 }
-
-/**
- * 预先注入插件
- * @param plugin
- * @param option
- */
-export function viewPlugin<T = any>(plugin: akView.IPlugin, option: T) {
-    globalPlugins.push({ plugin: plugin, option: option });
-}
-/**
- * 预先注入插件,装饰器
- * @param option
- */
-export function viewPluginDecorator<T>(option: T) {
-    return function (target) {
-        const plugin = new target();
-        if (viewMgr?.inited) {
-            viewMgr.use(plugin, option);
-        } else {
-            viewPlugin(plugin, option);
-        }
-    };
-}
 /**
  * 构建key类型Map
  * const keyMap = createKeyMap<KeyTypes>();

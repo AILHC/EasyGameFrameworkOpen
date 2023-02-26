@@ -793,7 +793,7 @@ declare global {
             /**
              * 默认ViewAgent的配置，在viewAgent.onCreate时合并传入
              */
-            vsCreateOpt?: IAkViewViewAgentOption;
+            vaCreateOpt?: IAkViewViewAgentOption;
             /**
              * 模板字典
              */
@@ -802,7 +802,6 @@ declare global {
         interface IViewStateFields {
             initState?;
             showState?;
-
             updateState?;
             hideState?;
         }
@@ -862,17 +861,9 @@ declare global {
             // getCacheHandler<T extends akView.ICacheHandler = akView.ICacheHandler>(): T;
 
             /**
-             * 模板处理器
+             * 项目适配器
              */
-            tplHandler: akView.IProjAdapter;
-            /**
-             * 资源处理器
-             */
-            resHandler: akView.IResHandler;
-            /**
-             * 显示处理器
-             */
-            displayHandler: akView.IDisplayHandler;
+            projAdapter: akView.IProjAdapter;
             // /**
             //  * 获取模块处理器,可类型转换
             //  */
