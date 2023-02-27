@@ -148,11 +148,12 @@ export class BaseObjPool<T = any, onGetDataType = any> implements objPool.IPool<
         if (this.poolObjs.length) {
             obj = this._poolObjs.pop() as any;
         } else {
-            obj = new this._clas() as any;
-            if (obj && obj.onCreate) {
-                obj.onCreate();
-            } else if (handler && handler.onCreate) {
-                handler.onCreate(obj as any);
+            if (handler) {
+                obj = handler.createObj() as any;
+                handler.onCreate?.(obj as any);
+            } else {
+                obj = new this._clas() as any;
+                obj.onCreate?.();
             }
             obj.poolSign = this._sign as any;
         }
