@@ -71,13 +71,16 @@ export class UIPackage {
         let pkg: UIPackage = _instById[path];
         if (pkg)
             return pkg;
-
         let asset: any = resources.get(path, BufferAsset);
-        if (!asset)
-            throw "Resource '" + path + "' not ready";
+        if (!asset) {
+            console.error("Resource '" + path + "' not ready");
+            return;
+        }
 
-        if (!asset._buffer)
-            throw "Missing asset data.";
+        if (!asset._buffer) {
+            console.error(`Missing path:${path} asset data.`);
+            return;
+        }
 
         pkg = new UIPackage();
         pkg._bundle = resources;
