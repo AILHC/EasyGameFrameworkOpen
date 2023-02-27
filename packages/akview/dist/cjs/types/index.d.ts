@@ -254,17 +254,6 @@ declare module '@ailhc/akview' {
 	 */
 	export function viewTemplate(template: akView.ITemplate, templateMap?: akView.TemplateMap): boolean;
 	/**
-	 * 预先注入插件
-	 * @param plugin
-	 * @param option
-	 */
-	export function viewPlugin<T = any>(plugin: akView.IPlugin, option: T): void;
-	/**
-	 * 预先注入插件,装饰器
-	 * @param option
-	 */
-	export function viewPluginDecorator<T>(option: T): (target: any) => void;
-	/**
 	 * 构建key类型Map
 	 * const keyMap = createKeyMap<KeyTypes>();
 	 * keyMap.test //有类型提示
@@ -287,15 +276,11 @@ declare module '@ailhc/akview' {
 	    protected _eventBus: akView.IEventBus;
 	    /**事件处理器 */
 	    get eventBus(): akView.IEventBus;
-	    protected _tplHandler: akView.IProjAdapter;
+	    protected _projAdapter: akView.IProjAdapter;
 	    /**
 	     * 模板处理器
 	     */
-	    get tplHandler(): akView.IProjAdapter;
-	    protected _resHandler: akView.IResHandler;
-	    get resHandler(): akView.IResHandler;
-	    protected _displayHandler: akView.IDisplayHandler;
-	    get displayHandler(): akView.IDisplayHandler;
+	    get projAdapter(): akView.IProjAdapter;
 	    /**模版字典 */
 	    protected _templateMap: akView.TemplateMap;
 	    /**状态缓存 */
@@ -316,7 +301,6 @@ declare module '@ailhc/akview' {
 	    protected _option: akView.IMgrInitOption;
 	    get option(): akView.IMgrInitOption;
 	    init(option: akView.IMgrInitOption): void;
-	    static use(plugin: akView.IPlugin, option?: any): void;
 	    template(templateOrKey: keyType | TemplateType | Array<TemplateType | keyType>): void;
 	    hasTemplate(key: keyType): boolean;
 	    getTemplate(key: keyType): akView.ITemplate;
@@ -1189,7 +1173,7 @@ declare module '@ailhc/akview' {
 	            /**
 	             * 默认ViewAgent的配置，在viewAgent.onCreate时合并传入
 	             */
-	            vsCreateOpt?: IAkViewViewAgentOption;
+	            vaCreateOpt?: IAkViewViewAgentOption;
 	            /**
 	             * 模板字典
 	             */
@@ -1226,17 +1210,9 @@ declare module '@ailhc/akview' {
 	             */
 	            cacheHandler: akView.ICacheHandler;
 	            /**
-	             * 模板处理器
+	             * 项目适配器
 	             */
-	            tplHandler: akView.IProjAdapter;
-	            /**
-	             * 资源处理器
-	             */
-	            resHandler: akView.IResHandler;
-	            /**
-	             * 显示处理器
-	             */
-	            displayHandler: akView.IDisplayHandler;
+	            projAdapter: akView.IProjAdapter;
 	            /**
 	             * 初始化参数(只读)
 	             */
