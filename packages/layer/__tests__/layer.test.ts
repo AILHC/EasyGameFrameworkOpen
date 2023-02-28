@@ -49,7 +49,7 @@ test("test layermgr setLayerRoot", function () {
     expect(testLayerMgr.root.childs.length).toBe(Object.keys(TestHasCustomLayerType).length / 2);
 })
 test("test layermgr addNodeToLayer", function () {
-    const testLayerMgr = new LayerMgr<TestRenderNode>();
+    const testLayerMgr = new LayerMgr<TestRenderNode, { a: Date }>();
     const root = new TestRenderNode();
     const addNodeToLayerSpy = jest.spyOn(testLayerMgr, "addNodeToLayer");
     testLayerMgr.init(TestLayerType, TestLayerImpl, null, root);

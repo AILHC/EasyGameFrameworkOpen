@@ -1,6 +1,6 @@
 type LayerClassType = layer.LayerClassType;
 
-export class LayerMgr<T> implements layer.IMgr<T> {
+export class LayerMgr<T, AddNodeOpt extends Record<string, any> = Record<string, any>> implements layer.IMgr<T> {
 
 
     protected layerEnum: any;
@@ -92,10 +92,10 @@ export class LayerMgr<T> implements layer.IMgr<T> {
             layer.onShow();
         }
     }
-    public addNodeToLayer(node: T, layerType: number): void {
+    public addNodeToLayer(node: T, layerType: number, addOpt?: AddNodeOpt): void {
         const layer = this.getLayerByType(layerType);
         if (layer) {
-            layer.onNodeAdd(node);
+            layer.onNodeAdd(node, addOpt);
         }
     }
 

@@ -1,6 +1,6 @@
 declare module '@ailhc/layer' {
 	 type LayerClassType = layer.LayerClassType;
-	export class LayerMgr<T> implements layer.IMgr<T> {
+	export class LayerMgr<T, AddNodeOpt extends Record<string, any> = Record<string, any>> implements layer.IMgr<T> {
 	    protected layerEnum: any;
 	    protected classMap: Map<string, LayerClassType>;
 	    protected defaultType: LayerClassType;
@@ -14,7 +14,7 @@ declare module '@ailhc/layer' {
 	    removeLayer(layerType: number): boolean;
 	    hideLayer(layerType: number): void;
 	    showLayer(layerType: number): void;
-	    addNodeToLayer(node: T, layerType: number): void;
+	    addNodeToLayer(node: T, layerType: number, addOpt?: AddNodeOpt): void;
 	    getLayerByType<T extends layer.ILayer>(layerType: number): T;
 	}
 	export {};
@@ -24,7 +24,7 @@ declare module '@ailhc/layer' {
 	 global {
 	    namespace layer {
 	        type LayerClassType = new () => ILayer;
-	        interface ILayer {
+	        interface ILayer<AddNodeOpt extends Record<string, any> = Record<string, any>> {
 	            layerType: number;
 	            layerName: string;
 	            onInit(layerName: string, layerType: number, layerMgr: IMgr): void;
@@ -49,13 +49,13 @@ declare module '@ailhc/layer' {
 	             * 当有节点添加时
 	             * @param node
 	             */
-	            onNodeAdd(node: any): void;
+	            onNodeAdd(node: any, opt?: AddNodeOpt): void;
 	        }
-	        interface IMgr<T = any> {
+	        interface IMgr<T = any, AddNodeOpt extends Record<string, any> = Record<string, any>> {
 	            /**
 	             * 层级字典
 	             */
-	            layerMap: Map<number, layer.ILayer>;
+	            layerMap: Map<number, layer.ILayer<AddNodeOpt>>;
 	            /**
 	             * 层级管理根节点
 	             */
@@ -98,7 +98,7 @@ declare module '@ailhc/layer' {
 	             * @param node
 	             * @param layerType
 	             */
-	            addNodeToLayer(node: T, layerType: number): void;
+	            addNodeToLayer(node: T, layerType: number, opt?: AddNodeOpt): void;
 	            /**
 	             * 获取层级
 	             * @param layerType
