@@ -1,39 +1,51 @@
 declare global {
-    interface IBroadcastMsgKey {
-        onListenerOn?: "onListenerOn"
+    interface IBroadcastEventType extends Record<never, IBroadcastParamTypeFields> {
+        "onListenerOn"?: ToBroadcastParamType<{
+            cbParam: string,
+            resultCbParam: string,
+        }>
     }
+    interface IBroadcastParamTypeFields {
+        /**监听回调参数 */
+        cbParam?;
+        /**返回回调参数 */
+        resultCbParam?;
+    }
+    type ToBroadcastParamType<T extends IBroadcastParamTypeFields> = T;
     interface IBroadcastParamTypes {
-        onListenerOn: broadcast.ToParamType<{
+        onListenerOn: ToBroadcastParamType<{
             cbParam: string,
             resultCbParam: string,
         }>
     }
     namespace broadcast {
-        interface IParamTypeFields {
-            /**监听回调参数 */
-            cbParam?;
-            /**返回回调参数 */
-            resultCbParam?;
-        }
-        type ToParamType<T extends broadcast.IParamTypeFields> = T;
-
-        interface IMsgValueType {
-            onListenerOn?: string
-        }
-        interface IResultType {
-            onListenerOn?: string
-        }
         type ResultCallBack<T = any> = (data?: T, callBack?: any) => void
         type Listener<T = any, K = any> = (value: T, callBack?: ResultCallBack<K>, ...args) => void
+        type GetCbParamType<IndexKey, StateTypes> = GetTypeMapType<
+            IndexKey,
+            StateTypes
+        > extends {
+            cbParam: infer StateType;
+        }
+            ? StateType
+            : any;
+        type GetResultCbParamType<IndexKey, StateTypes> = GetTypeMapType<
+            IndexKey,
+            StateTypes
+        > extends {
+            cbParam: infer StateType;
+        }
+            ? StateType
+            : any;
         // type GetTypeMapType<IndexKey, TypeMap> = TypeMap[ToAnyIndexKey<IndexKey, TypeMap>];
-        type GetTypeMapType<IndexKey, TypeMap> = IndexKey extends keyof broadcast.IMsgKey ? TypeMap[ToAnyIndexKey<IndexKey, TypeMap>] : unknown;
+        type GetTypeMapType<IndexKey, TypeMap> = IndexKey extends keyof IBroadcastEventType ? TypeMap[ToAnyIndexKey<IndexKey, TypeMap>] : unknown;
         /**
          * 将索引类型转换为任意类型的索引类型
          */
         type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
-        interface IListenerHandler<keyType extends keyof any = any, ValueType = any, ResultType = any> {
+        interface IListenerHandler<keyType extends keyof any = any, ValueType = any> {
             key: keyType
-            listener: Listener<ValueType[ToAnyIndexKey<keyType, ValueType>], ResultType[ToAnyIndexKey<keyType, ResultType>]>,
+            listener: Listener<GetCbParamType<keyType, ValueType>, GetResultCbParamType<keyType, ValueType>>,
             context?: any,
             args?: any[],
             once?: boolean
@@ -45,7 +57,8 @@ declare global {
             callback?: ResultCallBack,
             persistence?: boolean
         }
-        interface IBroadcast<MsgKeyType = any, ValueType = any, ResultType = any> {
+        interface IBroadcast<MsgKeyType = any> {
+            readonly keys: Readonly<{ [P in keyof MsgKeyType]: P }>;
             /**
              * 注册事件，可以注册多个
              * @param key 事件名
@@ -56,8 +69,8 @@ declare global {
              *
              */
             on<keyType extends keyof MsgKeyType>(
-                handler: keyType | String | broadcast.IListenerHandler<keyType, ValueType, ResultType> | broadcast.IListenerHandler<keyType, ValueType, ResultType>[],
-                listener?: broadcast.Listener<ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>], ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
+                handler: keyType | String | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[],
+                listener?: broadcast.Listener<broadcast.GetCbParamType<keyType, MsgKeyType>, broadcast.GetResultCbParamType<keyType, MsgKeyType>>,
                 context?: any,
                 once?: boolean,
                 args?: any[]
@@ -93,8 +106,8 @@ declare global {
              * @param persistence 是否持久化数据
              */
             broadcast<keyType extends keyof MsgKeyType>(
-                key: keyType | String, value?: GetTypeMapType<keyType, ValueType>
-                , callback?: ResultCallBack<GetTypeMapType<keyType, ResultType>>, persistence?: boolean): void;
+                key: keyType | String, value?: broadcast.GetCbParamType<keyType, MsgKeyType>
+                , callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
             /**
              * 广播一条 指定 [key] 的粘性消息
              * 如果广播系统中没有注册该类型的接收者，本条信息将被滞留在系统中。一旦有该类型接收者被注册，本条消息将会被立即发送给接收者
@@ -107,15 +120,15 @@ declare global {
              */
             stickyBroadcast<keyType extends keyof MsgKeyType>(
                 key: keyType,
-                value?: broadcast.GetTypeMapType<keyType, ValueType>,
-                callback?: broadcast.ResultCallBack<broadcast.GetTypeMapType<keyType, ResultType>>,
+                value?: broadcast.GetCbParamType<keyType, MsgKeyType>,
+                callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>,
                 persistence?: boolean
             ): void
             /**
              * 取值
              * @param key
              */
-            value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetTypeMapType<keyType, ValueType>;
+            value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType>;
             /**
              * 销毁广播系统
              */

@@ -4,8 +4,8 @@ export abstract class BaseClassView<DisplayObjectType = any> implements akView.I
     dpObj?: DisplayObjectType;
     
     onInitView?(initState?: any): void;
-    onBeforeSetVisible?(visible: boolean, showOpt?: akView.IShowOption<any, IAkViewStateTypes>, hideOpt?: akView.IHideOption<any, IAkViewStateTypes>): void;
-    setVisible?(visible: boolean, showOpt?: akView.IShowOption<any, IAkViewStateTypes>, hideOpt?: akView.IHideOption<any, IAkViewStateTypes>): void ;
+    onBeforeSetVisible?(visible: boolean, showOpt?: akView.IShowOption<any, IAkViewKeyTypes>, hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>): void;
+    setVisible?(visible: boolean, showOpt?: akView.IShowOption<any, IAkViewKeyTypes>, hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>): void;
 
     onTransition?(isToShow?: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): Promise<void>;
 

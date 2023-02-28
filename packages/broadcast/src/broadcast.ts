@@ -3,8 +3,8 @@
 /**
  * @author AILHC 505126057@qq.com
  */
-export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, ResultType = any>
-    implements broadcast.IBroadcast<MsgKeyType, ValueType, ResultType>{
+export class Broadcast<MsgKeyType extends IBroadcastEventType>
+    implements broadcast.IBroadcast<MsgKeyType>{
     private _valueMap: Record<any, any>;
     public static readonly onListenerOnEventKey: "onListenerOn" = "onListenerOn";
     private _handlerMap: Record<any, broadcast.IListenerHandler | broadcast.IListenerHandler[]>
@@ -15,6 +15,9 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
         this._valueMap = {} as any;
         this._unuseHandlers = [];
     }
+    keys: Readonly<{ [P in keyof MsgKeyType]: P; }> = new Proxy({} as any,{get(target, p, receiver) {
+        return p;
+    }});
     //注册
     /**
      * 注册事件，可以注册多个
@@ -26,12 +29,13 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * 
      */
     public on<keyType extends keyof MsgKeyType>(
-        handler: keyType | String | broadcast.IListenerHandler<keyType, ValueType, ResultType> | broadcast.IListenerHandler<keyType, ValueType, ResultType>[],
-        listener?: broadcast.Listener<ValueType[broadcast.ToAnyIndexKey<keyType, ValueType>], ResultType[broadcast.ToAnyIndexKey<keyType, ResultType>]>,
+        handler: keyType | String | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[],
+        listener?: broadcast.Listener<broadcast.GetCbParamType<keyType, MsgKeyType>, broadcast.GetResultCbParamType<keyType, MsgKeyType>>,
         context?: any,
         once?: boolean,
         args?: any[]
-    ) {
+    ): void {
+        
         if (typeof handler === "string") {
             if (!listener) return;
             this._addHandler(this._getHandler(handler, listener, context, once, args));
@@ -162,9 +166,8 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * @param persistence 是否持久化数据
      */
     public broadcast<keyType extends keyof MsgKeyType>(
-        key: keyType | String, value?: broadcast.GetTypeMapType<keyType, ValueType>,
-        callback?: broadcast.ResultCallBack<broadcast.GetTypeMapType<keyType, ResultType>>,
-        persistence?: boolean) {
+        key: keyType | String, value?: broadcast.GetCbParamType<keyType, MsgKeyType>
+        , callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void {
         const handlerMap = this._handlerMap;
         if (!handlerMap) return;
         const handlers = handlerMap[key];
@@ -216,8 +219,8 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      */
     public stickyBroadcast<keyType extends keyof MsgKeyType>(
         key: keyType,
-        value?: broadcast.GetTypeMapType<keyType, ValueType>,
-        callback?: broadcast.ResultCallBack<broadcast.GetTypeMapType<keyType, ResultType>>,
+        value?: broadcast.GetCbParamType<keyType, MsgKeyType>,
+        callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>,
         persistence?: boolean
     ): void {
         if (this._isStringNull(key)) return;
@@ -365,7 +368,7 @@ export class Broadcast<MsgKeyType extends broadcast.IMsgKey, ValueType = any, Re
      * 取值
      * @param key 
      */
-    public value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetTypeMapType<keyType, ValueType> {
+    public value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType> {
         return this._valueMap && this._valueMap[key] as any;
     }
     /**

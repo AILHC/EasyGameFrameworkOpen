@@ -9,8 +9,9 @@ import { globalViewTemplateMap, injectViewMgr } from "./view-utils";
 const IdSplitChars: akView.IdSplitCharsType = "_$_";
 type TemplateType = akView.ITemplate;
 export class ViewMgr<
-    keyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes
-> implements akView.IMgr<keyType>
+    ViewKeyTypes extends akView.IBaseAkViewKeyDataType = IAkViewKeyTypes,
+    keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
+> implements akView.IMgr<ViewKeyTypes>
 {
     protected _cacheHandler: akView.ICacheHandler;
 
@@ -346,7 +347,7 @@ export class ViewMgr<
      * @returns 返回ViewAgent
      */
     create<T extends akView.IViewAgent = any, ConfigKeyType extends keyType = keyType>(
-        keyOrConfig: akView.IShowOption<ConfigKeyType, IAkViewStateTypes>
+        keyOrConfig: akView.IShowOption<ConfigKeyType, ViewKeyTypes>
     ): T;
     /**
      * 创建新的ViewAgent并显示
@@ -361,9 +362,9 @@ export class ViewMgr<
      */
     create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(
         keyOrConfig: ViewKey,
-        viewInitState?: akView.GetInitStateType<ViewKey, IAkViewStateTypes>,
+        viewInitState?: akView.GetInitStateType<ViewKey, ViewKeyTypes>,
         needShowView?: boolean,
-        viewShowState?: akView.GetShowStateType<ViewKey, IAkViewStateTypes>,
+        viewShowState?: akView.GetShowStateType<ViewKey, ViewKeyTypes>,
 
         cacheMode?: akView.ViewAgentCacheModeType
     ): T;
@@ -379,10 +380,10 @@ export class ViewMgr<
      * @returns 返回ViewAgent
      */
     create<CreateKeyType extends keyType, T extends akView.IViewAgent = any>(
-        keyOrConfig: string | akView.IShowOption<CreateKeyType, IAkViewStateTypes>,
-        viewInitState?: akView.GetInitStateType<CreateKeyType, IAkViewStateTypes>,
+        keyOrConfig: string | akView.IShowOption<CreateKeyType, ViewKeyTypes>,
+        viewInitState?: akView.GetInitStateType<CreateKeyType, ViewKeyTypes>,
         needShowView?: boolean,
-        viewShowState?: akView.GetShowStateType<CreateKeyType, IAkViewStateTypes>,
+        viewShowState?: akView.GetShowStateType<CreateKeyType, ViewKeyTypes>,
         cacheMode?: akView.ViewAgentCacheModeType
     ): T {
         if (!this._inited) {
@@ -423,9 +424,9 @@ export class ViewMgr<
      * @param viewInitState 初始化数据
      */
     show<TKeyType extends keyType>(
-        keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, IAkViewStateTypes>,
-        viewShowState?: akView.GetShowStateType<TKeyType, IAkViewStateTypes>,
-        viewInitState?: akView.GetInitStateType<TKeyType, IAkViewStateTypes>
+        keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewKeyTypes>,
+        viewShowState?: akView.GetShowStateType<TKeyType, ViewKeyTypes>,
+        viewInitState?: akView.GetInitStateType<TKeyType, ViewKeyTypes>
     ): string {
         let showOpt: akView.IShowOption;
         let isSig: boolean;
@@ -492,7 +493,7 @@ export class ViewMgr<
      * @param keyOrId 界面id
      * @param updateOpt 更新数据
      */
-    update<K extends keyType | String>(keyOrId: K, updateOpt?: akView.GetUpdateStateType<K, IAkViewStateTypes>): void {
+    update<K extends keyof ViewKeyTypes | String>(keyOrId: K, updateOpt?: akView.GetUpdateStateType<K, ViewKeyTypes>): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);
             return;
@@ -508,9 +509,9 @@ export class ViewMgr<
      * @param keyOrId 界面id
      * @param hideOpt
      */
-    hide<KeyOrIdType extends keyType | String>(
+    hide<KeyOrIdType extends keyof ViewKeyTypes | String>(
         keyOrId: KeyOrIdType,
-        hideOpt?: akView.IHideOption<KeyOrIdType, IAkViewStateTypes>
+        hideOpt?: akView.IHideOption<KeyOrIdType, ViewKeyTypes>
     ): void {
         if (!this._inited) {
             console.error(`viewMgr is no inited`);

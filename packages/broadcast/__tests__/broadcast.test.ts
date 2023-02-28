@@ -1,32 +1,36 @@
 import { Broadcast } from "../src"
 
-interface ITestKey extends broadcast.IMsgKey {
-    testKey1: "testKey1",
-    testKey2: "testKey2",
-    testKey3: "testKey3",
-    testKey4: "testKey4",
-    testKey5: "testKey5",
-    testKey6: "testKey6",
-}
-interface ITestValueType extends broadcast.IMsgValueType {
-    testKey1: number,
-    testKey2: { a: string },
-    testKey3: Array<string>,
-    testKey4: Map<string, number>,
-    testKey5: undefined,
-    testKey6: Set<number>,
-}
-interface ITestResultType extends broadcast.IMsgValueType {
-    testKey1: string,
-    testKey2: { a: number },
-    testKey3: Array<number>,
-    testKey4: Map<number, string>,
-    testKey5: {},
-    testKey6: Set<string>,
+interface ITestKey extends IBroadcastEventType {
+    testKey1: ToBroadcastParamType<{
+        cbParam: number,
+        resultCbParam: string
+    }>,
+    testKey2: ToBroadcastParamType<{
+        cbParam: { a: string },
+        resultCbParam: { a: number }
+    }>,
+    testKey3: ToBroadcastParamType<{
+        cbParam: Array<string>,
+        resultCbParam: Array<number>
+    }>,
+    testKey4: ToBroadcastParamType<{
+        cbParam: Map<string, number>,
+        resultCbParam: Map<number, string>
+    }>,
+    testKey5: ToBroadcastParamType<{
+        cbParam: undefined,
+        resultCbParam: {}
+    }>,
+    testKey6: ToBroadcastParamType<{
+        cbParam: Set<number>,
+        resultCbParam: Set<string>
+
+    }>,
 }
 //监听测试
 test("on Listener", function (done) {
-    const broadcast = new Broadcast<ITestKey, ITestValueType>();
+    const broadcast = new Broadcast<ITestKey>();
+
     //事件类型，事件回调
     broadcast.on({ key: broadcast.keys.onListenerOn, listener: function () { } });
     expect(broadcast.has(broadcast.keys.onListenerOn)).toBe(true);
@@ -145,7 +149,7 @@ test("off Listener", function (done) {
 })
 //广播普通消息
 test("broadcast normal msg", function (done) {
-    const broadcast = new Broadcast<ITestKey, ITestValueType, ITestResultType>();
+    const broadcast = new Broadcast<ITestKey>();
     broadcast.broadcast('onListenerOn');
     //事件类型，事件回调
     broadcast.on({
@@ -199,7 +203,8 @@ test("sticky broadcast", function (done) {
 })
 //双向通信测试
 test("double call test", function () {
-    const broadcast = new Broadcast<ITestKey, ITestValueType, ITestResultType>();
+    const broadcast = new Broadcast<ITestKey>();
+    broadcast.on
     broadcast.on("testKey1", (value, callback) => {
         expect(value).toBe(1);
         callback("result");

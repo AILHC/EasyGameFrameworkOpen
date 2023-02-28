@@ -19,11 +19,7 @@ declare global {
     /**
      * 默认ViewKey接口
      */
-    interface IAkViewKeyTypes { }
-    /**
-     * 默认ViewOpt接口
-     */
-    interface IAkViewStateTypes { }
+    interface IAkViewKeyTypes extends akView.IBaseAkViewKeyDataType { }
     /**
      * 获取默认ViewKey
      */
@@ -133,7 +129,9 @@ declare global {
         height: number;
     }
     namespace akView {
+        interface IBaseAkViewKeyDataType extends Record<never, IViewStateFields> {
 
+        }
         type IdSplitCharsType = "_$_";
         interface ICallableFunction {
             method?: Function;
@@ -594,7 +592,7 @@ declare global {
         /**
          * 显示参数
          */
-        interface IShowOption<TemplateKeyType extends keyof any = any, ViewStateTypes = IAkViewStateTypes> {
+        interface IShowOption<TemplateKeyType extends keyof any = any, ViewStateTypes = IAkViewKeyTypes> {
             id?: string;
             /**
              * template key
@@ -620,7 +618,7 @@ declare global {
         /**
          * 隐藏参数
          */
-        interface IHideOption<TemplateKeyType = any, ViewStateTypes = IAkViewStateTypes> {
+        interface IHideOption<TemplateKeyType = any, ViewStateTypes = IAkViewKeyTypes> {
             /**释放资源引用 默认false */
             decTemplateResRef?: boolean;
             /**
@@ -777,7 +775,7 @@ declare global {
              * 视图处理适配器
              */
             adapter?: akView.IProjAdapter;
-            
+
             /**
              * 默认ViewAgent类
              */
@@ -800,9 +798,21 @@ declare global {
             templateMap?: akView.TemplateMap;
         }
         interface IViewStateFields {
+            /**
+             * 传递给 onViewInit 参数
+             */
             initState?;
+            /**
+             * 传递给 onViewShow 参数
+             */
             showState?;
+            /**
+             * 传递给 onViewUpdate 参数
+             */
             updateState?;
+            /**
+             * 传递给 onViewHide 参数
+             */
             hideState?;
         }
         type GetShowStateType<IndexKey, StateTypes> = GetTypeMapType<
@@ -839,12 +849,13 @@ declare global {
             : any;
         type TemplateType = akView.ITemplate;
         interface IMgr<
-            keyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes
+            ViewKeyTypes extends akView.IBaseAkViewKeyDataType = IAkViewKeyTypes,
+            keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes
         > {
             /**
              * 类型参数
              */
-            MgrTypeParams?: [IAkViewKeyTypes, IAkViewStateTypes, keyType];
+            MgrTypeParams?: [IAkViewKeyTypes, IAkViewKeyTypes, keyType];
             /**事件处理器 */
             eventBus: akView.IEventBus;
             // /**
@@ -971,7 +982,7 @@ declare global {
              * @returns 返回ViewAgent
              */
             create<T extends akView.IViewAgent = any, StateKeyType extends keyType = keyType>(
-                keyOrConfig: akView.IShowOption<StateKeyType, IAkViewStateTypes>
+                keyOrConfig: akView.IShowOption<StateKeyType, ViewKeyTypes>
             ): T;
             /**
              * 创建新的ViewAgent并显示
@@ -986,9 +997,9 @@ declare global {
             */
             create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(
                 keyOrConfig: ViewKey,
-                onInitOpt?: akView.GetInitStateType<ViewKey, IAkViewStateTypes>,
+                onInitOpt?: akView.GetInitStateType<ViewKey, ViewKeyTypes>,
                 needShowView?: boolean,
-                onShowOpt?: akView.GetShowStateType<ViewKey, IAkViewStateTypes>,
+                onShowOpt?: akView.GetShowStateType<ViewKey, ViewKeyTypes>,
                 cacheMode?: akView.ViewAgentCacheModeType
             ): T;
             /**
@@ -1004,9 +1015,9 @@ declare global {
             */
             create<CreateKeyType extends keyType, T extends akView.IViewAgent = any>(
                 keyOrConfig: string,
-                onInitOpt?: akView.GetInitStateType<CreateKeyType, IAkViewStateTypes>,
+                onInitOpt?: akView.GetInitStateType<CreateKeyType, ViewKeyTypes>,
                 needShowView?: boolean,
-                onShowOpt?: akView.GetShowStateType<CreateKeyType, IAkViewStateTypes>,
+                onShowOpt?: akView.GetShowStateType<CreateKeyType, ViewKeyTypes>,
 
                 cacheMode?: akView.ViewAgentCacheModeType
             ): T;
@@ -1018,7 +1029,7 @@ declare global {
              * @param onInitOpt 初始化数据
              */
             show<ConfigKeyType extends keyType>(
-                idOrkeyOrConfig: akView.IShowOption<ConfigKeyType, IAkViewStateTypes>
+                idOrkeyOrConfig: akView.IShowOption<ConfigKeyType, ViewKeyTypes>
             ): string;
             /**
              * 显示View
@@ -1027,9 +1038,9 @@ declare global {
              * @param onInitOpt 初始化数据
              */
             show<TKeyType extends keyType>(
-                keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, IAkViewStateTypes>,
-                onShowOpt?: akView.GetShowStateType<TKeyType, IAkViewStateTypes>,
-                onInitOpt?: akView.GetInitStateType<TKeyType, IAkViewStateTypes>
+                keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewKeyTypes>,
+                onShowOpt?: akView.GetShowStateType<TKeyType, ViewKeyTypes>,
+                onInitOpt?: akView.GetInitStateType<TKeyType, ViewKeyTypes>
             ): string;
 
             /**
@@ -1039,7 +1050,7 @@ declare global {
              */
             update<K extends keyType | String>(
                 keyOrId: K,
-                onUpdateOpt?: akView.GetUpdateStateType<K, IAkViewStateTypes>
+                onUpdateOpt?: akView.GetUpdateStateType<K, ViewKeyTypes>
             ): void;
 
             /**
@@ -1049,7 +1060,7 @@ declare global {
              */
             hide<KeyOrIdType extends keyType | String>(
                 keyOrId: KeyOrIdType,
-                hideCfg?: akView.IHideOption<KeyOrIdType, IAkViewStateTypes>
+                hideCfg?: akView.IHideOption<KeyOrIdType, ViewKeyTypes>
             ): void;
 
             /**
@@ -1094,7 +1105,7 @@ declare global {
              * @param key
              * @returns
              */
-            createViewId(key: keyType): string;
+            createViewId(key: keyType | String): string;
             /**
              * 根据viewid 获取view实例
              * @param id view id

@@ -42,9 +42,9 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     /**是否需要显示View */
     needShowView?: boolean;
     /**显示参数 */
-    showOpt?: akView.IShowOption<any, IAkViewStateTypes>;
+    showOpt?: akView.IShowOption<any, IAkViewKeyTypes>;
     /**隐藏参数 */
-    hideOpt?: akView.IHideOption<any, IAkViewStateTypes>;
+    hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>;
     /**显示过程中的Promise */
     protected _showingPromise?: void | Promise<void>;
     /**隐藏中的Promise */

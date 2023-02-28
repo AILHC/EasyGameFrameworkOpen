@@ -155,7 +155,7 @@ export abstract class BaseProjAdapter implements akView.IProjAdapter<akView.ITem
         this.destroyRes(this.getTplResInfo(template));
         return true;
     }
-
+    //#region 自定义实现
     abstract isLoaded(resInfo: akView.TemplateResInfoType): boolean;
     abstract loadRes(resInfo: akView.TemplateResInfoType, complete: akView.LoadResCompleteCallback, progress: akView.LoadResProgressCallback, loadOption?: IAkViewLoadOption): string;
     abstract destroyRes(resInfo: akView.TemplateResInfoType): void;
@@ -168,5 +168,6 @@ export abstract class BaseProjAdapter implements akView.IProjAdapter<akView.ITem
     createViewIns?<T extends akView.IView<any>>(template: akView.ITemplate<never>): T;
     createDisplayObj?(keyOrPath: string, opt?: any): any;
     destroyDisplayObj?(dpObj: any): void;
-    handleViewVisible?(viewIns: akView.IView<any>, visible: boolean, showOpt?: akView.IShowOption<any, IAkViewStateTypes>, hideOpt?: akView.IHideOption<any, IAkViewStateTypes>): void;
+    handleViewVisible?(viewIns: akView.IView<any>, visible: boolean, showOpt?: akView.IShowOption<any, IAkViewKeyTypes>, hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>): void;
+    //#endregion
 }

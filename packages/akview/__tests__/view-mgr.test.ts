@@ -1,6 +1,5 @@
-import { DefaultPlugin, ViewMgr } from "../src";
+import { ViewMgr } from "../src";
 import { DefaultEventBus } from "../src/DefaultEventBus";
-import { DefaultTemplateHandler } from "../src/DefaultTemplateHandler";
 import { DefaultViewAgent } from "../src/DefaultViewAgent";
 import { LRU2QCacheHandler } from "../src/LRU2QCacheHandler";
 import { TestParentView } from "./test-use-logics/test-child-view";
@@ -8,33 +7,27 @@ import { TestViewAgent } from "./test-use-logics/test-view-agent";
 
 declare global {
     interface ITestViewKeys {
-        regitstTestViewKey1?: "regitstTestViewKey1";
-        regitstTestViewKey2?: "regitstTestViewKey2";
-        regitstTestViewKey3?: "regitstTestViewKey3";
-        regitstTestViewKey4?: "regitstTestViewKey4";
-        regitstTestViewKey5?: "regitstTestViewKey5";
-        regitstTestViewKey6?: "regitstTestViewKey6";
-        regitstTestViewKey7?: "regitstTestViewKey7";
-        regitstTestViewKey8?: "regitstTestViewKey8";
-        regitstTestViewKey9?: "regitstTestViewKey9";
-        regitstTestViewKey10?: "regitstTestViewKey10";
-        regitstTestViewKey11?: "regitstTestViewKey11";
-        regitstTestViewKey12?: "regitstTestViewKey12";
-        regitstTestViewKey13?: "regitstTestViewKey13";
+        
     }
-    interface IAkViewKeyTypes extends ITestViewKeys{
-
-    }
-    interface ITestViewStateTypes {
-        regitstTestViewKey1: ToAkViewStateType<{
+    interface IAkViewKeyTypes {
+        regitstTestViewKey1?: ToAkViewStateType<{
             showState: { a: number };
             updateState: { b: string };
             initState: { init: string };
             hideState: { p: boolean };
         }>;
-    }
-    interface IAkViewStateTypes extends ITestViewStateTypes {
-
+        regitstTestViewKey2?
+        regitstTestViewKey3?
+        regitstTestViewKey4?
+        regitstTestViewKey5?
+        regitstTestViewKey6?
+        regitstTestViewKey7?
+        regitstTestViewKey8?
+        regitstTestViewKey9?
+        regitstTestViewKey10?
+        regitstTestViewKey11?
+        regitstTestViewKey12?
+        regitstTestViewKey13?
     }
 }
 
@@ -91,7 +84,7 @@ describe(`ViewMgr相关测试`, function () {
         //数组
         mgr.template([{ key: "regitstTestViewKey3" }, { key: "regitstTestViewKey4" }]);
         mgr.template(["regitstTestViewKey3_1", "regitstTestViewKey4_1"] as any);
-
+        
         expect(mgr.getTemplate(viewKey1)).toBeDefined();
         expect(mgr.getTemplate(viewKey1).key).toEqual(viewKey1);
         expect(mgr.hasTemplate("regitstTestViewKey2")).toBeTruthy();
@@ -104,25 +97,25 @@ describe(`ViewMgr相关测试`, function () {
         mgr.template({ key: viewKey1, obj: {} } as any);
         expect(mgr.getTemplate(viewKey1)["obj"]).toBeUndefined();
     });
-    test(`测试:ViewMgr.use 注册插件`, function () {
-        const mgr = new ViewMgr();
-        mgr.init();
-        mgr.use(
-            {
-                onUse(this: akView.IPlugin, option: { a: string; b: number }) {
-                    expect(option).toBeDefined();
-                    expect(option.a).toBe("a");
-                    expect(option.b).toBe(1);
-                    expect(this.viewMgr).toBeDefined();
-                }
-            },
-            { a: "a", b: 1 }
-        );
-        //注册空对象
-        mgr.use({} as any, { a: "a", b: 1 });
-        //注册空值
-        mgr.use(undefined as any, { a: "a", b: 1 });
-    });
+    // test(`测试:ViewMgr.use 注册插件`, function () {
+    //     const mgr = new ViewMgr();
+    //     mgr.init();
+    //     mgr.use(
+    //         {
+    //             onUse(this: akView.IPlugin, option: { a: string; b: number }) {
+    //                 expect(option).toBeDefined();
+    //                 expect(option.a).toBe("a");
+    //                 expect(option.b).toBe(1);
+    //                 expect(this.viewMgr).toBeDefined();
+    //             }
+    //         },
+    //         { a: "a", b: 1 }
+    //     );
+    //     //注册空对象
+    //     mgr.use({} as any, { a: "a", b: 1 });
+    //     //注册空值
+    //     mgr.use(undefined as any, { a: "a", b: 1 });
+    // });
     test("测试: ViewMgr.getResInfo", function () {
         const mgr = new ViewMgr();
         const tplHandler = {
