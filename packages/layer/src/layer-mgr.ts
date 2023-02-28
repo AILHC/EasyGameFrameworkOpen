@@ -36,7 +36,7 @@ export class LayerMgr<T, AddNodeOpt extends Record<string, any> = Record<string,
                 clas = defaultClass;
             }
             layer = new clas();
-            layer.onInit(layerName, i, this);
+            layer.onLayerInit(layerName, i, this);
             this.addLayer(layer);
         }
     }
@@ -45,7 +45,7 @@ export class LayerMgr<T, AddNodeOpt extends Record<string, any> = Record<string,
         this._root = root;
         if (this._layerMap) {
             this._layerMap.forEach((value: layer.ILayer) => {
-                value.onAdd(root);
+                value.onAddToRoot(root);
             })
         }
     }
@@ -67,7 +67,7 @@ export class LayerMgr<T, AddNodeOpt extends Record<string, any> = Record<string,
         }
         this._layerMap.set(layerType, layer);
         if (this._root) {
-            layer.onAdd(this._root);
+            layer.onAddToRoot(this._root);
         }
         return true;
     }
@@ -76,20 +76,20 @@ export class LayerMgr<T, AddNodeOpt extends Record<string, any> = Record<string,
             return false;
         }
         const layer: layer.ILayer = this._layerMap.get(layerType);
-        layer.onDestroy && layer.onDestroy();
+        layer.onLayerDestroy && layer.onLayerDestroy();
         this._layerMap.delete(layerType);
         return true;
     }
     public hideLayer(layerType: number): void {
         const layer = this.getLayerByType(layerType);
         if (layer) {
-            layer.onHide();
+            layer.onLayerHide();
         }
     }
     public showLayer(layerType: number): void {
         const layer = this.getLayerByType(layerType);
         if (layer) {
-            layer.onShow();
+            layer.onLayerShow();
         }
     }
     public addNodeToLayer(node: T, layerType: number, addOpt?: AddNodeOpt): void {

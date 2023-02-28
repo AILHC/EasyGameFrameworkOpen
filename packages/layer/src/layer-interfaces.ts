@@ -4,24 +4,24 @@ declare global {
         interface ILayer<AddNodeOpt extends Record<string, any> = Record<string, any>> {
             layerType: number;
             layerName: string;
-            onInit(layerName: string, layerType: number, layerMgr: IMgr): void;
+            onLayerInit(layerName: string, layerType: number, layerMgr: IMgr): void;
             /**
              * 当被添加到根节点时
              * @param root 
              */
-            onAdd(root: any): void;
+            onAddToRoot(root: any): void;
             /**
              * 当隐藏时
              */
-            onHide(): void;
+            onLayerHide(): void;
             /**
              * 当显示时
              */
-            onShow(): void;
+            onLayerShow(): void;
             /**
              * 当销毁时
              */
-            onDestroy?(): void;
+            onLayerDestroy?(): void;
             /**
              * 当有节点添加时
              * @param node 
