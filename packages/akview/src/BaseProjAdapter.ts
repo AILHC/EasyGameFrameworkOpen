@@ -117,14 +117,14 @@ export abstract class BaseProjAdapter implements akView.IProjAdapter<akView.ITem
         let refIds = this._resRefMap[id];
         if (!refIds) {
             refIds = [];
-            this._resRefMap[id] = refIds;
+            this._resRefMap[template.key] = refIds;
         }
         refIds.push(id);
         this.addResRef(this.getTplResInfo(template));
     }
     decTplRef(id: string, template: akView.ITemplate): void {
         //移除引用
-        let refIds = this._resRefMap[id];
+        let refIds = this._resRefMap[template.key];
         if (refIds) {
             const index = refIds.indexOf(id);
             if (index > -1) {
