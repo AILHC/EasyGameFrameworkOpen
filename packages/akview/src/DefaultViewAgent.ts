@@ -69,7 +69,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     }
 
     initAndShowView(): void {
-        this._initViewIns();
+        this._initViewIns(this.showOpt);
         if (!this.needShowView) return;
         if (this.isViewInited) {
             this.showView();
@@ -145,7 +145,8 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
             if (this._hidingPromise !== promise) return;
             this._hidingPromise = undefined;
         }
-        this._hideViewIns();
+        this._hideViewIns(this.hideOpt);
+        this.hideOpt = null;
         this.needDestroy && this.doDestroy();
     }
     onDestroy(destroyRes?: boolean) {
@@ -168,7 +169,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
     showView(): void {
         const viewIns = this.viewIns;
 
-        this._showViewIns();
+        this._showViewIns(this.showOpt);
 
         const promise = viewIns.onTransition && viewIns.onTransition(true, this.showOpt);
         this._showingPromise = promise;
