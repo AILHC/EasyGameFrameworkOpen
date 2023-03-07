@@ -1,54 +1,52 @@
 var enet = (function (exports) {
     'use strict';
 
-    var DefaultNetEventHandler = (function () {
-        function DefaultNetEventHandler() {
+    class DefaultNetEventHandler {
+        onStartConnenct(connectOpt) {
+            console.log(`start connect:${connectOpt.url},opt:`, connectOpt);
         }
-        DefaultNetEventHandler.prototype.onStartConnenct = function (connectOpt) {
-            console.log("start connect:" + connectOpt.url + ",opt:", connectOpt);
-        };
-        DefaultNetEventHandler.prototype.onConnectEnd = function (connectOpt, handshakeRes) {
-            console.log("connect ok:" + connectOpt.url + ",opt:", connectOpt);
-            console.log("handshakeRes:", handshakeRes);
-        };
-        DefaultNetEventHandler.prototype.onError = function (event, connectOpt) {
-            console.error("socket error,opt:", connectOpt);
+        onConnectEnd(connectOpt, handshakeRes) {
+            console.log(`connect ok:${connectOpt.url},opt:`, connectOpt);
+            console.log(`handshakeRes:`, handshakeRes);
+        }
+        onError(event, connectOpt) {
+            console.error(`socket error,opt:`, connectOpt);
             console.error(event);
-        };
-        DefaultNetEventHandler.prototype.onClosed = function (event, connectOpt) {
-            console.error("socket close,opt:", connectOpt);
+        }
+        onClosed(event, connectOpt) {
+            console.error(`socket close,opt:`, connectOpt);
             console.error(event);
-        };
-        DefaultNetEventHandler.prototype.onStartReconnect = function (reConnectCfg, connectOpt) {
-            console.log("start reconnect:" + connectOpt.url + ",opt:", connectOpt);
-        };
-        DefaultNetEventHandler.prototype.onReconnecting = function (curCount, reConnectCfg, connectOpt) {
-            console.log("url:" + connectOpt.url + " reconnect count:" + curCount + ",less count:" + reConnectCfg.reconnectCount + ",opt:", connectOpt);
-        };
-        DefaultNetEventHandler.prototype.onReconnectEnd = function (isOk, reConnectCfg, connectOpt) {
-            console.log("url:" + connectOpt.url + "reconnect end " + (isOk ? "ok" : "fail") + " ,opt:", connectOpt);
-        };
-        DefaultNetEventHandler.prototype.onStartRequest = function (reqCfg, connectOpt) {
-            console.log("start request:" + reqCfg.protoKey + ",id:" + reqCfg.reqId + ",opt:", connectOpt);
-            console.log("reqCfg:", reqCfg);
-        };
-        DefaultNetEventHandler.prototype.onData = function (dpkg, connectOpt) {
-            console.log("data :" + dpkg.key + ",opt:", connectOpt);
-        };
-        DefaultNetEventHandler.prototype.onRequestTimeout = function (reqCfg, connectOpt) {
-            console.warn("request timeout:" + reqCfg.protoKey + ",opt:", connectOpt);
-        };
-        DefaultNetEventHandler.prototype.onCustomError = function (dpkg, connectOpt) {
-            console.error("proto key:" + dpkg.key + ",reqId:" + dpkg.reqId + ",code:" + dpkg.code + ",errorMsg:" + dpkg.errorMsg + ",opt:", connectOpt);
-        };
-        DefaultNetEventHandler.prototype.onKick = function (dpkg, copt) {
-            console.log("be kick,opt:", copt);
-        };
-        return DefaultNetEventHandler;
-    }());
+        }
+        onStartReconnect(reConnectCfg, connectOpt) {
+            console.log(`start reconnect:${connectOpt.url},opt:`, connectOpt);
+        }
+        onReconnecting(curCount, reConnectCfg, connectOpt) {
+            console.log(`url:${connectOpt.url} reconnect count:${curCount},less count:${reConnectCfg.reconnectCount},opt:`, connectOpt);
+        }
+        onReconnectEnd(isOk, reConnectCfg, connectOpt) {
+            console.log(`url:${connectOpt.url}reconnect end ${isOk ? "ok" : "fail"} ,opt:`, connectOpt);
+        }
+        onStartRequest(reqCfg, connectOpt) {
+            console.log(`start request:${reqCfg.protoKey},id:${reqCfg.reqId},opt:`, connectOpt);
+            console.log(`reqCfg:`, reqCfg);
+        }
+        onData(dpkg, connectOpt) {
+            console.log(`data :${dpkg.key},opt:`, connectOpt);
+        }
+        onRequestTimeout(reqCfg, connectOpt) {
+            console.warn(`request timeout:${reqCfg.protoKey},opt:`, connectOpt);
+        }
+        onCustomError(dpkg, connectOpt) {
+            console.error(`proto key:${dpkg.key},reqId:${dpkg.reqId},code:${dpkg.code},errorMsg:${dpkg.errorMsg},opt:`, connectOpt);
+        }
+        onKick(dpkg, copt) {
+            console.log(`be kick,opt:`, copt);
+        }
+    }
 
     exports.PackageType = void 0;
     (function (PackageType) {
+        PackageType[PackageType["NONE"] = 0] = "NONE";
         PackageType[PackageType["HANDSHAKE"] = 1] = "HANDSHAKE";
         PackageType[PackageType["HANDSHAKE_ACK"] = 2] = "HANDSHAKE_ACK";
         PackageType[PackageType["HEARTBEAT"] = 3] = "HEARTBEAT";
@@ -56,35 +54,25 @@ var enet = (function (exports) {
         PackageType[PackageType["KICK"] = 5] = "KICK";
     })(exports.PackageType || (exports.PackageType = {}));
 
-    var DefaultProtoHandler = (function () {
-        function DefaultProtoHandler() {
+    class DefaultProtoHandler {
+        get handShakeRes() {
+            return undefined;
         }
-        Object.defineProperty(DefaultProtoHandler.prototype, "handShakeRes", {
-            get: function () {
-                return undefined;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(DefaultProtoHandler.prototype, "heartbeatConfig", {
-            get: function () {
-                return this._heartbeatCfg;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        DefaultProtoHandler.prototype.encodePkg = function (pkg, useCrypto) {
+        get heartbeatConfig() {
+            return this._heartbeatCfg;
+        }
+        encodePkg(pkg, useCrypto) {
             return JSON.stringify(pkg);
-        };
-        DefaultProtoHandler.prototype.protoKey2Key = function (protoKey) {
+        }
+        protoKey2Key(protoKey) {
             return protoKey;
-        };
-        DefaultProtoHandler.prototype.encodeMsg = function (msg, useCrypto) {
+        }
+        encodeMsg(msg, useCrypto) {
             return JSON.stringify({ type: exports.PackageType.DATA, data: msg });
-        };
-        DefaultProtoHandler.prototype.decodePkg = function (data) {
-            var parsedData;
-            var pkgType;
+        }
+        decodePkg(data) {
+            let parsedData;
+            let pkgType;
             try {
                 parsedData = JSON.parse(data);
                 pkgType = parsedData.type;
@@ -92,13 +80,13 @@ var enet = (function (exports) {
             catch (error) {
                 parsedData = {
                     key: null,
-                    type: 0,
+                    type: exports.PackageType.NONE,
                     data: data
                 };
-                pkgType = 0;
+                pkgType = exports.PackageType.NONE;
             }
             if (parsedData.type === exports.PackageType.DATA) {
-                var msg = parsedData.data;
+                const msg = parsedData.data;
                 return {
                     key: msg && msg.key,
                     type: pkgType,
@@ -115,9 +103,8 @@ var enet = (function (exports) {
                     data: parsedData.data
                 };
             }
-        };
-        return DefaultProtoHandler;
-    }());
+        }
+    }
 
     exports.SocketState = void 0;
     (function (SocketState) {
@@ -127,32 +114,22 @@ var enet = (function (exports) {
         SocketState[SocketState["CLOSED"] = 3] = "CLOSED";
     })(exports.SocketState || (exports.SocketState = {}));
 
-    var WSocket = (function () {
-        function WSocket() {
+    class WSocket {
+        get state() {
+            return this._sk ? this._sk.readyState : exports.SocketState.CLOSED;
         }
-        Object.defineProperty(WSocket.prototype, "state", {
-            get: function () {
-                return this._sk ? this._sk.readyState : exports.SocketState.CLOSED;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(WSocket.prototype, "isConnected", {
-            get: function () {
-                return this._sk ? this._sk.readyState === exports.SocketState.OPEN : false;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        WSocket.prototype.setEventHandler = function (handler) {
+        get isConnected() {
+            return this._sk ? this._sk.readyState === exports.SocketState.OPEN : false;
+        }
+        setEventHandler(handler) {
             this._eventHandler = handler;
-        };
-        WSocket.prototype.connect = function (opt) {
+        }
+        connect(opt) {
             var _a, _b, _c, _d, _e, _f, _g, _h;
-            var url = opt.url;
+            let url = opt.url;
             if (!url) {
                 if (opt.host && opt.port) {
-                    url = (opt.protocol ? "wss" : "ws") + "://" + opt.host + ":" + opt.port;
+                    url = `${opt.protocol ? "wss" : "ws"}://${opt.host}:${opt.port}`;
                 }
                 else {
                     return false;
@@ -173,19 +150,19 @@ var enet = (function (exports) {
                 this._sk.onmessage = ((_e = this._eventHandler) === null || _e === void 0 ? void 0 : _e.onSocketMsg) && ((_f = this._eventHandler) === null || _f === void 0 ? void 0 : _f.onSocketMsg);
                 this._sk.onopen = ((_g = this._eventHandler) === null || _g === void 0 ? void 0 : _g.onSocketConnected) && ((_h = this._eventHandler) === null || _h === void 0 ? void 0 : _h.onSocketConnected);
             }
-        };
-        WSocket.prototype.send = function (data) {
+        }
+        send(data) {
             if (this._sk) {
                 this._sk.send(data);
             }
             else {
-                console.error("socket is null");
+                console.error(`socket is null`);
             }
-        };
-        WSocket.prototype.close = function (disconnect) {
+        }
+        close(disconnect) {
             var _a, _b;
             if (this._sk) {
-                var isConnected = this.isConnected;
+                const isConnected = this.isConnected;
                 this._sk.close();
                 this._sk.onclose = null;
                 this._sk.onerror = null;
@@ -196,52 +173,35 @@ var enet = (function (exports) {
                     ((_a = this._eventHandler) === null || _a === void 0 ? void 0 : _a.onSocketClosed) && ((_b = this._eventHandler) === null || _b === void 0 ? void 0 : _b.onSocketClosed(disconnect));
                 }
             }
-        };
-        return WSocket;
-    }());
+        }
+    }
 
-    var NetNode = (function () {
-        function NetNode() {
+    class NetNode {
+        constructor() {
             this._curReconnectCount = 0;
             this._reqId = 1;
         }
-        Object.defineProperty(NetNode.prototype, "socket", {
-            get: function () {
-                return this._socket;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(NetNode.prototype, "netEventHandler", {
-            get: function () {
-                return this._netEventHandler;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(NetNode.prototype, "protoHandler", {
-            get: function () {
-                return this._protoHandler;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(NetNode.prototype, "socketEventHandler", {
-            get: function () {
-                if (!this._socketEventHandler) {
-                    this._socketEventHandler = {
-                        onSocketClosed: this._onSocketClosed.bind(this),
-                        onSocketConnected: this._onSocketConnected.bind(this),
-                        onSocketError: this._onSocketError.bind(this),
-                        onSocketMsg: this._onSocketMsg.bind(this)
-                    };
-                }
-                return this._socketEventHandler;
-            },
-            enumerable: false,
-            configurable: true
-        });
-        NetNode.prototype.init = function (config) {
+        get socket() {
+            return this._socket;
+        }
+        get netEventHandler() {
+            return this._netEventHandler;
+        }
+        get protoHandler() {
+            return this._protoHandler;
+        }
+        get socketEventHandler() {
+            if (!this._socketEventHandler) {
+                this._socketEventHandler = {
+                    onSocketClosed: this._onSocketClosed.bind(this),
+                    onSocketConnected: this._onSocketConnected.bind(this),
+                    onSocketError: this._onSocketError.bind(this),
+                    onSocketMsg: this._onSocketMsg.bind(this)
+                };
+            }
+            return this._socketEventHandler;
+        }
+        init(config) {
             if (this._inited)
                 return;
             this._protoHandler = config && config.protoHandler ? config.protoHandler : new DefaultProtoHandler();
@@ -251,7 +211,7 @@ var enet = (function (exports) {
             this._pushHandlerMap = {};
             this._oncePushHandlerMap = {};
             this._reqCfgMap = {};
-            var reConnectCfg = config && config.reConnectCfg;
+            const reConnectCfg = config && config.reConnectCfg;
             if (!reConnectCfg) {
                 this._reConnectCfg = {
                     reconnectCount: 4,
@@ -276,10 +236,10 @@ var enet = (function (exports) {
             this._pkgTypeHandlers[exports.PackageType.HEARTBEAT] = this._heartbeat.bind(this);
             this._pkgTypeHandlers[exports.PackageType.DATA] = this._onData.bind(this);
             this._pkgTypeHandlers[exports.PackageType.KICK] = this._onKick.bind(this);
-        };
-        NetNode.prototype.connect = function (option, connectEnd) {
-            var socket = this._socket;
-            var socketInCloseState = socket && (socket.state === exports.SocketState.CLOSING || socket.state === exports.SocketState.CLOSED);
+        }
+        connect(option, connectEnd) {
+            const socket = this._socket;
+            const socketInCloseState = socket && (socket.state === exports.SocketState.CLOSING || socket.state === exports.SocketState.CLOSED);
             if (this._inited && socketInCloseState) {
                 if (typeof option === "string") {
                     option = {
@@ -292,14 +252,14 @@ var enet = (function (exports) {
                 }
                 this._connectOpt = option;
                 this._socket.connect(option);
-                var netEventHandler = this._netEventHandler;
+                const netEventHandler = this._netEventHandler;
                 netEventHandler.onStartConnenct && netEventHandler.onStartConnenct(option);
             }
             else {
-                console.error("is not inited" + (socket ? " , socket state" + socket.state : ""));
+                console.error(`is not inited${socket ? " , socket state" + socket.state : ""}`);
             }
-        };
-        NetNode.prototype.disConnect = function () {
+        }
+        disConnect() {
             this._socket.close(true);
             if (this._heartbeatTimeId) {
                 clearTimeout(this._heartbeatTimeId);
@@ -309,9 +269,8 @@ var enet = (function (exports) {
                 clearTimeout(this._heartbeatTimeoutId);
                 this._heartbeatTimeoutId = undefined;
             }
-        };
-        NetNode.prototype.reConnect = function () {
-            var _this = this;
+        }
+        reConnect() {
             if (!this._inited || !this._socket) {
                 return;
             }
@@ -320,27 +279,27 @@ var enet = (function (exports) {
                 return;
             }
             if (!this._isReconnecting) {
-                var netEventHandler_1 = this._netEventHandler;
-                netEventHandler_1.onStartReconnect && netEventHandler_1.onStartReconnect(this._reConnectCfg, this._connectOpt);
+                const netEventHandler = this._netEventHandler;
+                netEventHandler.onStartReconnect && netEventHandler.onStartReconnect(this._reConnectCfg, this._connectOpt);
             }
             this._isReconnecting = true;
             this.connect(this._connectOpt);
             this._curReconnectCount++;
-            var netEventHandler = this._netEventHandler;
+            const netEventHandler = this._netEventHandler;
             netEventHandler.onReconnecting &&
                 netEventHandler.onReconnecting(this._curReconnectCount, this._reConnectCfg, this._connectOpt);
-            this._reconnectTimerId = setTimeout(function () {
-                _this.reConnect();
+            this._reconnectTimerId = setTimeout(() => {
+                this.reConnect();
             }, this._reConnectCfg.connectTimeout);
-        };
-        NetNode.prototype.request = function (protoKey, data, resHandler, arg) {
+        }
+        request(protoKey, data, resHandler, arg) {
             if (!this._isSocketReady())
                 return;
-            var reqId = this._reqId;
-            var protoHandler = this._protoHandler;
-            var encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data }, this._useCrypto);
+            const reqId = this._reqId;
+            const protoHandler = this._protoHandler;
+            const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data }, this._useCrypto);
             if (encodePkg) {
-                var reqCfg = {
+                let reqCfg = {
                     reqId: reqId,
                     protoKey: protoHandler.protoKey2Key(protoKey),
                     data: data,
@@ -353,40 +312,40 @@ var enet = (function (exports) {
                 this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg, this._connectOpt);
                 this.send(encodePkg);
             }
-        };
-        NetNode.prototype.notify = function (protoKey, data) {
+        }
+        notify(protoKey, data) {
             if (!this._isSocketReady())
                 return;
-            var encodePkg = this._protoHandler.encodeMsg({
+            const encodePkg = this._protoHandler.encodeMsg({
                 key: protoKey,
                 data: data
             }, this._useCrypto);
             this.send(encodePkg);
-        };
-        NetNode.prototype.send = function (netData) {
+        }
+        send(netData) {
             this._socket.send(netData);
-        };
-        NetNode.prototype.onPush = function (protoKey, handler) {
-            var key = this._protoHandler.protoKey2Key(protoKey);
+        }
+        onPush(protoKey, handler) {
+            const key = this._protoHandler.protoKey2Key(protoKey);
             if (!this._pushHandlerMap[key]) {
                 this._pushHandlerMap[key] = [handler];
             }
             else {
                 this._pushHandlerMap[key].push(handler);
             }
-        };
-        NetNode.prototype.oncePush = function (protoKey, handler) {
-            var key = this._protoHandler.protoKey2Key(protoKey);
+        }
+        oncePush(protoKey, handler) {
+            const key = this._protoHandler.protoKey2Key(protoKey);
             if (!this._oncePushHandlerMap[key]) {
                 this._oncePushHandlerMap[key] = [handler];
             }
             else {
                 this._oncePushHandlerMap[key].push(handler);
             }
-        };
-        NetNode.prototype.offPush = function (protoKey, callbackHandler, context, onceOnly) {
-            var key = this._protoHandler.protoKey2Key(protoKey);
-            var handlers;
+        }
+        offPush(protoKey, callbackHandler, context, onceOnly) {
+            const key = this._protoHandler.protoKey2Key(protoKey);
+            let handlers;
             if (onceOnly) {
                 handlers = this._oncePushHandlerMap[key];
             }
@@ -394,9 +353,9 @@ var enet = (function (exports) {
                 handlers = this._pushHandlerMap[key];
             }
             if (handlers) {
-                var handler = void 0;
-                var isEqual = void 0;
-                for (var i = handlers.length - 1; i > -1; i--) {
+                let handler;
+                let isEqual;
+                for (let i = handlers.length - 1; i > -1; i--) {
                     handler = handlers[i];
                     isEqual = false;
                     if (typeof handler === "function" && handler === callbackHandler) {
@@ -416,10 +375,10 @@ var enet = (function (exports) {
                     }
                 }
             }
-        };
-        NetNode.prototype.offPushAll = function (protoKey) {
+        }
+        offPushAll(protoKey) {
             if (protoKey) {
-                var key = this._protoHandler.protoKey2Key(protoKey);
+                const key = this._protoHandler.protoKey2Key(protoKey);
                 delete this._pushHandlerMap[key];
                 delete this._oncePushHandlerMap[key];
             }
@@ -427,42 +386,41 @@ var enet = (function (exports) {
                 this._pushHandlerMap = {};
                 this._oncePushHandlerMap = {};
             }
-        };
-        NetNode.prototype._onHandshake = function (dpkg) {
+        }
+        _onHandshake(dpkg) {
             if (dpkg.errorMsg) {
                 return;
             }
             this._handshakeInit(dpkg);
-            var ackPkg = this._protoHandler.encodePkg({ type: exports.PackageType.HANDSHAKE_ACK });
+            const ackPkg = this._protoHandler.encodePkg({ type: exports.PackageType.HANDSHAKE_ACK });
             this.send(ackPkg);
-            var connectOpt = this._connectOpt;
-            var handshakeRes = this._protoHandler.handShakeRes;
+            const connectOpt = this._connectOpt;
+            const handshakeRes = this._protoHandler.handShakeRes;
             connectOpt.connectEnd && connectOpt.connectEnd(handshakeRes);
             this._netEventHandler.onConnectEnd && this._netEventHandler.onConnectEnd(connectOpt, handshakeRes);
-        };
-        NetNode.prototype._handshakeInit = function (dpkg) {
-            var heartbeatCfg = this.protoHandler.heartbeatConfig;
+        }
+        _handshakeInit(dpkg) {
+            const heartbeatCfg = this.protoHandler.heartbeatConfig;
             this._heartbeatConfig = heartbeatCfg;
-        };
-        NetNode.prototype._heartbeat = function (dpkg) {
-            var _this = this;
-            var heartbeatCfg = this._heartbeatConfig;
-            var protoHandler = this._protoHandler;
+        }
+        _heartbeat(dpkg) {
+            const heartbeatCfg = this._heartbeatConfig;
+            const protoHandler = this._protoHandler;
             if (!heartbeatCfg || !heartbeatCfg.heartbeatInterval) {
                 return;
             }
             if (this._heartbeatTimeoutId) {
                 return;
             }
-            this._heartbeatTimeId = setTimeout(function () {
-                _this._heartbeatTimeId = undefined;
-                var heartbeatPkg = protoHandler.encodePkg({ type: exports.PackageType.HEARTBEAT }, _this._useCrypto);
-                _this.send(heartbeatPkg);
-                _this._nextHeartbeatTimeoutTime = Date.now() + heartbeatCfg.heartbeatTimeout;
-                _this._heartbeatTimeoutId = setTimeout(_this._heartbeatTimeoutCb.bind(_this), heartbeatCfg.heartbeatTimeout);
+            this._heartbeatTimeId = setTimeout(() => {
+                this._heartbeatTimeId = undefined;
+                const heartbeatPkg = protoHandler.encodePkg({ type: exports.PackageType.HEARTBEAT }, this._useCrypto);
+                this.send(heartbeatPkg);
+                this._nextHeartbeatTimeoutTime = Date.now() + heartbeatCfg.heartbeatTimeout;
+                this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), heartbeatCfg.heartbeatTimeout);
             }, heartbeatCfg.heartbeatInterval);
-        };
-        NetNode.prototype._heartbeatTimeoutCb = function () {
+        }
+        _heartbeatTimeoutCb() {
             var gap = this._nextHeartbeatTimeoutTime - Date.now();
             if (gap > this._gapThreashold) {
                 this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), gap);
@@ -471,14 +429,14 @@ var enet = (function (exports) {
                 console.error("server heartbeat timeout");
                 this.disConnect();
             }
-        };
-        NetNode.prototype._onData = function (dpkg) {
+        }
+        _onData(dpkg) {
             if (dpkg.errorMsg) {
                 return;
             }
-            var reqCfg;
+            let reqCfg;
             if (!isNaN(dpkg.reqId) && dpkg.reqId > 0) {
-                var reqId = dpkg.reqId;
+                const reqId = dpkg.reqId;
                 reqCfg = this._reqCfgMap[reqId];
                 if (!reqCfg)
                     return;
@@ -486,9 +444,9 @@ var enet = (function (exports) {
                 this._runHandler(reqCfg.resHandler, dpkg);
             }
             else {
-                var pushKey = dpkg.key;
-                var handlers = this._pushHandlerMap[pushKey];
-                var onceHandlers = this._oncePushHandlerMap[pushKey];
+                const pushKey = dpkg.key;
+                let handlers = this._pushHandlerMap[pushKey];
+                const onceHandlers = this._oncePushHandlerMap[pushKey];
                 if (!handlers) {
                     handlers = onceHandlers;
                 }
@@ -497,42 +455,42 @@ var enet = (function (exports) {
                 }
                 delete this._oncePushHandlerMap[pushKey];
                 if (handlers) {
-                    for (var i = 0; i < handlers.length; i++) {
+                    for (let i = 0; i < handlers.length; i++) {
                         this._runHandler(handlers[i], dpkg);
                     }
                 }
             }
-            var netEventHandler = this._netEventHandler;
+            const netEventHandler = this._netEventHandler;
             netEventHandler.onData && netEventHandler.onData(dpkg, this._connectOpt, reqCfg);
-        };
-        NetNode.prototype._onKick = function (dpkg) {
+        }
+        _onKick(dpkg) {
             this._netEventHandler.onKick && this._netEventHandler.onKick(dpkg, this._connectOpt);
-        };
-        NetNode.prototype._isSocketReady = function () {
-            var socket = this._socket;
-            var socketIsReady = socket && (socket.state === exports.SocketState.CONNECTING || socket.state === exports.SocketState.OPEN);
+        }
+        _isSocketReady() {
+            const socket = this._socket;
+            const socketIsReady = socket && (socket.state === exports.SocketState.CONNECTING || socket.state === exports.SocketState.OPEN);
             if (this._inited && socketIsReady) {
                 return true;
             }
             else {
-                console.error("" + (this._inited
-                    ? socketIsReady
-                        ? "socket is ready"
-                        : "socket is null or unready"
-                    : "netNode is unInited"));
+                console.error(`${this._inited
+                ? socketIsReady
+                    ? "socket is ready"
+                    : "socket is null or unready"
+                : "netNode is unInited"}`);
                 return false;
             }
-        };
-        NetNode.prototype._onSocketConnected = function (event) {
+        }
+        _onSocketConnected(event) {
             if (this._isReconnecting) {
                 this._stopReconnect();
             }
             else {
-                var handler = this._netEventHandler;
-                var connectOpt = this._connectOpt;
-                var protoHandler = this._protoHandler;
+                const handler = this._netEventHandler;
+                const connectOpt = this._connectOpt;
+                const protoHandler = this._protoHandler;
                 if (protoHandler && connectOpt.handShakeReq) {
-                    var handShakeNetData = protoHandler.encodePkg({
+                    const handShakeNetData = protoHandler.encodePkg({
                         type: exports.PackageType.HANDSHAKE,
                         data: connectOpt.handShakeReq
                     });
@@ -543,20 +501,20 @@ var enet = (function (exports) {
                     handler.onConnectEnd && handler.onConnectEnd(connectOpt);
                 }
             }
-        };
-        NetNode.prototype._onSocketError = function (event) {
-            var eventHandler = this._netEventHandler;
+        }
+        _onSocketError(event) {
+            const eventHandler = this._netEventHandler;
             eventHandler.onError && eventHandler.onError(event, this._connectOpt);
-        };
-        NetNode.prototype._onSocketMsg = function (event) {
-            var depackage = this._protoHandler.decodePkg(event.data);
-            var netEventHandler = this._netEventHandler;
-            var pkgTypeHandler = this._pkgTypeHandlers[depackage.type];
+        }
+        _onSocketMsg(event) {
+            const depackage = this._protoHandler.decodePkg(event.data);
+            const netEventHandler = this._netEventHandler;
+            const pkgTypeHandler = this._pkgTypeHandlers[depackage.type];
             if (pkgTypeHandler) {
                 pkgTypeHandler(depackage);
             }
             else {
-                console.error("There is no handler of this type:" + depackage.type);
+                console.error(`There is no handler of this type:${depackage.type}`);
             }
             if (depackage.errorMsg) {
                 netEventHandler.onCustomError && netEventHandler.onCustomError(depackage, this._connectOpt);
@@ -564,9 +522,9 @@ var enet = (function (exports) {
             if (this._nextHeartbeatTimeoutTime) {
                 this._nextHeartbeatTimeoutTime = Date.now() + this._heartbeatConfig.heartbeatTimeout;
             }
-        };
-        NetNode.prototype._onSocketClosed = function (event) {
-            var netEventHandler = this._netEventHandler;
+        }
+        _onSocketClosed(event) {
+            const netEventHandler = this._netEventHandler;
             if (this._isReconnecting) {
                 clearTimeout(this._reconnectTimerId);
                 this.reConnect();
@@ -574,8 +532,8 @@ var enet = (function (exports) {
             else {
                 netEventHandler.onClosed && netEventHandler.onClosed(event, this._connectOpt);
             }
-        };
-        NetNode.prototype._runHandler = function (handler, depackage) {
+        }
+        _runHandler(handler, depackage) {
             if (typeof handler === "function") {
                 handler(depackage);
             }
@@ -583,19 +541,17 @@ var enet = (function (exports) {
                 handler.method &&
                     handler.method.apply(handler.context, handler.args ? [depackage].concat(handler.args) : [depackage]);
             }
-        };
-        NetNode.prototype._stopReconnect = function (isOk) {
-            if (isOk === void 0) { isOk = true; }
+        }
+        _stopReconnect(isOk = true) {
             if (this._isReconnecting) {
                 this._isReconnecting = false;
                 clearTimeout(this._reconnectTimerId);
                 this._curReconnectCount = 0;
-                var eventHandler = this._netEventHandler;
+                const eventHandler = this._netEventHandler;
                 eventHandler.onReconnectEnd && eventHandler.onReconnectEnd(isOk, this._reConnectCfg, this._connectOpt);
             }
-        };
-        return NetNode;
-    }());
+        }
+    }
 
     exports.DefaultNetEventHandler = DefaultNetEventHandler;
     exports.NetNode = NetNode;

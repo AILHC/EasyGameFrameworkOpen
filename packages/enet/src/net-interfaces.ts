@@ -80,7 +80,8 @@ declare global {
              * 1 HANDSHAKE 客户端和服务端之间的握手数据包类型
              * 2 HANDSHAKE_ACK 客户端回应服务端的握手包类型
              * 3 HEARTBEAT 客户端和服务端之间的心跳数据包类型
-             * 4 KICK 服务端发给客户端的下线数据包类型
+             * 4 DATA 数据包
+             * 5 KICK 服务端发给客户端的下线数据包类型
              */
             type: number;
             /**协议字符串key */
