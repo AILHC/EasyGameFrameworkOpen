@@ -626,3 +626,29 @@ test("send message on netNode connecting", async (done) => {
     done();
 
 })
+interface INetProtoType {
+    testReq: enet.ToProtoType<{
+        reqType: { 
+            /**
+             * test
+             */
+            a: number },
+        resType: { b: number }
+    }>,
+    testReq2: enet.ToProtoType<{
+        reqType: { uu: number },
+        resType: { pp: number }
+    }>
+}
+// const netNode: enet.INode<INetProtoType> = {} as any;
+// netNode.request("testReqx",{a:"1"},(pkg)=>{
+//     pkg.data.b
+// });
+
+// const netNodeAny: enet.INode = {} as any;
+// netNodeAny.request<{ a: number }, { b: number }>("st", { a: 1 }, () => {
+
+// });
+// netNode.requestAsync("testReq");
+// // netNode.notify<{dasf}>("testReqxx",{dasf})
+// type b = enet.GetReqType2<"testReq",INetProtoType,"resType"|"reqType">;

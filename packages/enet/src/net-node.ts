@@ -4,7 +4,14 @@ import { PackageType } from "./pkg-type";
 import { SocketState } from "./socketStateType";
 import { WSocket } from "./wsocket";
 
-export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
+export class NetNode<ProtoType,
+    InferReqTypeKey extends string = "reqType",
+    InferResTypeKey extends string = "reqType"> implements enet.INode<ProtoType, InferReqTypeKey, InferResTypeKey> {
+    keys: Readonly<{ [P in keyof ProtoType]: P; }> = new Proxy({} as any, {
+        get(target, p, receiver) {
+            return p;
+        }
+    });
     /**
      * 套接字实现
      */
@@ -198,14 +205,16 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
             this.reConnect();
         }, this._reConnectCfg.connectTimeout);
     }
-    public request<ReqData = any, ResData = any>(
-        protoKey: ProtoKeyType,
-        data: ReqData,
-        resHandler:
-            | enet.ICallbackHandler<enet.IDecodePackage<ResData>>
-            | enet.ValueCallback<enet.IDecodePackage<ResData>>,
-        arg?: any
-    ): void {
+    public request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
+        ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+        ProtoKeyType extends ((keyof ProtoType) | String)>
+        (
+            protoKey: ProtoKeyType,
+            data: ReqData,
+            resHandler:
+                | enet.ICallbackHandler<enet.IDecodePackage<ResData>>
+                | enet.ValueCallback<enet.IDecodePackage<ResData>>
+        ): void {
         if (!this._isSocketReady()) return;
         const reqId = this._reqId;
         const protoHandler = this._protoHandler;
@@ -217,14 +226,40 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
                 data: data,
                 resHandler: resHandler
             };
-            if (arg) reqCfg = Object.assign(reqCfg, arg);
             this._reqCfgMap[reqId] = reqCfg;
             this._reqId++;
             this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg, this._connectOpt);
             this.send(encodePkg);
         }
     }
-    public notify<T>(protoKey: ProtoKeyType, data?: T): void {
+    public requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
+        ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+        ProtoKeyType extends ((keyof ProtoType) | String)
+    >(
+        protoKey: ProtoKeyType,
+        data: ReqData,
+    ): Promise<enet.IDecodePackage<ResData>> {
+        if (!this._isSocketReady()) return;
+
+        return new Promise((res) => {
+            const reqId = this._reqId;
+            const protoHandler = this._protoHandler;
+            const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data }, this._useCrypto);
+            if (encodePkg) {
+                let reqCfg: enet.IRequestConfig = {
+                    reqId: reqId,
+                    protoKey: protoHandler.protoKey2Key(protoKey),
+                    data: data,
+                    resHandler: res
+                };
+                this._reqCfgMap[reqId] = reqCfg;
+                this._reqId++;
+                this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg, this._connectOpt);
+                this.send(encodePkg);
+            }
+        });
+    }
+    public notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data?: ReqData): void {
         if (!this._isSocketReady()) return;
 
         const encodePkg = this._protoHandler.encodeMsg(
@@ -240,10 +275,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
     public send(netData: enet.NetData): void {
         this._socket.send(netData);
     }
-    public onPush<ResData = any>(
-        protoKey: ProtoKeyType,
-        handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>
-    ): void {
+    public onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+        ProtoKeyType extends ((keyof ProtoType) | String)>
+        (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         if (!this._pushHandlerMap[key]) {
             this._pushHandlerMap[key] = [handler];
@@ -251,10 +285,9 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
             this._pushHandlerMap[key].push(handler);
         }
     }
-    public oncePush<ResData = any>(
-        protoKey: ProtoKeyType,
-        handler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>
-    ): void {
+    public oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+        ProtoKeyType extends ((keyof ProtoType) | String)>
+        (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         if (!this._oncePushHandlerMap[key]) {
             this._oncePushHandlerMap[key] = [handler];
@@ -262,7 +295,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
             this._oncePushHandlerMap[key].push(handler);
         }
     }
-    public offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void {
+    public offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+    public offPush(protoKey: String, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         let handlers: enet.AnyCallback[];
         if (onceOnly) {
@@ -295,7 +329,8 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
             }
         }
     }
-    public offPushAll(protoKey?: ProtoKeyType): void {
+    public offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void;
+    public offPushAll(protoKey?: String): void {
         if (protoKey) {
             const key = this._protoHandler.protoKey2Key(protoKey);
             delete this._pushHandlerMap[key];
@@ -426,12 +461,11 @@ export class NetNode<ProtoKeyType> implements enet.INode<ProtoKeyType> {
             return true;
         } else {
             console.error(
-                `${
-                    this._inited
-                        ? socketIsReady
-                            ? "socket is ready"
-                            : "socket is null or unready"
-                        : "netNode is unInited"
+                `${this._inited
+                    ? socketIsReady
+                        ? "socket is ready"
+                        : "socket is null or unready"
+                    : "netNode is unInited"
                 }`
             );
             return false;

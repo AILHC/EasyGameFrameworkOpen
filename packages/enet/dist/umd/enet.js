@@ -181,6 +181,11 @@
 
     class NetNode {
         constructor() {
+            this.keys = new Proxy({}, {
+                get(target, p, receiver) {
+                    return p;
+                }
+            });
             this._curReconnectCount = 0;
             this._reqId = 1;
         }
@@ -295,7 +300,7 @@
                 this.reConnect();
             }, this._reConnectCfg.connectTimeout);
         }
-        request(protoKey, data, resHandler, arg) {
+        request(protoKey, data, resHandler) {
             if (!this._isSocketReady())
                 return;
             const reqId = this._reqId;
@@ -308,13 +313,32 @@
                     data: data,
                     resHandler: resHandler
                 };
-                if (arg)
-                    reqCfg = Object.assign(reqCfg, arg);
                 this._reqCfgMap[reqId] = reqCfg;
                 this._reqId++;
                 this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg, this._connectOpt);
                 this.send(encodePkg);
             }
+        }
+        requestAsync(protoKey, data) {
+            if (!this._isSocketReady())
+                return;
+            return new Promise((res) => {
+                const reqId = this._reqId;
+                const protoHandler = this._protoHandler;
+                const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data }, this._useCrypto);
+                if (encodePkg) {
+                    let reqCfg = {
+                        reqId: reqId,
+                        protoKey: protoHandler.protoKey2Key(protoKey),
+                        data: data,
+                        resHandler: res
+                    };
+                    this._reqCfgMap[reqId] = reqCfg;
+                    this._reqId++;
+                    this._netEventHandler.onStartRequest && this._netEventHandler.onStartRequest(reqCfg, this._connectOpt);
+                    this.send(encodePkg);
+                }
+            });
         }
         notify(protoKey, data) {
             if (!this._isSocketReady())

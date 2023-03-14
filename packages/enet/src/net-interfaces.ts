@@ -1,5 +1,50 @@
 declare global {
     namespace enet {
+        interface INetProtocolReqResType {
+            reqType?: any;
+            resType?: any;
+        }
+        // interface INetProtoType extends Record<never, INetProtocolReqResType> {
+
+        // }
+        type ToProtoType<T extends INetProtocolReqResType> = T;
+        type GetReqType<IndexKey, StateTypes, InferKey extends string> = GetTypeMapType<
+            IndexKey,
+            StateTypes
+        > extends {
+                [key in InferKey]: infer StateType;
+            }
+            ? StateType
+            : any;
+        // type GetReqType<IndexKey, StateTypes> = GetTypeMapType<
+        //     IndexKey,
+        //     StateTypes
+        // > extends {
+        //     reqType: infer StateType;
+        // }
+        //     ? StateType
+        //     : any;
+        type GetResType<IndexKey, StateTypes, InferKey extends string> = GetTypeMapType<
+            IndexKey,
+            StateTypes
+        > extends {
+                [key in InferKey]: infer StateType;
+            }
+            ? StateType
+            : any;
+        // type GetResType<IndexKey, StateTypes> = GetTypeMapType<
+        //     IndexKey,
+        //     StateTypes
+        // > extends {
+        //     resType: infer StateType;
+        // }
+        //     ? StateType
+        //     : any;
+        type GetTypeMapType<IndexKey, TypeMap> = IndexKey extends keyof TypeMap ? TypeMap[ToAnyIndexKey<IndexKey, TypeMap>] : never;
+        /**
+         * 将索引类型转换为任意类型的索引类型
+         */
+        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
         /**网络数据格式 */
         type NetData = string | ArrayBufferLike | Blob | ArrayBufferView | Uint8Array;
         /**
@@ -96,7 +141,7 @@ declare global {
             errorMsg?: string;
         }
         /**默认握手返回 */
-        interface IDefaultHandshakeRes extends IHeartBeatConfig {}
+        interface IDefaultHandshakeRes extends IHeartBeatConfig { }
         interface IHeartBeatConfig {
             /**心跳间隔，毫秒 */
             heartbeatInterval: number;
@@ -315,7 +360,13 @@ declare global {
             /**使用加密 */
             useCrypto?: boolean;
         }
-        interface INode<ProtoKeyType = any> {
+        interface INode<ProtoType extends Record<never, INetProtocolReqResType> = any,
+            InferReqTypeKey extends string = "reqType",
+            InferResTypeKey extends string = "resType"> {
+            /**
+             * 协议key
+             */
+            readonly keys: Readonly<{ [P in keyof ProtoType]: P }>;
             /**网络事件处理器 */
             netEventHandler: enet.INetEventHandler;
             /**协议处理器 */
@@ -344,13 +395,52 @@ declare global {
              * 请求协议接口，处理返回
              * @param protoKey 协议key
              * @param data 请求数据体
-             * @param resHandler 返回处理
+             * @param resHandler 响应处理
              */
-            request<ReqData = any, ResData = any>(
+            request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
+                ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+                ProtoKeyType extends ((keyof ProtoType) | String)=String>
+                (
+                    protoKey: ProtoKeyType,
+                    data: ReqData,
+                    resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>
+                ): void;
+
+            /**
+             * 请求协议接口，处理返回
+             * @param protoKey 协议key
+             * @param data 请求数据体
+             * @param resHandler 响应处理
+             */
+            // request<ReqData, ResData>(
+            //     protoKey: String,
+            //     data: ReqData,
+            //     resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<IDecodePackage<ResData>>
+            // ): void;
+            /**
+             * 请求协议接口，处理返回
+             * @param protoKey 协议key
+             * @param data 请求数据体
+             * @returns 返回Promise
+             */
+            requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
+                ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+                ProtoKeyType extends ((keyof ProtoType) | String)
+            >(
                 protoKey: ProtoKeyType,
                 data: ReqData,
-                resHandler: ICallbackHandler<IDecodePackage<ResData>> | ValueCallback<IDecodePackage<ResData>>
-            ): void;
+            ): Promise<enet.IDecodePackage<ResData>>;
+            /**
+             * 请求协议接口，处理返回
+             * @param protoKey 协议key
+             * @param data 请求数据体
+             * @returns 返回Promise
+             */
+            requestAsync<ReqData, ResData>(
+                protoKey: string,
+                data: ReqData,
+            ): Promise<enet.IDecodePackage<ResData>>;
+
             /**
              * 发送网络数据
              * @param netData
@@ -362,19 +452,26 @@ declare global {
              * @param protoKey 协议key
              * @param data 数据体
              */
-            notify<T>(protoKey: ProtoKeyType, data?: T): void;
+            notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data?: ReqData): void;
+            notify<ReqData>(protoKey: string, data?: ReqData): void;
             /**
              * 监听推送
              * @param protoKey
              * @param handler
              */
-            onPush<ResData = any>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+            onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+                ProtoKeyType extends ((keyof ProtoType) | String)>
+                (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+            onPush<ResData>(protoKey: string, handler: enet.AnyCallback<ResData>): void;
             /**
              * 监听一次推送
              * @param protoKey
              * @param handler
              */
-            oncePush<ResData = any>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+            oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+                ProtoKeyType extends ((keyof ProtoType) | String)>
+                (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+            oncePush<ResData>(protoKey: string, handler: enet.AnyCallback<ResData>): void;
             /**
              * 取消监听推送
              * @param protoKey 协议
@@ -382,13 +479,15 @@ declare global {
              * @param context 指定上下文的监听
              * @param onceOnly 是否只取消 监听一次 的推送监听
              */
-            offPush(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+            offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+            offPush(protoKey: String, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
             /**
              * 取消所有监听
              * @param protoKey 指定协议的推送，如果为空，则取消所有协议的所有监听
              */
-            offPushAll(protoKey?: ProtoKeyType): void;
+            offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void;
+            offPushAll(protoKey?: String): void;
         }
     }
 }
-export {};
+export { };
