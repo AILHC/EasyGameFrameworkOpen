@@ -366,14 +366,7 @@ declare module '@ailhc/enet' {
 	             * @param data 请求数据体
 	             * @returns 返回Promise
 	             */
-	            requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
-	            /**
-	             * 请求协议接口，处理返回
-	             * @param protoKey 协议key
-	             * @param data 请求数据体
-	             * @returns 返回Promise
-	             */
-	            requestAsync<ReqData, ResData>(protoKey: string, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
+	            requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
 	            /**
 	             * 发送网络数据
 	             * @param netData
@@ -386,21 +379,18 @@ declare module '@ailhc/enet' {
 	             * @param data 数据体
 	             */
 	            notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data?: ReqData): void;
-	            notify<ReqData>(protoKey: string, data?: ReqData): void;
 	            /**
 	             * 监听推送
 	             * @param protoKey
 	             * @param handler
 	             */
-	            onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
-	            onPush<ResData>(protoKey: string, handler: enet.AnyCallback<ResData>): void;
+	            onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 	            /**
 	             * 监听一次推送
 	             * @param protoKey
 	             * @param handler
 	             */
-	            oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
-	            oncePush<ResData>(protoKey: string, handler: enet.AnyCallback<ResData>): void;
+	            oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 	            /**
 	             * 取消监听推送
 	             * @param protoKey 协议
@@ -408,14 +398,12 @@ declare module '@ailhc/enet' {
 	             * @param context 指定上下文的监听
 	             * @param onceOnly 是否只取消 监听一次 的推送监听
 	             */
-	            offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
-	            offPush(protoKey: String, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+	            offPush<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
 	            /**
 	             * 取消所有监听
 	             * @param protoKey 指定协议的推送，如果为空，则取消所有协议的所有监听
 	             */
-	            offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void;
-	            offPushAll(protoKey?: String): void;
+	            offPushAll<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey?: ProtoKeyType): void;
 	        }
 	    }
 	}
@@ -588,14 +576,14 @@ declare module '@ailhc/enet' {
 	    connect(option: string | enet.IConnectOptions, connectEnd?: VoidFunction): void;
 	    disConnect(): void;
 	    reConnect(): void;
-	    request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
-	    requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
+	    request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+	    requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
 	    notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data?: ReqData): void;
 	    send(netData: enet.NetData): void;
-	    onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
-	    oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
-	    offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
-	    offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void;
+	    onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+	    oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+	    offPush<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+	    offPushAll<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey?: ProtoKeyType): void;
 	    /**
 	     * 握手包处理
 	     * @param dpkg

@@ -640,15 +640,15 @@ interface INetProtoType {
         resType: { pp: number }
     }>
 }
-// const netNode: enet.INode<INetProtoType> = {} as any;
-// netNode.request("testReqx",{a:"1"},(pkg)=>{
-//     pkg.data.b
-// });
+const netNode: enet.INode<INetProtoType> = {} as any;
+netNode.request("testReqx",{a:"1"},(pkg)=>{
+    pkg.data.b
+});
 
-// const netNodeAny: enet.INode = {} as any;
-// netNodeAny.request<{ a: number }, { b: number }>("st", { a: 1 }, () => {
+const netNodeAny: enet.INode = {} as any;
+netNodeAny.request<{ a: number }, { b: number }>("st", { a: 1 }, () => {
 
-// });
-// netNode.requestAsync("testReq");
-// // netNode.notify<{dasf}>("testReqxx",{dasf})
-// type b = enet.GetReqType2<"testReq",INetProtoType,"resType"|"reqType">;
+});
+netNode.requestAsync("testReq");
+// netNode.notify<{dasf}>("testReqxx",{dasf})
+type b = enet.GetReqType2<"testReq",INetProtoType,"resType"|"reqType">;
