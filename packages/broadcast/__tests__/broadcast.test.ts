@@ -214,3 +214,15 @@ test("double call test", function () {
     })
 
 })
+// interface IBroadcastEventType {
+//     abc:ToBroadcastParamType<{
+//         cbParam:{fa:number}
+//     }>
+// }
+// const br:broadcast.IBroadcast<IBroadcastEventType> = {} as any;
+// br.on("sfsfd",(value)=>{
+//     value
+// })
+// br.on("abc",(value)=>{
+//     value
+// })

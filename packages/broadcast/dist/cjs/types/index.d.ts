@@ -21,7 +21,7 @@ declare module '@ailhc/broadcast' {
 	     * @param once 是否监听一次
 	     *
 	     */
-	    on<keyType extends keyof MsgKeyType>(handler: keyType | String | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[], listener?: broadcast.Listener<broadcast.GetCbParamType<keyType, MsgKeyType>, broadcast.GetResultCbParamType<keyType, MsgKeyType>>, context?: any, once?: boolean, args?: any[]): void;
+	    on<keyType extends (keyof MsgKeyType) | String>(handler: keyType | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[], listener?: broadcast.Listener<broadcast.GetCbParamType<keyType, MsgKeyType>, broadcast.GetResultCbParamType<keyType, MsgKeyType>>, context?: any, once?: boolean, args?: any[]): void;
 	    has(key: keyof MsgKeyType | String): boolean;
 	    offAllByContext(context: any): void;
 	    /**
@@ -37,7 +37,7 @@ declare module '@ailhc/broadcast' {
 	     * @param callback 回调
 	     * @param persistence 是否持久化数据
 	     */
-	    broadcast<keyType extends keyof MsgKeyType>(key: keyType | String, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
+	    broadcast<keyType extends (keyof MsgKeyType) | String>(key: keyType, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
 	    /**
 	     * 广播一条 指定 [key] 的粘性消息
 	     * 如果广播系统中没有注册该类型的接收者，本条信息将被滞留在系统中。一旦有该类型接收者被注册，本条消息将会被立即发送给接收者
@@ -48,7 +48,7 @@ declare module '@ailhc/broadcast' {
 	     * @param callback 能够收到接收器返回的消息
 	     * @param persistence 是否持久化消息类型。持久化的消息可以在任意时刻通过 broadcast.value(key) 获取当前消息的数据包。默认情况下，未持久化的消息类型在没有接收者的时候会被移除，而持久化的消息类型则不会。开发者可以通过 [clear] 函数来移除持久化的消息类型。
 	     */
-	    stickyBroadcast<keyType extends keyof MsgKeyType>(key: keyType, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
+	    stickyBroadcast<keyType extends (keyof MsgKeyType) | String>(key: keyType, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
 	    /**
 	     * 字符串是否为空 undefined null ""
 	     * @param str
@@ -95,7 +95,7 @@ declare module '@ailhc/broadcast' {
 	     * 取值
 	     * @param key
 	     */
-	    value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType>;
+	    value<keyType extends (keyof MsgKeyType) | String>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType>;
 	    /**
 	     * 销毁广播系统
 	     */
@@ -133,12 +133,12 @@ declare module '@ailhc/broadcast' {
 	        type GetResultCbParamType<IndexKey, StateTypes> = GetTypeMapType<IndexKey, StateTypes> extends {
 	            cbParam: infer StateType;
 	        } ? StateType : any;
-	        type GetTypeMapType<IndexKey, TypeMap> = IndexKey extends keyof IBroadcastEventType ? TypeMap[ToAnyIndexKey<IndexKey, TypeMap>] : unknown;
+	        type GetTypeMapType<IndexKey, TypeMap> = IndexKey extends keyof TypeMap ? TypeMap[ToAnyIndexKey<IndexKey, TypeMap>] : unknown;
 	        /**
 	         * 将索引类型转换为任意类型的索引类型
 	         */
 	        type ToAnyIndexKey<IndexKey, AnyType> = IndexKey extends keyof AnyType ? IndexKey : keyof AnyType;
-	        interface IListenerHandler<keyType extends keyof any = any, ValueType = any> {
+	        interface IListenerHandler<keyType extends (keyof any) | String = any, ValueType = any> {
 	            key: keyType;
 	            listener: Listener<GetCbParamType<keyType, ValueType>, GetResultCbParamType<keyType, ValueType>>;
 	            context?: any;
@@ -165,7 +165,7 @@ declare module '@ailhc/broadcast' {
 	             * @param once 是否监听一次
 	             *
 	             */
-	            on<keyType extends keyof MsgKeyType>(handler: keyType | String | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[], listener?: broadcast.Listener<broadcast.GetCbParamType<keyType, MsgKeyType>, broadcast.GetResultCbParamType<keyType, MsgKeyType>>, context?: any, once?: boolean, args?: any[]): void;
+	            on<keyType extends (keyof MsgKeyType) | String>(handler: keyType | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[], listener?: broadcast.Listener<broadcast.GetCbParamType<keyType, MsgKeyType>, broadcast.GetResultCbParamType<keyType, MsgKeyType>>, context?: any, once?: boolean, args?: any[]): void;
 	            /**
 	             * 有没有这个事件注册
 	             * @param key
@@ -196,7 +196,7 @@ declare module '@ailhc/broadcast' {
 	             * @param callback 回调
 	             * @param persistence 是否持久化数据
 	             */
-	            broadcast<keyType extends keyof MsgKeyType>(key: keyType | String, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
+	            broadcast<keyType extends (keyof MsgKeyType) | String>(key: keyType, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
 	            /**
 	             * 广播一条 指定 [key] 的粘性消息
 	             * 如果广播系统中没有注册该类型的接收者，本条信息将被滞留在系统中。一旦有该类型接收者被注册，本条消息将会被立即发送给接收者
@@ -207,12 +207,12 @@ declare module '@ailhc/broadcast' {
 	             * @param callback 能够收到接收器返回的消息
 	             * @param persistence 是否持久化消息类型。持久化的消息可以在任意时刻通过 broadcast.value(key) 获取当前消息的数据包。默认情况下，未持久化的消息类型在没有接收者的时候会被移除，而持久化的消息类型则不会。开发者可以通过 [clear] 函数来移除持久化的消息类型。
 	             */
-	            stickyBroadcast<keyType extends keyof MsgKeyType>(key: keyType, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
+	            stickyBroadcast<keyType extends (keyof MsgKeyType) | String>(key: keyType, value?: broadcast.GetCbParamType<keyType, MsgKeyType>, callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void;
 	            /**
 	             * 取值
 	             * @param key
 	             */
-	            value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType>;
+	            value<keyType extends (keyof MsgKeyType) | String>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType>;
 	            /**
 	             * 销毁广播系统
 	             */

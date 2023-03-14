@@ -2,19 +2,19 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.broadcast = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
-    var Broadcast = (function () {
-        function Broadcast() {
+    class Broadcast {
+        constructor() {
             this.keys = new Proxy({}, {
-                get: function (target, p) {
+                get(target, p, receiver) {
                     return p;
                 }
             });
             this._valueMap = {};
             this._unuseHandlers = [];
         }
-        Broadcast.prototype.on = function (handler, listener, context, once, args) {
+        on(handler, listener, context, once, args) {
             if (typeof handler === "string") {
                 if (!listener)
                     return;
@@ -22,8 +22,8 @@
             }
             else {
                 if (this._isArr(handler)) {
-                    var handlers = handler;
-                    for (var i = 0; i < handlers.length; i++) {
+                    const handlers = handler;
+                    for (let i = 0; i < handlers.length; i++) {
                         this._addHandler(handlers[i]);
                     }
                 }
@@ -31,33 +31,33 @@
                     this._addHandler(handler);
                 }
             }
-        };
-        Broadcast.prototype.has = function (key) {
+        }
+        has(key) {
             return this._handlerMap && !!this._handlerMap[key];
-        };
-        Broadcast.prototype.offAllByContext = function (context) {
-            var handlerMap = this._handlerMap;
+        }
+        offAllByContext(context) {
+            const handlerMap = this._handlerMap;
             if (context && handlerMap) {
-                for (var key in handlerMap) {
+                for (const key in handlerMap) {
                     if (handlerMap[key]) {
                         this.off(key, null, context);
                     }
                 }
             }
-        };
-        Broadcast.prototype.offAll = function (key) {
+        }
+        offAll(key) {
             if (this._isStringNull(key)) {
                 return;
             }
-            var handlerMap = this._handlerMap;
-            var stickyMap = this._stickHandlersMap;
-            var valueMap = this._valueMap;
+            const handlerMap = this._handlerMap;
+            const stickyMap = this._stickHandlersMap;
+            const valueMap = this._valueMap;
             if (stickyMap)
                 stickyMap[key] = undefined;
             if (handlerMap) {
-                var handlers = handlerMap[key];
+                const handlers = handlerMap[key];
                 if (this._isArr(handlers)) {
-                    for (var i = 0; i < handlers.length; i++) {
+                    for (let i = 0; i < handlers.length; i++) {
                         this._recoverHandler(handlers[i]);
                     }
                 }
@@ -68,16 +68,16 @@
             }
             if (valueMap)
                 valueMap[key] = undefined;
-        };
-        Broadcast.prototype.off = function (key, listener, context, onceOnly) {
+        }
+        off(key, listener, context, onceOnly) {
             if (this._isStringNull(key))
                 return;
-            var handlerMap = this._handlerMap;
+            const handlerMap = this._handlerMap;
             if (!handlerMap || !handlerMap[key])
                 return this;
-            var handler = handlerMap[key];
+            let handler = handlerMap[key];
             if (handler !== undefined && handler !== null) {
-                var handlers = void 0;
+                let handlers;
                 if (!this._isArr(handler)) {
                     if ((!context || handler.context === context)
                         && (listener == null || handler.listener === listener)
@@ -88,8 +88,8 @@
                 }
                 else {
                     handlers = handler;
-                    var endIndex = handlers.length - 1;
-                    for (var i = endIndex; i >= 0; i--) {
+                    let endIndex = handlers.length - 1;
+                    for (let i = endIndex; i >= 0; i--) {
                         handler = handlers[i];
                         if (handler && (!context || handler.context === context)
                             && (listener == null || handler.listener === listener)
@@ -109,14 +109,14 @@
                 }
             }
             return this;
-        };
-        Broadcast.prototype.broadcast = function (key, value, callback, persistence) {
-            var handlerMap = this._handlerMap;
+        }
+        broadcast(key, value, callback, persistence) {
+            const handlerMap = this._handlerMap;
             if (!handlerMap)
                 return;
-            var handlers = handlerMap[key];
+            const handlers = handlerMap[key];
             if (persistence) {
-                var valueMap = this._valueMap;
+                let valueMap = this._valueMap;
                 if (!valueMap) {
                     valueMap = {};
                     this._valueMap = valueMap;
@@ -126,7 +126,7 @@
             if (!handlers)
                 return;
             if (!this._isArr(handlers)) {
-                var handler = handlers;
+                const handler = handlers;
                 value ? Broadcast._runHandlerWithData(handler, value, callback) : Broadcast._runHandler(handler, callback);
                 if (handler.once) {
                     this._recoverHandler(handler);
@@ -134,10 +134,10 @@
                 }
             }
             else {
-                var handlerArr = handlers;
-                var handler = void 0;
-                var endIndex = handlerArr.length - 1;
-                for (var i = endIndex; i >= 0; i--) {
+                const handlerArr = handlers;
+                let handler;
+                let endIndex = handlerArr.length - 1;
+                for (let i = endIndex; i >= 0; i--) {
                     handler = handlerArr[i];
                     value ? Broadcast._runHandlerWithData(handler, value, callback) : Broadcast._runHandler(handler, callback);
                     if (handler.once) {
@@ -152,22 +152,22 @@
                     this._handlerMap[key] = undefined;
                 }
             }
-        };
-        Broadcast.prototype.stickyBroadcast = function (key, value, callback, persistence) {
+        }
+        stickyBroadcast(key, value, callback, persistence) {
             if (this._isStringNull(key))
                 return;
-            var handlerMap = this._handlerMap;
+            const handlerMap = this._handlerMap;
             if (handlerMap && handlerMap[key]) {
                 this.broadcast(key, value, callback, persistence);
             }
             else {
-                var stickyMap = this._stickHandlersMap;
+                let stickyMap = this._stickHandlersMap;
                 if (!stickyMap) {
                     stickyMap = {};
                     this._stickHandlersMap = stickyMap;
                 }
-                var stickyHandlers = stickyMap[key];
-                var handler = {
+                const stickyHandlers = stickyMap[key];
+                const handler = {
                     key: key,
                     value: value,
                     callback: callback,
@@ -180,19 +180,19 @@
                     stickyHandlers.push(handler);
                 }
             }
-        };
-        Broadcast.prototype._isStringNull = function (str) {
+        }
+        _isStringNull(str) {
             return !str || str.trim() === "";
-        };
-        Broadcast.prototype._isArr = function (target) {
+        }
+        _isArr(target) {
             return Object.prototype.toString.call(target) === "[object Array]";
-        };
-        Broadcast._runHandlerWithData = function (handler, data, callback) {
+        }
+        static _runHandlerWithData(handler, data, callback) {
             if (handler.listener == null)
                 return null;
-            var result;
+            let result;
             if (data == null) {
-                var args = handler.args ? handler.args.unshift(callback) : [callback];
+                const args = handler.args ? handler.args.unshift(callback) : [callback];
                 result = handler.listener.apply(handler.context, args);
             }
             else if (!handler.args && !data.unshift)
@@ -202,24 +202,24 @@
             else
                 result = handler.listener.apply(handler.context, [data, callback]);
             return result;
-        };
-        Broadcast._runHandler = function (handler, callback) {
+        }
+        static _runHandler(handler, callback) {
             if (handler.listener == null)
                 return null;
-            var args = handler.args ? handler.args.unshift(callback) : [callback];
-            var result = handler.listener.apply(handler.context, args);
+            const args = handler.args ? handler.args.unshift(callback) : [callback];
+            const result = handler.listener.apply(handler.context, args);
             return result;
-        };
-        Broadcast.prototype._recoverHandler = function (handler) {
+        }
+        _recoverHandler(handler) {
             handler.args = undefined;
             handler.context = undefined;
             handler.listener = undefined;
             handler.key = undefined;
             this._unuseHandlers.push(handler);
-        };
-        Broadcast.prototype._getHandler = function (key, listener, context, once, args) {
-            var unuseHandlers = this._unuseHandlers;
-            var handler;
+        }
+        _getHandler(key, listener, context, once, args) {
+            const unuseHandlers = this._unuseHandlers;
+            let handler;
             if (unuseHandlers.length) {
                 handler = unuseHandlers.pop();
             }
@@ -232,9 +232,9 @@
             handler.once = once;
             handler.args = args;
             return handler;
-        };
-        Broadcast.prototype._addHandler = function (handler) {
-            var handlerMap = this._handlerMap;
+        }
+        _addHandler(handler) {
+            let handlerMap = this._handlerMap;
             if (handler.once) {
                 this.off(handler.key, handler.listener, handler.context, handler.once);
             }
@@ -242,7 +242,7 @@
                 handlerMap = {};
                 this._handlerMap = handlerMap;
             }
-            var events = handlerMap[handler.key];
+            const events = handlerMap[handler.key];
             if (events) {
                 if (this._isArr(events)) {
                     events.push(handler);
@@ -254,38 +254,38 @@
             else {
                 handlerMap[handler.key] = handler;
             }
-            var stickyMap = this._stickHandlersMap;
+            const stickyMap = this._stickHandlersMap;
             if (stickyMap) {
-                var stickyHandlers = stickyMap[handler.key];
+                const stickyHandlers = stickyMap[handler.key];
                 if (stickyHandlers) {
-                    var handler_1;
-                    for (var i = 0; i < stickyHandlers.length; i++) {
-                        handler_1 = stickyHandlers[i];
-                        this.broadcast(handler_1.key, handler_1.value, handler_1.callback, handler_1.persistence);
+                    let handler;
+                    for (let i = 0; i < stickyHandlers.length; i++) {
+                        handler = stickyHandlers[i];
+                        this.broadcast(handler.key, handler.value, handler.callback, handler.persistence);
                     }
-                    stickyMap[handler_1.key] = undefined;
+                    stickyMap[handler.key] = undefined;
                 }
             }
-            if (handler.key !== this.keys.onListenerOn) {
-                this.broadcast(this.keys.onListenerOn, handler.key);
+            if (handler.key !== "onListenerOn") {
+                this.broadcast("onListenerOn", handler.key);
             }
-        };
-        Broadcast.prototype.value = function (key) {
+        }
+        value(key) {
             return this._valueMap && this._valueMap[key];
-        };
-        Broadcast.prototype.dispose = function () {
+        }
+        dispose() {
             this._handlerMap = undefined;
             this._stickHandlersMap = undefined;
             this._valueMap = undefined;
-        };
-        return Broadcast;
-    }());
+        }
+    }
+    Broadcast.onListenerOnEventKey = "onListenerOn";
 
     exports.Broadcast = Broadcast;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 
     var globalTarget =window?window:global;
     globalTarget.broadcast?Object.assign({},globalTarget.broadcast):(globalTarget.broadcast = broadcast)

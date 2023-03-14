@@ -15,9 +15,11 @@ export class Broadcast<MsgKeyType extends IBroadcastEventType>
         this._valueMap = {} as any;
         this._unuseHandlers = [];
     }
-    keys: Readonly<{ [P in keyof MsgKeyType]: P; }> = new Proxy({} as any,{get(target, p, receiver) {
-        return p;
-    }});
+    keys: Readonly<{ [P in keyof MsgKeyType]: P; }> = new Proxy({} as any, {
+        get(target, p, receiver) {
+            return p;
+        }
+    });
     //注册
     /**
      * 注册事件，可以注册多个
@@ -28,14 +30,14 @@ export class Broadcast<MsgKeyType extends IBroadcastEventType>
      * @param once 是否监听一次
      * 
      */
-    public on<keyType extends keyof MsgKeyType>(
-        handler: keyType | String | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[],
+    public on<keyType extends (keyof MsgKeyType) | String>(
+        handler: keyType | broadcast.IListenerHandler<keyType, MsgKeyType> | broadcast.IListenerHandler<keyType, MsgKeyType>[],
         listener?: broadcast.Listener<broadcast.GetCbParamType<keyType, MsgKeyType>, broadcast.GetResultCbParamType<keyType, MsgKeyType>>,
         context?: any,
         once?: boolean,
         args?: any[]
     ): void {
-        
+
         if (typeof handler === "string") {
             if (!listener) return;
             this._addHandler(this._getHandler(handler, listener, context, once, args));
@@ -165,8 +167,8 @@ export class Broadcast<MsgKeyType extends IBroadcastEventType>
      * @param callback 回调
      * @param persistence 是否持久化数据
      */
-    public broadcast<keyType extends keyof MsgKeyType>(
-        key: keyType | String, value?: broadcast.GetCbParamType<keyType, MsgKeyType>
+    public broadcast<keyType extends (keyof MsgKeyType) | String>(
+        key: keyType, value?: broadcast.GetCbParamType<keyType, MsgKeyType>
         , callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>, persistence?: boolean): void {
         const handlerMap = this._handlerMap;
         if (!handlerMap) return;
@@ -177,7 +179,7 @@ export class Broadcast<MsgKeyType extends IBroadcastEventType>
                 valueMap = {} as any;
                 this._valueMap = valueMap;
             }
-            valueMap[key] = value;
+            valueMap[key] = value as any;
         }
         if (!handlers) return;
         if (!this._isArr(handlers)) {
@@ -217,7 +219,7 @@ export class Broadcast<MsgKeyType extends IBroadcastEventType>
      * @param callback 能够收到接收器返回的消息
      * @param persistence 是否持久化消息类型。持久化的消息可以在任意时刻通过 broadcast.value(key) 获取当前消息的数据包。默认情况下，未持久化的消息类型在没有接收者的时候会被移除，而持久化的消息类型则不会。开发者可以通过 [clear] 函数来移除持久化的消息类型。
      */
-    public stickyBroadcast<keyType extends keyof MsgKeyType>(
+    public stickyBroadcast<keyType extends (keyof MsgKeyType) | String>(
         key: keyType,
         value?: broadcast.GetCbParamType<keyType, MsgKeyType>,
         callback?: broadcast.ResultCallBack<broadcast.GetResultCbParamType<keyType, MsgKeyType>>,
@@ -241,7 +243,7 @@ export class Broadcast<MsgKeyType extends IBroadcastEventType>
                 persistence: persistence
             };
             if (!stickyHandlers) {
-                stickyMap[key] = [handler]
+                stickyMap[key] = [handler] as any;
             } else {
                 stickyHandlers.push(handler)
             }
@@ -368,7 +370,7 @@ export class Broadcast<MsgKeyType extends IBroadcastEventType>
      * 取值
      * @param key 
      */
-    public value<keyType extends keyof MsgKeyType>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType> {
+    public value<keyType extends (keyof MsgKeyType) | String>(key: keyType | String): broadcast.GetCbParamType<keyType, MsgKeyType> {
         return this._valueMap && this._valueMap[key] as any;
     }
     /**
