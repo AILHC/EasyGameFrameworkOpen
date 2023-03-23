@@ -272,7 +272,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         const { eventBus } = viewMgr;
 
         if (viewIns) {
-            this._setViewInsVisible(true, null, hideOption);
+            this._setViewInsVisible(false, null, hideOption);
             viewIns.onHidedView && viewIns.onHidedView(viewHideState);
             eventBus.offAkEvent("onWindowResize", viewIns.onWindowResize, viewIns);
         }

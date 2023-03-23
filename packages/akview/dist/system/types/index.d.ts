@@ -4,7 +4,8 @@ declare module '@ailhc/akview' {
 	    layerType?: string | number;
 	    dpObj?: DisplayObjectType;
 	    onInitView?(initState?: any): void;
-	    onBeforeSetVisible?(visible: boolean, showOpt?: akView.IShowOption<any, IAkViewStateTypes>, hideOpt?: akView.IHideOption<any, IAkViewStateTypes>): void;
+	    onBeforeSetVisible?(visible: boolean, showOpt?: akView.IShowOption<any, IAkViewKeyTypes>, hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>): void;
+	    setVisible?(visible: boolean, showOpt?: akView.IShowOption<any, IAkViewKeyTypes>, hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>): void;
 	    onTransition?(isToShow?: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): Promise<void>;
 	    onShowedView?(showState?: any): void;
 	    onUpdateView?(updateState?: any): void;
@@ -17,103 +18,7 @@ declare module '@ailhc/akview' {
 
 }
 declare module '@ailhc/akview' {
-	export class DefaultEventBus implements akView.IEventBus {
-	    viewMgr: akView.IMgr;
-	    handleMethodMap: Map<String | string, akView.ICallableFunction[]>;
-	    onRegist(): void;
-	    onAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
-	    onceAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
-	    offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
-	    emitAkEvent<EventDataType = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
-	    onAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
-	    onceAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
-	    offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
-	    emitAkViewEvent<EventDataType extends any = any>(viewId: string, eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
-	    protected getIdEventKey(viewId: string, eventKey: any): string;
-	}
-
-}
-declare module '@ailhc/akview' {
-	 global {
-	    /**
-	     * 创建和显示处理器
-	     * 可扩展
-	     */
-	    interface IAkViewTemplateCreateAdapter {
-	        /**
-	         * 创建View
-	         * @param template
-	         */
-	        createView?(template: akView.ITemplate): akView.IView;
-	        /**
-	         * 创建ViewAgent
-	         * @param template
-	         */
-	        createViewAgent?(template: akView.ITemplate): akView.IViewAgent;
-	    }
-	    interface IAkViewDefaultTplHandlerOption extends IAkViewTemplateCreateAdapter {
-	        /**
-	         * 资源是否加载
-	         * @param resInfo
-	         */
-	        isLoaded(resInfo: akView.TemplateResInfoType): boolean;
-	        /**
-	         * 获取资源信息
-	         * @param template
-	         */
-	        getPreloadResInfo(template: akView.ITemplate): akView.TemplateResInfoType | undefined;
-	        /**
-	         * 加载资源
-	         * @param resInfo
-	         * @param complete
-	         * @param progress
-	         * @param loadOption 加载配置，会=Object.assign(IResLoadConfig.loadOption,ITemplate.loadOption);
-	         * @returns 返回加载id，用于取消加载
-	         */
-	        loadRes(resInfo: akView.TemplateResInfoType, complete: akView.LoadResCompleteCallback, progress: akView.LoadResProgressCallback, loadOption?: IAkViewLoadOption): string;
-	        /**
-	         * 销毁资源
-	         * @param resInfo
-	         */
-	        destroyRes?(resInfo: akView.TemplateResInfoType): void;
-	        /**
-	         * 显示或隐藏 并 添加到层级或从层级移除
-	         * @param viewAgent
-	         * @param visible 是否显示
-	         * @param showOrHideOpt 参数
-	         */
-	        handleViewVisible?: akView.ITemplateHandler["handleViewVisible"];
-	        /**
-	         * 创建显示对象
-	         * @param viewIns
-	         * @param template
-	         */
-	        createDisplayObj?: akView.ITemplateHandler["createDisplayObj"];
-	        /**
-	         * 销毁渲染实例
-	         * @param viewIns
-	         */
-	        destroyDisplayObj?: akView.ITemplateHandler["destroyDisplayObj"];
-	        /**
-	         * 取消资源加载
-	         * @param loadResId 加载资源id
-	         * @param resInfo
-	         */
-	        cancelLoadRes?(loadResId: string, resInfo: akView.TemplateResInfoType): void;
-	        /**
-	         * 增加资源引用
-	         * @param resInfo
-	         */
-	        addResRef?(resInfo: akView.TemplateResInfoType): void;
-	        /**
-	         * 减少资源引用
-	         * @param resInfo
-	         */
-	        decResRef?(resInfo: akView.TemplateResInfoType): void;
-	    }
-	}
-	export class DefaultTemplateHandler implements akView.ITemplateHandler<akView.ITemplate> {
-	    _option?: IAkViewDefaultTplHandlerOption;
+	export abstract class BaseProjAdapter implements akView.IProjAdapter<akView.ITemplate> {
 	    /**
 	     * 模板加载config字典，key为模板key，value为{id:config}的字典
 	     */
@@ -146,18 +51,41 @@ declare module '@ailhc/akview' {
 	    protected _resInfoMap: {
 	        [key: string]: akView.TemplateResInfoType;
 	    };
-	    constructor(_option?: IAkViewDefaultTplHandlerOption);
-	    createViewIns<T extends akView.IView>(template: akView.ITemplate): T;
-	    handleViewVisible<BoolType extends boolean>(viewAgent: akView.IViewAgent<any>, visible: BoolType, showOpt?: akView.IShowOption<any, IAkViewStateTypes>, hideOpt?: akView.IHideOption<any, IAkViewStateTypes>): void;
-	    createDisplayObj<T extends akView.IView<any>>(viewIns: T, template: akView.ITemplate): void;
-	    destroyDisplayObj?<T extends akView.IView>(viewIns: T, template: akView.ITemplate): void;
-	    getResInfo(template: akView.ITemplate): akView.TemplateResInfoType;
-	    isLoaded(template: akView.ITemplate): boolean;
-	    loadRes(config: akView.IResLoadConfig): void;
-	    cancelLoad(id: string, template: akView.ITemplate): void;
-	    addResRef(id: string, template: akView.ITemplate): void;
-	    decResRef(id: string, template: akView.ITemplate): void;
-	    destroyRes(template: akView.ITemplate): boolean;
+	    getTplResInfo(template: akView.ITemplate): akView.TemplateResInfoType;
+	    isTplResLoaded(template: akView.ITemplate): boolean;
+	    loadTplRes(config: akView.IResLoadConfig): void;
+	    cancelLoadTplRes(id: string, template: akView.ITemplate): void;
+	    addTplRef(id: string, template: akView.ITemplate): void;
+	    decTplRef(id: string, template: akView.ITemplate): void;
+	    destroyTplRes(template: akView.ITemplate): boolean;
+	    abstract isLoaded(resInfo: akView.TemplateResInfoType): boolean;
+	    abstract loadRes(resInfo: akView.TemplateResInfoType, complete: akView.LoadResCompleteCallback, progress: akView.LoadResProgressCallback, loadOption?: IAkViewLoadOption): string;
+	    abstract destroyRes(resInfo: akView.TemplateResInfoType): void;
+	    abstract cancelLoadRes(loadResId: string, resInfo: akView.TemplateResInfoType): void;
+	    abstract addResRef(resInfo: akView.TemplateResInfoType): void;
+	    abstract decResRef(resInfo: akView.TemplateResInfoType): void;
+	    customGetTplResInfo?(template: akView.ITemplate): akView.TemplateResInfoType;
+	    createViewIns?<T extends akView.IView<any>>(template: akView.ITemplate<never>): T;
+	    createDisplayObj?(keyOrPath: string, opt?: any): any;
+	    destroyDisplayObj?(dpObj: any): void;
+	    handleViewVisible?(viewIns: akView.IView<any>, visible: boolean, showOpt?: akView.IShowOption<any, IAkViewKeyTypes>, hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>): void;
+	}
+
+}
+declare module '@ailhc/akview' {
+	export class DefaultEventBus implements akView.IEventBus {
+	    viewMgr: akView.IMgr;
+	    handleMethodMap: Map<String | string, akView.ICallableFunction[]>;
+	    onRegist(): void;
+	    onAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
+	    onceAkEvent<EventDataType extends unknown = IAkViewEventData>(eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
+	    offAkEvent(eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+	    emitAkEvent<EventDataType = any>(eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
+	    onAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[], offBefore?: boolean): void;
+	    onceAkViewEvent<EventDataType extends unknown = IAkViewEventData>(viewId: string, eventKey: String | keyof IAkViewEventKeys, method: akView.EventCallBack<EventDataType>, caller?: any, args?: any[]): void;
+	    offAkViewEvent(viewId: string, eventKey: AkViewEventKeyType | String, method: Function, caller?: any): void;
+	    emitAkViewEvent<EventDataType extends any = any>(viewId: string, eventKey: AkViewEventKeyType | String, eventData?: EventDataType): void;
+	    protected getIdEventKey(viewId: string, eventKey: any): string;
 	}
 
 }
@@ -201,9 +129,9 @@ declare module '@ailhc/akview' {
 	    /**是否需要显示View */
 	    needShowView?: boolean;
 	    /**显示参数 */
-	    showOpt?: akView.IShowOption<any, IAkViewStateTypes>;
+	    showOpt?: akView.IShowOption<any, IAkViewKeyTypes>;
 	    /**隐藏参数 */
-	    hideOpt?: akView.IHideOption<any, IAkViewStateTypes>;
+	    hideOpt?: akView.IHideOption<any, IAkViewKeyTypes>;
 	    /**显示过程中的Promise */
 	    protected _showingPromise?: void | Promise<void>;
 	    /**隐藏中的Promise */
@@ -303,25 +231,6 @@ declare module '@ailhc/akview' {
 
 }
 declare module '@ailhc/akview' {
-	 global {
-	    interface IAkViewDefaultPluginOption {
-	        /**
-	         * 默认模板处理配置
-	         */
-	        tplHandlerOption?: IAkViewDefaultTplHandlerOption;
-	        /**
-	         * 默认缓存处理配置
-	         */
-	        cacheHandlerOption?: akView.ILRU2QCacheHandlerOption;
-	    }
-	}
-	export class DefaultPlugin implements akView.IPlugin {
-	    viewMgr: akView.IMgr;
-	    onUse(opt: IAkViewDefaultPluginOption): void;
-	}
-
-}
-declare module '@ailhc/akview' {
 	export const globalViewTemplateMap: akView.TemplateMap;
 	export const globalPlugins: akView.IPluginRegistInfo[]; global {
 	    namespace akView {
@@ -345,17 +254,6 @@ declare module '@ailhc/akview' {
 	 */
 	export function viewTemplate(template: akView.ITemplate, templateMap?: akView.TemplateMap): boolean;
 	/**
-	 * 预先注入插件
-	 * @param plugin
-	 * @param option
-	 */
-	export function viewPlugin<T = any>(plugin: akView.IPlugin, option: T): void;
-	/**
-	 * 预先注入插件,装饰器
-	 * @param option
-	 */
-	export function viewPluginDecorator<T>(option: T): (target: any) => void;
-	/**
 	 * 构建key类型Map
 	 * const keyMap = createKeyMap<KeyTypes>();
 	 * keyMap.test //有类型提示
@@ -371,18 +269,18 @@ declare module '@ailhc/akview' {
 }
 declare module '@ailhc/akview' {
 	 type TemplateType = akView.ITemplate;
-	export class ViewMgr<keyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes> implements akView.IMgr<keyType> {
-	    private _cacheHandler;
+	export class ViewMgr<ViewKeyTypes extends akView.IBaseAkViewKeyDataType = IAkViewKeyTypes, keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> implements akView.IMgr<ViewKeyTypes> {
+	    protected _cacheHandler: akView.ICacheHandler;
 	    get cacheHandler(): akView.ICacheHandler;
 	    set cacheHandler(cacheHandler: akView.ICacheHandler);
-	    private _eventBus;
+	    protected _eventBus: akView.IEventBus;
 	    /**事件处理器 */
 	    get eventBus(): akView.IEventBus;
-	    private _tplHandler;
+	    protected _projAdapter: akView.IProjAdapter;
 	    /**
 	     * 模板处理器
 	     */
-	    get tplHandler(): akView.ITemplateHandler;
+	    get projAdapter(): akView.IProjAdapter;
 	    /**模版字典 */
 	    protected _templateMap: akView.TemplateMap;
 	    /**状态缓存 */
@@ -399,11 +297,10 @@ declare module '@ailhc/akview' {
 	    /**
 	     * 默认ViewAgent的配置
 	     */
-	    private _vsCreateOpt;
-	    private _option;
+	    protected _vsCreateOpt: any;
+	    protected _option: akView.IMgrInitOption;
 	    get option(): akView.IMgrInitOption;
-	    init(option?: akView.IMgrInitOption): void;
-	    use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void;
+	    init(option: akView.IMgrInitOption): void;
 	    template(templateOrKey: keyType | TemplateType | Array<TemplateType | keyType>): void;
 	    hasTemplate(key: keyType): boolean;
 	    getTemplate(key: keyType): akView.ITemplate;
@@ -471,7 +368,7 @@ declare module '@ailhc/akview' {
 	     * @param keyOrConfig 配置
 	     * @returns 返回ViewAgent
 	     */
-	    create<T extends akView.IViewAgent = any, ConfigKeyType extends keyType = keyType>(keyOrConfig: akView.IShowOption<ConfigKeyType, IAkViewStateTypes>): T;
+	    create<T extends akView.IViewAgent = any, ConfigKeyType extends keyType = keyType>(keyOrConfig: akView.IShowOption<ConfigKeyType, ViewKeyTypes>): T;
 	    /**
 	     * 创建新的ViewAgent并显示
 	     * @param keyOrConfig 字符串key|配置
@@ -483,14 +380,14 @@ declare module '@ailhc/akview' {
 	     
 	     * @returns 返回ViewAgent
 	     */
-	    create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, viewInitState?: akView.GetInitStateType<ViewKey, IAkViewStateTypes>, needShowView?: boolean, viewShowState?: akView.GetShowStateType<ViewKey, IAkViewStateTypes>, cacheMode?: akView.ViewAgentCacheModeType): T;
+	    create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, viewInitState?: akView.GetInitStateType<ViewKey, ViewKeyTypes>, needShowView?: boolean, viewShowState?: akView.GetShowStateType<ViewKey, ViewKeyTypes>, cacheMode?: akView.ViewAgentCacheModeType): T;
 	    /**
 	     * 显示View
 	     * @param keyOrViewAgentOrConfig 类key或者ViewAgent对象或者显示配置IShowConfig
 	     * @param viewShowState 显示透传数据
 	     * @param viewInitState 初始化数据
 	     */
-	    show<TKeyType extends keyType>(keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, IAkViewStateTypes>, viewShowState?: akView.GetShowStateType<TKeyType, IAkViewStateTypes>, viewInitState?: akView.GetInitStateType<TKeyType, IAkViewStateTypes>): string;
+	    show<TKeyType extends keyType>(keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewKeyTypes>, viewShowState?: akView.GetShowStateType<TKeyType, ViewKeyTypes>, viewInitState?: akView.GetInitStateType<TKeyType, ViewKeyTypes>): string;
 	    /**
 	     * 显示
 	     * @param viewAgent
@@ -503,13 +400,13 @@ declare module '@ailhc/akview' {
 	     * @param keyOrId 界面id
 	     * @param updateOpt 更新数据
 	     */
-	    update<K extends keyType | String>(keyOrId: K, updateOpt?: akView.GetUpdateStateType<K, IAkViewStateTypes>): void;
+	    update<K extends keyof ViewKeyTypes | String>(keyOrId: K, updateOpt?: akView.GetUpdateStateType<K, ViewKeyTypes>): void;
 	    /**
 	     * 隐藏View
 	     * @param keyOrId 界面id
 	     * @param hideOpt
 	     */
-	    hide<KeyOrIdType extends keyType | String>(keyOrId: KeyOrIdType, hideOpt?: akView.IHideOption<KeyOrIdType, IAkViewStateTypes>): void;
+	    hide<KeyOrIdType extends keyof ViewKeyTypes | String>(keyOrId: KeyOrIdType, hideOpt?: akView.IHideOption<KeyOrIdType, ViewKeyTypes>): void;
 	    destroy(keyOrId: keyType | String, destroyRes?: boolean): void;
 	    private _destroy;
 	    isViewInited<ViewAgentType extends akView.IViewAgent>(keyOrId: keyType | String): boolean;
@@ -559,7 +456,6 @@ declare module '@ailhc/akview' {
 	     * @returns
 	     */
 	    getKeyById(id: keyType | String): keyType;
-	    protected _usePlugins(pluginInfos: akView.IPluginRegistInfo[]): void;
 	}
 	export {};
 
@@ -585,12 +481,7 @@ declare module '@ailhc/akview' {
 	    /**
 	     * 默认ViewKey接口
 	     */
-	    interface IAkViewKeyTypes {
-	    }
-	    /**
-	     * 默认ViewOpt接口
-	     */
-	    interface IAkViewStateTypes {
+	    interface IAkViewKeyTypes extends akView.IBaseAkViewKeyDataType {
 	    }
 	    /**
 	     * 获取默认ViewKey
@@ -698,6 +589,8 @@ declare module '@ailhc/akview' {
 	        height: number;
 	    }
 	    namespace akView {
+	        interface IBaseAkViewKeyDataType extends Record<never, IViewStateFields> {
+	        }
 	        type IdSplitCharsType = "_$_";
 	        interface ICallableFunction {
 	            method?: Function;
@@ -718,14 +611,11 @@ declare module '@ailhc/akview' {
 	         */
 	        type GetPluginOptionType<Plugin> = Plugin extends {
 	            onUse(...args: infer P): void;
-	        } ? P[0] : any;
+	        } ? P : any;
 	        interface IPlugin {
-	            /**
-	             * 管理器
-	             * 自动赋值
-	             */
-	            viewMgr?: akView.IMgr;
-	            onUse(...args: any[]): void;
+	            onUse(viewMgr: {
+	                new (): akView.IMgr;
+	            }, option: any): void;
 	        }
 	        interface ITemplate<ViewKeyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes> {
 	            /**key */
@@ -785,41 +675,30 @@ declare module '@ailhc/akview' {
 	        type ChildViewInsMapType = {
 	            [key: string]: akView.IView;
 	        };
-	        interface ITemplateHandler<TemplateType = akView.ITemplate> {
+	        interface IDisplayHandler {
+	        }
+	        interface IResHandler {
 	            /**
-	             * 创建akView.IView实例
+	             * 获取模块依赖的资源信息
 	             * @param template
 	             */
-	            createViewIns<T extends akView.IView>(template: TemplateType): T;
-	            /**
-	             * 创建显示对象
-	             * @param viewIns
-	             * @param template
-	             */
-	            createDisplayObj?<T extends akView.IView>(viewIns: T, template: TemplateType): any;
-	            /**
-	             * 销毁渲染实例
-	             * @param viewIns
-	             */
-	            destroyDisplayObj?<T extends akView.IView>(viewIns: T, template: TemplateType): void;
-	            /**
-	             * 显示或隐藏 并 添加到层级或从层级移除
-	             * @param viewAgent
-	             * @param visible 是否显示
-	             * @param showOpt 显示透传参数
-	             * @param hideOpt 隐藏透传参数
-	             */
-	            handleViewVisible?<BoolType extends true | false>(viewAgent: akView.IViewAgent, visible: BoolType, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): void;
+	            getTemplateResInfo(template: akView.ITemplate): akView.TemplateResInfoType;
+	        }
+	        /**
+	         * 项目适配器
+	         * 针对不同项目的资源加载、视图底层进行实现
+	         */
+	        interface IProjAdapter<TemplateType = akView.ITemplate> {
 	            /**
 	             * 获取模板预加载资源
 	             * @param template
 	             */
-	            getResInfo(template: TemplateType): akView.TemplateResInfoType;
+	            getTplResInfo(template: TemplateType): akView.TemplateResInfoType;
 	            /**
 	             * 判断资源是否已经加载
 	             * @param template
 	             */
-	            isLoaded(template: TemplateType): boolean;
+	            isTplResLoaded(template: TemplateType): boolean;
 	            /**
 	             * 加载资源
 	             * 为了防止所有资源没下载完时，加载完成的单项资源被别的逻辑释放掉
@@ -827,31 +706,90 @@ declare module '@ailhc/akview' {
 	             * 总体加载完成后的资源引用则由业务处理了。
 	             * @param config
 	             */
-	            loadRes(config: IResLoadConfig): void;
+	            loadTplRes(config: IResLoadConfig): void;
 	            /**
 	             * 取消模板资源下载
 	             * @param id
 	             * @param template
 	             */
-	            cancelLoad(id: string, template: TemplateType): void;
+	            cancelLoadTplRes(id: string, template: TemplateType): void;
 	            /**
 	             * 持有模板资源引用
 	             * @param id
 	             * @param template
 	             */
-	            addResRef(id: string, template: TemplateType): void;
+	            addTplRef(id: string, template: TemplateType): void;
 	            /**
 	             * 释放模板资源引用
 	             * @param id
 	             * @param template
 	             */
-	            decResRef(id: string, template: TemplateType): void;
+	            decTplRef(id: string, template: TemplateType): void;
 	            /**
 	             * 销毁模板资源
 	             * @param template
 	             * @returns 返回是否销毁成功(比如引用不为零，则是没销毁)
 	             */
-	            destroyRes(template: TemplateType): boolean;
+	            destroyTplRes(template: TemplateType): boolean;
+	            /**
+	             * 资源是否加载
+	             * @param resInfo
+	             */
+	            isLoaded(resInfo: akView.TemplateResInfoType): boolean;
+	            /**
+	             * 加载资源,需要返回唯一id，用于取消加载
+	             * @param resInfo
+	             * @param completeCb
+	             * @param progressCb
+	             * @param loadOption 加载配置，会=Object.assign(IResLoadConfig.loadOption,ITemplate.loadOption);
+	             * @returns 返回加载id，用于取消加载
+	             */
+	            loadRes(resInfo: akView.TemplateResInfoType, completeCb: akView.LoadResCompleteCallback, progressCb: akView.LoadResProgressCallback, loadOption?: IAkViewLoadOption): string;
+	            /**
+	             * 销毁资源
+	             * @param resInfo
+	             */
+	            destroyRes(resInfo: akView.TemplateResInfoType): void;
+	            /**
+	             * 取消资源加载
+	             * @param loadResId 加载资源id
+	             * @param resInfo
+	             */
+	            cancelLoadRes(loadResId: string, resInfo: akView.TemplateResInfoType): void;
+	            /**
+	             * 增加资源引用
+	             * @param resInfo
+	             */
+	            addResRef(resInfo: akView.TemplateResInfoType): void;
+	            /**
+	             * 减少资源引用
+	             * @param resInfo
+	             */
+	            decResRef(resInfo: akView.TemplateResInfoType): void;
+	            /**
+	             * 自定义创建akView.IView实例
+	             * @param template
+	             */
+	            createViewIns?<T extends akView.IView>(template: akView.ITemplate): T;
+	            /**
+	             * 创建显示对象
+	             * @param keyOrPath
+	             * @param opt 可选自定义参数
+	             */
+	            createDisplayObj?(keyOrPath: string, opt?: any): any;
+	            /**
+	             * 销毁渲染实例
+	             * @param dpObj
+	             */
+	            destroyDisplayObj?(dpObj: any): void;
+	            /**
+	             * 显示或隐藏 并 添加到层级或从层级移除
+	             * @param viewIns
+	             * @param visible 是否显示
+	             * @param showOpt 显示透传参数
+	             * @param hideOpt 隐藏透传参数
+	             */
+	            handleViewVisible?(viewIns: akView.IView, visible: boolean, showOpt?: akView.IShowOption, hideOpt?: akView.IHideOption): void;
 	        }
 	        type EventCallBack<EventDataType extends any = IAkViewEventData> = (eventData: EventDataType, ...args: any[]) => void;
 	        interface IEventBus {
@@ -1043,7 +981,7 @@ declare module '@ailhc/akview' {
 	        /**
 	         * 显示参数
 	         */
-	        interface IShowOption<TemplateKeyType extends keyof any = any, ViewStateTypes = IAkViewStateTypes> {
+	        interface IShowOption<TemplateKeyType extends keyof any = any, ViewStateTypes = IAkViewKeyTypes> {
 	            id?: string;
 	            /**
 	             * template key
@@ -1069,7 +1007,7 @@ declare module '@ailhc/akview' {
 	        /**
 	         * 隐藏参数
 	         */
-	        interface IHideOption<TemplateKeyType = any, ViewStateTypes = IAkViewStateTypes> {
+	        interface IHideOption<TemplateKeyType = any, ViewStateTypes = IAkViewKeyTypes> {
 	            /**释放资源引用 默认false */
 	            decTemplateResRef?: boolean;
 	            /**
@@ -1215,10 +1153,13 @@ declare module '@ailhc/akview' {
 	             */
 	            cacheHandler?: akView.ICacheHandler;
 	            /**
-	             * 模板处理器
-	             * 可使用default-plugin-handler或者直接use default-plugin
+	             * 默认缓存处理配置
 	             */
-	            tplHandler?: akView.ITemplateHandler;
+	            cacheHandlerOption?: akView.ILRU2QCacheHandlerOption;
+	            /**
+	             * 视图处理适配器
+	             */
+	            adapter?: akView.IProjAdapter;
 	            /**
 	             * 默认ViewAgent类
 	             */
@@ -1229,16 +1170,28 @@ declare module '@ailhc/akview' {
 	            /**
 	             * 默认ViewAgent的配置，在viewAgent.onCreate时合并传入
 	             */
-	            vsCreateOpt?: IAkViewViewAgentOption;
+	            vaCreateOpt?: IAkViewViewAgentOption;
 	            /**
 	             * 模板字典
 	             */
 	            templateMap?: akView.TemplateMap;
 	        }
 	        interface IViewStateFields {
+	            /**
+	             * 传递给 onViewInit 参数
+	             */
 	            initState?: any;
+	            /**
+	             * 传递给 onViewShow 参数
+	             */
 	            showState?: any;
+	            /**
+	             * 传递给 onViewUpdate 参数
+	             */
 	            updateState?: any;
+	            /**
+	             * 传递给 onViewHide 参数
+	             */
 	            hideState?: any;
 	        }
 	        type GetShowStateType<IndexKey, StateTypes> = GetTypeMapType<IndexKey extends `${infer K}${akView.IdSplitCharsType}${number}` ? K : IndexKey, StateTypes> extends {
@@ -1254,11 +1207,11 @@ declare module '@ailhc/akview' {
 	            hideState: infer StateType;
 	        } ? StateType : any;
 	        type TemplateType = akView.ITemplate;
-	        interface IMgr<keyType extends keyof IAkViewKeyTypes = keyof IAkViewKeyTypes> {
+	        interface IMgr<ViewKeyTypes extends akView.IBaseAkViewKeyDataType = IAkViewKeyTypes, keyType extends keyof ViewKeyTypes = keyof ViewKeyTypes> {
 	            /**
 	             * 类型参数
 	             */
-	            MgrTypeParams?: [IAkViewKeyTypes, IAkViewStateTypes, keyType];
+	            MgrTypeParams?: [IAkViewKeyTypes, IAkViewKeyTypes, keyType];
 	            /**事件处理器 */
 	            eventBus: akView.IEventBus;
 	            /**
@@ -1266,9 +1219,9 @@ declare module '@ailhc/akview' {
 	             */
 	            cacheHandler: akView.ICacheHandler;
 	            /**
-	             * 模板处理器
+	             * 项目适配器
 	             */
-	            tplHandler: akView.ITemplateHandler;
+	            projAdapter: akView.IProjAdapter;
 	            /**
 	             * 初始化参数(只读)
 	             */
@@ -1282,12 +1235,6 @@ declare module '@ailhc/akview' {
 	             * @param option 初始化配置
 	             */
 	            init(option: IMgrInitOption): void;
-	            /**
-	             * 使用插件，可在插件声明周期中对Mgr进行扩展：addTemplate,addTemplateHandler等
-	             * @param plugin 插件实现
-	             * @param option 插件配置
-	             */
-	            use<PluginType extends akView.IPlugin>(plugin: PluginType, option?: akView.GetPluginOptionType<PluginType>): void;
 	            /**
 	             * 批量注册控制器模版
 	             * @param templates 定义字典，单个定义，定义数组
@@ -1363,7 +1310,7 @@ declare module '@ailhc/akview' {
 	             * @param keyOrConfig 配置
 	             * @returns 返回ViewAgent
 	             */
-	            create<T extends akView.IViewAgent = any, StateKeyType extends keyType = keyType>(keyOrConfig: akView.IShowOption<StateKeyType, IAkViewStateTypes>): T;
+	            create<T extends akView.IViewAgent = any, StateKeyType extends keyType = keyType>(keyOrConfig: akView.IShowOption<StateKeyType, ViewKeyTypes>): T;
 	            /**
 	             * 创建新的ViewAgent并显示
 	             * @param keyOrConfig 字符串key|配置
@@ -1375,7 +1322,7 @@ declare module '@ailhc/akview' {
 	             
 	            * @returns 返回ViewAgent
 	            */
-	            create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, onInitOpt?: akView.GetInitStateType<ViewKey, IAkViewStateTypes>, needShowView?: boolean, onShowOpt?: akView.GetShowStateType<ViewKey, IAkViewStateTypes>, cacheMode?: akView.ViewAgentCacheModeType): T;
+	            create<T extends akView.IViewAgent = any, ViewKey extends keyType = keyType>(keyOrConfig: ViewKey, onInitOpt?: akView.GetInitStateType<ViewKey, ViewKeyTypes>, needShowView?: boolean, onShowOpt?: akView.GetShowStateType<ViewKey, ViewKeyTypes>, cacheMode?: akView.ViewAgentCacheModeType): T;
 	            /**
 	             * 创建新的ViewAgent并显示
 	             * @param keyOrConfig 字符串key
@@ -1387,33 +1334,33 @@ declare module '@ailhc/akview' {
 	             
 	            * @returns 返回ViewAgent
 	            */
-	            create<CreateKeyType extends keyType, T extends akView.IViewAgent = any>(keyOrConfig: string, onInitOpt?: akView.GetInitStateType<CreateKeyType, IAkViewStateTypes>, needShowView?: boolean, onShowOpt?: akView.GetShowStateType<CreateKeyType, IAkViewStateTypes>, cacheMode?: akView.ViewAgentCacheModeType): T;
+	            create<CreateKeyType extends keyType, T extends akView.IViewAgent = any>(keyOrConfig: string, onInitOpt?: akView.GetInitStateType<CreateKeyType, ViewKeyTypes>, needShowView?: boolean, onShowOpt?: akView.GetShowStateType<CreateKeyType, ViewKeyTypes>, cacheMode?: akView.ViewAgentCacheModeType): T;
 	            /**
 	             * 显示View
 	             * @param idOrkeyOrConfig 类key或者显示配置IShowConfig
 	             * @param onShowOpt 显示透传数据
 	             * @param onInitOpt 初始化数据
 	             */
-	            show<ConfigKeyType extends keyType>(idOrkeyOrConfig: akView.IShowOption<ConfigKeyType, IAkViewStateTypes>): string;
+	            show<ConfigKeyType extends keyType>(idOrkeyOrConfig: akView.IShowOption<ConfigKeyType, ViewKeyTypes>): string;
 	            /**
 	             * 显示View
 	             * @param keyOrViewAgentOrConfig 类key或者ViewAgent对象或者显示配置IShowConfig
 	             * @param onShowOpt 显示透传数据
 	             * @param onInitOpt 初始化数据
 	             */
-	            show<TKeyType extends keyType>(keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, IAkViewStateTypes>, onShowOpt?: akView.GetShowStateType<TKeyType, IAkViewStateTypes>, onInitOpt?: akView.GetInitStateType<TKeyType, IAkViewStateTypes>): string;
+	            show<TKeyType extends keyType>(keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewKeyTypes>, onShowOpt?: akView.GetShowStateType<TKeyType, ViewKeyTypes>, onInitOpt?: akView.GetInitStateType<TKeyType, ViewKeyTypes>): string;
 	            /**
 	             * 更新View
 	             * @param keyOrId 界面id
 	             * @param updateOpt 更新数据
 	             */
-	            update<K extends keyType | String>(keyOrId: K, onUpdateOpt?: akView.GetUpdateStateType<K, IAkViewStateTypes>): void;
+	            update<K extends keyType | String>(keyOrId: K, onUpdateOpt?: akView.GetUpdateStateType<K, ViewKeyTypes>): void;
 	            /**
 	             * 隐藏View
 	             * @param keyOrViewAgent 界面id
 	             * @param hideCfg
 	             */
-	            hide<KeyOrIdType extends keyType | String>(keyOrId: KeyOrIdType, hideCfg?: akView.IHideOption<KeyOrIdType, IAkViewStateTypes>): void;
+	            hide<KeyOrIdType extends keyType | String>(keyOrId: KeyOrIdType, hideCfg?: akView.IHideOption<KeyOrIdType, ViewKeyTypes>): void;
 	            /**
 	             * 销毁View
 	             * @param keyOrId 界面id
@@ -1456,7 +1403,7 @@ declare module '@ailhc/akview' {
 	             * @param key
 	             * @returns
 	             */
-	            createViewId(key: keyType): string;
+	            createViewId(key: keyType | String): string;
 	            /**
 	             * 根据viewid 获取view实例
 	             * @param id view id
