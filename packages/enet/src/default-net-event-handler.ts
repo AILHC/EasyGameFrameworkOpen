@@ -31,7 +31,7 @@ export class DefaultNetEventHandler implements enet.INetEventHandler {
         console.log(`reqCfg:`, reqCfg);
     }
     onData?(dpkg: enet.IDecodePackage<any>, connectOpt: enet.IConnectOptions): void {
-        console.log(`data :${dpkg.key},opt:`, connectOpt);
+        console.log(`data :${dpkg.key},data:`, dpkg);
     }
     onRequestTimeout?(reqCfg: enet.IRequestConfig, connectOpt: enet.IConnectOptions): void {
         console.warn(`request timeout:${reqCfg.protoKey},opt:`, connectOpt);
@@ -43,6 +43,6 @@ export class DefaultNetEventHandler implements enet.INetEventHandler {
         );
     }
     onKick(dpkg: enet.IDecodePackage<any>, copt: enet.IConnectOptions) {
-        console.log(`be kick,opt:`, copt);
+        console.log(`be kick,dpkg:`, dpkg);
     }
 }

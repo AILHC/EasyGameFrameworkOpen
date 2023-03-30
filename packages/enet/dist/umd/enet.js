@@ -34,7 +34,7 @@
             console.log(`reqCfg:`, reqCfg);
         }
         onData(dpkg, connectOpt) {
-            console.log(`data :${dpkg.key},opt:`, connectOpt);
+            console.log(`data :${dpkg.key},data:`, dpkg);
         }
         onRequestTimeout(reqCfg, connectOpt) {
             console.warn(`request timeout:${reqCfg.protoKey},opt:`, connectOpt);
@@ -43,7 +43,7 @@
             console.error(`proto key:${dpkg.key},reqId:${dpkg.reqId},code:${dpkg.code},errorMsg:${dpkg.errorMsg},opt:`, connectOpt);
         }
         onKick(dpkg, copt) {
-            console.log(`be kick,opt:`, copt);
+            console.log(`be kick,dpkg:`, dpkg);
         }
     }
 

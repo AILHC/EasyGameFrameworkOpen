@@ -399,7 +399,7 @@ declare global {
              */
             request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
                 ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-                ProtoKeyType extends ((keyof ProtoType) | String) = String>
+                ProtoKeyType extends ((keyof ProtoType) | String)>
                 (
                     protoKey: ProtoKeyType,
                     data: ReqData,
@@ -421,7 +421,7 @@ declare global {
              */
             requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
                 ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-                ProtoKeyType extends ((keyof ProtoType) | String) = String
+                ProtoKeyType extends ((keyof ProtoType) | String)
             >(
                 protoKey: ProtoKeyType,
                 data: ReqData,
@@ -447,7 +447,7 @@ declare global {
              * @param handler
              */
             onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-                ProtoKeyType extends ((keyof ProtoType) | String) = String>
+                ProtoKeyType extends ((keyof ProtoType) | String)>
                 (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 
             /**
@@ -456,7 +456,7 @@ declare global {
              * @param handler
              */
             oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-                ProtoKeyType extends ((keyof ProtoType) | String) = String>
+                ProtoKeyType extends ((keyof ProtoType) | String)>
                 (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 
             /**
@@ -466,13 +466,13 @@ declare global {
              * @param context 指定上下文的监听
              * @param onceOnly 是否只取消 监听一次 的推送监听
              */
-            offPush<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+            offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
 
             /**
              * 取消所有监听
              * @param protoKey 指定协议的推送，如果为空，则取消所有协议的所有监听
              */
-            offPushAll<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey?: ProtoKeyType): void;
+            offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void;
 
         }
     }

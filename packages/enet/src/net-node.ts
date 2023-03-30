@@ -6,7 +6,7 @@ import { WSocket } from "./wsocket";
 
 export class NetNode<ProtoType,
     InferReqTypeKey extends string = "reqType",
-    InferResTypeKey extends string = "reqType"> implements enet.INode<ProtoType, InferReqTypeKey, InferResTypeKey> {
+    InferResTypeKey extends string = "resType"> implements enet.INode<ProtoType, InferReqTypeKey, InferResTypeKey> {
     keys: Readonly<{ [P in keyof ProtoType]: P; }> = new Proxy({} as any, {
         get(target, p, receiver) {
             return p;
@@ -207,7 +207,7 @@ export class NetNode<ProtoType,
     }
     public request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
         ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-        ProtoKeyType extends ((keyof ProtoType) | String) = String>
+        ProtoKeyType extends ((keyof ProtoType) | String)>
         (
             protoKey: ProtoKeyType,
             data: ReqData,
@@ -234,7 +234,7 @@ export class NetNode<ProtoType,
     }
     public requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
         ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-        ProtoKeyType extends ((keyof ProtoType) | String) = String>(
+        ProtoKeyType extends ((keyof ProtoType) | String)>(
             protoKey: ProtoKeyType,
             data: ReqData,
         ): Promise<enet.IDecodePackage<ResData>> {
@@ -275,7 +275,7 @@ export class NetNode<ProtoType,
         this._socket.send(netData);
     }
     public onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-        ProtoKeyType extends ((keyof ProtoType) | String) = String>
+        ProtoKeyType extends ((keyof ProtoType) | String)>
         (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         if (!this._pushHandlerMap[key]) {
@@ -285,7 +285,7 @@ export class NetNode<ProtoType,
         }
     }
     public oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-        ProtoKeyType extends ((keyof ProtoType) | String) = String>
+        ProtoKeyType extends ((keyof ProtoType) | String)>
         (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         if (!this._oncePushHandlerMap[key]) {
@@ -294,7 +294,7 @@ export class NetNode<ProtoType,
             this._oncePushHandlerMap[key].push(handler);
         }
     }
-    public offPush<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void {
+    public offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         let handlers: enet.AnyCallback[];
         if (onceOnly) {
@@ -327,7 +327,7 @@ export class NetNode<ProtoType,
             }
         }
     }
-    public offPushAll<ProtoKeyType extends ((keyof ProtoType) | String) = String>(protoKey?: ProtoKeyType): void {
+    public offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void {
         if (protoKey) {
             const key = this._protoHandler.protoKey2Key(protoKey);
             delete this._pushHandlerMap[key];
