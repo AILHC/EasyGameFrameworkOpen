@@ -1,4 +1,4 @@
-import { Mask, Vec2, Size, Node, UITransform, Constructor, Sprite } from "cc";
+import { Mask, Vec2, Size, Node, UITransform, Constructor, Sprite, Graphics } from "cc";
 import { Controller } from "./Controller";
 import { Event as FUIEvent } from "./event/Event";
 import { IHitTest, PixelHitTest, ChildHitArea } from "./event/HitTest";
@@ -40,6 +40,7 @@ export class GComponent extends GObject {
     public _scrollPane?: ScrollPane;
     public _alignOffset: Vec2;
     public _customMask?: Mask
+    private _maskInverted: boolean;
 
     public constructor() {
         super();
@@ -604,6 +605,7 @@ export class GComponent extends GObject {
     }
 
     public setMask(value: GObject, inverted: boolean): void {
+        this._maskInverted = inverted;
         if (this._maskContent) {
             this._maskContent.node.off(Node.EventType.TRANSFORM_CHANGED, this.onMaskContentChanged, this);
             this._maskContent.node.off(Node.EventType.SIZE_CHANGED, this.onMaskContentChanged, this);
@@ -636,7 +638,7 @@ export class GComponent extends GObject {
             
 
             if (this._node.activeInHierarchy)
-                this.onMaskReady(inverted);
+                this.onMaskReady();
             else
                 this.on(FUIEvent.DISPLAY, this.onMaskReady, this);
 
@@ -661,7 +663,8 @@ export class GComponent extends GObject {
         }
     }
 
-    private onMaskReady(inverted: boolean) {
+    private onMaskReady() {
+        const inverted = this._maskInverted;
         this.off(FUIEvent.DISPLAY, this.onMaskReady, this);
 
         if (this._maskContent instanceof GImage) {
@@ -673,7 +676,7 @@ export class GComponent extends GObject {
             if (this._maskContent.type == 1) {
                 this._customMask.type = Mask.Type.GRAPHICS_RECT;
             } else if (this._maskContent.type == 2) {
-                this._customMask.type = Mask.Type.GRAPHICS_STENCIL
+                this._customMask.type = Mask.Type.GRAPHICS_ELLIPSE;
             }
 
         }

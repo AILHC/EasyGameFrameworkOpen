@@ -5028,10 +5028,14 @@ class UIPackage {
         if (pkg)
             return pkg;
         let asset = resources.get(path, BufferAsset);
-        if (!asset)
-            throw "Resource '" + path + "' not ready";
-        if (!asset._buffer)
-            throw "Missing asset data.";
+        if (!asset) {
+            console.error("Resource '" + path + "' not ready");
+            return;
+        }
+        if (!asset._buffer) {
+            console.error(`Missing path:${path} asset data.`);
+            return;
+        }
         pkg = new UIPackage();
         pkg._bundle = resources;
         pkg.loadPackage(new ByteBuffer(asset._buffer), path);
@@ -10485,6 +10489,7 @@ class GComponent extends GObject {
         this.setMask(value, false);
     }
     setMask(value, inverted) {
+        this._maskInverted = inverted;
         if (this._maskContent) {
             this._maskContent.node.off(Node.EventType.TRANSFORM_CHANGED, this.onMaskContentChanged, this);
             this._maskContent.node.off(Node.EventType.SIZE_CHANGED, this.onMaskContentChanged, this);
@@ -10511,7 +10516,7 @@ class GComponent extends GObject {
             value.node.on(Node.EventType.SIZE_CHANGED, this.onMaskContentChanged, this);
             value.node.on(Node.EventType.ANCHOR_CHANGED, this.onMaskContentChanged, this);
             if (this._node.activeInHierarchy)
-                this.onMaskReady(inverted);
+                this.onMaskReady();
             else
                 this.on(Event.DISPLAY, this.onMaskReady, this);
             this.onMaskContentChanged();
@@ -10533,7 +10538,8 @@ class GComponent extends GObject {
                 this._container.setPosition(this._pivotCorrectX, this._pivotCorrectY);
         }
     }
-    onMaskReady(inverted) {
+    onMaskReady() {
+        const inverted = this._maskInverted;
         this.off(Event.DISPLAY, this.onMaskReady, this);
         if (this._maskContent instanceof GImage) {
             this._customMask.type = Mask.Type.SPRITE_STENCIL;
@@ -10546,7 +10552,7 @@ class GComponent extends GObject {
                 this._customMask.type = Mask.Type.GRAPHICS_RECT;
             }
             else if (this._maskContent.type == 2) {
-                this._customMask.type = Mask.Type.GRAPHICS_STENCIL;
+                this._customMask.type = Mask.Type.GRAPHICS_ELLIPSE;
             }
         }
         this._customMask.inverted = inverted;
