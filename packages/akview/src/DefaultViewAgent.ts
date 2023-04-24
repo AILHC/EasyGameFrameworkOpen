@@ -131,7 +131,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
             this._isLoading = false;
             this.viewMgr.cancelPreloadRes(this.id);
         }
-        this.viewMgr.eventBus.emitAkViewEvent("onViewHide", this.id);
+        this.viewMgr.eventBus.emitAkViewEvent(this.id, "onViewHide");
         let promise: Promise<void>;
         this.isViewShowed = false;
         this.isViewShowEnd = false;
@@ -313,7 +313,7 @@ export class DefaultViewAgent implements akView.IViewAgent<IAkViewViewAgentOptio
         //销毁资源
         needDestroyRes && viewMgr.destroyRes(template.key);
 
-        viewMgr.eventBus.emitAkViewEvent("onViewDestroyed", this.id);
+        viewMgr.eventBus.emitAkViewEvent(this.id, "onViewDestroyed");
     }
     /**
      * 派发View事件
