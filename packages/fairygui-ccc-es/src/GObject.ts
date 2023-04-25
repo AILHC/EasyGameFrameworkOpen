@@ -108,6 +108,7 @@ export class GObject {
     }
 
     public set name(value: string) {
+        this._node.name = value;
         this._name = value;
     }
 

@@ -2505,6 +2505,7 @@ class GObject {
         return this._name;
     }
     set name(value) {
+        this._node.name = value;
         this._name = value;
     }
     get x() {
