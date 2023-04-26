@@ -1,7 +1,9 @@
 import { Event as CCEvent, Node, Touch, Vec2 } from 'cc';
 import { GObject } from '../GObject';
 import { InputProcessor } from './InputProcessor';
-
+export interface EventCallBack {
+    (evt: Event, arg0?: any, arg1?: any, arg2?: any, arg3?: any, ...args: any[]): void
+}
 export class Event extends CCEvent {
     public static TOUCH_BEGIN: string = "fui_touch_begin";
     public static TOUCH_MOVE: string = "fui_touch_move";

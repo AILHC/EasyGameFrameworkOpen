@@ -98,6 +98,7 @@ declare module 'fairygui-cc/GObject' {
     import { Vec2, Rect, Component, Node, UITransform, UIOpacity } from "cc";
     import { Controller } from "fairygui-cc/Controller";
     import { BlendMode } from "fairygui-cc/display/BlendMode";
+    import { EventCallBack } from "fairygui-cc/event/Event";
     import { GComponent } from "fairygui-cc/GComponent";
     import { GearBase } from "fairygui-cc/gears/GearBase";
     import { GearLook } from "fairygui-cc/gears/GearLook";
@@ -249,13 +250,13 @@ declare module 'fairygui-cc/GObject' {
         protected onDisable(): void;
         protected onUpdate(): void;
         protected onDestroy(): void;
-        onClick(listener: Function, target?: any): void;
-        onceClick(listener: Function, target?: any): void;
+        onClick(listener: Function | EventCallBack, target?: any): void;
+        onceClick(listener: Function | EventCallBack, target?: any): void;
         offClick(listener: Function, target?: any): void;
         clearClick(): void;
         hasClickListener(): boolean;
-        on(type: string, listener: Function, target?: any): void;
-        once(type: string, listener: Function, target?: any): void;
+        on(type: string, listener: Function | EventCallBack, target?: any): void;
+        once(type: string, listener: Function | EventCallBack, target?: any): void;
         off(type: string, listener?: Function, target?: any): void;
         get draggable(): boolean;
         set draggable(value: boolean);
@@ -2022,6 +2023,9 @@ declare module 'fairygui-cc/event/Event' {
     import { Event as CCEvent, Vec2 } from 'cc';
     import { GObject } from 'fairygui-cc/GObject';
     import { InputProcessor } from 'fairygui-cc/event/InputProcessor';
+    export interface EventCallBack {
+        (evt: Event, arg0?: any, arg1?: any, arg2?: any, arg3?: any, ...args: any[]): void;
+    }
     export class Event extends CCEvent {
         static TOUCH_BEGIN: string;
         static TOUCH_MOVE: string;

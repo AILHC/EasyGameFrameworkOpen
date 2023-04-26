@@ -1,7 +1,7 @@
 import { Vec2, Rect, Component, director, Node, UITransform, UIOpacity, Vec3, Constructor } from "cc";
 import { Controller } from "./Controller";
 import { BlendMode, BlendModeUtils } from "./display/BlendMode";
-import { Event as FUIEvent } from "./event/Event";
+import { EventCallBack, Event as FUIEvent } from "./event/Event";
 import { RelationType, ObjectPropID } from "./FieldTypes";
 import { GComponent } from "./GComponent";
 import { GearAnimation } from "./gears/GearAnimation";
@@ -667,11 +667,11 @@ export class GObject {
     protected onDestroy() {
     }
 
-    public onClick(listener: Function, target?: any): void {
+    public onClick(listener: Function | EventCallBack, target?: any): void {
         this._node.on(FUIEvent.CLICK, listener, target);
     }
 
-    public onceClick(listener: Function, target?: any): void {
+    public onceClick(listener: Function | EventCallBack, target?: any): void {
         this._node.once(FUIEvent.CLICK, listener, target);
     }
 
@@ -687,14 +687,14 @@ export class GObject {
         return this._node.hasEventListener(FUIEvent.CLICK);
     }
 
-    public on(type: string, listener: Function, target?: any): void {
+    public on(type: string, listener: Function | EventCallBack, target?: any): void {
         if (type == FUIEvent.DISPLAY || type == FUIEvent.UNDISPLAY)
             this._partner._emitDisplayEvents = true;
 
         this._node.on(type, listener, target);
     }
 
-    public once(type: string, listener: Function, target?: any): void {
+    public once(type: string, listener: Function | EventCallBack, target?: any): void {
         if (type == FUIEvent.DISPLAY || type == FUIEvent.UNDISPLAY)
             this._partner._emitDisplayEvents = true;
 
