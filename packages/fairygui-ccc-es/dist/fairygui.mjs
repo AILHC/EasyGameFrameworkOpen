@@ -3205,7 +3205,14 @@ class GObject {
         if (buffer.readBool())
             this.grayed = true;
         this.blendMode = buffer.readByte();
-        buffer.readByte();
+        var filter = buffer.readByte();
+        if (filter == 1) {
+            //TODO: filter support
+            buffer.readFloat();
+            buffer.readFloat();
+            buffer.readFloat();
+            buffer.readFloat();
+        }
         var str = buffer.readS();
         if (str != null)
             this.data = str;
@@ -3758,7 +3765,10 @@ class GGraph extends GObject {
         this._lineSize = 1;
         this._lineColor = new Color();
         this._fillColor = new Color(255, 255, 255, 255);
-        this._content = this._node.addComponent(Graphics);
+        this._content = this._node.addComponent("CustomGraphics");
+        if (!this._content) {
+            this._content = this._node.addComponent(Graphics);
+        }
     }
     drawRect(lineSize, lineColor, fillColor, corner) {
         this._type = 1;

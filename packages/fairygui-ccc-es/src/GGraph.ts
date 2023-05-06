@@ -25,7 +25,10 @@ export class GGraph extends GObject {
         this._lineColor = new Color();
         this._fillColor = new Color(255, 255, 255, 255);
 
-        this._content = this._node.addComponent(Graphics);
+        this._content = this._node.addComponent("CustomGraphics") as Graphics;
+        if (!this._content) {
+            this._content = this._node.addComponent(Graphics);
+        }
     }
 
     public drawRect(lineSize: number, lineColor: Color, fillColor: Color, corner?: Array<number>): void {

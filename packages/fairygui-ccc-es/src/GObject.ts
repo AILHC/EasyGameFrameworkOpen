@@ -979,6 +979,10 @@ export class GObject {
         var filter: number = buffer.readByte();
         if (filter == 1) {
             //TODO: filter support
+            buffer.readFloat();
+            buffer.readFloat();
+            buffer.readFloat();
+            buffer.readFloat();
         }
 
         var str: string = buffer.readS();
