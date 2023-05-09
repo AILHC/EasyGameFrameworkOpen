@@ -1594,10 +1594,11 @@ declare module 'fairygui-cc/UIPackage' {
             static getById(id: string): UIPackage;
             static getByName(name: string): UIPackage;
             /**
-                * 注册一个包。包的所有资源必须放在resources下，且已经预加载。
-                * @param path 相对 resources 的路径。
+                * 注册一个包。包的所有资源必须放在bundle下，且已经预加载。
+                * @param path 相对 bundle 的路径。
+                * @param bundle 指定assetBundle，默认resources
                 */
-            static addPackage(path: string): UIPackage;
+            static addPackage(path: string, bundle?: AssetManager.Bundle): UIPackage;
             /**
                 * 载入一个包。包的资源从Asset Bundle加载.
                 * @param bundle Asset Bundle 对象.

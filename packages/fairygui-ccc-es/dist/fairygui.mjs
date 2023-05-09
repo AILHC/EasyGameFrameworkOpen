@@ -5031,10 +5031,11 @@ class UIPackage {
         return _instByName[name];
     }
     /**
-     * 注册一个包。包的所有资源必须放在resources下，且已经预加载。
-     * @param path 相对 resources 的路径。
+     * 注册一个包。包的所有资源必须放在bundle下，且已经预加载。
+     * @param path 相对 bundle 的路径。
+     * @param bundle 指定assetBundle，默认resources
      */
-    static addPackage(path) {
+    static addPackage(path, bundle) {
         let pkg = _instById[path];
         if (pkg)
             return pkg;
@@ -5048,7 +5049,7 @@ class UIPackage {
             return;
         }
         pkg = new UIPackage();
-        pkg._bundle = resources;
+        pkg._bundle = bundle || resources;
         pkg.loadPackage(new ByteBuffer(asset._buffer), path);
         _instById[pkg.id] = pkg;
         _instByName[pkg.name] = pkg;
