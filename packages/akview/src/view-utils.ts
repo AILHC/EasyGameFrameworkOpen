@@ -72,7 +72,7 @@ export function viewTemplate(
  * }
  * @returns
  */
-export function createKeyMap<KeyTypes>(): KeyTypes {
+export function createKeyMap<T>(): Readonly<{[P in keyof T]:P}> {
     return new Proxy(
         {},
         {

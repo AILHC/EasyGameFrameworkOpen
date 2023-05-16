@@ -264,7 +264,9 @@ declare module 'akview' {
 	 * }
 	 * @returns
 	 */
-	function createKeyMap<KeyTypes>(): KeyTypes;
+	function createKeyMap<T>(): Readonly<{
+	    [P in keyof T]: P;
+	}>;
 
 }
 declare module 'akview' {
@@ -1433,11 +1435,19 @@ declare module 'akview' {
 	/**
 	 * 界面key字典
 	 */
-	const ViewKeyMap: IAkViewKeyTypes;
+	const ViewKeyMap: Readonly<{}>;
 	/**
 	 * 事件key字典
 	 */
-	const ViewEventKeyMap: IAkViewEventKeys;
+	const ViewEventKeyMap: Readonly<{
+	    onViewInit: "onViewInit";
+	    onViewShow: "onViewShow";
+	    onViewShowEnd: "onViewShowEnd";
+	    onViewHide: "onViewHide";
+	    onViewHideEnd: "onViewHideEnd";
+	    onViewDestroyed: "onViewDestroyed";
+	    onWindowResize: "onWindowResize";
+	}>;
 
 }
 declare module 'akview' {

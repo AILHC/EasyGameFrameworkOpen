@@ -264,7 +264,9 @@ declare module '@ailhc/akview' {
 	 * }
 	 * @returns
 	 */
-	export function createKeyMap<KeyTypes>(): KeyTypes;
+	export function createKeyMap<T>(): Readonly<{
+	    [P in keyof T]: P;
+	}>;
 
 }
 declare module '@ailhc/akview' {
@@ -1433,11 +1435,19 @@ declare module '@ailhc/akview' {
 	/**
 	 * 界面key字典
 	 */
-	export const ViewKeyMap: IAkViewKeyTypes;
+	export const ViewKeyMap: Readonly<{}>;
 	/**
 	 * 事件key字典
 	 */
-	export const ViewEventKeyMap: IAkViewEventKeys;
+	export const ViewEventKeyMap: Readonly<{
+	    onViewInit: "onViewInit";
+	    onViewShow: "onViewShow";
+	    onViewShowEnd: "onViewShowEnd";
+	    onViewHide: "onViewHide";
+	    onViewHideEnd: "onViewHideEnd";
+	    onViewDestroyed: "onViewDestroyed";
+	    onWindowResize: "onWindowResize";
+	}>;
 
 }
 declare module '@ailhc/akview' {
