@@ -1435,18 +1435,14 @@ declare module '@ailhc/akview' {
 	/**
 	 * 界面key字典
 	 */
-	export const ViewKeyMap: Readonly<{}>;
+	export const ViewKeyMap: Readonly<{
+	    [P in keyof IAkViewKeyTypes]: P;
+	}>;
 	/**
 	 * 事件key字典
 	 */
 	export const ViewEventKeyMap: Readonly<{
-	    onViewInit: "onViewInit";
-	    onViewShow: "onViewShow";
-	    onViewShowEnd: "onViewShowEnd";
-	    onViewHide: "onViewHide";
-	    onViewHideEnd: "onViewHideEnd";
-	    onViewDestroyed: "onViewDestroyed";
-	    onWindowResize: "onWindowResize";
+	    [P in keyof IAkViewEventKeys]: P;
 	}>;
 
 }
