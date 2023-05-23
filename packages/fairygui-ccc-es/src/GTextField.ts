@@ -1,4 +1,4 @@
-import { BitmapFont, Color, Font, HorizontalTextAlignment, Label, LabelOutline, LabelShadow, Node, SystemEventType, Vec2, VerticalTextAlignment } from "cc";
+import { BitmapFont, Color, Font, HorizontalTextAlignment, Label, LabelOutline, LabelShadow, Node, SystemEventType, Vec2, VerticalTextAlignment, builtinResMgr } from "cc";
 import { Event as FUIEvent } from "./event/Event";
 import { AutoSizeType, ObjectPropID } from "./FieldTypes";
 import { GObject } from "./GObject";
@@ -505,6 +505,12 @@ export class GTextField extends GObject {
     }
 
     protected handleGrayedChanged(): void {
+        if(this._grayed) {
+            this._label.customMaterial = builtinResMgr.get(`ui-sprite-gray-material`);
+        }
+        else {
+            this._label.customMaterial = null;
+        }
         this.updateFontColor();
         this.updateStrokeColor();
     }
