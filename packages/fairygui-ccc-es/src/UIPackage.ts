@@ -72,7 +72,7 @@ export class UIPackage {
         let pkg: UIPackage = _instById[path];
         if (pkg)
             return pkg;
-        let asset: any = resources.get(path, BufferAsset);
+        let asset: any = (bundle || resources).get(path, BufferAsset);
         if (!asset) {
             console.error("Resource '" + path + "' not ready");
             return;
