@@ -5039,7 +5039,7 @@ class UIPackage {
         let pkg = _instById[path];
         if (pkg)
             return pkg;
-        let asset = resources.get(path, BufferAsset);
+        let asset = (bundle || resources).get(path, BufferAsset);
         if (!asset) {
             console.error("Resource '" + path + "' not ready");
             return;
