@@ -89,6 +89,16 @@ export class GImage extends GObject {
         this._content.grayscale = this._grayed;
     }
 
+    public handleFilterChanged(): void {
+        if(this._filter) {
+            this._content.customMaterial = this.hueMat;
+            this.updateFilterProp();
+        } 
+        else {
+            this._content.customMaterial = null;
+        }
+    }
+
     public getProp(index: number): any {
         if (index == ObjectPropID.Color)
             return this.color;

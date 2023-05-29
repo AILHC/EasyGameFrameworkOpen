@@ -1,5 +1,6 @@
 import { Material, Sprite, UITransform, Vec2 } from "cc";
 import { FillMethod, FillOrigin, FlipType } from "../FieldTypes";
+import { GObject } from "../GObject";
 
 export class Image extends Sprite {
     private _flip: FlipType = FlipType.None;

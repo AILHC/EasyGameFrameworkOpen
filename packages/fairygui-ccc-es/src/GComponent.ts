@@ -768,6 +768,20 @@ export class GComponent extends GObject {
         }
     }
 
+    public handleFilterChanged(): void {
+        var cnt: number = this._children.length;
+        var child;
+        for (var i: number = 0; i < cnt; ++i) {
+            child = this._children[i];
+            child._brightness = this.brightness;
+            child._saturation = this.saturation;
+            child._contrast = this.contrast;
+            child._hue = this.hue;
+            child._filter = this.filter;
+            child.handleFilterChanged();
+        }
+    }
+
     public handleControllerChanged(c: Controller): void {
         super.handleControllerChanged(c);
 

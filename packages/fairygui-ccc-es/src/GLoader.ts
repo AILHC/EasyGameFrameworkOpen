@@ -511,6 +511,17 @@ export class GLoader extends GObject {
         this._content.grayscale = this._grayed;
     }
 
+    public handleFilterChanged(): void {
+        if(this._filter) {
+            this._content.customMaterial = this.hueMat;
+            this.updateFilterProp();
+        } 
+        else {
+            this._content.customMaterial = null;
+        }
+    
+    }
+
     protected _hitTest(pt: Vec2, globalPt: Vec2): GObject {
         if (this._content2) {
             let obj: GObject = this._content2.hitTest(globalPt);
