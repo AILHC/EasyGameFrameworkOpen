@@ -33,6 +33,7 @@ export class GObject {
             effect.shaders = hueEffect.shaders;
             effect.techniques = hueEffect.techniques;
             GObject._hueEffect = effect;
+            effect.onLoaded();
         }
         return GObject._hueEffect;
     }
@@ -1331,7 +1332,7 @@ let hueEffect:any = {
               "rasterizerState": {
                 "cullMode": 0
               },
-              "program": "../__test_cases__/gray_test/builtin-sprite-filter|sprite-vs:vert|sprite-fs:frag",
+              "program": "sprite-filter|sprite-vs:vert|sprite-fs:frag",
               "depthStencilState": {
                 "depthTest": false,
                 "depthWrite": false
@@ -1916,7 +1917,7 @@ let hueEffect:any = {
               "defines": []
             }
           ],
-          "name": "../__test_cases__/gray_test/builtin-sprite-filter|sprite-vs:vert|sprite-fs:frag"
+          "name": "sprite-filter|sprite-vs:vert|sprite-fs:frag"
         }
       ]
 };
