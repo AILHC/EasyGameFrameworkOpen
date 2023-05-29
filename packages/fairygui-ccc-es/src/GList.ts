@@ -1061,6 +1061,7 @@ export class GList extends GComponent {
                 for (i = 0; i < value; i++)
                     this.itemRenderer(i, this.getChildAt(i));
             }
+            //不需要在此执行handleFilterChanged,避免性能问题，应该根据业务需要在业务逻辑中手动调用
         }
     }
 

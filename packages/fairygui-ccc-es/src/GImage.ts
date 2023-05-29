@@ -89,6 +89,28 @@ export class GImage extends GObject {
         this._content.grayscale = this._grayed;
     }
 
+    protected handleFilterChanged(): void {
+        let sprite = this._node.getComponent(Image);
+        if(this._filter) {
+            let use = this._brightness!==0 || this._contrast!=0 || this._hue!==0 || this._saturation!==0;
+            if(use && sprite) {
+                let mat = this.hueMat;
+                sprite.customMaterial = mat;
+                mat?.setProperty("brightness" , this._brightness);
+                mat?.setProperty("saturation" , this._saturation+1);
+                mat?.setProperty("contrast" , this._contrast+1);
+                mat?.setProperty("hue" , this._hue*180);
+            }
+            else {
+                //参数都是0，为了合批，取消自定义材质
+                sprite && (sprite.customMaterial=null);
+            }
+        } 
+        else {
+            sprite && (sprite.customMaterial=null);
+        }
+    }
+
     public getProp(index: number): any {
         if (index == ObjectPropID.Color)
             return this.color;

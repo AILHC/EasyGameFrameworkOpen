@@ -1,4 +1,4 @@
-import { gfx, UIRenderer, Event as Event$1, Vec2, Node, game, director, macro, Color, Layers, Font, resources, Vec3, Rect, UITransform, UIOpacity, Component, Graphics, misc, Sprite, Size, screen, view, ImageAsset, AudioClip, BufferAsset, AssetManager, Asset, assetManager, Texture2D, SpriteFrame, BitmapFont, sp, dragonBones, path, Label, LabelOutline, LabelShadow, builtinResMgr, SpriteAtlas, RichText, sys, EventMouse, EventTarget, Mask, math, isValid, View, AudioSourceComponent, EditBox } from 'cc';
+import { gfx, UIRenderer, Event as Event$1, Vec2, Node, game, director, macro, Color, Layers, Font, resources, Vec3, Rect, UITransform, UIOpacity, EffectAsset, Material, Component, Graphics, misc, Sprite, Size, screen, view, ImageAsset, AudioClip, BufferAsset, AssetManager, Asset, assetManager, Texture2D, SpriteFrame, BitmapFont, sp, dragonBones, path, Label, LabelOutline, LabelShadow, builtinResMgr, SpriteAtlas, RichText, sys, EventMouse, EventTarget, Mask, math, isValid, View, AudioSourceComponent, EditBox } from 'cc';
 import { EDITOR } from 'cc/env';
 
 var ButtonMode;
@@ -2484,6 +2484,17 @@ class GObject {
         this._rawHeight = 0;
         this._underConstruct = false;
         this._sizePercentInGroup = 0;
+        //亮度
+        this._brightness = 0;
+        //饱和度
+        this._saturation = 0;
+        //对比度
+        this._contrast = 0;
+        //色相
+        this._hue = 0;
+        //滤镜
+        this._filter = false;
+        this._hueMat = null;
         this._node = new Node();
         this._uiTrans = this._node.addComponent(UITransform);
         this._uiOpacity = this.node.addComponent(UIOpacity);
@@ -2497,6 +2508,88 @@ class GObject {
         this._gears = new Array(10);
         this._blendMode = BlendMode.Normal;
         this._partner = this._node.addComponent(GObjectPartner);
+    }
+    //获得色相效果文件
+    static get hueEffect() {
+        if (!GObject._hueEffect) {
+            //创建效果对象
+            let effect = new EffectAsset();
+            effect.shaders = hueEffect.shaders;
+            effect.techniques = hueEffect.techniques;
+            GObject._hueEffect = effect;
+        }
+        return GObject._hueEffect;
+    }
+    //创建一个色相材质
+    static createHueMaterial() {
+        //创建材质对象
+        let mat = new Material();
+        mat.initialize({
+            // 通过 effect 名指定材质使用的着色器资源
+            effectAsset: GObject.hueEffect,
+            //宏定义
+            defines: {
+                USE_TEXTURE: true
+            }
+        });
+        return mat;
+    }
+    //获得色相材质
+    get hueMat() {
+        if (!this._hueMat) {
+            this._hueMat = GObject.createHueMaterial();
+        }
+        return this._hueMat;
+    }
+    //亮度
+    get brightness() {
+        return this._brightness;
+    }
+    set brightness(value) {
+        value = Math.min(1, value);
+        value = Math.max(-1, value);
+        this._brightness = value;
+    }
+    //饱和度
+    get saturation() {
+        return this._saturation;
+    }
+    set saturation(value) {
+        value = Math.min(1, value);
+        value = Math.max(-1, value);
+        this._saturation = value;
+    }
+    //对比度
+    get contrast() {
+        return this._contrast;
+    }
+    set contrast(value) {
+        value = Math.min(1, value);
+        value = Math.max(-1, value);
+        this._contrast = value;
+    }
+    //色相
+    get hue() {
+        return this._hue;
+    }
+    set hue(value) {
+        value = Math.min(1, value);
+        value = Math.max(-1, value);
+        this._hue = value;
+    }
+    //滤镜
+    get filter() {
+        return this._filter;
+    }
+    set filter(value) {
+        this._filter = value;
+        this.handleFilterChanged();
+    }
+    createHueMaterial() {
+        //创建效果对象
+        let effect = new EffectAsset();
+        effect.shaders = hueEffect.shaders;
+        effect.techniques = hueEffect.techniques;
     }
     get id() {
         return this._id;
@@ -3091,6 +3184,9 @@ class GObject {
     handleGrayedChanged() {
         //nothing is base
     }
+    handleFilterChanged() {
+        //default image
+    }
     handleVisibleChanged() {
         this._node.active = this._finalVisible;
         if (this instanceof GGroup)
@@ -3208,10 +3304,15 @@ class GObject {
         var filter = buffer.readByte();
         if (filter == 1) {
             //TODO: filter support
-            buffer.readFloat();
-            buffer.readFloat();
-            buffer.readFloat();
-            buffer.readFloat();
+            f1 = buffer.readFloat();
+            f2 = buffer.readFloat();
+            this._brightness = f1;
+            this._contrast = f2;
+            f1 = buffer.readFloat();
+            f2 = buffer.readFloat();
+            this._saturation = f1;
+            this._hue = f2;
+            this.filter = true;
         }
         var str = buffer.readS();
         if (str != null)
@@ -3381,6 +3482,614 @@ var s_dragging;
 var s_dragQuery;
 var Decls$1 = {};
 var constructingDepth = { n: 0 };
+//cocos预编译后的效果文件
+let hueEffect = {
+    "techniques": [
+        {
+            "passes": [
+                {
+                    "blendState": {
+                        "targets": [
+                            {
+                                "blend": true,
+                                "blendSrc": 2,
+                                "blendDst": 4,
+                                "blendDstAlpha": 4
+                            }
+                        ]
+                    },
+                    "rasterizerState": {
+                        "cullMode": 0
+                    },
+                    "program": "../__test_cases__/gray_test/builtin-sprite-filter|sprite-vs:vert|sprite-fs:frag",
+                    "depthStencilState": {
+                        "depthTest": false,
+                        "depthWrite": false
+                    },
+                    "properties": {
+                        "alphaThreshold": {
+                            "value": [
+                                0.5
+                            ],
+                            "type": 13
+                        },
+                        "brightness": {
+                            "value": [
+                                0
+                            ],
+                            "inspector": {
+                                "displayName": "亮度[-1-1]"
+                            },
+                            "type": 13
+                        },
+                        "saturation": {
+                            "value": [
+                                1
+                            ],
+                            "inspector": {
+                                "displayName": "饱和度[0-2]"
+                            },
+                            "type": 13
+                        },
+                        "contrast": {
+                            "value": [
+                                1
+                            ],
+                            "inspector": {
+                                "displayName": "对比度[0-2]"
+                            },
+                            "type": 13
+                        },
+                        "hue": {
+                            "value": [
+                                0
+                            ],
+                            "inspector": {
+                                "displayName": "色相[-180-180]"
+                            },
+                            "type": 13
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "shaders": [
+        {
+            "blocks": [
+                {
+                    "name": "ALPHA_TEST_DATA",
+                    "members": [
+                        {
+                            "name": "alphaThreshold",
+                            "type": 13,
+                            "count": 1
+                        }
+                    ],
+                    "defines": [
+                        "USE_ALPHA_TEST"
+                    ],
+                    "stageFlags": 16,
+                    "binding": 0
+                },
+                {
+                    "name": "Constant",
+                    "members": [
+                        {
+                            "name": "brightness",
+                            "type": 13,
+                            "count": 1
+                        },
+                        {
+                            "name": "saturation",
+                            "type": 13,
+                            "count": 1
+                        },
+                        {
+                            "name": "contrast",
+                            "type": 13,
+                            "count": 1
+                        },
+                        {
+                            "name": "hue",
+                            "type": 13,
+                            "count": 1
+                        }
+                    ],
+                    "defines": [],
+                    "stageFlags": 16,
+                    "binding": 1
+                }
+            ],
+            "samplerTextures": [],
+            "samplers": [],
+            "textures": [],
+            "buffers": [],
+            "images": [],
+            "subpassInputs": [],
+            "attributes": [
+                {
+                    "name": "a_position",
+                    "defines": [],
+                    "format": 32,
+                    "location": 0
+                },
+                {
+                    "name": "a_texCoord",
+                    "defines": [],
+                    "format": 21,
+                    "location": 1
+                },
+                {
+                    "name": "a_color",
+                    "defines": [],
+                    "format": 44,
+                    "location": 2
+                }
+            ],
+            "varyings": [
+                {
+                    "name": "color",
+                    "type": 16,
+                    "count": 1,
+                    "defines": [],
+                    "stageFlags": 17,
+                    "location": 0
+                },
+                {
+                    "name": "uv0",
+                    "type": 14,
+                    "count": 1,
+                    "defines": [],
+                    "stageFlags": 17,
+                    "location": 1
+                }
+            ],
+            "fragColors": [
+                {
+                    "name": "cc_FragColor",
+                    "typename": "vec4",
+                    "type": 16,
+                    "count": 1,
+                    "defines": [],
+                    "stageFlags": 16,
+                    "location": 0
+                }
+            ],
+            "descriptors": [
+                {
+                    "rate": 0,
+                    "blocks": [
+                        {
+                            "tags": {
+                                "builtin": "local"
+                            },
+                            "name": "CCLocal",
+                            "members": [
+                                {
+                                    "name": "cc_matWorld",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_matWorldIT",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_lightingMapUVParam",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_localShadowBias",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "highp "
+                                }
+                            ],
+                            "defines": [
+                                "USE_LOCAL"
+                            ],
+                            "stageFlags": 1
+                        }
+                    ],
+                    "samplerTextures": [
+                        {
+                            "tags": {
+                                "builtin": "local"
+                            },
+                            "name": "cc_spriteTexture",
+                            "typename": "sampler2D",
+                            "type": 28,
+                            "count": 1,
+                            "defines": [
+                                "USE_TEXTURE"
+                            ],
+                            "stageFlags": 16
+                        }
+                    ],
+                    "samplers": [],
+                    "textures": [],
+                    "buffers": [],
+                    "images": [],
+                    "subpassInputs": []
+                },
+                {
+                    "rate": 1,
+                    "blocks": [
+                        {
+                            "name": "ALPHA_TEST_DATA",
+                            "members": [
+                                {
+                                    "name": "alphaThreshold",
+                                    "type": 13,
+                                    "count": 1
+                                }
+                            ],
+                            "defines": [
+                                "USE_ALPHA_TEST"
+                            ],
+                            "stageFlags": 16,
+                            "binding": 0
+                        },
+                        {
+                            "name": "Constant",
+                            "members": [
+                                {
+                                    "name": "brightness",
+                                    "type": 13,
+                                    "count": 1
+                                },
+                                {
+                                    "name": "saturation",
+                                    "type": 13,
+                                    "count": 1
+                                },
+                                {
+                                    "name": "contrast",
+                                    "type": 13,
+                                    "count": 1
+                                },
+                                {
+                                    "name": "hue",
+                                    "type": 13,
+                                    "count": 1
+                                }
+                            ],
+                            "defines": [],
+                            "stageFlags": 16,
+                            "binding": 1
+                        }
+                    ],
+                    "samplerTextures": [],
+                    "samplers": [],
+                    "textures": [],
+                    "buffers": [],
+                    "images": [],
+                    "subpassInputs": []
+                },
+                {
+                    "rate": 2,
+                    "blocks": [],
+                    "samplerTextures": [],
+                    "samplers": [],
+                    "textures": [],
+                    "buffers": [],
+                    "images": [],
+                    "subpassInputs": []
+                },
+                {
+                    "rate": 3,
+                    "blocks": [
+                        {
+                            "tags": {
+                                "builtin": "global"
+                            },
+                            "name": "CCGlobal",
+                            "members": [
+                                {
+                                    "name": "cc_time",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_screenSize",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_nativeSize",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_debug_view_mode",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_debug_view_composite_pack_1",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_debug_view_composite_pack_2",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_debug_view_composite_pack_3",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                }
+                            ],
+                            "defines": [],
+                            "stageFlags": 1
+                        },
+                        {
+                            "tags": {
+                                "builtin": "global"
+                            },
+                            "name": "CCCamera",
+                            "members": [
+                                {
+                                    "name": "cc_matView",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_matViewInv",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_matProj",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_matProjInv",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_matViewProj",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_matViewProjInv",
+                                    "typename": "mat4",
+                                    "type": 25,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_cameraPos",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "highp "
+                                },
+                                {
+                                    "name": "cc_surfaceTransform",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_screenScale",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_exposure",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_mainLitDir",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_mainLitColor",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_ambientSky",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_ambientGround",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_fogColor",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_fogBase",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_fogAdd",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_nearFar",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                },
+                                {
+                                    "name": "cc_viewPort",
+                                    "typename": "vec4",
+                                    "type": 16,
+                                    "count": 1,
+                                    "precision": "mediump "
+                                }
+                            ],
+                            "defines": [],
+                            "stageFlags": 1
+                        }
+                    ],
+                    "samplerTextures": [],
+                    "samplers": [],
+                    "textures": [],
+                    "buffers": [],
+                    "images": [],
+                    "subpassInputs": []
+                }
+            ],
+            "hash": 4243428481,
+            "glsl4": {
+                "vert": "\nprecision highp float;\nlayout(set = 0, binding = 0) uniform CCGlobal {\n  highp   vec4 cc_time;\n  mediump vec4 cc_screenSize;\n  mediump vec4 cc_nativeSize;\n  mediump vec4 cc_debug_view_mode;\n  mediump vec4 cc_debug_view_composite_pack_1;\n  mediump vec4 cc_debug_view_composite_pack_2;\n  mediump vec4 cc_debug_view_composite_pack_3;\n};\nlayout(set = 0, binding = 1) uniform CCCamera {\n  highp   mat4 cc_matView;\n  highp   mat4 cc_matViewInv;\n  highp   mat4 cc_matProj;\n  highp   mat4 cc_matProjInv;\n  highp   mat4 cc_matViewProj;\n  highp   mat4 cc_matViewProjInv;\n  highp   vec4 cc_cameraPos;\n  mediump vec4 cc_surfaceTransform;\n  mediump vec4 cc_screenScale;\n  mediump vec4 cc_exposure;\n  mediump vec4 cc_mainLitDir;\n  mediump vec4 cc_mainLitColor;\n  mediump vec4 cc_ambientSky;\n  mediump vec4 cc_ambientGround;\n  mediump vec4 cc_fogColor;\n  mediump vec4 cc_fogBase;\n  mediump vec4 cc_fogAdd;\n  mediump vec4 cc_nearFar;\n  mediump vec4 cc_viewPort;\n};\n#if USE_LOCAL\n  layout(set = 2, binding = 0) uniform CCLocal {\n    highp mat4 cc_matWorld;\n    highp mat4 cc_matWorldIT;\n    highp vec4 cc_lightingMapUVParam;\n    highp vec4 cc_localShadowBias;\n  };\n#endif\n#if SAMPLE_FROM_RT\n  #define QUATER_PI         0.78539816340\n  #define HALF_PI           1.57079632679\n  #define PI                3.14159265359\n  #define PI2               6.28318530718\n  #define PI4               12.5663706144\n  #define INV_QUATER_PI     1.27323954474\n  #define INV_HALF_PI       0.63661977237\n  #define INV_PI            0.31830988618\n  #define INV_PI2           0.15915494309\n  #define INV_PI4           0.07957747155\n  #define EPSILON           1e-6\n  #define EPSILON_LOWP      1e-4\n  #define LOG2              1.442695\n  #define EXP_VALUE         2.71828183f\n  #define FP_MAX            65504.0\n  #define FP_SCALE          0.0009765625\n  #define FP_SCALE_INV      1024.0\n  #define GRAY_VECTOR       vec3(0.299, 0.587, 0.114)\n      #define LIGHT_MAP_TYPE_DISABLED 0\n  #define LIGHT_MAP_TYPE_ALL_IN_ONE 1\n  #define LIGHT_MAP_TYPE_INDIRECT_OCCLUSION 2\n  #define REFLECTION_PROBE_TYPE_NONE 0\n  #define REFLECTION_PROBE_TYPE_CUBE 1\n  #define REFLECTION_PROBE_TYPE_PLANAR 2\n  #define LIGHT_TYPE_DIRECTIONAL 0.0\n  #define LIGHT_TYPE_SPHERE 1.0\n  #define LIGHT_TYPE_SPOT 2.0\n  #define IS_DIRECTIONAL_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_DIRECTIONAL)) < EPSILON)\n  #define IS_SPHERE_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_SPHERE)) < EPSILON)\n  #define IS_SPOT_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_SPOT)) < EPSILON)\n#endif\nlayout(location = 0) in vec3 a_position;\nlayout(location = 1) in vec2 a_texCoord;\nlayout(location = 2) in vec4 a_color;\nlayout(location = 0) out vec4 color;\nlayout(location = 1) out vec2 uv0;\nvec4 vert () {\n  vec4 pos = vec4(a_position, 1);\n  #if USE_LOCAL\n    pos = cc_matWorld * pos;\n  #endif\n  #if USE_PIXEL_ALIGNMENT\n    pos = cc_matView * pos;\n    pos.xyz = floor(pos.xyz);\n    pos = cc_matProj * pos;\n  #else\n    pos = cc_matViewProj * pos;\n  #endif\n  uv0 = a_texCoord;\n  #if SAMPLE_FROM_RT\n    uv0 = cc_cameraPos.w > 1.0 ? vec2(uv0.x, 1.0 - uv0.y) : uv0;\n  #endif\n  color = a_color;\n  return pos;\n}\nvoid main() { gl_Position = vert(); }",
+                "frag": "\nprecision highp float;\nvec4 CCSampleWithAlphaSeparated(sampler2D tex, vec2 uv) {\n#if CC_USE_EMBEDDED_ALPHA\n  return vec4(texture(tex, uv).rgb, texture(tex, uv + vec2(0.0, 0.5)).r);\n#else\n  return texture(tex, uv);\n#endif\n}\n#if USE_ALPHA_TEST\n  layout(set = 1, binding = 0) uniform ALPHA_TEST_DATA {\n    float alphaThreshold;\n  };\n#endif\nvoid ALPHA_TEST (in vec4 color) {\n  #if USE_ALPHA_TEST\n    if (color.a < alphaThreshold) discard;\n  #endif\n}\nvoid ALPHA_TEST (in float alpha) {\n  #if USE_ALPHA_TEST\n    if (alpha < alphaThreshold) discard;\n  #endif\n}\nlayout(location = 0) in vec4 color;\nlayout(set = 1, binding = 1) uniform Constant{\n  float brightness;\n  float saturation;\n  float contrast;\n  float hue;\n};\n#if USE_TEXTURE\n  layout(location = 1) in vec2 uv0;\n  layout(set = 2, binding = 12) uniform sampler2D cc_spriteTexture;\n#endif\n  vec3 rgb2hsv(vec3 rgb) {\n      float R = rgb.x, G = rgb.y, B = rgb.z;\n      vec3 hsv;\n      float max1 = max(R,max(G,B));\n      float min1 = min(R,min(G,B));\n      if (R == max1) {\n          hsv.x = (G-B)/(max1-min1);\n      }\n      if (G == max1) {\n          hsv.x = 2.0 + (B-R)/(max1-min1);\n      }\n      if (B == max1) {\n          hsv.x = 4.0 + (R-G)/(max1-min1);\n      }\n      hsv.x = hsv.x * 60.0;\n      if (hsv.x < 0.0) {\n          hsv.x = hsv.x + 360.0;\n      }\n      hsv.z = max1;\n      hsv.y = (max1 - min1) / max1;\n      return hsv;\n}\nvec3 hsv2rgb(vec3 hsv) {\n      float R,G,B;\n      if(hsv.y == 0.0) {\n          R = G = B = hsv.z;\n      }\n      else {\n          hsv.x = hsv.x/60.0;\n          int i = int(hsv.x);\n          float f = hsv.x - float(i);\n          float a = hsv.z * ( 1.0 - hsv.y );\n          float b = hsv.z * ( 1.0 - hsv.y * f );\n          float c = hsv.z * ( 1.0 - hsv.y * (1.0 - f ) );\n          if(i == 0) {\n              R = hsv.z; G = c; B = a;\n          }\n          else if(i == 1) {\n              R = b; G = hsv.z; B = a;\n          }\n          else if(i == 2) {\n              R = a; G = hsv.z; B = c;\n          }\n          else if(i == 3) {\n              R = a; G = b; B = hsv.z;\n          }\n          else if(i == 4) {\n              R = c; G = a; B = hsv.z;\n          }\n          else {\n              R = hsv.z; G = a; B = b;\n          }\n      }\n      return vec3(R,G,B);\n}\n  vec4 frag () {\n      vec4 o = vec4(1, 1, 1, 1);\n      #if USE_TEXTURE\n          o *= CCSampleWithAlphaSeparated(cc_spriteTexture, uv0);\n          o.rgb += brightness;\n          if(hue != 0.0) {\n              vec3 hsv = rgb2hsv(o.xyz);\n              hsv.x += hue;\n              hsv.x = mod(hsv.x, 360.0);\n              o.xyz = hsv2rgb(hsv.xyz);\n          }\n          if(saturation != 1.0) {\n              float gray = 0.2126 * o.r + 0.7152 * o.g + 0.0722 * o.b;\n              vec3 grayColor = vec3(gray ,gray ,gray);\n              o.rgb = mix(grayColor , o.rgb , saturation);\n          }\n          if(contrast != 1.0) {\n              vec3 avgColor = vec3(0.5 , 0.5 , 0.5);\n              o.rgb = mix(avgColor , o.rgb , contrast);\n          }\n      #endif\n      o *= color;\n      ALPHA_TEST(o);\n      return o;\n  }\nlayout(location = 0) out vec4 cc_FragColor;\nvoid main() { cc_FragColor = frag(); }"
+            },
+            "glsl3": {
+                "vert": "\nprecision highp float;\nlayout(std140) uniform CCGlobal {\n  highp   vec4 cc_time;\n  mediump vec4 cc_screenSize;\n  mediump vec4 cc_nativeSize;\n  mediump vec4 cc_debug_view_mode;\n  mediump vec4 cc_debug_view_composite_pack_1;\n  mediump vec4 cc_debug_view_composite_pack_2;\n  mediump vec4 cc_debug_view_composite_pack_3;\n};\nlayout(std140) uniform CCCamera {\n  highp   mat4 cc_matView;\n  highp   mat4 cc_matViewInv;\n  highp   mat4 cc_matProj;\n  highp   mat4 cc_matProjInv;\n  highp   mat4 cc_matViewProj;\n  highp   mat4 cc_matViewProjInv;\n  highp   vec4 cc_cameraPos;\n  mediump vec4 cc_surfaceTransform;\n  mediump vec4 cc_screenScale;\n  mediump vec4 cc_exposure;\n  mediump vec4 cc_mainLitDir;\n  mediump vec4 cc_mainLitColor;\n  mediump vec4 cc_ambientSky;\n  mediump vec4 cc_ambientGround;\n  mediump vec4 cc_fogColor;\n  mediump vec4 cc_fogBase;\n  mediump vec4 cc_fogAdd;\n  mediump vec4 cc_nearFar;\n  mediump vec4 cc_viewPort;\n};\n#if USE_LOCAL\n  layout(std140) uniform CCLocal {\n    highp mat4 cc_matWorld;\n    highp mat4 cc_matWorldIT;\n    highp vec4 cc_lightingMapUVParam;\n    highp vec4 cc_localShadowBias;\n  };\n#endif\n#if SAMPLE_FROM_RT\n  #define QUATER_PI         0.78539816340\n  #define HALF_PI           1.57079632679\n  #define PI                3.14159265359\n  #define PI2               6.28318530718\n  #define PI4               12.5663706144\n  #define INV_QUATER_PI     1.27323954474\n  #define INV_HALF_PI       0.63661977237\n  #define INV_PI            0.31830988618\n  #define INV_PI2           0.15915494309\n  #define INV_PI4           0.07957747155\n  #define EPSILON           1e-6\n  #define EPSILON_LOWP      1e-4\n  #define LOG2              1.442695\n  #define EXP_VALUE         2.71828183f\n  #define FP_MAX            65504.0\n  #define FP_SCALE          0.0009765625\n  #define FP_SCALE_INV      1024.0\n  #define GRAY_VECTOR       vec3(0.299, 0.587, 0.114)\n      #define LIGHT_MAP_TYPE_DISABLED 0\n  #define LIGHT_MAP_TYPE_ALL_IN_ONE 1\n  #define LIGHT_MAP_TYPE_INDIRECT_OCCLUSION 2\n  #define REFLECTION_PROBE_TYPE_NONE 0\n  #define REFLECTION_PROBE_TYPE_CUBE 1\n  #define REFLECTION_PROBE_TYPE_PLANAR 2\n  #define LIGHT_TYPE_DIRECTIONAL 0.0\n  #define LIGHT_TYPE_SPHERE 1.0\n  #define LIGHT_TYPE_SPOT 2.0\n  #define IS_DIRECTIONAL_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_DIRECTIONAL)) < EPSILON)\n  #define IS_SPHERE_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_SPHERE)) < EPSILON)\n  #define IS_SPOT_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_SPOT)) < EPSILON)\n#endif\nin vec3 a_position;\nin vec2 a_texCoord;\nin vec4 a_color;\nout vec4 color;\nout vec2 uv0;\nvec4 vert () {\n  vec4 pos = vec4(a_position, 1);\n  #if USE_LOCAL\n    pos = cc_matWorld * pos;\n  #endif\n  #if USE_PIXEL_ALIGNMENT\n    pos = cc_matView * pos;\n    pos.xyz = floor(pos.xyz);\n    pos = cc_matProj * pos;\n  #else\n    pos = cc_matViewProj * pos;\n  #endif\n  uv0 = a_texCoord;\n  #if SAMPLE_FROM_RT\n    uv0 = cc_cameraPos.w > 1.0 ? vec2(uv0.x, 1.0 - uv0.y) : uv0;\n  #endif\n  color = a_color;\n  return pos;\n}\nvoid main() { gl_Position = vert(); }",
+                "frag": "\nprecision highp float;\nvec4 CCSampleWithAlphaSeparated(sampler2D tex, vec2 uv) {\n#if CC_USE_EMBEDDED_ALPHA\n  return vec4(texture(tex, uv).rgb, texture(tex, uv + vec2(0.0, 0.5)).r);\n#else\n  return texture(tex, uv);\n#endif\n}\n#if USE_ALPHA_TEST\n  layout(std140) uniform ALPHA_TEST_DATA {\n    float alphaThreshold;\n  };\n#endif\nvoid ALPHA_TEST (in vec4 color) {\n  #if USE_ALPHA_TEST\n    if (color.a < alphaThreshold) discard;\n  #endif\n}\nvoid ALPHA_TEST (in float alpha) {\n  #if USE_ALPHA_TEST\n    if (alpha < alphaThreshold) discard;\n  #endif\n}\nin vec4 color;\nlayout(std140) uniform Constant{\n  float brightness;\n  float saturation;\n  float contrast;\n  float hue;\n};\n#if USE_TEXTURE\n  in vec2 uv0;\n  uniform sampler2D cc_spriteTexture;\n#endif\n  vec3 rgb2hsv(vec3 rgb) {\n      float R = rgb.x, G = rgb.y, B = rgb.z;\n      vec3 hsv;\n      float max1 = max(R,max(G,B));\n      float min1 = min(R,min(G,B));\n      if (R == max1) {\n          hsv.x = (G-B)/(max1-min1);\n      }\n      if (G == max1) {\n          hsv.x = 2.0 + (B-R)/(max1-min1);\n      }\n      if (B == max1) {\n          hsv.x = 4.0 + (R-G)/(max1-min1);\n      }\n      hsv.x = hsv.x * 60.0;\n      if (hsv.x < 0.0) {\n          hsv.x = hsv.x + 360.0;\n      }\n      hsv.z = max1;\n      hsv.y = (max1 - min1) / max1;\n      return hsv;\n}\nvec3 hsv2rgb(vec3 hsv) {\n      float R,G,B;\n      if(hsv.y == 0.0) {\n          R = G = B = hsv.z;\n      }\n      else {\n          hsv.x = hsv.x/60.0;\n          int i = int(hsv.x);\n          float f = hsv.x - float(i);\n          float a = hsv.z * ( 1.0 - hsv.y );\n          float b = hsv.z * ( 1.0 - hsv.y * f );\n          float c = hsv.z * ( 1.0 - hsv.y * (1.0 - f ) );\n          if(i == 0) {\n              R = hsv.z; G = c; B = a;\n          }\n          else if(i == 1) {\n              R = b; G = hsv.z; B = a;\n          }\n          else if(i == 2) {\n              R = a; G = hsv.z; B = c;\n          }\n          else if(i == 3) {\n              R = a; G = b; B = hsv.z;\n          }\n          else if(i == 4) {\n              R = c; G = a; B = hsv.z;\n          }\n          else {\n              R = hsv.z; G = a; B = b;\n          }\n      }\n      return vec3(R,G,B);\n}\n  vec4 frag () {\n      vec4 o = vec4(1, 1, 1, 1);\n      #if USE_TEXTURE\n          o *= CCSampleWithAlphaSeparated(cc_spriteTexture, uv0);\n          o.rgb += brightness;\n          if(hue != 0.0) {\n              vec3 hsv = rgb2hsv(o.xyz);\n              hsv.x += hue;\n              hsv.x = mod(hsv.x, 360.0);\n              o.xyz = hsv2rgb(hsv.xyz);\n          }\n          if(saturation != 1.0) {\n              float gray = 0.2126 * o.r + 0.7152 * o.g + 0.0722 * o.b;\n              vec3 grayColor = vec3(gray ,gray ,gray);\n              o.rgb = mix(grayColor , o.rgb , saturation);\n          }\n          if(contrast != 1.0) {\n              vec3 avgColor = vec3(0.5 , 0.5 , 0.5);\n              o.rgb = mix(avgColor , o.rgb , contrast);\n          }\n      #endif\n      o *= color;\n      ALPHA_TEST(o);\n      return o;\n  }\nlayout(location = 0) out vec4 cc_FragColor;\nvoid main() { cc_FragColor = frag(); }"
+            },
+            "glsl1": {
+                "vert": "\nprecision highp float;\nuniform highp mat4 cc_matView;\n  uniform highp mat4 cc_matProj;\n  uniform highp mat4 cc_matViewProj;\n  uniform highp vec4 cc_cameraPos;\n#if USE_LOCAL\n  uniform highp mat4 cc_matWorld;\n#endif\n#if SAMPLE_FROM_RT\n  #define QUATER_PI         0.78539816340\n  #define HALF_PI           1.57079632679\n  #define PI                3.14159265359\n  #define PI2               6.28318530718\n  #define PI4               12.5663706144\n  #define INV_QUATER_PI     1.27323954474\n  #define INV_HALF_PI       0.63661977237\n  #define INV_PI            0.31830988618\n  #define INV_PI2           0.15915494309\n  #define INV_PI4           0.07957747155\n  #define EPSILON           1e-6\n  #define EPSILON_LOWP      1e-4\n  #define LOG2              1.442695\n  #define EXP_VALUE         2.71828183f\n  #define FP_MAX            65504.0\n  #define FP_SCALE          0.0009765625\n  #define FP_SCALE_INV      1024.0\n  #define GRAY_VECTOR       vec3(0.299, 0.587, 0.114)\n      #define LIGHT_MAP_TYPE_DISABLED 0\n  #define LIGHT_MAP_TYPE_ALL_IN_ONE 1\n  #define LIGHT_MAP_TYPE_INDIRECT_OCCLUSION 2\n  #define REFLECTION_PROBE_TYPE_NONE 0\n  #define REFLECTION_PROBE_TYPE_CUBE 1\n  #define REFLECTION_PROBE_TYPE_PLANAR 2\n  #define LIGHT_TYPE_DIRECTIONAL 0.0\n  #define LIGHT_TYPE_SPHERE 1.0\n  #define LIGHT_TYPE_SPOT 2.0\n  #define IS_DIRECTIONAL_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_DIRECTIONAL)) < EPSILON)\n  #define IS_SPHERE_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_SPHERE)) < EPSILON)\n  #define IS_SPOT_LIGHT(light_type) (abs(float(light_type) - float(LIGHT_TYPE_SPOT)) < EPSILON)\n#endif\nattribute vec3 a_position;\nattribute vec2 a_texCoord;\nattribute vec4 a_color;\nvarying vec4 color;\nvarying vec2 uv0;\nvec4 vert () {\n  vec4 pos = vec4(a_position, 1);\n  #if USE_LOCAL\n    pos = cc_matWorld * pos;\n  #endif\n  #if USE_PIXEL_ALIGNMENT\n    pos = cc_matView * pos;\n    pos.xyz = floor(pos.xyz);\n    pos = cc_matProj * pos;\n  #else\n    pos = cc_matViewProj * pos;\n  #endif\n  uv0 = a_texCoord;\n  #if SAMPLE_FROM_RT\n    uv0 = cc_cameraPos.w > 1.0 ? vec2(uv0.x, 1.0 - uv0.y) : uv0;\n  #endif\n  color = a_color;\n  return pos;\n}\nvoid main() { gl_Position = vert(); }",
+                "frag": "\nprecision highp float;\nvec4 CCSampleWithAlphaSeparated(sampler2D tex, vec2 uv) {\n#if CC_USE_EMBEDDED_ALPHA\n  return vec4(texture2D(tex, uv).rgb, texture2D(tex, uv + vec2(0.0, 0.5)).r);\n#else\n  return texture2D(tex, uv);\n#endif\n}\n#if USE_ALPHA_TEST\n      uniform float alphaThreshold;\n#endif\nvoid ALPHA_TEST (in vec4 color) {\n  #if USE_ALPHA_TEST\n    if (color.a < alphaThreshold) discard;\n  #endif\n}\nvoid ALPHA_TEST (in float alpha) {\n  #if USE_ALPHA_TEST\n    if (alpha < alphaThreshold) discard;\n  #endif\n}\nvarying vec4 color;\n   uniform float brightness;\n   uniform float saturation;\n   uniform float contrast;\n   uniform float hue;\n#if USE_TEXTURE\n  varying vec2 uv0;\n  uniform sampler2D cc_spriteTexture;\n#endif\n  vec3 rgb2hsv(vec3 rgb) {\n      float R = rgb.x, G = rgb.y, B = rgb.z;\n      vec3 hsv;\n      float max1 = max(R,max(G,B));\n      float min1 = min(R,min(G,B));\n      if (R == max1) {\n          hsv.x = (G-B)/(max1-min1);\n      }\n      if (G == max1) {\n          hsv.x = 2.0 + (B-R)/(max1-min1);\n      }\n      if (B == max1) {\n          hsv.x = 4.0 + (R-G)/(max1-min1);\n      }\n      hsv.x = hsv.x * 60.0;\n      if (hsv.x < 0.0) {\n          hsv.x = hsv.x + 360.0;\n      }\n      hsv.z = max1;\n      hsv.y = (max1 - min1) / max1;\n      return hsv;\n}\nvec3 hsv2rgb(vec3 hsv) {\n      float R,G,B;\n      if(hsv.y == 0.0) {\n          R = G = B = hsv.z;\n      }\n      else {\n          hsv.x = hsv.x/60.0;\n          int i = int(hsv.x);\n          float f = hsv.x - float(i);\n          float a = hsv.z * ( 1.0 - hsv.y );\n          float b = hsv.z * ( 1.0 - hsv.y * f );\n          float c = hsv.z * ( 1.0 - hsv.y * (1.0 - f ) );\n          if(i == 0) {\n              R = hsv.z; G = c; B = a;\n          }\n          else if(i == 1) {\n              R = b; G = hsv.z; B = a;\n          }\n          else if(i == 2) {\n              R = a; G = hsv.z; B = c;\n          }\n          else if(i == 3) {\n              R = a; G = b; B = hsv.z;\n          }\n          else if(i == 4) {\n              R = c; G = a; B = hsv.z;\n          }\n          else {\n              R = hsv.z; G = a; B = b;\n          }\n      }\n      return vec3(R,G,B);\n}\n  vec4 frag () {\n      vec4 o = vec4(1, 1, 1, 1);\n      #if USE_TEXTURE\n          o *= CCSampleWithAlphaSeparated(cc_spriteTexture, uv0);\n          o.rgb += brightness;\n          if(hue != 0.0) {\n              vec3 hsv = rgb2hsv(o.xyz);\n              hsv.x += hue;\n              hsv.x = mod(hsv.x, 360.0);\n              o.xyz = hsv2rgb(hsv.xyz);\n          }\n          if(saturation != 1.0) {\n              float gray = 0.2126 * o.r + 0.7152 * o.g + 0.0722 * o.b;\n              vec3 grayColor = vec3(gray ,gray ,gray);\n              o.rgb = mix(grayColor , o.rgb , saturation);\n          }\n          if(contrast != 1.0) {\n              vec3 avgColor = vec3(0.5 , 0.5 , 0.5);\n              o.rgb = mix(avgColor , o.rgb , contrast);\n          }\n      #endif\n      o *= color;\n      ALPHA_TEST(o);\n      return o;\n  }\nvoid main() { gl_FragColor = frag(); }"
+            },
+            "builtins": {
+                "globals": {
+                    "blocks": [
+                        {
+                            "name": "CCGlobal",
+                            "defines": []
+                        },
+                        {
+                            "name": "CCCamera",
+                            "defines": []
+                        }
+                    ],
+                    "samplerTextures": [],
+                    "buffers": [],
+                    "images": []
+                },
+                "locals": {
+                    "blocks": [
+                        {
+                            "name": "CCLocal",
+                            "defines": [
+                                "USE_LOCAL"
+                            ]
+                        }
+                    ],
+                    "samplerTextures": [
+                        {
+                            "name": "cc_spriteTexture",
+                            "defines": [
+                                "USE_TEXTURE"
+                            ]
+                        }
+                    ],
+                    "buffers": [],
+                    "images": []
+                },
+                "statistics": {
+                    "CC_EFFECT_USED_VERTEX_UNIFORM_VECTORS": 54,
+                    "CC_EFFECT_USED_FRAGMENT_UNIFORM_VECTORS": 5
+                }
+            },
+            "defines": [
+                {
+                    "name": "USE_LOCAL",
+                    "type": "boolean",
+                    "defines": []
+                },
+                {
+                    "name": "SAMPLE_FROM_RT",
+                    "type": "boolean",
+                    "defines": []
+                },
+                {
+                    "name": "USE_PIXEL_ALIGNMENT",
+                    "type": "boolean",
+                    "defines": []
+                },
+                {
+                    "name": "CC_USE_EMBEDDED_ALPHA",
+                    "type": "boolean",
+                    "defines": []
+                },
+                {
+                    "name": "USE_ALPHA_TEST",
+                    "type": "boolean",
+                    "defines": []
+                },
+                {
+                    "name": "USE_TEXTURE",
+                    "type": "boolean",
+                    "defines": []
+                }
+            ],
+            "name": "../__test_cases__/gray_test/builtin-sprite-filter|sprite-vs:vert|sprite-fs:frag"
+        }
+    ]
+};
 
 class GGroup extends GObject {
     constructor() {
@@ -3989,6 +4698,7 @@ class Image extends Sprite {
         this._fillMethod = FillMethod.None;
         this._fillOrigin = FillOrigin.Left;
         this._fillAmount = 0;
+        this._mat = null;
     }
     get flip() {
         return this._flip;
@@ -4088,6 +4798,21 @@ class Image extends Sprite {
             }
         }
     }
+    handleFilterChanged(filter, brightness, saturation, contrast, hue) {
+        let sprite = this;
+        if (filter) {
+            this._mat = this._mat || GObject.createHueMaterial();
+            let mat = this._mat;
+            sprite.customMaterial = mat;
+            mat === null || mat === void 0 ? void 0 : mat.setProperty("brightness", brightness);
+            mat === null || mat === void 0 ? void 0 : mat.setProperty("saturation", saturation + 1);
+            mat === null || mat === void 0 ? void 0 : mat.setProperty("contrast", contrast + 1);
+            mat === null || mat === void 0 ? void 0 : mat.setProperty("hue", hue * 180);
+        }
+        else {
+            sprite && (sprite.customMaterial = null);
+        }
+    }
 }
 
 class GImage extends GObject {
@@ -4153,6 +4878,27 @@ class GImage extends GObject {
     }
     handleGrayedChanged() {
         this._content.grayscale = this._grayed;
+    }
+    handleFilterChanged() {
+        let sprite = this._node.getComponent(Image);
+        if (this._filter) {
+            let use = this._brightness !== 0 || this._contrast != 0 || this._hue !== 0 || this._saturation !== 0;
+            if (use && sprite) {
+                let mat = this.hueMat;
+                sprite.customMaterial = mat;
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("brightness", this._brightness);
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("saturation", this._saturation + 1);
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("contrast", this._contrast + 1);
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("hue", this._hue * 180);
+            }
+            else {
+                //参数都是0，为了合批，取消自定义材质
+                sprite && (sprite.customMaterial = null);
+            }
+        }
+        else {
+            sprite && (sprite.customMaterial = null);
+        }
     }
     getProp(index) {
         if (index == ObjectPropID.Color)
@@ -5039,7 +5785,7 @@ class UIPackage {
         let pkg = _instById[path];
         if (pkg)
             return pkg;
-        let asset = (bundle || resources).get(path, BufferAsset);
+        let asset = resources.get(path, BufferAsset);
         if (!asset) {
             console.error("Resource '" + path + "' not ready");
             return;
@@ -6249,6 +6995,27 @@ class GTextField extends GObject {
         }
         this.updateFontColor();
         this.updateStrokeColor();
+    }
+    handleFilterChanged() {
+        let label = this._label;
+        if (this._filter) {
+            let use = this._brightness !== 0 || this._contrast != 0 || this._hue !== 0 || this._saturation !== 0;
+            if (use && label) {
+                let mat = this.hueMat;
+                label.customMaterial = mat;
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("brightness", this._brightness);
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("saturation", this._saturation + 1);
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("contrast", this._contrast + 1);
+                mat === null || mat === void 0 ? void 0 : mat.setProperty("hue", this._hue * 180);
+            }
+            else {
+                //参数都是0，为了合批，取消自定义材质
+                this.handleGrayedChanged();
+            }
+        }
+        else {
+            this.handleGrayedChanged();
+        }
     }
     getProp(index) {
         switch (index) {
@@ -10641,6 +11408,18 @@ class GComponent extends GObject {
             this._children[i].grayed = v;
         }
     }
+    handleFilterChanged() {
+        var cnt = this._children.length;
+        var child;
+        for (var i = 0; i < cnt; ++i) {
+            child = this._children[i];
+            child.brightness = this.brightness;
+            child.saturation = this.saturation;
+            child.contrast = this.contrast;
+            child.hue = this.hue;
+            child.filter = this.filter;
+        }
+    }
     handleControllerChanged(c) {
         super.handleControllerChanged(c);
         if (this._scrollPane)
@@ -12239,6 +13018,10 @@ class GLoader extends GObject {
     }
     handleGrayedChanged() {
         this._content.grayscale = this._grayed;
+    }
+    handleFilterChanged() {
+        //default image
+        this._content.handleFilterChanged(this._filter, this._brightness, this._saturation, this._contrast, this._hue);
     }
     _hitTest(pt, globalPt) {
         if (this._content2) {
@@ -14247,6 +15030,7 @@ class GList extends GComponent {
                 for (i = 0; i < value; i++)
                     this.itemRenderer(i, this.getChildAt(i));
             }
+            //不需要在此执行handleFilterChanged,避免性能问题，应该根据业务需要在业务逻辑中手动调用
         }
     }
     refreshVirtualList() {

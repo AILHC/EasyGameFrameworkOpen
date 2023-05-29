@@ -95,7 +95,7 @@ declare module 'fairygui-cc/GGroup' {
 }
 
 declare module 'fairygui-cc/GObject' {
-    import { Vec2, Rect, Component, Node, UITransform, UIOpacity } from "cc";
+    import { Vec2, Rect, Component, Node, UITransform, UIOpacity, Material, EffectAsset } from "cc";
     import { Controller } from "fairygui-cc/Controller";
     import { BlendMode } from "fairygui-cc/display/BlendMode";
     import { EventCallBack } from "fairygui-cc/event/Event";
@@ -110,6 +110,9 @@ declare module 'fairygui-cc/GObject' {
     import { Relations } from "fairygui-cc/Relations";
     import { ByteBuffer } from "fairygui-cc/utils/ByteBuffer";
     export class GObject {
+        protected static _hueEffect: EffectAsset;
+        static get hueEffect(): EffectAsset;
+        static createHueMaterial(): Material;
         data?: any;
         packageItem?: PackageItem;
         static draggingObject: GObject | null;
@@ -159,7 +162,25 @@ declare module 'fairygui-cc/GObject' {
         _treeNode?: GTreeNode;
         _uiTrans: UITransform;
         _uiOpacity: UIOpacity;
+        protected _brightness: number;
+        protected _saturation: number;
+        protected _contrast: number;
+        protected _hue: number;
+        protected _filter: boolean;
+        protected _hueMat: Material;
+        get hueMat(): Material;
         constructor();
+        get brightness(): number;
+        set brightness(value: number);
+        get saturation(): number;
+        set saturation(value: number);
+        get contrast(): number;
+        set contrast(value: number);
+        get hue(): number;
+        set hue(value: number);
+        get filter(): boolean;
+        set filter(value: boolean);
+        createHueMaterial(): void;
         get id(): string;
         get name(): string;
         set name(value: string);
@@ -274,6 +295,7 @@ declare module 'fairygui-cc/GObject' {
         handlePositionChanged(): void;
         protected handleSizeChanged(): void;
         protected handleGrayedChanged(): void;
+        protected handleFilterChanged(): void;
         handleVisibleChanged(): void;
         hitTest(globalPt: Vec2, forTouch?: boolean): GObject;
         protected _hitTest(pt: Vec2, globalPt: Vec2): GObject;
@@ -352,6 +374,7 @@ declare module 'fairygui-cc/GImage' {
         set fillAmount(value: number);
         constructFromResource(): void;
         protected handleGrayedChanged(): void;
+        protected handleFilterChanged(): void;
         getProp(index: number): any;
         setProp(index: number, value: any): void;
         setup_beforeAdd(buffer: ByteBuffer, beginPos: number): void;
@@ -518,6 +541,7 @@ declare module 'fairygui-cc/GTextField' {
         protected onLabelSizeChanged(): void;
         protected handleSizeChanged(): void;
         protected handleGrayedChanged(): void;
+        protected handleFilterChanged(): void;
         getProp(index: number): any;
         setProp(index: number, value: any): void;
         setup_beforeAdd(buffer: ByteBuffer, beginPos: number): void;
@@ -643,6 +667,7 @@ declare module 'fairygui-cc/GLoader' {
         protected handleSizeChanged(): void;
         protected handleAnchorChanged(): void;
         protected handleGrayedChanged(): void;
+        protected handleFilterChanged(): void;
         protected _hitTest(pt: Vec2, globalPt: Vec2): GObject;
         getProp(index: number): any;
         setProp(index: number, value: any): void;
@@ -780,6 +805,7 @@ declare module 'fairygui-cc/GComponent' {
         protected handleAnchorChanged(): void;
         protected handleSizeChanged(): void;
         protected handleGrayedChanged(): void;
+        protected handleFilterChanged(): void;
         handleControllerChanged(c: Controller): void;
         protected _hitTest(pt: Vec2, globalPt: Vec2): GObject;
         setBoundsChangedFlag(): void;
@@ -1986,6 +2012,7 @@ declare module 'fairygui-cc/display/Image' {
         set fillClockwise(value: boolean);
         get fillAmount(): number;
         set fillAmount(value: number);
+        handleFilterChanged(filter: boolean, brightness: number, saturation: number, contrast: number, hue: number): void;
     }
 }
 
