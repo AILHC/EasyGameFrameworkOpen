@@ -991,10 +991,14 @@ export class Transition {
                 break;
 
             case ActionType.ColorFilter:
-                {
-                    //TODO: filter support
-                    break;
-                }
+                //console.error(value.f1 , value.f2 , value.f3, value.f4);
+                item.target._brightness = value.f1;
+                item.target._contrast = value.f2;
+                item.target._saturation = value.f3;
+                item.target._hue = value.f4;
+                item.target._filter = true;
+                item.target.handleFilterChanged();
+                break;
             case ActionType.Text:
                 item.target.text = value.text;
                 break;

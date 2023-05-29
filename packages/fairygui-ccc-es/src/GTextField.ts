@@ -515,22 +515,11 @@ export class GTextField extends GObject {
         this.updateStrokeColor();
     }
 
-    protected handleFilterChanged(): void {
+    public handleFilterChanged(): void {
         let label = this._label;
         if(this._filter) {
-            let use = this._brightness!==0 || this._contrast!=0 || this._hue!==0 || this._saturation!==0;
-            if(use && label) {
-                let mat = this.hueMat;
-                label.customMaterial = mat;
-                mat?.setProperty("brightness" , this._brightness);
-                mat?.setProperty("saturation" , this._saturation+1);
-                mat?.setProperty("contrast" , this._contrast+1);
-                mat?.setProperty("hue" , this._hue*180);
-            }
-            else {
-                //参数都是0，为了合批，取消自定义材质
-                this.handleGrayedChanged();
-            }
+            label.customMaterial = this.hueMat;
+            this.updateFilterProp();
         } 
         else {
             this.handleGrayedChanged();

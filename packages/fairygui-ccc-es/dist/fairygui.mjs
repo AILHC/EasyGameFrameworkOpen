@@ -2550,6 +2550,7 @@ class GObject {
         value = Math.min(1, value);
         value = Math.max(-1, value);
         this._brightness = value;
+        this.updateFilterProp();
     }
     //饱和度
     get saturation() {
@@ -2559,6 +2560,7 @@ class GObject {
         value = Math.min(1, value);
         value = Math.max(-1, value);
         this._saturation = value;
+        this.updateFilterProp();
     }
     //对比度
     get contrast() {
@@ -2568,6 +2570,7 @@ class GObject {
         value = Math.min(1, value);
         value = Math.max(-1, value);
         this._contrast = value;
+        this.updateFilterProp();
     }
     //色相
     get hue() {
@@ -2577,14 +2580,17 @@ class GObject {
         value = Math.min(1, value);
         value = Math.max(-1, value);
         this._hue = value;
+        this.updateFilterProp();
     }
     //滤镜
     get filter() {
         return this._filter;
     }
     set filter(value) {
-        this._filter = value;
-        this.handleFilterChanged();
+        if (this._filter !== value) {
+            this._filter = value;
+            this.handleFilterChanged();
+        }
     }
     createHueMaterial() {
         //创建效果对象
@@ -3187,6 +3193,14 @@ class GObject {
     }
     handleFilterChanged() {
         //default image
+    }
+    //更新滤镜的属性
+    updateFilterProp() {
+        let mat = this._hueMat;
+        mat === null || mat === void 0 ? void 0 : mat.setProperty("brightness", this._brightness);
+        mat === null || mat === void 0 ? void 0 : mat.setProperty("saturation", this._saturation + 1);
+        mat === null || mat === void 0 ? void 0 : mat.setProperty("contrast", this._contrast + 1);
+        mat === null || mat === void 0 ? void 0 : mat.setProperty("hue", this._hue * 180);
     }
     handleVisibleChanged() {
         this._node.active = this._finalVisible;
@@ -4699,7 +4713,6 @@ class Image extends Sprite {
         this._fillMethod = FillMethod.None;
         this._fillOrigin = FillOrigin.Left;
         this._fillAmount = 0;
-        this._mat = null;
     }
     get flip() {
         return this._flip;
@@ -4799,21 +4812,6 @@ class Image extends Sprite {
             }
         }
     }
-    handleFilterChanged(filter, brightness, saturation, contrast, hue) {
-        let sprite = this;
-        if (filter) {
-            this._mat = this._mat || GObject.createHueMaterial();
-            let mat = this._mat;
-            sprite.customMaterial = mat;
-            mat === null || mat === void 0 ? void 0 : mat.setProperty("brightness", brightness);
-            mat === null || mat === void 0 ? void 0 : mat.setProperty("saturation", saturation + 1);
-            mat === null || mat === void 0 ? void 0 : mat.setProperty("contrast", contrast + 1);
-            mat === null || mat === void 0 ? void 0 : mat.setProperty("hue", hue * 180);
-        }
-        else {
-            sprite && (sprite.customMaterial = null);
-        }
-    }
 }
 
 class GImage extends GObject {
@@ -4881,24 +4879,12 @@ class GImage extends GObject {
         this._content.grayscale = this._grayed;
     }
     handleFilterChanged() {
-        let sprite = this._node.getComponent(Image);
         if (this._filter) {
-            let use = this._brightness !== 0 || this._contrast != 0 || this._hue !== 0 || this._saturation !== 0;
-            if (use && sprite) {
-                let mat = this.hueMat;
-                sprite.customMaterial = mat;
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("brightness", this._brightness);
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("saturation", this._saturation + 1);
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("contrast", this._contrast + 1);
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("hue", this._hue * 180);
-            }
-            else {
-                //参数都是0，为了合批，取消自定义材质
-                sprite && (sprite.customMaterial = null);
-            }
+            this._content.customMaterial = this.hueMat;
+            this.updateFilterProp();
         }
         else {
-            sprite && (sprite.customMaterial = null);
+            this._content.customMaterial = null;
         }
     }
     getProp(index) {
@@ -7000,19 +6986,8 @@ class GTextField extends GObject {
     handleFilterChanged() {
         let label = this._label;
         if (this._filter) {
-            let use = this._brightness !== 0 || this._contrast != 0 || this._hue !== 0 || this._saturation !== 0;
-            if (use && label) {
-                let mat = this.hueMat;
-                label.customMaterial = mat;
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("brightness", this._brightness);
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("saturation", this._saturation + 1);
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("contrast", this._contrast + 1);
-                mat === null || mat === void 0 ? void 0 : mat.setProperty("hue", this._hue * 180);
-            }
-            else {
-                //参数都是0，为了合批，取消自定义材质
-                this.handleGrayedChanged();
-            }
+            label.customMaterial = this.hueMat;
+            this.updateFilterProp();
         }
         else {
             this.handleGrayedChanged();
@@ -10632,10 +10607,14 @@ class Transition {
                 value.lastOffsetY = value.offsetY;
                 break;
             case ActionType.ColorFilter:
-                {
-                    //TODO: filter support
-                    break;
-                }
+                //console.error(value.f1 , value.f2 , value.f3, value.f4);
+                item.target._brightness = value.f1;
+                item.target._contrast = value.f2;
+                item.target._saturation = value.f3;
+                item.target._hue = value.f4;
+                item.target._filter = true;
+                item.target.handleFilterChanged();
+                break;
             case ActionType.Text:
                 item.target.text = value.text;
                 break;
@@ -11414,11 +11393,12 @@ class GComponent extends GObject {
         var child;
         for (var i = 0; i < cnt; ++i) {
             child = this._children[i];
-            child.brightness = this.brightness;
-            child.saturation = this.saturation;
-            child.contrast = this.contrast;
-            child.hue = this.hue;
-            child.filter = this.filter;
+            child._brightness = this.brightness;
+            child._saturation = this.saturation;
+            child._contrast = this.contrast;
+            child._hue = this.hue;
+            child._filter = this.filter;
+            child.handleFilterChanged();
         }
     }
     handleControllerChanged(c) {
@@ -13021,8 +13001,13 @@ class GLoader extends GObject {
         this._content.grayscale = this._grayed;
     }
     handleFilterChanged() {
-        //default image
-        this._content.handleFilterChanged(this._filter, this._brightness, this._saturation, this._contrast, this._hue);
+        if (this._filter) {
+            this._content.customMaterial = this.hueMat;
+            this.updateFilterProp();
+        }
+        else {
+            this._content.customMaterial = null;
+        }
     }
     _hitTest(pt, globalPt) {
         if (this._content2) {

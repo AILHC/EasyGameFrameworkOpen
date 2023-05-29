@@ -109,17 +109,17 @@ export class GObject {
     private _hitTestPt?: Vec2;
 
     //亮度
-    protected _brightness = 0;
+    public _brightness = 0;
     //饱和度
-    protected _saturation = 0;
+    public _saturation = 0;
     //对比度
-    protected _contrast = 0 ;
+    public _contrast = 0 ;
     //色相
-    protected _hue = 0;
+    public _hue = 0;
     //滤镜
-    protected _filter = false;
+    public _filter = false;
 
-    protected _hueMat:Material = null;
+    public _hueMat:Material = null;
     //获得色相材质
     get hueMat() {
         if(!this._hueMat) {
@@ -155,6 +155,7 @@ export class GObject {
         value = Math.min(1,value);
         value = Math.max(-1 , value);
         this._brightness = value;
+        this.updateFilterProp();
     }
     //饱和度
     get saturation() {
@@ -164,6 +165,7 @@ export class GObject {
         value = Math.min(1,value);
         value = Math.max(-1 , value);
         this._saturation = value;
+        this.updateFilterProp();
     }
     //对比度
     get contrast() {
@@ -173,6 +175,7 @@ export class GObject {
         value = Math.min(1,value);
         value = Math.max(-1 , value);
         this._contrast = value;
+        this.updateFilterProp();
     }
     //色相
     get hue() {
@@ -182,14 +185,17 @@ export class GObject {
         value = Math.min(1,value);
         value = Math.max(-1 , value);
         this._hue = value;
+        this.updateFilterProp();
     }
     //滤镜
     get filter() {
         return this._filter;
     }
     set filter(value) {
-        this._filter = value;
-        this.handleFilterChanged();
+        if(this._filter !== value) {
+            this._filter = value;
+            this.handleFilterChanged();
+        }
     }
 
     public createHueMaterial() {
@@ -943,8 +949,16 @@ export class GObject {
         //nothing is base
     }
 
-    protected handleFilterChanged(): void {
+    public handleFilterChanged(): void {
         //default image
+    }
+    //更新滤镜的属性
+    public updateFilterProp() {
+        let mat = this._hueMat;
+        mat?.setProperty("brightness" , this._brightness);
+        mat?.setProperty("saturation" , this._saturation+1);
+        mat?.setProperty("contrast" , this._contrast+1);
+        mat?.setProperty("hue" , this._hue*180);
     }
 
     public handleVisibleChanged(): void {
@@ -1086,10 +1100,12 @@ export class GObject {
             //TODO: filter support
             f1 = buffer.readFloat();
             f2 = buffer.readFloat();
+            
             this._brightness = f1 ;
             this._contrast = f2;
             f1 = buffer.readFloat();
             f2 = buffer.readFloat();
+
             this._saturation = f1;
             this._hue = f2;
             this.filter = true;

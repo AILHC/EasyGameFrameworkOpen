@@ -162,12 +162,12 @@ declare module 'fairygui-cc/GObject' {
         _treeNode?: GTreeNode;
         _uiTrans: UITransform;
         _uiOpacity: UIOpacity;
-        protected _brightness: number;
-        protected _saturation: number;
-        protected _contrast: number;
-        protected _hue: number;
-        protected _filter: boolean;
-        protected _hueMat: Material;
+        _brightness: number;
+        _saturation: number;
+        _contrast: number;
+        _hue: number;
+        _filter: boolean;
+        _hueMat: Material;
         get hueMat(): Material;
         constructor();
         get brightness(): number;
@@ -295,7 +295,8 @@ declare module 'fairygui-cc/GObject' {
         handlePositionChanged(): void;
         protected handleSizeChanged(): void;
         protected handleGrayedChanged(): void;
-        protected handleFilterChanged(): void;
+        handleFilterChanged(): void;
+        updateFilterProp(): void;
         handleVisibleChanged(): void;
         hitTest(globalPt: Vec2, forTouch?: boolean): GObject;
         protected _hitTest(pt: Vec2, globalPt: Vec2): GObject;
@@ -374,7 +375,7 @@ declare module 'fairygui-cc/GImage' {
         set fillAmount(value: number);
         constructFromResource(): void;
         protected handleGrayedChanged(): void;
-        protected handleFilterChanged(): void;
+        handleFilterChanged(): void;
         getProp(index: number): any;
         setProp(index: number, value: any): void;
         setup_beforeAdd(buffer: ByteBuffer, beginPos: number): void;
@@ -541,7 +542,7 @@ declare module 'fairygui-cc/GTextField' {
         protected onLabelSizeChanged(): void;
         protected handleSizeChanged(): void;
         protected handleGrayedChanged(): void;
-        protected handleFilterChanged(): void;
+        handleFilterChanged(): void;
         getProp(index: number): any;
         setProp(index: number, value: any): void;
         setup_beforeAdd(buffer: ByteBuffer, beginPos: number): void;
@@ -667,7 +668,7 @@ declare module 'fairygui-cc/GLoader' {
         protected handleSizeChanged(): void;
         protected handleAnchorChanged(): void;
         protected handleGrayedChanged(): void;
-        protected handleFilterChanged(): void;
+        handleFilterChanged(): void;
         protected _hitTest(pt: Vec2, globalPt: Vec2): GObject;
         getProp(index: number): any;
         setProp(index: number, value: any): void;
@@ -805,7 +806,7 @@ declare module 'fairygui-cc/GComponent' {
         protected handleAnchorChanged(): void;
         protected handleSizeChanged(): void;
         protected handleGrayedChanged(): void;
-        protected handleFilterChanged(): void;
+        handleFilterChanged(): void;
         handleControllerChanged(c: Controller): void;
         protected _hitTest(pt: Vec2, globalPt: Vec2): GObject;
         setBoundsChangedFlag(): void;
@@ -2012,7 +2013,6 @@ declare module 'fairygui-cc/display/Image' {
         set fillClockwise(value: boolean);
         get fillAmount(): number;
         set fillAmount(value: number);
-        handleFilterChanged(filter: boolean, brightness: number, saturation: number, contrast: number, hue: number): void;
     }
 }
 

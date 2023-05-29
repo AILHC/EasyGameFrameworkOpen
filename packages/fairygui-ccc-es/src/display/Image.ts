@@ -8,7 +8,6 @@ export class Image extends Sprite {
     private _fillOrigin: FillOrigin = FillOrigin.Left;
     private _fillAmount: number = 0;
     private _fillClockwise: boolean;
-    private _mat:Material = null;
 
     public constructor() {
         super();
@@ -123,22 +122,6 @@ export class Image extends Sprite {
                     this.fillStart = 0.75;
                     break;
             }
-        }
-    }
-
-    public handleFilterChanged(filter:boolean , brightness:number , saturation:number , contrast:number , hue:number): void {
-        let sprite = this;
-        if(filter) {
-            this._mat = this._mat || GObject.createHueMaterial();
-            let mat = this._mat;
-            sprite.customMaterial = mat;
-            mat?.setProperty("brightness" , brightness);
-            mat?.setProperty("saturation" , saturation+1);
-            mat?.setProperty("contrast" , contrast+1);
-            mat?.setProperty("hue" , hue*180);
-        } 
-        else {
-            sprite && (sprite.customMaterial=null);
         }
     }
 }
