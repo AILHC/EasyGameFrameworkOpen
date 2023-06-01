@@ -111,8 +111,9 @@ declare module 'fairygui-cc/GObject' {
     import { ByteBuffer } from "fairygui-cc/utils/ByteBuffer";
     export class GObject {
         protected static _hueEffect: EffectAsset;
+        static set hueEffect(effect: EffectAsset);
         static get hueEffect(): EffectAsset;
-        static createHueMaterial(): Material;
+        static createHueMaterial(): Material | null;
         data?: any;
         packageItem?: PackageItem;
         static draggingObject: GObject | null;
@@ -180,7 +181,6 @@ declare module 'fairygui-cc/GObject' {
         set hue(value: number);
         get filter(): boolean;
         set filter(value: boolean);
-        createHueMaterial(): void;
         get id(): string;
         get name(): string;
         set name(value: string);
