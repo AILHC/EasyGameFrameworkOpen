@@ -1042,7 +1042,26 @@ declare global {
                 onShowOpt?: akView.GetShowStateType<TKeyType, ViewKeyTypes>,
                 onInitOpt?: akView.GetInitStateType<TKeyType, ViewKeyTypes>
             ): string;
-
+            /**
+             * 显示View,可await
+             * @param idOrkeyOrConfig 类key或者显示配置IShowConfig
+             * @param onShowOpt 显示透传数据
+             * @param onInitOpt 初始化数据
+             */
+            showAsync<ConfigKeyType extends keyType>(
+                idOrkeyOrConfig: akView.IShowOption<ConfigKeyType, ViewKeyTypes>
+            ): Promise<string>;
+            /**
+             * 显示View,可await
+             * @param keyOrViewAgentOrConfig 类key或者ViewAgent对象或者显示配置IShowConfig
+             * @param onShowOpt 显示透传数据
+             * @param onInitOpt 初始化数据
+             */
+            showAsync<TKeyType extends keyType>(
+                keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewKeyTypes>,
+                onShowOpt?: akView.GetShowStateType<TKeyType, ViewKeyTypes>,
+                onInitOpt?: akView.GetInitStateType<TKeyType, ViewKeyTypes>
+            ): Promise<string>;
             /**
              * 更新View
              * @param keyOrId 界面id

@@ -473,6 +473,35 @@ export class ViewMgr<
         }
         return viewAgent.id;
     }
+    public showAsync<TKeyType extends keyType>(
+        keyOrViewAgentOrConfig: TKeyType | akView.IShowOption<keyType, ViewKeyTypes>,
+        viewShowState?: akView.GetShowStateType<TKeyType, ViewKeyTypes>,
+        viewInitState?: akView.GetInitStateType<TKeyType, ViewKeyTypes>
+    ) {
+        let id: string;
+        if (typeof keyOrViewAgentOrConfig == "string") {
+            id = keyOrViewAgentOrConfig;
+        } else if (typeof keyOrViewAgentOrConfig === "object") {
+            if (keyOrViewAgentOrConfig["__$flag"]) {
+                let viewAgent = keyOrViewAgentOrConfig as akView.IViewAgent;
+                id = viewAgent.id;
+
+            } else {
+                let showOpt = keyOrViewAgentOrConfig as akView.IShowOption<keyType, ViewKeyTypes>;
+                id = showOpt.key as string;
+
+            }
+        } else {
+            console.warn(`[viewMgr](show) unknown param`, keyOrViewAgentOrConfig);
+            return;
+        }
+
+        const promise = new Promise<string>((res) => {
+            this._eventBus.onAkViewEvent(id, "onViewShow", res.bind(null, id));
+        });
+        this.show(keyOrViewAgentOrConfig, viewShowState, viewInitState);
+        return promise;
+    }
     /**
      * 显示
      * @param viewAgent
