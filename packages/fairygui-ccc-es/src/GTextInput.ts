@@ -22,6 +22,8 @@ export class GTextInput extends GTextField {
         this._editBox.maxLength = -1;
         this._editBox["_updateTextLabel"]();
 
+        this._label = this._editBox.textLabel;
+
         this._node.on('text-changed', this.onTextChanged, this);
         this.on(FUIEvent.TOUCH_END, this.onTouchEnd1, this);
 

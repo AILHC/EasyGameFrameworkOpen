@@ -1,4 +1,4 @@
-import { gfx, UIRenderer, Event as Event$1, Vec2, Node, game, director, macro, Color, Layers, Font, resources, Vec3, Rect, UITransform, UIOpacity, Material, Component, Graphics, misc, Sprite, Size, screen, view, ImageAsset, AudioClip, BufferAsset, AssetManager, Asset, assetManager, Texture2D, SpriteFrame, BitmapFont, sp, dragonBones, path, Label, LabelOutline, LabelShadow, builtinResMgr, SpriteAtlas, RichText, sys, EventMouse, EventTarget, Mask, math, isValid, View, AudioSourceComponent, EditBox } from 'cc';
+import { gfx, UIRenderer, Event as Event$1, Vec2, Node, game, director, macro, Color, Layers, Font, resources, Vec3, Rect, Material, UITransform, UIOpacity, Component, Graphics, misc, Sprite, Size, screen, view, ImageAsset, AudioClip, BufferAsset, AssetManager, Asset, assetManager, Texture2D, SpriteFrame, BitmapFont, sp, dragonBones, path, Label, LabelOutline, LabelShadow, builtinResMgr, SpriteAtlas, RichText, sys, EventMouse, EventTarget, Mask, math, isValid, View, AudioSourceComponent, EditBox } from 'cc';
 import { EDITOR } from 'cc/env';
 
 var ButtonMode;
@@ -2460,6 +2460,41 @@ function getFontByName(name) {
 }
 
 class GObject {
+    //设置色相效果资源
+    static set hueEffect(effect) {
+        this._hueEffect = effect;
+    }
+    //获得色相效果文件
+    static get hueEffect() {
+        if (!GObject._hueEffect) {
+            //创建效果对象
+            console.error("hue effect is null , please initialize the effect resource before using it ");
+        }
+        return GObject._hueEffect;
+    }
+    //创建一个色相材质
+    static createHueMaterial() {
+        if (GObject.hueEffect) {
+            //创建材质对象
+            let mat = new Material();
+            mat.initialize({
+                // 通过 effect 名指定材质使用的着色器资源
+                effectAsset: GObject.hueEffect,
+                //宏定义
+                defines: {
+                    USE_TEXTURE: true
+                }
+            });
+            return mat;
+        }
+    }
+    //获得色相材质
+    get hueMat() {
+        if (!this._hueMat) {
+            this._hueMat = GObject.createHueMaterial();
+        }
+        return this._hueMat;
+    }
     constructor() {
         this._x = 0;
         this._y = 0;
@@ -2508,41 +2543,6 @@ class GObject {
         this._gears = new Array(10);
         this._blendMode = BlendMode.Normal;
         this._partner = this._node.addComponent(GObjectPartner);
-    }
-    //设置色相效果资源
-    static set hueEffect(effect) {
-        this._hueEffect = effect;
-    }
-    //获得色相效果文件
-    static get hueEffect() {
-        if (!GObject._hueEffect) {
-            //创建效果对象
-            console.error("hue effect is null , please initialize the effect resource before using it ");
-        }
-        return GObject._hueEffect;
-    }
-    //创建一个色相材质
-    static createHueMaterial() {
-        if (GObject.hueEffect) {
-            //创建材质对象
-            let mat = new Material();
-            mat.initialize({
-                // 通过 effect 名指定材质使用的着色器资源
-                effectAsset: GObject.hueEffect,
-                //宏定义
-                defines: {
-                    USE_TEXTURE: true
-                }
-            });
-            return mat;
-        }
-    }
-    //获得色相材质
-    get hueMat() {
-        if (!this._hueMat) {
-            this._hueMat = GObject.createHueMaterial();
-        }
-        return this._hueMat;
     }
     //亮度
     get brightness() {
@@ -6107,7 +6107,7 @@ class GTextField extends GObject {
         }
         else {
             if (!this._outline) {
-                this._outline = this._node.addComponent(LabelOutline);
+                this._outline = this._label.addComponent(LabelOutline);
                 this.updateStrokeColor();
             }
             else
@@ -6134,7 +6134,7 @@ class GTextField extends GObject {
         this._shadowOffset.set(value);
         if (this._shadowOffset.x != 0 || this._shadowOffset.y != 0) {
             if (!this._shadow) {
-                this._shadow = this._node.addComponent(LabelShadow);
+                this._shadow = this._label.addComponent(LabelShadow);
                 this.updateShadowColor();
             }
             else
@@ -11429,6 +11429,17 @@ class Window extends GComponent {
 }
 
 class GRoot extends GComponent {
+    static get inst() {
+        if (!GRoot._inst)
+            throw 'Call GRoot.create first!';
+        return GRoot._inst;
+    }
+    static create() {
+        GRoot._inst = new GRoot();
+        director.getScene().getChildByName('Canvas').addChild(GRoot._inst.node);
+        GRoot._inst.onWinResize();
+        return GRoot._inst;
+    }
     constructor() {
         super();
         this._node.name = "GRoot";
@@ -11448,17 +11459,6 @@ class GRoot extends GComponent {
             View.instance.on('canvas-resize', this._thisOnResized);
             window.addEventListener('orientationchange', this._thisOnResized);
         }
-    }
-    static get inst() {
-        if (!GRoot._inst)
-            throw 'Call GRoot.create first!';
-        return GRoot._inst;
-    }
-    static create() {
-        GRoot._inst = new GRoot();
-        director.getScene().getChildByName('Canvas').addChild(GRoot._inst.node);
-        GRoot._inst.onWinResize();
-        return GRoot._inst;
     }
     onDestroy() {
         View.instance.off('design-resolution-changed', this.onWinResize, this);
@@ -11774,6 +11774,7 @@ class GTextInput extends GTextField {
         this._editBox = this._node.addComponent(MyEditBox);
         this._editBox.maxLength = -1;
         this._editBox["_updateTextLabel"]();
+        this._label = this._editBox.textLabel;
         this._node.on('text-changed', this.onTextChanged, this);
         this.on(Event.TOUCH_END, this.onTouchEnd1, this);
         this.autoSize = AutoSizeType.None;
@@ -17181,6 +17182,11 @@ UIObjectFactory.extensions = {};
 Decls.UIObjectFactory = UIObjectFactory;
 
 class DragDropManager {
+    static get inst() {
+        if (!DragDropManager._inst)
+            DragDropManager._inst = new DragDropManager();
+        return DragDropManager._inst;
+    }
     constructor() {
         this._agent = new GLoader();
         this._agent.draggable = true;
@@ -17191,11 +17197,6 @@ class DragDropManager {
         this._agent.verticalAlign = VertAlignType.Middle;
         this._agent.sortingOrder = 1000000;
         this._agent.on(Event.DRAG_END, this.onDragEnd, this);
-    }
-    static get inst() {
-        if (!DragDropManager._inst)
-            DragDropManager._inst = new DragDropManager();
-        return DragDropManager._inst;
     }
     get dragAgent() {
         return this._agent;

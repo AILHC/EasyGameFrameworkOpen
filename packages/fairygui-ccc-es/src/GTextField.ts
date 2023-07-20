@@ -203,7 +203,7 @@ export class GTextField extends GObject {
         }
         else {
             if (!this._outline) {
-                this._outline = this._node.addComponent(LabelOutline);
+                this._outline = this._label.addComponent(LabelOutline);
                 this.updateStrokeColor();
             }
             else
@@ -234,7 +234,7 @@ export class GTextField extends GObject {
         this._shadowOffset.set(value);
         if (this._shadowOffset.x != 0 || this._shadowOffset.y != 0) {
             if (!this._shadow) {
-                this._shadow = this._node.addComponent(LabelShadow);
+                this._shadow = this._label.addComponent(LabelShadow);
                 this.updateShadowColor();
             }
             else
