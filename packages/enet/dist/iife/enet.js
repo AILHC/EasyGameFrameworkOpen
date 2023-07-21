@@ -412,9 +412,6 @@ var enet = (function (exports) {
             }
         }
         _onHandshake(dpkg) {
-            if (dpkg.errorMsg) {
-                return;
-            }
             this._handshakeInit(dpkg);
             const ackPkg = this._protoHandler.encodePkg({ type: exports.PackageType.HANDSHAKE_ACK });
             this.send(ackPkg);
@@ -455,9 +452,6 @@ var enet = (function (exports) {
             }
         }
         _onData(dpkg) {
-            if (dpkg.errorMsg) {
-                return;
-            }
             let reqCfg;
             if (!isNaN(dpkg.reqId) && dpkg.reqId > 0) {
                 const reqId = dpkg.reqId;

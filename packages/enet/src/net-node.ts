@@ -342,9 +342,6 @@ export class NetNode<ProtoType,
      * @param dpkg
      */
     protected _onHandshake(dpkg: enet.IDecodePackage) {
-        if (dpkg.errorMsg) {
-            return;
-        }
         this._handshakeInit(dpkg);
         const ackPkg = this._protoHandler.encodePkg({ type: PackageType.HANDSHAKE_ACK });
         this.send(ackPkg);
@@ -410,9 +407,6 @@ export class NetNode<ProtoType,
      * @param dpkg
      */
     protected _onData(dpkg: enet.IDecodePackage) {
-        if (dpkg.errorMsg) {
-            return;
-        }
         let reqCfg: enet.IRequestConfig;
         if (!isNaN(dpkg.reqId) && dpkg.reqId > 0) {
             //请求
