@@ -24,7 +24,7 @@ declare global {
         // }
         //     ? StateType
         //     : any;
-        type GetResType<IndexKey, StateTypes, InferKey extends string> = GetTypeMapType<
+        type GetDataType<IndexKey, StateTypes, InferKey extends string> = GetTypeMapType<
             IndexKey,
             StateTypes
         > extends {
@@ -362,7 +362,8 @@ declare global {
         }
         interface INode<ProtoType extends Record<never, INetProtocolReqResType> = any,
             InferReqTypeKey extends string = "reqType",
-            InferResTypeKey extends string = "resType"> {
+            InferResTypeKey extends string = "resType",
+            InferPushTypeKey extends string = "pushType"> {
             /**
              * 协议key
              */
@@ -398,7 +399,7 @@ declare global {
              * @param resHandler 响应处理
              */
             request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
-                ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+                ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferResTypeKey>,
                 ProtoKeyType extends ((keyof ProtoType) | String)>
                 (
                     protoKey: ProtoKeyType,
@@ -420,7 +421,7 @@ declare global {
              * @returns 返回Promise
              */
             requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
-                ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+                ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferResTypeKey>,
                 ProtoKeyType extends ((keyof ProtoType) | String)
             > (
                 protoKey: ProtoKeyType,
@@ -446,7 +447,7 @@ declare global {
              * @param protoKey
              * @param handler
              */
-            onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+            onPush<ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferPushTypeKey>,
                 ProtoKeyType extends ((keyof ProtoType) | String)>
                 (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 
@@ -455,7 +456,7 @@ declare global {
              * @param protoKey
              * @param handler
              */
-            oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
+            oncePush<ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferPushTypeKey>,
                 ProtoKeyType extends ((keyof ProtoType) | String)>
                 (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 

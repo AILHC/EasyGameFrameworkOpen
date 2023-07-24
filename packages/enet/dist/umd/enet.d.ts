@@ -9,7 +9,7 @@ declare module 'enet' {
 	        type GetReqType<IndexKey, StateTypes, InferKey extends string> = GetTypeMapType<IndexKey, StateTypes> extends {
 	            [key in InferKey]: infer StateType;
 	        } ? StateType : any;
-	        type GetResType<IndexKey, StateTypes, InferKey extends string> = GetTypeMapType<IndexKey, StateTypes> extends {
+	        type GetDataType<IndexKey, StateTypes, InferKey extends string> = GetTypeMapType<IndexKey, StateTypes> extends {
 	            [key in InferKey]: infer StateType;
 	        } ? StateType : any;
 	        type GetTypeMapType<IndexKey, TypeMap> = IndexKey extends keyof TypeMap ? TypeMap[ToAnyIndexKey<IndexKey, TypeMap>] : never;
@@ -316,7 +316,7 @@ declare module 'enet' {
 	            /**使用加密 */
 	            useCrypto?: boolean;
 	        }
-	        interface INode<ProtoType extends Record<never, INetProtocolReqResType> = any, InferReqTypeKey extends string = "reqType", InferResTypeKey extends string = "resType"> {
+	        interface INode<ProtoType extends Record<never, INetProtocolReqResType> = any, InferReqTypeKey extends string = "reqType", InferResTypeKey extends string = "resType", InferPushTypeKey extends string = "pushType"> {
 	            /**
 	             * 协议key
 	             */
@@ -353,7 +353,7 @@ declare module 'enet' {
 	             * @param data 请求数据体
 	             * @param resHandler 响应处理
 	             */
-	            request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+	            request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
 	            /**
 	             * 请求协议接口，处理返回
 	             * @param protoKey 协议key
@@ -366,7 +366,7 @@ declare module 'enet' {
 	             * @param data 请求数据体
 	             * @returns 返回Promise
 	             */
-	            requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
+	            requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
 	            /**
 	             * 发送网络数据
 	             * @param netData
@@ -384,13 +384,13 @@ declare module 'enet' {
 	             * @param protoKey
 	             * @param handler
 	             */
-	            onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+	            onPush<ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferPushTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 	            /**
 	             * 监听一次推送
 	             * @param protoKey
 	             * @param handler
 	             */
-	            oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+	            oncePush<ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferPushTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
 	            /**
 	             * 取消监听推送
 	             * @param protoKey 协议
@@ -484,7 +484,7 @@ declare module 'enet' {
 
 }
 declare module 'enet' {
-	class NetNode<ProtoType, InferReqTypeKey extends string = "reqType", InferResTypeKey extends string = "resType"> implements enet.INode<ProtoType, InferReqTypeKey, InferResTypeKey> {
+	class NetNode<ProtoType, InferReqTypeKey extends string = "reqType", InferResTypeKey extends string = "resType", InferPushTypeKey extends string = "pushType"> implements enet.INode<ProtoType, InferReqTypeKey, InferResTypeKey, InferPushTypeKey> {
 	    keys: Readonly<{
 	        [P in keyof ProtoType]: P;
 	    }>;
@@ -576,12 +576,12 @@ declare module 'enet' {
 	    connect(option: string | enet.IConnectOptions, connectEnd?: VoidFunction): void;
 	    disConnect(): void;
 	    reConnect(): void;
-	    request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
-	    requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
+	    request<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData, resHandler: enet.ICallbackHandler<enet.IDecodePackage<ResData>> | enet.ValueCallback<enet.IDecodePackage<ResData>>): void;
+	    requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ResData extends enet.GetDataType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data: ReqData): Promise<enet.IDecodePackage<ResData>>;
 	    notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data?: ReqData): void;
 	    send(netData: enet.NetData): void;
-	    onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
-	    oncePush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void;
+	    onPush<PushData extends enet.GetDataType<ProtoKeyType, ProtoType, InferPushTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<PushData>): void;
+	    oncePush<PushData extends enet.GetDataType<ProtoKeyType, ProtoType, InferPushTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, handler: enet.AnyCallback<PushData>): void;
 	    offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
 	    offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void;
 	    /**
@@ -673,6 +673,6 @@ declare namespace enet {
 	type DefaultNetEventHandler = import('enet').DefaultNetEventHandler;
 	type DefaultProtoHandler<ProtoKeyType> = import('enet').DefaultProtoHandler<ProtoKeyType>;
 	type WSocket = import('enet').WSocket;
-	type NetNode<ProtoType,  InferReqTypeKey extends string = "reqType",  InferResTypeKey extends string = "resType"> = import('enet').NetNode<ProtoType, InferReqTypeKey, InferResTypeKey>;
+	type NetNode<ProtoType,  InferReqTypeKey extends string = "reqType",  InferResTypeKey extends string = "resType",  InferPushTypeKey extends string = "pushType"> = import('enet').NetNode<ProtoType, InferReqTypeKey, InferResTypeKey, InferPushTypeKey>;
 }
 declare const enet:typeof import("enet");
