@@ -3,31 +3,31 @@ import { SocketState } from "./socketStateType";
 export class WSocket implements enet.ISocket {
     private _sk: WebSocket;
     private _eventHandler: enet.ISocketEventHandler;
-    public get state(): SocketState {
+    public get state (): SocketState {
         return this._sk ? this._sk.readyState : SocketState.CLOSED;
     }
-    public get isConnected(): boolean {
+    public get isConnected (): boolean {
         return this._sk ? this._sk.readyState === SocketState.OPEN : false;
     }
-    setEventHandler(handler: enet.ISocketEventHandler): void {
+    setEventHandler (handler: enet.ISocketEventHandler): void {
         this._eventHandler = handler;
     }
-    connect(opt: enet.IConnectOptions): boolean {
+    connect (opt: enet.IConnectOptions): boolean {
         let url = opt.url;
-        if (!url) {
-            if (opt.host && opt.port) {
+        if(!url) {
+            if(opt.host && opt.port) {
                 url = `${opt.protocol ? "wss" : "ws"}://${opt.host}:${opt.port}`;
             } else {
                 return false;
             }
         }
         opt.url = url;
-        if (this._sk) {
+        if(this._sk) {
             this.close(true);
         }
-        if (!this._sk) {
+        if(!this._sk) {
             this._sk = new WebSocket(url);
-            if (!opt.binaryType) {
+            if(!opt.binaryType) {
                 opt.binaryType = "arraybuffer";
             }
             this._sk.binaryType = opt.binaryType;
@@ -37,16 +37,16 @@ export class WSocket implements enet.ISocket {
             this._sk.onopen = this._eventHandler?.onSocketConnected && this._eventHandler?.onSocketConnected;
         }
     }
-    send(data: enet.NetData): void {
-        if (this._sk) {
+    send (data: enet.NetData): void {
+        if(this._sk) {
             this._sk.send(data);
         } else {
             console.error(`socket is null`);
         }
     }
 
-    close(disconnect?: boolean): void {
-        if (this._sk) {
+    close (disconnect?: boolean): void {
+        if(this._sk) {
             const isConnected = this.isConnected;
             this._sk.close();
             this._sk.onclose = null;
@@ -54,7 +54,7 @@ export class WSocket implements enet.ISocket {
             this._sk.onmessage = null;
             this._sk.onopen = null;
             this._sk = null;
-            if (isConnected) {
+            if(isConnected) {
                 this._eventHandler?.onSocketClosed && this._eventHandler?.onSocketClosed(disconnect);
             }
         }

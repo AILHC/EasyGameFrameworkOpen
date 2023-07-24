@@ -8,7 +8,7 @@ export class NetNode<ProtoType,
     InferReqTypeKey extends string = "reqType",
     InferResTypeKey extends string = "resType"> implements enet.INode<ProtoType, InferReqTypeKey, InferResTypeKey> {
     keys: Readonly<{ [P in keyof ProtoType]: P; }> = new Proxy({} as any, {
-        get(target, p, receiver) {
+        get (target, p, receiver) {
             return p;
         }
     });
@@ -16,21 +16,21 @@ export class NetNode<ProtoType,
      * 套接字实现
      */
     protected _socket: enet.ISocket;
-    public get socket(): enet.ISocket {
+    public get socket (): enet.ISocket {
         return this._socket;
     }
     /**
      * 网络事件处理器
      */
     protected _netEventHandler: enet.INetEventHandler;
-    public get netEventHandler(): enet.INetEventHandler<any> {
+    public get netEventHandler (): enet.INetEventHandler<any> {
         return this._netEventHandler;
     }
     /**
      * 协议处理器
      */
     protected _protoHandler: enet.IProtoHandler;
-    public get protoHandler(): enet.IProtoHandler<any> {
+    public get protoHandler (): enet.IProtoHandler<any> {
         return this._protoHandler;
     }
     /**
@@ -86,8 +86,8 @@ export class NetNode<ProtoType,
     /**
      * 获取socket事件处理器
      */
-    protected get socketEventHandler(): enet.ISocketEventHandler {
-        if (!this._socketEventHandler) {
+    protected get socketEventHandler (): enet.ISocketEventHandler {
+        if(!this._socketEventHandler) {
             this._socketEventHandler = {
                 onSocketClosed: this._onSocketClosed.bind(this),
                 onSocketConnected: this._onSocketConnected.bind(this),
@@ -107,8 +107,8 @@ export class NetNode<ProtoType,
     /**使用加密 */
     protected _useCrypto: boolean;
 
-    public init(config?: enet.INodeConfig): void {
-        if (this._inited) return;
+    public init (config?: enet.INodeConfig): void {
+        if(this._inited) return;
 
         this._protoHandler = config && config.protoHandler ? config.protoHandler : new DefaultProtoHandler();
         this._socket = config && config.socket ? config.socket : new WSocket();
@@ -118,17 +118,17 @@ export class NetNode<ProtoType,
         this._oncePushHandlerMap = {};
         this._reqCfgMap = {};
         const reConnectCfg = config && config.reConnectCfg;
-        if (!reConnectCfg) {
+        if(!reConnectCfg) {
             this._reConnectCfg = {
                 reconnectCount: 4,
                 connectTimeout: 60000
             };
         } else {
             this._reConnectCfg = reConnectCfg;
-            if (isNaN(reConnectCfg.reconnectCount)) {
+            if(isNaN(reConnectCfg.reconnectCount)) {
                 this._reConnectCfg.reconnectCount = 4;
             }
-            if (isNaN(reConnectCfg.connectTimeout)) {
+            if(isNaN(reConnectCfg.connectTimeout)) {
                 this._reConnectCfg.connectTimeout = 60000;
             }
         }
@@ -145,18 +145,18 @@ export class NetNode<ProtoType,
         this._pkgTypeHandlers[PackageType.KICK] = this._onKick.bind(this);
     }
 
-    public connect(option: string | enet.IConnectOptions, connectEnd?: VoidFunction): void {
+    public connect (option: string | enet.IConnectOptions, connectEnd?: VoidFunction): void {
         const socket = this._socket;
         const socketInCloseState =
             socket && (socket.state === SocketState.CLOSING || socket.state === SocketState.CLOSED);
-        if (this._inited && socketInCloseState) {
-            if (typeof option === "string") {
+        if(this._inited && socketInCloseState) {
+            if(typeof option === "string") {
                 option = {
                     url: option,
                     connectEnd: connectEnd
                 };
             }
-            if (connectEnd) {
+            if(connectEnd) {
                 option.connectEnd = connectEnd;
             }
             this._connectOpt = option;
@@ -168,29 +168,29 @@ export class NetNode<ProtoType,
             console.error(`is not inited${socket ? " , socket state" + socket.state : ""}`);
         }
     }
-    public disConnect(): void {
+    public disConnect (): void {
         this._socket.close(true);
 
         //清理心跳定时器
-        if (this._heartbeatTimeId) {
+        if(this._heartbeatTimeId) {
             clearTimeout(this._heartbeatTimeId);
             this._heartbeatTimeId = undefined;
         }
-        if (this._heartbeatTimeoutId) {
+        if(this._heartbeatTimeoutId) {
             clearTimeout(this._heartbeatTimeoutId);
             this._heartbeatTimeoutId = undefined;
         }
     }
 
-    public reConnect(): void {
-        if (!this._inited || !this._socket) {
+    public reConnect (): void {
+        if(!this._inited || !this._socket) {
             return;
         }
-        if (this._curReconnectCount > this._reConnectCfg.reconnectCount) {
+        if(this._curReconnectCount > this._reConnectCfg.reconnectCount) {
             this._stopReconnect(false);
             return;
         }
-        if (!this._isReconnecting) {
+        if(!this._isReconnecting) {
             const netEventHandler = this._netEventHandler;
             netEventHandler.onStartReconnect && netEventHandler.onStartReconnect(this._reConnectCfg, this._connectOpt);
         }
@@ -215,11 +215,11 @@ export class NetNode<ProtoType,
                 | enet.ICallbackHandler<enet.IDecodePackage<ResData>>
                 | enet.ValueCallback<enet.IDecodePackage<ResData>>
         ): void {
-        if (!this._isSocketReady()) return;
+        if(!this._isSocketReady()) return;
         const reqId = this._reqId;
         const protoHandler = this._protoHandler;
         const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data }, this._useCrypto);
-        if (encodePkg) {
+        if(encodePkg) {
             let reqCfg: enet.IRequestConfig = {
                 reqId: reqId,
                 protoKey: protoHandler.protoKey2Key(protoKey),
@@ -234,17 +234,17 @@ export class NetNode<ProtoType,
     }
     public requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
         ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
-        ProtoKeyType extends ((keyof ProtoType) | String)>(
+        ProtoKeyType extends ((keyof ProtoType) | String)> (
             protoKey: ProtoKeyType,
             data: ReqData,
         ): Promise<enet.IDecodePackage<ResData>> {
-        if (!this._isSocketReady()) return;
+        if(!this._isSocketReady()) return;
 
         return new Promise((res) => {
             const reqId = this._reqId;
             const protoHandler = this._protoHandler;
             const encodePkg = protoHandler.encodeMsg({ key: protoKey, reqId: reqId, data: data }, this._useCrypto);
-            if (encodePkg) {
+            if(encodePkg) {
                 let reqCfg: enet.IRequestConfig = {
                     reqId: reqId,
                     protoKey: protoHandler.protoKey2Key(protoKey),
@@ -258,8 +258,8 @@ export class NetNode<ProtoType,
             }
         });
     }
-    public notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data?: ReqData): void {
-        if (!this._isSocketReady()) return;
+    public notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)> (protoKey: ProtoKeyType, data?: ReqData): void {
+        if(!this._isSocketReady()) return;
 
         const encodePkg = this._protoHandler.encodeMsg(
             {
@@ -271,14 +271,14 @@ export class NetNode<ProtoType,
 
         this.send(encodePkg);
     }
-    public send(netData: enet.NetData): void {
+    public send (netData: enet.NetData): void {
         this._socket.send(netData);
     }
     public onPush<ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
         ProtoKeyType extends ((keyof ProtoType) | String)>
         (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
-        if (!this._pushHandlerMap[key]) {
+        if(!this._pushHandlerMap[key]) {
             this._pushHandlerMap[key] = [handler];
         } else {
             this._pushHandlerMap[key].push(handler);
@@ -288,37 +288,37 @@ export class NetNode<ProtoType,
         ProtoKeyType extends ((keyof ProtoType) | String)>
         (protoKey: ProtoKeyType, handler: enet.AnyCallback<ResData>): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
-        if (!this._oncePushHandlerMap[key]) {
+        if(!this._oncePushHandlerMap[key]) {
             this._oncePushHandlerMap[key] = [handler];
         } else {
             this._oncePushHandlerMap[key].push(handler);
         }
     }
-    public offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void {
+    public offPush<ProtoKeyType extends ((keyof ProtoType) | String)> (protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void {
         const key = this._protoHandler.protoKey2Key(protoKey);
         let handlers: enet.AnyCallback[];
-        if (onceOnly) {
+        if(onceOnly) {
             handlers = this._oncePushHandlerMap[key];
         } else {
             handlers = this._pushHandlerMap[key];
         }
-        if (handlers) {
+        if(handlers) {
             let handler: enet.AnyCallback;
             let isEqual: boolean;
-            for (let i = handlers.length - 1; i > -1; i--) {
+            for(let i = handlers.length - 1; i > -1; i--) {
                 handler = handlers[i];
                 isEqual = false;
-                if (typeof handler === "function" && handler === callbackHandler) {
+                if(typeof handler === "function" && handler === callbackHandler) {
                     isEqual = true;
-                } else if (
+                } else if(
                     typeof handler === "object" &&
                     handler.method === callbackHandler &&
                     (!context || context === handler.context)
                 ) {
                     isEqual = true;
                 }
-                if (isEqual) {
-                    if (i !== handlers.length) {
+                if(isEqual) {
+                    if(i !== handlers.length) {
                         handlers[i] = handlers[handlers.length - 1];
                         handlers[handlers.length - 1] = handler;
                     }
@@ -327,8 +327,8 @@ export class NetNode<ProtoType,
             }
         }
     }
-    public offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void {
-        if (protoKey) {
+    public offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)> (protoKey?: ProtoKeyType): void {
+        if(protoKey) {
             const key = this._protoHandler.protoKey2Key(protoKey);
             delete this._pushHandlerMap[key];
             delete this._oncePushHandlerMap[key];
@@ -341,7 +341,7 @@ export class NetNode<ProtoType,
      * 握手包处理
      * @param dpkg
      */
-    protected _onHandshake(dpkg: enet.IDecodePackage) {
+    protected _onHandshake (dpkg: enet.IDecodePackage) {
         this._handshakeInit(dpkg);
         const ackPkg = this._protoHandler.encodePkg({ type: PackageType.HANDSHAKE_ACK });
         this.send(ackPkg);
@@ -354,7 +354,7 @@ export class NetNode<ProtoType,
      * 握手初始化
      * @param dpkg
      */
-    protected _handshakeInit(dpkg: enet.IDecodePackage) {
+    protected _handshakeInit (dpkg: enet.IDecodePackage) {
         const heartbeatCfg = this.protoHandler.heartbeatConfig;
 
         this._heartbeatConfig = heartbeatCfg;
@@ -369,13 +369,13 @@ export class NetNode<ProtoType,
      * 心跳包处理
      * @param dpkg
      */
-    protected _heartbeat(dpkg: enet.IDecodePackage) {
+    protected _heartbeat (dpkg: enet.IDecodePackage) {
         const heartbeatCfg = this._heartbeatConfig;
         const protoHandler = this._protoHandler;
-        if (!heartbeatCfg || !heartbeatCfg.heartbeatInterval) {
+        if(!heartbeatCfg || !heartbeatCfg.heartbeatInterval) {
             return;
         }
-        if (this._heartbeatTimeoutId) {
+        if(this._heartbeatTimeoutId) {
             return;
         }
         this._heartbeatTimeId = setTimeout(() => {
@@ -393,9 +393,9 @@ export class NetNode<ProtoType,
     /**
      * 心跳超时处理
      */
-    protected _heartbeatTimeoutCb() {
+    protected _heartbeatTimeoutCb () {
         var gap = this._nextHeartbeatTimeoutTime - Date.now();
-        if (gap > this._gapThreashold) {
+        if(gap > this._gapThreashold) {
             this._heartbeatTimeoutId = setTimeout(this._heartbeatTimeoutCb.bind(this), gap) as any;
         } else {
             console.error("server heartbeat timeout");
@@ -406,13 +406,13 @@ export class NetNode<ProtoType,
      * 数据包处理
      * @param dpkg
      */
-    protected _onData(dpkg: enet.IDecodePackage) {
+    protected _onData (dpkg: enet.IDecodePackage) {
         let reqCfg: enet.IRequestConfig;
-        if (!isNaN(dpkg.reqId) && dpkg.reqId > 0) {
+        if(!isNaN(dpkg.reqId) && dpkg.reqId > 0) {
             //请求
             const reqId = dpkg.reqId;
             reqCfg = this._reqCfgMap[reqId];
-            if (!reqCfg) return;
+            if(!reqCfg) return;
             reqCfg.decodePkg = dpkg;
             this._runHandler(reqCfg.resHandler, dpkg);
         } else {
@@ -420,14 +420,14 @@ export class NetNode<ProtoType,
             //推送
             let handlers = this._pushHandlerMap[pushKey];
             const onceHandlers = this._oncePushHandlerMap[pushKey];
-            if (!handlers) {
+            if(!handlers) {
                 handlers = onceHandlers;
-            } else if (onceHandlers) {
+            } else if(onceHandlers) {
                 handlers = handlers.concat(onceHandlers);
             }
             delete this._oncePushHandlerMap[pushKey];
-            if (handlers) {
-                for (let i = 0; i < handlers.length; i++) {
+            if(handlers) {
+                for(let i = 0; i < handlers.length; i++) {
                     this._runHandler(handlers[i], dpkg);
                 }
             }
@@ -439,16 +439,16 @@ export class NetNode<ProtoType,
      * 踢下线数据包处理
      * @param dpkg
      */
-    protected _onKick(dpkg: enet.IDecodePackage) {
+    protected _onKick (dpkg: enet.IDecodePackage) {
         this._netEventHandler.onKick && this._netEventHandler.onKick(dpkg, this._connectOpt);
     }
     /**
      * socket状态是否准备好
      */
-    protected _isSocketReady(): boolean {
+    protected _isSocketReady (): boolean {
         const socket = this._socket;
         const socketIsReady = socket && (socket.state === SocketState.CONNECTING || socket.state === SocketState.OPEN);
-        if (this._inited && socketIsReady) {
+        if(this._inited && socketIsReady) {
             return true;
         } else {
             console.error(
@@ -466,14 +466,14 @@ export class NetNode<ProtoType,
      * 当socket连接成功
      * @param event
      */
-    protected _onSocketConnected(event: any): void {
-        if (this._isReconnecting) {
+    protected _onSocketConnected (event: any): void {
+        if(this._isReconnecting) {
             this._stopReconnect();
         } else {
             const handler = this._netEventHandler;
             const connectOpt = this._connectOpt;
             const protoHandler = this._protoHandler;
-            if (protoHandler && connectOpt.handShakeReq) {
+            if(protoHandler && connectOpt.handShakeReq) {
                 const handShakeNetData = protoHandler.encodePkg({
                     type: PackageType.HANDSHAKE,
                     data: connectOpt.handShakeReq
@@ -489,7 +489,7 @@ export class NetNode<ProtoType,
      * 当socket报错
      * @param event
      */
-    protected _onSocketError(event: any): void {
+    protected _onSocketError (event: any): void {
         const eventHandler = this._netEventHandler;
         eventHandler.onError && eventHandler.onError(event, this._connectOpt);
     }
@@ -497,20 +497,20 @@ export class NetNode<ProtoType,
      * 当socket有消息
      * @param event
      */
-    protected _onSocketMsg(event: { data: enet.NetData }) {
+    protected _onSocketMsg (event: { data: enet.NetData }) {
         const depackage = this._protoHandler.decodePkg(event.data);
         const netEventHandler = this._netEventHandler;
         const pkgTypeHandler = this._pkgTypeHandlers[depackage.type];
-        if (pkgTypeHandler) {
+        if(pkgTypeHandler) {
             pkgTypeHandler(depackage);
         } else {
             console.error(`There is no handler of this type:${depackage.type}`);
         }
-        if (depackage.errorMsg) {
+        if(depackage.errorMsg) {
             netEventHandler.onCustomError && netEventHandler.onCustomError(depackage, this._connectOpt);
         }
         //更新心跳超时时间
-        if (this._nextHeartbeatTimeoutTime) {
+        if(this._nextHeartbeatTimeoutTime) {
             this._nextHeartbeatTimeoutTime = Date.now() + this._heartbeatConfig.heartbeatTimeout;
         }
     }
@@ -518,9 +518,9 @@ export class NetNode<ProtoType,
      * 当socket关闭
      * @param event
      */
-    protected _onSocketClosed(event: any): void {
+    protected _onSocketClosed (event: any): void {
         const netEventHandler = this._netEventHandler;
-        if (this._isReconnecting) {
+        if(this._isReconnecting) {
             clearTimeout(this._reconnectTimerId);
             this.reConnect();
         } else {
@@ -533,10 +533,10 @@ export class NetNode<ProtoType,
      * @param handler 回调
      * @param depackage 解析完成的数据包
      */
-    protected _runHandler(handler: enet.AnyCallback, depackage: enet.IDecodePackage) {
-        if (typeof handler === "function") {
+    protected _runHandler (handler: enet.AnyCallback, depackage: enet.IDecodePackage) {
+        if(typeof handler === "function") {
             handler(depackage);
-        } else if (typeof handler === "object") {
+        } else if(typeof handler === "object") {
             handler.method &&
                 handler.method.apply(handler.context, handler.args ? [depackage].concat(handler.args) : [depackage]);
         }
@@ -545,8 +545,8 @@ export class NetNode<ProtoType,
      * 停止重连
      * @param isOk 重连是否成功
      */
-    protected _stopReconnect(isOk = true) {
-        if (this._isReconnecting) {
+    protected _stopReconnect (isOk = true) {
+        if(this._isReconnecting) {
             this._isReconnecting = false;
             clearTimeout(this._reconnectTimerId);
             this._curReconnectCount = 0;

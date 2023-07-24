@@ -59,23 +59,23 @@ declare global {
              * 设置事件处理器
              * @param handler
              */
-            setEventHandler(handler: ISocketEventHandler): void;
+            setEventHandler (handler: ISocketEventHandler): void;
             /**
              * 连接
              * @param opt
              * @returns
              */
-            connect(opt: IConnectOptions): boolean;
+            connect (opt: IConnectOptions): boolean;
             /**
              * 发送数据
              * @param data
              */
-            send(data: NetData): void;
+            send (data: NetData): void;
             /**
              * 关闭socket
              * @param disconnect 主动断开连接
              */
-            close(disconnect?: boolean): void;
+            close (disconnect?: boolean): void;
         }
         interface ISocketEventHandler {
             /**
@@ -159,24 +159,24 @@ declare global {
              * 协议key转字符串key
              * @param protoKey
              */
-            protoKey2Key(protoKey: ProtoKeyType): string;
+            protoKey2Key (protoKey: ProtoKeyType): string;
             /**
              * 编码数据包
              * @param pkg
              * @param useCrypto 是否加密
              */
-            encodePkg<T>(pkg: enet.IPackage<T>, useCrypto?: boolean): NetData;
+            encodePkg<T> (pkg: enet.IPackage<T>, useCrypto?: boolean): NetData;
             /**
              * 编码消息数据包
              * @param msg 消息包
              * @param useCrypto 是否加密
              */
-            encodeMsg<T>(msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): NetData;
+            encodeMsg<T> (msg: enet.IMessage<T, ProtoKeyType>, useCrypto?: boolean): NetData;
             /**
              * 解码网络数据包，
              * @param data
              */
-            decodePkg<T>(data: NetData): IDecodePackage<T>;
+            decodePkg<T> (data: NetData): IDecodePackage<T>;
         }
         type AnyCallback<ResData = any> =
             | enet.ICallbackHandler<enet.IDecodePackage<ResData>>
@@ -377,20 +377,20 @@ declare global {
              * 初始化网络节点，注入自定义处理
              * @param config 配置 重连次数，超时时间，网络事件处理，协议处理
              */
-            init(config?: INodeConfig): void;
+            init (config?: INodeConfig): void;
             /**
              * 连接
              * @param option 连接参数:可以直接传url|options
              */
-            connect(option: string | enet.IConnectOptions): void;
+            connect (option: string | enet.IConnectOptions): void;
             /**
              * 断开连接
              */
-            disConnect(): void;
+            disConnect (): void;
             /**
              * 重连
              */
-            reConnect(): void;
+            reConnect (): void;
             /**
              * 请求协议接口，处理返回
              * @param protoKey 协议key
@@ -422,7 +422,7 @@ declare global {
             requestAsync<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>,
                 ResData extends enet.GetResType<ProtoKeyType, ProtoType, InferResTypeKey>,
                 ProtoKeyType extends ((keyof ProtoType) | String)
-            >(
+            > (
                 protoKey: ProtoKeyType,
                 data: ReqData,
             ): Promise<enet.IDecodePackage<ResData>>;
@@ -432,14 +432,14 @@ declare global {
              * 发送网络数据
              * @param netData
              */
-            send(netData: NetData): void;
+            send (netData: NetData): void;
             /**
              * 通知
              * 发送数据给服务器，不处理返回
              * @param protoKey 协议key
              * @param data 数据体
              */
-            notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, data?: ReqData): void;
+            notify<ReqData extends enet.GetReqType<ProtoKeyType, ProtoType, InferReqTypeKey>, ProtoKeyType extends ((keyof ProtoType) | String)> (protoKey: ProtoKeyType, data?: ReqData): void;
 
             /**
              * 监听推送
@@ -466,13 +466,13 @@ declare global {
              * @param context 指定上下文的监听
              * @param onceOnly 是否只取消 监听一次 的推送监听
              */
-            offPush<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
+            offPush<ProtoKeyType extends ((keyof ProtoType) | String)> (protoKey: ProtoKeyType, callbackHandler: enet.AnyCallback, context?: any, onceOnly?: boolean): void;
 
             /**
              * 取消所有监听
              * @param protoKey 指定协议的推送，如果为空，则取消所有协议的所有监听
              */
-            offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)>(protoKey?: ProtoKeyType): void;
+            offPushAll<ProtoKeyType extends ((keyof ProtoType) | String)> (protoKey?: ProtoKeyType): void;
 
         }
     }

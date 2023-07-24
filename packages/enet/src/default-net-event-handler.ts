@@ -6,11 +6,11 @@ export class DefaultNetEventHandler implements enet.INetEventHandler {
         console.log(`connect ok:${connectOpt.url},opt:`, connectOpt);
         console.log(`handshakeRes:`, handshakeRes);
     }
-    onError(event: any, connectOpt: enet.IConnectOptions): void {
+    onError (event: any, connectOpt: enet.IConnectOptions): void {
         console.error(`socket error,opt:`, connectOpt);
         console.error(event);
     }
-    onClosed(event: any, connectOpt: enet.IConnectOptions): void {
+    onClosed (event: any, connectOpt: enet.IConnectOptions): void {
         console.error(`socket close,opt:`, connectOpt);
         console.error(event);
     }
@@ -42,7 +42,7 @@ export class DefaultNetEventHandler implements enet.INetEventHandler {
             connectOpt
         );
     }
-    onKick(dpkg: enet.IDecodePackage<any>, copt: enet.IConnectOptions) {
+    onKick (dpkg: enet.IDecodePackage<any>, copt: enet.IConnectOptions) {
         console.log(`be kick,dpkg:`, dpkg);
     }
 }
