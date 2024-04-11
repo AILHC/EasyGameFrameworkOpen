@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/dpctrl-fgui@0.10.6...@ailhc/dpctrl-fgui@0.10.7) (2024-04-11)
+
+
+### Bug Fixes
+
+* 增加isShowEnd状态字段，优化onShow和onHide逻辑，移除forceHide逻辑 ([6a8707e](https://github.com/AILHC/EasyGameFrameworkOpen/commit/6a8707efbe32f469bf548c83a966aab871933891))
+
+
+
+
+
 ## [0.10.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/dpctrl-fgui@0.10.5...@ailhc/dpctrl-fgui@0.10.6) (2021-06-20)
 
 **Note:** Version bump only for package @ailhc/dpctrl-fgui

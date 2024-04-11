@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@3.0.9...@ailhc/obj-pool@4.0.0) (2024-04-11)
+
+
+### Code Refactoring
+
+* refactor and simplified interface and implementing ([3f162b6](https://github.com/AILHC/EasyGameFrameworkOpen/commit/3f162b6c6f78d1bb686f522e0e3eebf0868af05a))
+
+
+### BREAKING CHANGES
+
+* 1. remove sign type limit|2. remove IObj field: pool |3. rename return to recycle|4. IPool remove
+setObjHandler、init;refactor to initByObjHandler;|5. IPoolMgr remove setPoolHandler、getPoolObjsBySign
+
+
+
+
+
 ## [3.0.9](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/obj-pool@3.0.8...@ailhc/obj-pool@3.0.9) (2021-09-15)
 
 

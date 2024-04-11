@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/layer@0.1.9...@ailhc/layer@0.2.0) (2024-04-11)
+
+
+### Code Refactoring
+
+* 修改ILayer接口，避免和别类声明的冲突 ([4235714](https://github.com/AILHC/EasyGameFrameworkOpen/commit/4235714cd2883fbf38e9e86da03dabed99074736))
+
+
+### Features
+
+* 将编译目标改为ES6,addNodeToLayer可以传递参数,可以控制界面适配 ([bd04ed0](https://github.com/AILHC/EasyGameFrameworkOpen/commit/bd04ed05a2217bd3216ceea16bbe19a94f9e3525))
+
+
+### BREAKING CHANGES
+
+* ILayer接口所有接口改变
+
+
+
+
+
 ## [0.1.9](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/layer@0.1.7...@ailhc/layer@0.1.9) (2021-06-10)
 
 **Note:** Version bump only for package @ailhc/layer

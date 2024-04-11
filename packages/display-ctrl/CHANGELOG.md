@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.10](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/display-ctrl@1.1.9...@ailhc/display-ctrl@1.1.10) (2024-04-11)
+
+
+### Bug Fixes
+
+* 增加显示控制器实例状态 isShowEnd 以及判断方法 isShowEnd。这个状态由业务控制 ([2d1cbfd](https://github.com/AILHC/EasyGameFrameworkOpen/commit/2d1cbfdba396ebd93754a419f9fce4a0d5c04670))
+
+
+
+
+
 ## [1.1.9](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/display-ctrl@1.1.7...@ailhc/display-ctrl@1.1.9) (2021-06-10)
 
 **Note:** Version bump only for package @ailhc/display-ctrl

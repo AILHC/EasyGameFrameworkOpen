@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/egf-protobuf@1.3.6...egf-protobuf@1.3.7) (2024-04-11)
+
+
+### Bug Fixes
+
+* 修复egf-protobuf-cli发布protojs类型为0或2时bug ([25f4ce1](https://github.com/AILHC/EasyGameFrameworkOpen/commit/25f4ce18ca18f69df22eed6489f6f595ee7fe381))
+
+
+
+
+
 ## [1.3.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/egf-protobuf@1.3.5...egf-protobuf@1.3.6) (2021-03-31)
 
 **Note:** Version bump only for package egf-protobuf

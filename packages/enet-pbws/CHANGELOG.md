@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.9](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pbws@1.2.8...@ailhc/enet-pbws@1.2.9) (2024-04-11)
+
+**Note:** Version bump only for package @ailhc/enet-pbws
+
+
+
+
+
 ## [1.2.8](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet-pbws@1.2.6...@ailhc/enet-pbws@1.2.8) (2021-06-10)
 
 **Note:** Version bump only for package @ailhc/enet-pbws

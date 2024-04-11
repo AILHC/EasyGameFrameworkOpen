@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.8](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet@1.2.7...@ailhc/enet@1.2.8) (2024-04-11)
+
+
+### Bug Fixes
+
+* 修复心跳超时处理bug ([581ca88](https://github.com/AILHC/EasyGameFrameworkOpen/commit/581ca88300575bae337bb3be0d379680f6ba2cfc))
+* defaultProtoHandler decodePkg fix ([33bc65d](https://github.com/AILHC/EasyGameFrameworkOpen/commit/33bc65d32b534649997a7c047d155233611f2c46))
+
+
+
+
+
 ## [1.2.7](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/enet@1.2.5...@ailhc/enet@1.2.7) (2021-06-10)
 
 **Note:** Version bump only for package @ailhc/enet

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.17](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-net-ws@1.0.16...egf-net-ws@1.0.17) (2024-04-11)
+
+**Note:** Version bump only for package egf-net-ws
+
+
+
+
+
 ## [1.0.16](https://e.coding.net/AILHC/easy-game-framework/EasyGameFrameworkOpen/compare/egf-net-ws@1.0.14...egf-net-ws@1.0.16) (2021-06-10)
 
 **Note:** Version bump only for package egf-net-ws

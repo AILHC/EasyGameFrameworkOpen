@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.6](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.5...@ailhc/excel2all@0.3.6) (2024-04-11)
+
+**Note:** Version bump only for package @ailhc/excel2all
+
+
+
+
+
 ## [0.3.5](https://github.com/AILHC/EasyGameFrameworkOpen/compare/@ailhc/excel2all@0.3.4...@ailhc/excel2all@0.3.5) (2021-09-28)
 
 
