@@ -133,14 +133,7 @@ export async function generate(projRootDir: string) {
         });
         console.log("[egf-protobuf]输出客户端proto文件的js文件->完成");
     }
-    if (pbconfig.outputFileType === 0 || pbconfig.outputFileType === 2) {
-        console.log("[egf-protobuf]生成客户端的 .min.js文件");
-        const minjs = UglifyJS.minify(outPbj);
-        await fs.writeFileAsync(clientPbjsFilePath, minjs, "utf-8").catch(function (res) {
-            console.log(res);
-        });
-        console.log("[egf-protobuf]生成客户端的.min.js文件->完成");
-    }
+
     if (serverPbjsFilePath) {
         console.log("[egf-protobuf]输出服务端proto文件的js文件");
         await fs.writeFileAsync(serverPbjsFilePath, outPbj, "utf-8").catch(function (res) {
@@ -186,7 +179,7 @@ export async function generate(projRootDir: string) {
 
     console.log("[egf-protobuf]解析js文件生成.d.ts中");
     let pbtsResult = await new Promise<string>((res) => {
-        pbts.main(["--main", pbjsFilePaths[0]], (err, output) => {
+        pbts.main(["--main", clientPbjsFilePath], (err, output) => {
             if (err) {
                 console.error(err);
             }
@@ -194,6 +187,7 @@ export async function generate(projRootDir: string) {
             return {};
         });
     });
+
     pbtsResult = pbtsResult.replace(/\$protobuf/gi, "protobuf").replace(/export namespace/gi, "declare namespace");
     pbtsResult = "type Long = protobuf.Long;\n" + pbtsResult;
     console.log("[egf-protobuf]解析js文件->完成");
@@ -236,6 +230,17 @@ export async function generate(projRootDir: string) {
     // pbtsResult = await fs.readFileAsync(tempfile, 'utf-8').catch(function (res) { console.log(res) }) as any;
 
     console.log("[egf-protobuf]生成.d.ts文件->完成");
+    console.log("[egf-protobuf]生成客户端的 .min.js文件中");
+    if (pbconfig.outputFileType === 0 || pbconfig.outputFileType === 2) {
+        console.log("[egf-protobuf]生成客户端的 .min.js文件");
+        const minjs = UglifyJS.minify(outPbj);
+        let minjsFilePath =
+            pbconfig.outputFileType === 0 ? `${clientPbjsFilePath.replace(".js", ".min.js")}` : clientPbjsFilePath;
+        await fs.writeFileAsync(minjsFilePath, minjs.code, "utf-8").catch(function (res) {
+            console.log(res);
+        });
+        console.log("[egf-protobuf]生成客户端的.min.js文件->完成");
+    }
 }
 
 const configTemplateDirPath = path.join(root, "config-template");
