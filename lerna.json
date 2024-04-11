@@ -1,17 +1,19 @@
 {
-  "packages": [
-    "packages/*",
-    "tool-packages/*"
-  ],
-  "publish": {
-    "allowBranch": "main"
-  },
-  "ignoreChanges": [
-    "**/*.md"
-  ],
-  "version": "independent",
-  "npmClient": "pnpm",
-  "commond": {},
-  "useWorkspaces": true,
-  "message": "chore: publish"
+    "packages": [
+        "packages/*",
+        "tool-packages/*"
+    ],
+    "publish": {
+        "allowBranch": "main"
+    },
+    "ignoreChanges": [
+        "**/*.md",
+        "**/package-lock.json",
+        "lerna.json"
+    ],
+    "version": "independent",
+    "npmClient": "pnpm",
+    "commond": {},
+    "useWorkspaces": true,
+    "message": "chore: publish"
 }
