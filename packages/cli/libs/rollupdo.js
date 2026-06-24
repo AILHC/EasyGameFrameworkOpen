@@ -30,6 +30,22 @@ const tsconfigOverride = {
     compilerOptions: {}
 }
 /**
+ * 生成压缩文件名，只处理最终文件名扩展名，避免路径中的 "." 被替换。
+ * @param {string} filePath
+ */
+function getMinifyOutputFile(filePath) {
+    const parsed = path.parse(filePath);
+    if (parsed.ext !== ".js" && parsed.ext !== ".mjs") {
+        throw new Error(`[EGF-CLI] 不支持为 ${filePath} 生成压缩文件名，仅支持 .js 或 .mjs 输出`);
+    }
+    return path.format({
+        dir: parsed.dir,
+        root: parsed.root,
+        name: `${parsed.name}.min`,
+        ext: parsed.ext
+    });
+}
+/**
  * 构建编译
  * @param {import("@ailhc/egf-cli").IEgfCompileOption} option 
  */
@@ -370,10 +386,10 @@ async function rollupBuild(option) {
                 }
             }
             const terserPlugin = terser.terser(terserOption);
-            outputOption.sourcemap = !!option.minifySourcemap;
+            outputOption.sourcemap = option.minifySourcemap;
             outputOption.plugins = [terserPlugin];
-            if (!(entrys.length > 1)) {
-                outputOption.file = outputOption.file.replace(".", ".min.");
+            if (!(entrys.length > 1) && outputOption.file) {
+                outputOption.file = getMinifyOutputFile(outputOption.file);
             }
             await rollupBuild.write(outputOption);
         }

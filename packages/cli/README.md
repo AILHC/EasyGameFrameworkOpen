@@ -81,6 +81,7 @@ ts编译器处理：`exclude`里配置只能忽略的`.d.ts`文件
 ```ts
 
 
+
 declare module "@ailhc/egf-cli" {
     interface IEgfCompileOption {
         /**项目根路径，默认为执行命令处 process.cwd() */
@@ -119,19 +120,28 @@ declare module "@ailhc/egf-cli" {
         footer: string | (() => string | Promise<string>),
         /**
          * 多入口处理共用js库输出的文件名,如果是字符串可以按照这个规则处理"[name]-[hash]-[format].js"
-         * 默认使用:"[name]-[hash].js"
+         * 默认使用:
+         * (chunkInfo) => {
+                if (format === "es" || format === "esm") {
+
+                    return `[name]${option.minify ? ".min" : ""}.mjs`
+                } else {
+                    return `[name]${option.minify ? ".min" : ""}.js`
+                }
+            }
          */
         chunkFileNames: string | ((chunkInfo: import("rollup").PreRenderedChunk) => string)
         /**
          * 多入口处理每个入口输出的js文件名
          * 默认使用 
-         * (chunkInfo) => {
-                if (format === "es" || format === "esm") {
-                    return `[name].mjs`
-                } else {
-                    return `[name].js`
-                }
-            },
+         *  (chunkInfo) => {
+            if (format === "es" || format === "esm") {
+
+                return `[name]${option.minify ? ".min" : ""}.mjs`
+            } else {
+                return `[name]${option.minify ? ".min" : ""}.js`
+            }
+            }
          * 用于从入口点创建的块的模式，或者每个入口块调用的函数以返回这样的模式。模式支持以下占位符:
             [format]:在输出选项中定义的呈现格式，例如es或cjs。
             [hash]:基于入口点的内容及其所有依赖项的内容的哈希。
